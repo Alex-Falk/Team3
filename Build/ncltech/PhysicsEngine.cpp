@@ -22,7 +22,7 @@ PhysicsEngine::PhysicsEngine()
 	//Variables set here will /not/ be reset with each scene
 	isPaused = false;  
 	debugDrawFlags = DEBUGDRAW_FLAGS_MANIFOLD | DEBUGDRAW_FLAGS_CONSTRAINT;
-	octree = new OcTree(limits.minVals, limits.maxVals, &physicsNodes);
+	worldPartitioning = new FixedWorldPartition(limits.minVals, limits.maxVals, &physicsNodes);
 	SetDefaults();
 }
 
@@ -36,11 +36,11 @@ void PhysicsEngine::AddPhysicsObject(PhysicsNode* obj)
 	physicsNodes.push_back(obj);	
 }
 
-void PhysicsEngine::ResetOcTree()
+void PhysicsEngine::ResetWorldPartition()
 {
-	delete octree;
-	octree = nullptr;
-	octree = new OcTree(limits.minVals, limits.maxVals, &physicsNodes);
+	delete worldPartitioning;
+	worldPartitioning = nullptr;
+	worldPartitioning = new FixedWorldPartition(limits.minVals, limits.maxVals, &physicsNodes);
 }
 
 void PhysicsEngine::RemovePhysicsObject(PhysicsNode* obj)
@@ -182,9 +182,9 @@ void PhysicsEngine::BroadPhaseCollisions()
 	//	the complexity of narrowphase collision checking, if this is too fine then collisions may be missed.
 	
 	//octree = new OcTree(Vector3(-20, 0, -20), Vector3(20, 20, 20), physicsNodes);
-	octree->UpdateOcTree();
+	worldPartitioning->UpdateFixedWorldPartition();
 
-	broadphaseColPairs = octree->CreatePairs();
+	broadphaseColPairs = worldPartitioning->CreatePairs(worldPartitioning->root);
 	//	Brute force approach.
 	//  - For every object A, assume it could collide with every other object.. 
 	//    even if they are on the opposite sides of the world.
@@ -283,7 +283,7 @@ void PhysicsEngine::DebugRender()
 {
 	if (debugDrawFlags & DEBUGDRAW_FLAGS_OCTREE)
 	{
-		octree->DebugDraw();
+		worldPartitioning->DebugDraw();
 	}
 	// Draw all collision manifolds
 	if (debugDrawFlags & DEBUGDRAW_FLAGS_MANIFOLD)
