@@ -1,8 +1,6 @@
 
 Build/\.vs/
 
-*.obj
-
 Build/ncltech/Debug/
 
 *.log
