@@ -4,4 +4,4 @@
 enum Colour
 {
 	Green , Blue, Red, Pink
-};s
+};

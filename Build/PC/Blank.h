@@ -6,6 +6,8 @@
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
+#include "GamePlay.h"
+#include "Player.h"
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
@@ -36,6 +38,7 @@ public:
 
 		this->AddGameObject(ground);
 
+		Player* p1 = new Player(Vector3(0.0, 5.0, 0.0), Green, 1.0f);
 
 		//Sphere-Sphere
 		{

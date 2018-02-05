@@ -1,104 +1,53 @@
-[12:59:35] Loading Shader:
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexBasic.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragSuperSample.glsl
-[12:59:35]     -> Linking Shader: Success!
-[12:59:35] 
-[12:59:35] Loading Shader:
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexShadow.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/Common/EmptyFragment.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechGeomShadow.glsl
-[12:59:35]     -> Linking Shader: Success!
-[12:59:35] 
-[12:59:35] Loading Shader:
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexFull.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragForwardRender.glsl
-[12:59:35]     -> Linking Shader: Success!
-[12:59:35] 
-[12:59:35] Loading Shader:
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointVertex.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointFragment.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointGeometry.glsl
-[12:59:35]     -> Linking Shader: Success!
-[12:59:35] 
-[12:59:35] Loading Shader:
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Vertex.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/LineGeometry.glsl
-[12:59:35]     -> Linking Shader: Success!
-[12:59:35] 
-[12:59:35] Loading Shader:
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/VertexColOnly.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
-[12:59:35]     -> Linking Shader: Success!
-[12:59:35] 
-[12:59:35] Loading Shader:
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextVertex.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextFragment.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextGeometry.glsl
-[12:59:35]     -> Linking Shader: Success!
-[12:59:35] 
-[12:59:35] Loading Shader:
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexPicker.glsl
-[12:59:35]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragScreenPicker_nsightfix.glsl
-[12:59:35]     -> Linking Shader: Success!
-[12:59:35] 
-[12:59:35] Loading Mesh: ../../Data/Meshes/cube.obj
-[12:59:35] 
-[12:59:35] Loading Mesh: ../../Data/Meshes/sphere.obj
-[12:59:36] 
-[12:59:36] [SceneManager] - Enqueued scene: "GameTech #1 - Different Integration Methods"
-[12:59:36] 
-[12:59:36] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:36] Physics too slow to run in real time!
-[12:59:51] [SceneManager] - Exiting scene -
-[12:59:51] 
-[12:59:51] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:51] [SceneManager] - Exiting scene -
-[12:59:51] 
-[12:59:51] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:52] [SceneManager] - Exiting scene -
-[12:59:52] 
-[12:59:52] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:52] [SceneManager] - Exiting scene -
-[12:59:52] 
-[12:59:52] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:52] [SceneManager] - Exiting scene -
-[12:59:52] 
-[12:59:52] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:53] [SceneManager] - Exiting scene -
-[12:59:53] 
-[12:59:53] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:53] [SceneManager] - Exiting scene -
-[12:59:53] 
-[12:59:53] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:53] [SceneManager] - Exiting scene -
-[12:59:53] 
-[12:59:53] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:53] [SceneManager] - Exiting scene -
-[12:59:53] 
-[12:59:53] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:54] [SceneManager] - Exiting scene -
-[12:59:54] 
-[12:59:54] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:54] [SceneManager] - Exiting scene -
-[12:59:54] 
-[12:59:54] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:55] [SceneManager] - Exiting scene -
-[12:59:55] 
-[12:59:55] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:55] [SceneManager] - Exiting scene -
-[12:59:55] 
-[12:59:55] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:55] [SceneManager] - Exiting scene -
-[12:59:55] 
-[12:59:55] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:55] [SceneManager] - Exiting scene -
-[12:59:55] 
-[12:59:55] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:56] [SceneManager] - Exiting scene -
-[12:59:56] 
-[12:59:56] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[12:59:56] [SceneManager] - Exiting scene -
-[12:59:56] 
-[12:59:56] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
-[13:00:05] [SceneManager] Closing scene manager
+[14:18:21] Loading Shader:
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexBasic.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragSuperSample.glsl
+[14:18:21]     -> Linking Shader: Success!
+[14:18:21] 
+[14:18:21] Loading Shader:
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexShadow.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/Common/EmptyFragment.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechGeomShadow.glsl
+[14:18:21]     -> Linking Shader: Success!
+[14:18:21] 
+[14:18:21] Loading Shader:
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexFull.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragForwardRender.glsl
+[14:18:21]     -> Linking Shader: Success!
+[14:18:21] 
+[14:18:21] Loading Shader:
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointVertex.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointFragment.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/PointGeometry.glsl
+[14:18:21]     -> Linking Shader: Success!
+[14:18:21] 
+[14:18:21] Loading Shader:
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Vertex.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/LineGeometry.glsl
+[14:18:21]     -> Linking Shader: Success!
+[14:18:21] 
+[14:18:21] Loading Shader:
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/VertexColOnly.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/Fragment.glsl
+[14:18:21]     -> Linking Shader: Success!
+[14:18:21] 
+[14:18:21] Loading Shader:
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextVertex.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextFragment.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/DebugShaders/TextGeometry.glsl
+[14:18:21]     -> Linking Shader: Success!
+[14:18:21] 
+[14:18:21] Loading Shader:
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechVertexPicker.glsl
+[14:18:21]     -> Compiling Shader: ../../Data/Shaders/SceneRenderer/TechFragScreenPicker_nsightfix.glsl
+[14:18:21]     -> Linking Shader: Success!
+[14:18:21] 
+[14:18:21] Loading Mesh: ../../Data/Meshes/cube.obj
+[14:18:21] 
+[14:18:21] Loading Mesh: ../../Data/Meshes/sphere.obj
+[14:18:21] 
+[14:18:21] [SceneManager] - Enqueued scene: "GameTech #1 - Different Integration Methods"
+[14:18:21] 
+[14:18:21] [SceneManager] - Scene switched to: "GameTech #1 - Different Integration Methods"
+[14:18:21] Physics too slow to run in real time!
+[14:18:26] [SceneManager] Closing scene manager
