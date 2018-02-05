@@ -38,8 +38,6 @@ public:
 
 		this->AddGameObject(ground);
 
-		Player* p1 = new Player(Vector3(0.0, 5.0, 0.0), Green, 1.0f);
-
 		//Sphere-Sphere
 		{
 
@@ -55,6 +53,15 @@ public:
 			this->AddGameObject(CommonUtils::BuildSphereObject("ss2",
 				ss_pos,									//Position
 				0.5f,									//Radius
+				true,									//Has Physics Object
+				1.0f,
+				true,									//Has Collision Shape
+				true,									//Dragable by the user
+				CommonUtils::GenColor(0.5f, 1.0f)));	//Color
+
+			this->AddGameObject(CommonUtils::BuildSphereObject("ss3",
+				ss_pos + Vector3(0.0f, 15.0f, 0.0f),  	//Position
+				0.9f,									//Radius
 				true,									//Has Physics Object
 				1.0f,
 				true,									//Has Collision Shape
