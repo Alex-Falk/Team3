@@ -199,6 +199,11 @@ public:
 				it++;
 		}
 	}
+
+	//toggle whether the camera is following an object
+	inline void ToggleCamera() {
+		GraphicsPipeline::Instance()->GetCamera()->ToggleFree();
+	}
 protected:
 	// Delete all contained Objects
 	//    - This is the default action upon firing OnCleanupScene()

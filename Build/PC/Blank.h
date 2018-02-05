@@ -105,6 +105,23 @@ public:
 				true,									//Dragable by the user
 				CommonUtils::GenColor(0.5f, 1.0f)));	//Color
 		}
+
+		//TEMP Camera Center
+		{
+			GameObject* center = CommonUtils::BuildSphereObject(
+				"Center",
+				Vector3(-2.5f, 1.5f, -2.0f),			//Position
+				0.5,									//Half dimensions
+				true,									//Has Physics Object
+				1.0f,									//Infinite Mass
+				true,									//Has Collision Shape
+				true,									//Dragable by the user
+				Vector4(1.0,0.0,0.0,1.0));				//Color
+
+			GraphicsPipeline::Instance()->GetCamera()->SetCenter(center->Physics());
+			this->AddGameObject(center);
+		}
+
 		Scene::OnInitializeScene();
 	}
 

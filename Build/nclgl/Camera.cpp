@@ -9,10 +9,21 @@ void Camera::HandleMouse(float dt)
 {
 
 	//Update the mouse by how much
-	if (Window::GetMouse()->ButtonDown(MOUSE_LEFT))
+	if (Window::GetMouse()->ButtonDown(MOUSE_LEFT) || !free)
 	{
 		pitch -= (Window::GetMouse()->GetRelativePosition().y);
 		yaw -= (Window::GetMouse()->GetRelativePosition().x);
+	}
+	//move the camera in and out depending on the wheel
+	if (Window::GetMouse()->WheelMoved()) {
+		//move the camera accordingly
+		distance += Window::GetMouse()->GetWheelMovement() * ZOOM_SPEED;
+		if (distance > maxDistance) {
+			distance = maxDistance;
+		}
+		else if (distance < minDistance) {
+			distance = minDistance;
+		}
 	}
 
 	//float wheel_speed = Window::GetMouse()->GetWheelMovement() * 0.5f;
@@ -73,6 +84,10 @@ Generates a view matrix for the camera's viewpoint. This matrix can be sent
 straight to the shader...it's already an 'inverse camera' matrix.
 */
 Matrix4 Camera::BuildViewMatrix() {
+	if (!free) {
+		position = center->GetPosition();
+		position -= GetViewDirection() * distance;
+	}
 	//Why do a complicated matrix inversion, when we can just generate the matrix
 	//using the negative values ;). The matrix multiplication order is important!
 	return	Matrix4::Rotation(-pitch, Vector3(1, 0, 0)) *
@@ -82,4 +97,14 @@ Matrix4 Camera::BuildViewMatrix() {
 
 Vector3 Camera::GetViewDirection() {
 	return Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1);
+}
+
+
+bool Camera::ToggleFree() {
+	//toggle the value for free movement if there is a center object
+	if (center) {
+		free = !free;
+	}
+
+	return free;
 }
