@@ -136,12 +136,12 @@
     <ClCompile Include="CommonMeshes.cpp" />
     <ClCompile Include="CommonUtils.cpp" />
     <ClCompile Include="CuboidCollisionShape.cpp" />
+    <ClCompile Include="FixedWorldPartition.cpp" />
     <ClCompile Include="GeometryUtils.cpp" />
     <ClCompile Include="GraphicsPipeline.cpp" />
     <ClCompile Include="Hull.cpp" />
     <ClCompile Include="Manifold.cpp" />
     <ClCompile Include="NetworkBase.cpp" />
-    <ClCompile Include="OcTree.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="PhysicsNode.cpp" />
     <ClCompile Include="SceneManager.cpp" />
@@ -158,6 +158,7 @@
     <ClInclude Include="Constraint.h" />
     <ClInclude Include="CuboidCollisionShape.h" />
     <ClInclude Include="DistanceConstraint.h" />
+    <ClInclude Include="FixedWorldPartition.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GeometryUtils.h" />
     <ClInclude Include="GraphicsPipeline.h" />
@@ -165,7 +166,6 @@
     <ClInclude Include="Manifold.h" />
     <ClInclude Include="MultiGameObject.h" />
     <ClInclude Include="NetworkBase.h" />
-    <ClInclude Include="OcTree.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="PhysicsNode.h" />
     <ClInclude Include="Scene.h" />
