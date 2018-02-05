@@ -13,9 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="GamePlay">
+      <UniqueIdentifier>{9eaceda8-8b8a-4006-bb0e-2c52ade02b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GamePlay\Header">
+      <UniqueIdentifier>{bb78d5f4-5521-46c1-8645-b0271f911958}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GamePlay\Source">
+      <UniqueIdentifier>{27103adf-a3a6-409f-948d-fbfb0f179103}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Blank.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

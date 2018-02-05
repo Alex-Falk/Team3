@@ -18,3 +18,5 @@ Build/Debug/
 Build/Examples_Cuda/\.vs/Examples_Cuda/v15/
 
 *.lastbuildstate
+
+Build/*.obj
