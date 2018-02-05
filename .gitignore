@@ -17,10 +17,6 @@ Build/Debug/
 
 *.pdb
 
-*.vcxproj
-
-*.filters
-
 Build/Examples_Cuda/\.vs/Examples_Cuda/v15/
 
 *.lastbuildstate
