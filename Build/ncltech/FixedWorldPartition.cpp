@@ -166,8 +166,10 @@ std::vector<PhysicsNode*> FixedWorldPartition::FindElementsInNode(Node * node, s
 {
 	std::vector<PhysicsNode*> newPhysicsNodes;
 
-	for (size_t i = 0; i < parentElements.size(); ++i) {
-		if (node->AABB->CollidingWithSphere(parentElements[i]->GetPosition(), parentElements[i]->GetBoundingRadius())) {
+	for (size_t i = 0; i < parentElements.size(); ++i) 
+	{
+		if (node->AABB->CollidingWithSphere(parentElements[i]->GetPosition(), parentElements[i]->GetBoundingRadius())) 
+		{
 			newPhysicsNodes.push_back(parentElements[i]);
 		}
 	}
