@@ -67,6 +67,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DebugShaders", "DebugShader
 		..\Data\Shaders\DebugShaders\VertexColOnly.glsl = ..\Data\Shaders\DebugShaders\VertexColOnly.glsl
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Networking", "Networking\Networking.vcxproj", "{467EF45B-D7EB-4E00-AF22-992C40F1C97D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
