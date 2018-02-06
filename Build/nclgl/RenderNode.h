@@ -69,6 +69,7 @@ public:
 
 	float			GetBoundingRadius() const	{return boundingRadius;}
 	void			SetBoundingRadius(float f)	{boundingRadius = f;}
+	void			SetBoundingRadius();
 
 	float			GetCameraDistance() const	{return distanceFromCamera;}
 	void			SetCameraDistance(float f)	{distanceFromCamera = f;}
