@@ -41,10 +41,10 @@ public:
 			false,
 			Vector4(0.2f, 0.5f, 1.0f, 1.0f));
 
-<<<<<<< Updated upstream
+		
 		this->AddGameObject(ground);
 
-		p1 = new Player(Vector3(0.0, 1.0, 0.0), Green, 1.0f);
+		p1 = new Player(Vector3(0.0, 1.0, 0.0), GREEN, 1.0f);
 
 
 
@@ -56,10 +56,12 @@ public:
 		GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->Physics());
 		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
-=======
-		PaintableGameObject pgo(ground, 1, true);
+
+		PaintableGameObject pgo(ground, 1, true); 
 		
-		Player* p1 = new Player(Vector3(0.0, 5.0, 0.0), Green, 1.0f);
+		Player* p1 = new Player(Vector3(0.0, 5.0, 0.0), GREEN, 1.0f);
+		
+		//use collision callbacks for this instead somewhere else
 		pgo.CollisionOccured(p1);
 
 		this->AddGameObject(ground);
@@ -146,7 +148,7 @@ public:
 			GraphicsPipeline::Instance()->GetCamera()->SetCenter(center->Physics());
 			this->AddGameObject(center);
 		}
->>>>>>> Stashed changes
+
 
 		
 		Scene::OnInitializeScene();

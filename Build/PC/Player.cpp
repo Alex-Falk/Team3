@@ -23,22 +23,22 @@ Player::Player(Vector3 pos, Colour c, float s)
 
 	switch (c)
 	{
-	case Green:
+	case GREEN:
 	{
 		colour = Vector4(0.0, 1.0, 0.0, 1.0);
 	}
 	break;
-	case Blue:
+	case BLUE:
 	{
 		colour = Vector4(0.0, 0.0, 1.0, 1.0);
 	}
 	break;
-	case Red:
+	case RED:
 	{
 		colour = Vector4(1.0, 0.0, 0.0, 1.0);
 	}
 	break;
-	case Pink:
+	case PINK:
 	{
 		colour = Vector4(1.0, 2.0, 1.0, 1.0);
 	}
