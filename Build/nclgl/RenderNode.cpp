@@ -81,6 +81,6 @@ bool RenderNode::RemoveChild(RenderNode* s,bool recursive) {
 	return false;
 }
 
-void RenderNode::SetBoundingRadius()
+void RenderNode::AutoSetBoundingRadius()
 {
 }
