@@ -3,7 +3,7 @@
 
 Player::Player()
 {
-	CommonUtils::BuildSphereObject("Player1" ,
+	Pl = CommonUtils::BuildSphereObject("Player1",
 		Vector3(0.0f, 1.0f, 0.0f),
 		1.0f,									//Radius
 		true,									//Has Physics Object
@@ -23,35 +23,35 @@ Player::Player(Vector3 pos, Colour c, float s)
 
 	switch (c)
 	{
-	case Green: 
+	case Green:
 	{
-		colour=	Vector4(0.0, 1.0, 0.0, 1.0);
+		colour = Vector4(0.0, 1.0, 0.0, 1.0);
 	}
-		break;
+	break;
 	case Blue:
 	{
 		colour = Vector4(0.0, 0.0, 1.0, 1.0);
 	}
-		break;
+	break;
 	case Red:
 	{
 		colour = Vector4(1.0, 0.0, 0.0, 1.0);
 	}
-		break;
+	break;
 	case Pink:
 	{
 		colour = Vector4(1.0, 2.0, 1.0, 1.0);
 	}
-		break;
+	break;
 	default:
 	{
 		colour = Vector4(0.5, 0.5, 0.5, 1.0);
 	}
-		break;
+	break;
 	}
 
-	CommonUtils::BuildSphereObject("Player" + to_string(c),
-		Vector3(0.0f, 1.0f, 0.0f) + pos,
+	Pl = CommonUtils::BuildSphereObject("Player" + to_string(c),
+		Vector3(0.0f, 1.0f*s, 0.0f) + pos,
 		1.0f * s,								//Radius
 		true,									//Has Physics Object
 		1.0f / s,
@@ -60,3 +60,36 @@ Player::Player(Vector3 pos, Colour c, float s)
 		colour);								//Colour
 }
 
+void Player::Input(float dt) {
+
+	Jumptime += dt;
+	if (Jumptime > 5)
+	{
+		CanJump = true;
+		Jumptime = 0;
+	}
+
+	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE) && CanJump) {
+		Pl->Physics()->SetLinearVelocity(Vector3(force.x / 2, 10, force.z / 2));
+	}
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) {
+		force += Matrix3::Rotation(0, Vector3(3, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 3, 0)) * Vector3(0, 0, -3) * 5 * dt;
+	}
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {
+		force += Matrix3::Rotation(0, Vector3(-3, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, -3, 0)) * Vector3(0, 0, 3) * 5 * dt;
+	}
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {
+		force += Matrix3::Rotation(0, Vector3(0, 0, -5)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(-3, 0, 0) * 5 * dt;
+	}
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {
+		force += Matrix3::Rotation(0, Vector3(0, 0, 5)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(3, 0, 0) * 5 * dt;
+	}
+	if (force.x > 5)force.x = 5;
+	if (force.x < -5)force.x = -5;
+	if (force.z > 5)force.z = 5;
+	if (force.z < -5)force.z = -5;
+	Pl->Physics()->SetForce(force);
+}
