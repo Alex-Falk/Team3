@@ -4,7 +4,7 @@
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
 
-#include "Blank.h"
+#include "SimpleGamePlay.h"
 
 
 bool draw_debug = true;
@@ -54,7 +54,7 @@ void Initialize()
 	PhysicsEngine::Instance();
 
 	//Enqueue All Scenes
-	SceneManager::Instance()->EnqueueScene(new Blank	("GameTech #1 - Different Integration Methods"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
 
 }
 

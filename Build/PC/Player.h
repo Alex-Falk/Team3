@@ -13,12 +13,15 @@ private:
 
 	Colour colour;				// Colour - Team
 
-	int life;
+	float life;
+	float maxLife = 100;
+	float minLife = 10;
 
 	float size;					//Player size
+	float curSize;
 	float jumpImpulse = 10.f;	// Jump Power
 	float speed = 10;			// movement speed
-	float maxForce = 5;			// Sets Maximum applied Force 
+	float maxForce = 15;			// Sets Maximum applied Force 
 
 	static bool canJump;
 
@@ -26,6 +29,10 @@ public:
 	Player();
 	Player(Vector3 pos, Colour c, float s); //Build Player using starting possition Colour and size
 	
+	virtual void OnPlayerUpdate(float dt);
+
+	virtual float GetMaxLife() { return maxLife; }
+	virtual void SetMaxLife(float x) { maxLife = x;}
 
 	virtual Colour GetColour() { return colour; }
 	virtual void SetColour(Colour c) { colour = c; }
@@ -42,3 +49,4 @@ public:
 	~Player();
 
 };
+
