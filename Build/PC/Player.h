@@ -41,6 +41,11 @@ public:
 	virtual	float GetSize() { return size; }
 	virtual void SetSize(float s) { size = s; }
 
+	virtual void IncrLife(float x) { life += x; }
+	virtual void DecrLife(float x) { life -= x; }
+
+	virtual float GetLife() { return life; }
+
 	virtual GameObject* GetGameObject() { return playerGameObject; }	//Pointer to the Player's Gameobject
 
 	virtual void Input(float time);		// Takes the keyboard input to control ball
