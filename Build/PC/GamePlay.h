@@ -3,5 +3,5 @@
 
 enum Colour
 {
-	GREEN , BLUE, RED, PINK
+	DEFAULT, GREEN, BLUE, RED, PINK
 };

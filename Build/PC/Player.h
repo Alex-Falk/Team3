@@ -13,21 +13,19 @@ private:
 
 	Colour colour;				// Colour - Team
 
-	int Life;
+	int life;
 
 	float size;					//Player size
 	float jumpImpulse = 10.f;	// Jump Power
 	float speed = 10;			// movement speed
-	float Jumptime = 5;			// Testing stop double jump
-	float Jtime = 0;			// Only for Testing
 	float maxForce = 5;			// Sets Maximum applied Force 
 
-	bool canJump;
+	static bool canJump;
 
 public:
 	Player();
 	Player(Vector3 pos, Colour c, float s); //Build Player using starting possition Colour and size
-	~Player();
+	
 
 	virtual Colour GetColour() { return colour; }
 	virtual void SetColour(Colour c) { colour = c; }
@@ -38,5 +36,9 @@ public:
 	virtual GameObject* GetGameObject() { return playerGameObject; }	//Pointer to the Player's Gameobject
 
 	virtual void Input(float time);		// Takes the keyboard input to control ball
+
+	static bool SetCanJump(PhysicsNode* self, PhysicsNode* collidingObject);	//Sets player's ability to jump
+
+	~Player();
 
 };

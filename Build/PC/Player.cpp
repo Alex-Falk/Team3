@@ -25,6 +25,10 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 
 	switch (c)
 	{
+	case DEFAULT:
+	{
+		Colour = Vector4(1.0, 1.0, 1.0, 1.0);
+	}
 	case GREEN:
 	{
 		Colour = Vector4(0.0, 1.0, 0.0, 1.0);
@@ -63,14 +67,16 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 		Colour);								//Colour
 }
 
+bool Player::canJump; // Resets Players ability to jump
+bool Player::SetCanJump(PhysicsNode* self, PhysicsNode* collidingObject) {
+	canJump = true;
+	return true;
+}
+
+//Takes Player Input and move the player using force
 void Player::Input(float dt) {
 
-	Jtime += dt;
-	if (Jtime > Jumptime)
-	{
-		canJump = true;
-		Jtime = 0;
-	}
+	playerGameObject->Physics()->SetOnCollisionCallback(SetCanJump);
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
