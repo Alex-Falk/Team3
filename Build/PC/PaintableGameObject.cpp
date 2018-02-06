@@ -17,51 +17,51 @@ void PaintableGameObject::CollisionOccured(Player * p)
 		switch (p->GetColour()) {
 		case GREEN:
 			go->Render()->GetChild()->SetBaseColor(Vector4(0.f, 1.0f, 0.0f, 1.0f));
-			colour = p->GetColour();
+			colour = GREEN;
 			break;
 
 		case RED:
 			go->Render()->GetChild()->SetBaseColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-			colour = p->GetColour();
+			colour = RED;
 			break;
 
 		case BLUE:
 			go->Render()->GetChild()->SetBaseColor(Vector4(0.f, 0.0f, 1.0f, 1.0f));
-			colour = p->GetColour();
+			colour = BLUE;
 			break;
 
 		case PINK:
 			go->Render()->GetChild()->SetBaseColor(Vector4(1.2f, 0.5f, 1.0f, 1.0f));
-			colour = p->GetColour();
+			colour = PINK;
 			break;
 		}
 	}
 }
 
 //void PaintableGameObject::CollisionOccured(Ammo * a) {
-//	if (a->GetOwner()->GetColour() == colour) {
+//	if (a->GetColour() == colour) {
 //
 //	}
 //	else if (isPaintable) {
 //		switch (a->GetOwner()->GetColour()) {
 //		case GREEN:
 //			go->Render()->GetChild()->SetBaseColor(Vector4(0.f, 1.0f, 0.0f, 1.0f));
-//			colour = a->GetOwner()->GetColour();
+//			colour = GREEN;
 //			break;
 //
 //		case RED:
 //			go->Render()->GetChild()->SetBaseColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-//			colour = a->GetOwner()->GetColour();
+//			colour = RED;
 //			break;
 //
 //		case BLUE:
 //			go->Render()->GetChild()->SetBaseColor(Vector4(0.f, 0.0f, 1.0f, 1.0f));
-//			colour = a->GetOwner()->GetColour();
+//			colour = BLUE;
 //			break;
 //
 //		case PINK:
 //			go->Render()->GetChild()->SetBaseColor(Vector4(1.2f, 0.5f, 1.0f, 1.0f));
-//			colour = a->GetOwner()->GetColour();
+//			colour = PINK;
 //			break;
 //		}
 //	}
