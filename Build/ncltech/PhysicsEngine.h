@@ -38,7 +38,7 @@ Description:
 #include "PhysicsNode.h"
 #include "Constraint.h"
 #include "Manifold.h"
-#include "OcTree.h"
+#include "FixedWorldPartition.h"
 #include <nclgl\TSingleton.h>
 #include <nclgl\PerfTimer.h>
 #include <vector>
@@ -79,7 +79,7 @@ public:
 
 	//Add/Remove Physics Objects
 	void AddPhysicsObject(PhysicsNode* obj);
-	void ResetOcTree();
+	void ResetWorldPartition();
 	void RemovePhysicsObject(PhysicsNode* obj);
 	void RemoveAllPhysicsObjects(); //Delete all physics entities etc and reset-physics environment for new scene to be initialized
 
@@ -114,7 +114,7 @@ public:
 	inline float GetDeltaTime() const			{ return updateTimestep; }
 
 	inline void SetIntegrator(Integrator i)		{ integrator = i; }
-	inline void SetOctreeMinSize(float s)		{ octree->SetMinSize(s); }
+	inline void SetWorldPartitionMinSize(float s)		{ worldPartitioning->SetMinSize(s); }
 
 	inline void SetLimits(Vector3 minvals, Vector3 maxvals) { 
 		limits.minVals = minvals; 
@@ -166,5 +166,5 @@ protected:
 
 	Integrator integrator = SYMPLETIC;
 
-	OcTree * octree;
+	FixedWorldPartition *worldPartitioning;
 };

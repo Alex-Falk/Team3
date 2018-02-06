@@ -175,6 +175,7 @@ void HandleKeyboardInputs()
 			true,									//Dragable by the user
 			CommonUtils::GenColor(0.1f, 0.8f));		//Color
 
+
 		spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
 
 		spawnSphere->Physics()->SetOnCollisionCallback(&ScoreCallbackFunction);
@@ -182,6 +183,10 @@ void HandleKeyboardInputs()
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
 
+	}
+	//toggle the camera
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {
+		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
 	}
 
 	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);

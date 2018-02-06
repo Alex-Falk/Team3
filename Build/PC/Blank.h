@@ -6,8 +6,13 @@
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
+#include "GamePlay.h"
+#include "Player.h"
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
+
+GameObject* player;
+Player* p1;
 
 class Blank : public Scene
 {
@@ -36,79 +41,32 @@ public:
 
 		this->AddGameObject(ground);
 
+		p1 = new Player(Vector3(0.0, 1.0, 0.0), Green, 1.0f);
 
-		//Sphere-Sphere
-		{
 
-			this->AddGameObject(CommonUtils::BuildSphereObject("ss1",
-				ss_pos + Vector3(0.0f, 5.0f, 0.0f),		//Position leading to 0.25 meter overlap between spheres
-				0.5f,									//Radius
-				true,									//Has Physics Object
-				1.0f,
-				true,									//Has Collision Shape
-				true,									//Dragable by the user
-				CommonUtils::GenColor(0.45f, 0.5f)));	//Color
 
-			this->AddGameObject(CommonUtils::BuildSphereObject("ss2",
-				ss_pos,									//Position
-				0.5f,									//Radius
-				true,									//Has Physics Object
-				1.0f,
-				true,									//Has Collision Shape
-				true,									//Dragable by the user
-				CommonUtils::GenColor(0.5f, 1.0f)));	//Color
+		player = p1->GetObj();
 
-		}
+		this->AddGameObject(player);
 
-		//Sphere-Cuboid
-		{
-			this->AddGameObject(CommonUtils::BuildCuboidObject("sc1",
-				sc_pos,									//Position
-				Vector3(0.5f, 0.5f, 0.5f),				//Half dimensions
-				true,									//Has Physics Object
-				1.0f,									//Infinite Mass
-				true,									//Has Collision Shape
-				true,									//Dragable by the user
-				CommonUtils::GenColor(0.5f, 1.0f)));	//Color
 
-			this->AddGameObject(CommonUtils::BuildSphereObject("sc2",
-				sc_pos + Vector3(0.0f, 5.0f, 0.0f),		//Position leading to 0.1 meter overlap on faces, and more on diagonals
-				0.5f,									//Radius
-				true,									//Has Physics Object
-				1.0f,									//Infinite Mass
-				true,									//Has Collision Shape
-				true,									//Dragable by the user
-				CommonUtils::GenColor(0.45f, 0.5f)));	//Color
-		}
+		GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->Physics());
+		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
-		//Cuboid-Cuboid
-		{
 
-			this->AddGameObject(CommonUtils::BuildCuboidObject("cc1",
-				cc_pos + Vector3(0.0f, 5.0f, 0.0f),	//Position leading to 0.25 meter overlap on faces, and more on diagonals
-				Vector3(0.5f, 0.5f, 0.5f),				//Half dimensions
-				true,									//Has Physics Object
-				1.0f,									//Infinite Mass
-				true,									//Has Collision Shape
-				true,									//Dragable by the user
-				CommonUtils::GenColor(0.45f, 0.5f)));	//Color
-
-			this->AddGameObject(CommonUtils::BuildCuboidObject("cc2",
-				cc_pos,									//Position
-				Vector3(0.5f, 0.5f, 0.5f),				//Half dimensions
-				true,									//Has Physics Object
-				1.0f,									//Infinite Mass
-				true,									//Has Collision Shape
-				true,									//Dragable by the user
-				CommonUtils::GenColor(0.5f, 1.0f)));	//Color
-		}
 		Scene::OnInitializeScene();
 	}
 
-	float m_AccumTime;
+	float m_AccumTime = 0;
 	virtual void OnUpdateScene(float dt) override
 	{
 		Scene::OnUpdateScene(dt);
+		m_AccumTime += dt;
+
+		p1->Input(dt);
+
+
+
 
 		uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 

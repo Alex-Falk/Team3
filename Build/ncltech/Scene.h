@@ -67,7 +67,7 @@ public:
 	// Called when scene is being activated, and will begin being rendered/updated. 
 	//	 - Initialize objects/physics here
 	virtual void OnInitializeScene()	{ 
-		PhysicsEngine::Instance()->ResetOcTree();
+		PhysicsEngine::Instance()->ResetWorldPartition();
 		score = 0;
 	}
 
@@ -198,6 +198,11 @@ public:
 			else
 				it++;
 		}
+	}
+
+	//toggle whether the camera is following an object
+	inline void ToggleCamera() {
+		GraphicsPipeline::Instance()->GetCamera()->ToggleFree();
 	}
 protected:
 	// Delete all contained Objects

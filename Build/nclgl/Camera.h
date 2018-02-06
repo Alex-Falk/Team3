@@ -17,12 +17,21 @@ _-_-_-_-_-_-_-""  ""
 #include "Matrix4.h"
 #include "Vector3.h"
 
+#include <ncltech\PhysicsNode.h>
+
+#define ZOOM_SPEED 0.5;
+
 class Camera {
 public:
 	Camera(void) {
 		position = Vector3(0.0f, 0.0f, 0.0f);
 		yaw = 0.0f;
 		pitch = 0.0f;
+		free = true;
+		center = nullptr;
+		maxDistance = 10.0f;
+		minDistance = 1.0;
+		distance = (maxDistance + minDistance) / 2;
 	};
 
 	Camera(float pitch, float yaw, Vector3 position) {
@@ -44,20 +53,44 @@ public:
 	//Gets position in world space
 	inline const Vector3& GetPosition() const { return position; }
 	//Sets position in world space
-	void	SetPosition(const Vector3& val) { position = val; }
+	inline void	SetPosition(const Vector3& val) { position = val; }
 
 	//Gets yaw, in degrees
-	float	GetYaw()   const { return yaw; }
+	inline float GetYaw() const { return yaw; }
 	//Sets yaw, in degrees
-	void	SetYaw(float y) { yaw = y; }
+	inline void SetYaw(float y) { yaw = y; }
 
 	//Gets pitch, in degrees
-	float	GetPitch() const { return pitch; }
+	inline float	GetPitch() const { return pitch; }
 	//Sets pitch, in degrees
-	void	SetPitch(float p) { pitch = p; }
+	inline void	SetPitch(float p) { pitch = p; }
 
+	//get center
+	inline PhysicsNode* GetCenter() const { return center; }
+	//set the center
+	inline void SetCenter(PhysicsNode* c) { center = c; }
+
+	//get max distance
+	inline float GetMaxDistance() const { return maxDistance; }
+	//set max distance
+	inline void SetMaxDistance(float d) { maxDistance = d; }
+
+	//toggle free
+	bool ToggleFree();
 protected:
 	float	yaw;
 	float	pitch;
 	Vector3 position;
+
+	//Object which the camera will be centered on
+	PhysicsNode* center;
+	//maximum and minimum distance from object when not free
+	float maxDistance;
+	float minDistance;
+	//current distance from object
+	float distance;
+
+
+	//is the camera following an object or just flying around
+	bool free;
 };
