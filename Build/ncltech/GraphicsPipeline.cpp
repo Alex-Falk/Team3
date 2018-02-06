@@ -232,7 +232,7 @@ void GraphicsPipeline::RenderScene()
 	for (RenderNode* node : allNodes)
 		node->Update(0.0f); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
 
-							//Build Transparent/Opaque Renderlists
+	//Build Transparent/Opaque Renderlists
 	BuildAndSortRenderLists();
 
 	//NCLDebug - Build render lists
