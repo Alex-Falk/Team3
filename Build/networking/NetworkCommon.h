@@ -25,6 +25,7 @@ struct placeholder_scores {
 
 class placeholder_world;
 
+void placeholder_LoadLevel(int levelID);
 
 Player * playerOne;
 Player * playerTwo;
@@ -47,6 +48,12 @@ Vector3 InterpretStringVector(string message)
 	out.y = stof(message.substr(xIdx+1, yIdx));
 	out.z = stof(message.substr(yIdx+1));
 
+	return out;
+}
+
+string Vector3ToString(Vector3 in)
+{
+	string out = to_string(in.x) + " " + to_string(in.y) + " " + to_string(in.z);
 	return out;
 }
 

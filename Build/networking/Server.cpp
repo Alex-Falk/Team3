@@ -20,6 +20,9 @@ int Server::ServerLoop()
 
 		server->ServiceNetwork(dt, [&](const ENetEvent& evnt) 
 		{
+			string data = GetPacketData(evnt);
+			PacketType type = FindType(data);
+
 			switch (evnt.type)
 			{
 			case ENET_EVENT_TYPE_CONNECT:
@@ -31,13 +34,12 @@ int Server::ServerLoop()
 			break;
 
 			case ENET_EVENT_TYPE_RECEIVE:
-
-				string data = GetPacketData(evnt);
-				PacketType type = FindType(data);
+				
 				switch (type) {
 				case PLAYER_ACCELERATION:
 				{
 					RecievePlayerAcceleration(data, CLIENT_ID);
+					SendAccelerations(CLIENT_ID);
 					break;
 				}
 				}
@@ -57,11 +59,27 @@ int Server::ServerLoop()
 
 
 // message in: "enum: linx liny linz; angx angy angz"
-void RecievePlayerAcceleration(string data, int id)
+void Server::RecievePlayerAcceleration(string data, int id)
 {
-	int start = data.find_first_of(':');
-	int mid = data.find_first_of(';');
+	size_t start = data.find_first_of(':');
+	size_t mid = data.find_first_of(';');
 
 	Vector3 linAcc = InterpretStringVector(data.substr(start, mid));
 	Vector3 angAcc = InterpretStringVector(data.substr(mid + 2));
+
+	// Apply forces accordingly
+
+}
+
+void Server::SendAccelerations(int id)
+{
+	string data;
+
+	// Create a string containing the type of message, user to update and new updated vector
+	//TODO replace the zero vector with the player's acceleration
+	data = to_string(PLAYER_ACCELERATION) + ":" +
+		to_string(id) + ";" + Vector3ToString(Vector3(0, 0, 0));
+
+	ENetPacket* accPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	enet_host_broadcast(server->m_pNetwork, 0, accPacket);
 }
