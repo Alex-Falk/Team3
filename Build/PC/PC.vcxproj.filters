@@ -33,12 +33,18 @@
     <ClInclude Include="Player.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="Pickup.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
+      <Filter>GamePlay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Pickup.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
   </ItemGroup>

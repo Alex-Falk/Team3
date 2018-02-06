@@ -27,7 +27,7 @@ private:
 
 	Colour colour;
 
-	int Life;
+	int life;
 
 	float size = 1;
 	float jumpImpulse = 10.f;

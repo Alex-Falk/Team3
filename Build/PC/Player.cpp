@@ -3,7 +3,7 @@
 
 Player::Player()
 {
-	Pl = CommonUtils::BuildSphereObject("Player1",
+	Pl = CommonUtils::BuildSphereObject("Player",
 		Vector3(0.0f, 1.0f, 0.0f),
 		1.0f,									//Radius
 		true,									//Has Physics Object
@@ -23,22 +23,26 @@ Player::Player(Vector3 pos, Colour c, float s)
 
 	switch (c)
 	{
-	case Green:
+	case DEFAULT: 
+	{
+		colour = Vector4(0.5, 0.5, 0.5, 1.0);
+	}
+	case GREEN:
 	{
 		colour = Vector4(0.0, 1.0, 0.0, 1.0);
 	}
 	break;
-	case Blue:
+	case BLUE:
 	{
 		colour = Vector4(0.0, 0.0, 1.0, 1.0);
 	}
 	break;
-	case Red:
+	case RED:
 	{
 		colour = Vector4(1.0, 0.0, 0.0, 1.0);
 	}
 	break;
-	case Pink:
+	case PINK:
 	{
 		colour = Vector4(1.0, 2.0, 1.0, 1.0);
 	}
@@ -50,7 +54,7 @@ Player::Player(Vector3 pos, Colour c, float s)
 	break;
 	}
 
-	Pl = CommonUtils::BuildSphereObject("Player" + to_string(c),
+	Pl = CommonUtils::BuildSphereObject("Player",
 		Vector3(0.0f, 1.0f*s, 0.0f) + pos,
 		1.0f * s,								//Radius
 		true,									//Has Physics Object
@@ -58,6 +62,7 @@ Player::Player(Vector3 pos, Colour c, float s)
 		true,									//Has Collision Shape
 		true,									//Dragable by the user
 		colour);								//Colour
+
 }
 
 void Player::Input(float dt) {

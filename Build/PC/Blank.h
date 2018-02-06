@@ -1,3 +1,6 @@
+//Name: Nick Bedford
+//Date: 06/02/2018
+//Added a pickup to test
 #pragma once
 
 #include <nclgl\NCLDebug.h>
@@ -8,11 +11,12 @@
 #include <ncltech\CommonUtils.h>
 #include "GamePlay.h"
 #include "Player.h"
+#include "Pickup.h"
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
-GameObject* player;
 Player* p1;
+Pickup* pickUpOne;
 
 class Blank : public Scene
 {
@@ -41,16 +45,15 @@ public:
 
 		this->AddGameObject(ground);
 
-		p1 = new Player(Vector3(0.0, 1.0, 0.0), Green, 1.0f);
+		p1 = new Player(Vector3(0.0, 1.0, 0.0), GREEN, 1.0f);
 
+		this->AddGameObject(p1->GetObj());
+		
+		pickUpOne = new Pickup(Vector3(0.0f, 1.0f, 5.0f), SPEED_BOOST);
 
+		this->AddGameObject(pickUpOne->GetObj());
 
-		player = p1->GetObj();
-
-		this->AddGameObject(player);
-
-
-		GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->Physics());
+		GraphicsPipeline::Instance()->GetCamera()->SetCenter(p1->GetObj()->Physics());
 		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
 
@@ -64,7 +67,7 @@ public:
 		m_AccumTime += dt;
 
 		p1->Input(dt);
-
+		pickUpOne->Update(dt);
 
 
 
