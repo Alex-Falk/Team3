@@ -14,7 +14,7 @@
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
 
-Player* p1ayer;
+Player* player;
 
 class Blank : public Scene
 {
@@ -40,11 +40,11 @@ public:
 		
 		this->AddGameObject(ground);
 
-		p1ayer = new Player(Vector3(0.0, 1.0, 0.0),PINK, 1.0f);
+		player = new Player(Vector3(0.0, 1.0, 0.0),PINK, 1.0f);
 
-		this->AddGameObject(p1ayer->GetGameObject());
+		this->AddGameObject(player->GetGameObject());
 
-		GraphicsPipeline::Instance()->GetCamera()->SetCenter(p1ayer->GetGameObject()->Physics());
+		GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
 
@@ -66,9 +66,6 @@ public:
 	{
 		Scene::OnUpdateScene(dt);
 		m_AccumTime += dt;
-
-		p1ayer->Input(dt);
-		
 
 		player->Input(dt);
 
