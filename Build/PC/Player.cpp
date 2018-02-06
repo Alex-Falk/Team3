@@ -9,7 +9,7 @@ Player::Player() : GameObject("Player")
 		true,									//Has Physics Object
 		1.0f,
 		true,									//Has Collision Shape
-		true,									//Dragable by the user
+		false,									//Dragable by the user
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
 	canJump = true;
 }
@@ -49,12 +49,12 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 	{
 		Colour = Vector4(1.0, 0.41, 0.7, 1.0);
 	}
-	break;
+		break;
 	default:
 	{
 		Colour = Vector4(0.5, 0.5, 0.5, 1.0);
 	}
-	break;
+		break;
 	}
 
 	playerGameObject = CommonUtils::BuildSphereObject("Player" + to_string(c),

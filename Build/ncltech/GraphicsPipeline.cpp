@@ -215,6 +215,10 @@ void GraphicsPipeline::UpdateScene(float dt)
 		camera->HandleMouse(dt);
 
 	camera->HandleKeyboard(dt);
+	
+	//update the distance of the camera if it is attached to an object
+	camera->UpdateDistance();
+
 	viewMatrix = camera->BuildViewMatrix();
 	projViewMatrix = projMatrix * viewMatrix;
 

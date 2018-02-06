@@ -14,7 +14,7 @@
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
 
-Player* player;
+Player* p1ayer;
 
 class Blank : public Scene
 {
@@ -40,37 +40,37 @@ public:
 		
 		this->AddGameObject(ground);
 
-		player = new Player(Vector3(0.0, 1.0, 0.0), PINK, 1.0f);
+		p1ayer = new Player(Vector3(0.0, 1.0, 0.0),PINK, 1.0f);
 
-		this->AddGameObject(player->GetGameObject());
+		this->AddGameObject(p1ayer->GetGameObject());
 
-
-		GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
+		GraphicsPipeline::Instance()->GetCamera()->SetCenter(p1ayer->GetGameObject()->Physics());
 		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
 
-		PaintableGameObject pgo(ground, 1, true); 
-		
-		Player* p1 = new Player(Vector3(0.0, 5.0, 0.0), GREEN, 1.0f);
-		
-		//use collision callbacks for this instead somewhere else
-		pgo.CollisionOccured(p1);
-
-		this->AddGameObject(ground);
+		this->AddGameObject(CommonUtils::BuildCuboidObject(
+			"box",
+			Vector3(-4.0f, 4.5f, -4.0f),
+			Vector3(3.0f, 3.0f, 3.0f),
+			true,
+			0.0f,
+			true,
+			false,
+			Vector4(0.2f, 0.5f, 1.0f, 1.0f)));
 
 		Scene::OnInitializeScene();
 	}
 
-	float m_AccumTime = 0;
+	float m_AccumTime=0;
 	virtual void OnUpdateScene(float dt) override
 	{
 		Scene::OnUpdateScene(dt);
 		m_AccumTime += dt;
 
+		p1ayer->Input(dt);
+		
 
 		player->Input(dt);
-
-
 
 
 		uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
