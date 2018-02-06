@@ -77,8 +77,10 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 }
 
 bool Player::canJump; // Resets Players ability to jump
+bool Player::inAir;
 bool Player::SetCanJump(PhysicsNode* self, PhysicsNode* collidingObject) {
 	canJump = true;
+	inAir = false;
 	return true;
 }
 
@@ -91,29 +93,31 @@ void Player::Input(float dt) {
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 
-
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) { 		//Front
-		if (force.z > 0)force.z /= 2;
-	//	force.y = 0;
-		force = Matrix3::Rotation(0, Vector3(10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 0, 0)) * Vector3(0, 0, -3) * speed;
-	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {		//Back
-		if (force.z < 0)force.z /= 2;
-	//	force.y = 0;
-		force = Matrix3::Rotation(0, Vector3(-10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 0, 0)) * Vector3(0, 0, 3) * speed;
-	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {		//Left
-		if (force.x > 0)force.x /= 2;
-	//	force.y = 0;
-		force = Matrix3::Rotation(0, Vector3(0, 0, -10)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(-3, 0, 0) * speed;
-	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {		//Right
-		if (force.x < 0)force.x /= 2;
-	//	force.y = 0;
-		force = Matrix3::Rotation(0, Vector3(0, 0, 10)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(3, 0, 0) * speed;
+	if (!inAir) {
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) { 		//Front
+			if (force.z > 0)force.z /= 2;
+			force = Matrix3::Rotation(0, Vector3(10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10);
+			force.y = 0;
+		}
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {		//Back
+			if (force.z < 0)force.z /= 2;
+			force = Matrix3::Rotation(0, Vector3(10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, 10);
+			force.y = 0;
+		}
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {		//Left
+			if (force.x > 0)force.x /= 2;
+			force = Matrix3::Rotation(0, Vector3(-10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(-10, 0, 0);
+			force.y = 0;
+		}
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {		//Right
+			if (force.x < 0)force.x /= 2;
+			force = Matrix3::Rotation(0, Vector3(-10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(10, 0, 0);
+			force.y = 0;
+		}
 	}
 	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE) && canJump) {		//Jump
-		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x / 2, jumpImpulse, force.z / 2));
+		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /1.5, jumpImpulse, force.z / 1.5));
+		inAir = true;
 	}
 	canJump = false;
 	

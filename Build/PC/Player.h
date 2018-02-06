@@ -24,6 +24,7 @@ private:
 	float maxForce = 15;			// Sets Maximum applied Force 
 
 	static bool canJump;
+	static bool inAir;
 
 public:
 	Player();
