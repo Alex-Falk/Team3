@@ -99,6 +99,7 @@ public:
 	inline const Vector3&		GetLinearVelocity()			const { return linVelocity; }
 	inline const Vector3&		GetForce()					const { return force; }
 	inline float				GetInverseMass()			const { return invMass; }
+	inline const Vector3&		GetAcceleration()			const { return force*invMass; }
 
 	inline const Quaternion&	GetOrientation()			const { return orientation; }
 	inline const Vector3&		GetAngularVelocity()		const { return angVelocity; }
@@ -115,6 +116,7 @@ public:
 
 	inline std::string			getName()					const { return friendly_name; }
 
+	
 
 
 	//<--------- SETTERS ------------->
@@ -127,6 +129,7 @@ public:
 	inline void SetLinearVelocity(const Vector3& v)					{ linVelocity = v; }
 	inline void SetForce(const Vector3& v)							{ force = v; }
 	inline void SetInverseMass(const float& v)						{ invMass = v; }
+	inline void SetAcceleration(const Vector3& v)					{ force = v / invMass; }
 
 	inline void SetOrientation(const Quaternion& v)					{ orientation = v; FireOnUpdateCallback(); }
 	inline void SetAngularVelocity(const Vector3& v)				{ angVelocity = v; }
