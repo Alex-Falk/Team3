@@ -1,9 +1,9 @@
 #include "Player.h"
 #include <string.h>
 
-Player::Player()
+Player::Player() : GameObject("Player")
 {
-	Pl = CommonUtils::BuildSphereObject("Player1",
+	playerGameObject = CommonUtils::BuildSphereObject("Player1",
 		Vector3(0.0f, 1.0f, 0.0f),
 		1.0f,									//Radius
 		true,									//Has Physics Object
@@ -11,85 +11,102 @@ Player::Player()
 		true,									//Has Collision Shape
 		true,									//Dragable by the user
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
+	canJump = true;
 }
 
 Player::~Player()
 {
 }
 
-Player::Player(Vector3 pos, Colour c, float s)
+Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 {
-	Vector4 colour;
+	Vector4 Colour;
+	canJump = true;
 
 	switch (c)
 	{
-	case Green:
+	case DEFAULT:
 	{
-		colour = Vector4(0.0, 1.0, 0.0, 1.0);
+		Colour = Vector4(1.0, 1.0, 1.0, 1.0);
+	}
+	case GREEN:
+	{
+		Colour = Vector4(0.0, 1.0, 0.0, 1.0);
 	}
 	break;
-	case Blue:
+	case BLUE:
 	{
-		colour = Vector4(0.0, 0.0, 1.0, 1.0);
+		Colour = Vector4(0.0, 0.0, 1.0, 1.0);
 	}
 	break;
-	case Red:
+	case RED:
 	{
-		colour = Vector4(1.0, 0.0, 0.0, 1.0);
+		Colour = Vector4(1.0, 0.0, 0.0, 1.0);
 	}
 	break;
-	case Pink:
+	case PINK
+		:
 	{
-		colour = Vector4(1.0, 2.0, 1.0, 1.0);
+		Colour = Vector4(1.0, 0.41, 0.7, 1.0);
 	}
 	break;
 	default:
 	{
-		colour = Vector4(0.5, 0.5, 0.5, 1.0);
+		Colour = Vector4(0.5, 0.5, 0.5, 1.0);
 	}
 	break;
 	}
 
-	Pl = CommonUtils::BuildSphereObject("Player" + to_string(c),
+	playerGameObject = CommonUtils::BuildSphereObject("Player" + to_string(c),
 		Vector3(0.0f, 1.0f*s, 0.0f) + pos,
 		1.0f * s,								//Radius
 		true,									//Has Physics Object
-		1.0f / s,
+		1.0f,
 		true,									//Has Collision Shape
 		true,									//Dragable by the user
-		colour);								//Colour
+		Colour);								//Colour
 }
 
+bool Player::canJump; // Resets Players ability to jump
+bool Player::SetCanJump(PhysicsNode* self, PhysicsNode* collidingObject) {
+	canJump = true;
+	return true;
+}
+
+//Takes Player Input and move the player using force
 void Player::Input(float dt) {
 
-	Jumptime += dt;
-	if (Jumptime > 5)
-	{
-		CanJump = true;
-		Jumptime = 0;
-	}
+	playerGameObject->Physics()->SetOnCollisionCallback(SetCanJump);
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE) && CanJump) {
-		Pl->Physics()->SetLinearVelocity(Vector3(force.x / 2, 10, force.z / 2));
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE) && canJump) {		//Jump
+		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x / 2, jumpImpulse, force.z / 2));
+		canJump = false;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) {
-		force += Matrix3::Rotation(0, Vector3(3, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 3, 0)) * Vector3(0, 0, -3) * 5 * dt;
+
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) { 		//Front
+		if (force.z > 0)force.z /= 2;
+		force += Matrix3::Rotation(0, Vector3(10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 0, 0)) * Vector3(0, 0, -3) * speed * dt;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {
-		force += Matrix3::Rotation(0, Vector3(-3, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, -3, 0)) * Vector3(0, 0, 3) * 5 * dt;
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {		//Back
+		if (force.z < 0)force.z /= 2;
+		force += Matrix3::Rotation(0, Vector3(-10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 0, 0)) * Vector3(0, 0, 3) * speed * dt;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {
-		force += Matrix3::Rotation(0, Vector3(0, 0, -5)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(-3, 0, 0) * 5 * dt;
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {		//Left
+		if (force.x > 0)force.x /= 2;
+		force += Matrix3::Rotation(0, Vector3(0, 0, -10)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(-3, 0, 0) * speed * dt;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {
-		force += Matrix3::Rotation(0, Vector3(0, 0, 5)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(3, 0, 0) * 5 * dt;
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {		//Right
+		if (force.x < 0)force.x /= 2;
+		force += Matrix3::Rotation(0, Vector3(0, 0, 10)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(3, 0, 0) * speed * dt;
 	}
-	if (force.x > 5)force.x = 5;
-	if (force.x < -5)force.x = -5;
-	if (force.z > 5)force.z = 5;
-	if (force.z < -5)force.z = -5;
-	Pl->Physics()->SetForce(force);
+
+
+	if (force.x > maxForce)force.x = maxForce;
+	if (force.x < -maxForce)force.x = -maxForce;
+	if (force.z > maxForce)force.z = maxForce;
+	if (force.z < -maxForce)force.z = -maxForce;
+	playerGameObject->Physics()->SetForce(force);
 }
