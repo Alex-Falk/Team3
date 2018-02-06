@@ -14,6 +14,7 @@ Player::Player() : GameObject("Player")
 		false,									//Dragable by the user
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
 	canJump = true;
+	playerGameObject->Physics()->SetElasticity(0);
 }
 
 Player::~Player()
@@ -71,6 +72,8 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 		true,									//Has Collision Shape
 		false,									//Dragable by the user
 		Colour);								//Colour
+
+	playerGameObject->Physics()->SetElasticity(0);
 }
 
 bool Player::canJump; // Resets Players ability to jump
@@ -113,7 +116,7 @@ void Player::Input(float dt) {
 		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x / 2, jumpImpulse, force.z / 2));
 		canJump = false;
 	}
-
+	
 
 
 	if (force.x > maxForce)force.x = maxForce;
