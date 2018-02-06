@@ -209,6 +209,42 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 }
 
 
+void GraphicsPipeline::DebugRender()
+{
+	// Draw all bounding radius
+	if (debugDrawFlags & DEBUGDRAW_FLAGS_BOUNDING)
+	{
+		for each (RenderNode* var in allNodes)
+		{
+			Vector3 pos = var->GetWorldTransform().GetPositionVector();
+			float radius = var->GetBoundingRadius();
+			//Draw Perimeter Axes
+			Vector3 lastX = pos + Vector3(0.0f, 1.0f, 0.0f) * radius;
+			Vector3 lastY = pos + Vector3(1.0f, 0.0f, 0.0f) * radius;
+			Vector3 lastZ = pos + Vector3(1.0f, 0.0f, 0.0f) * radius;
+			const int nSubdivisions = 20;
+			for (int itr = 1; itr <= nSubdivisions; ++itr)
+			{
+				float angle = itr / float(nSubdivisions) * PI * 2.f;
+				float alpha = cosf(angle) * radius;
+				float beta = sinf(angle) * radius;
+
+				Vector3 newX = pos + Vector3(0.0f, alpha, beta);
+				Vector3 newY = pos + Vector3(alpha, 0.0f, beta);
+				Vector3 newZ = pos + Vector3(alpha, beta, 0.0f);
+
+				NCLDebug::DrawThickLineNDT(lastX, newX, 0.02f, Vector4(1.0f, 0.3f, 1.0f, 1.0f));
+				NCLDebug::DrawThickLineNDT(lastY, newY, 0.02f, Vector4(1.0f, 0.3f, 1.0f, 1.0f));
+				NCLDebug::DrawThickLineNDT(lastZ, newZ, 0.02f, Vector4(1.0f, 0.3f, 1.0f, 1.0f));
+
+				lastX = newX;
+				lastY = newY;
+				lastZ = newZ;
+			}
+		}
+	}
+}
+
 void GraphicsPipeline::UpdateScene(float dt)
 {
 	if (!ScreenPicker::Instance()->HandleMouseClicks(dt))
@@ -217,6 +253,9 @@ void GraphicsPipeline::UpdateScene(float dt)
 	camera->HandleKeyboard(dt);
 	viewMatrix = camera->BuildViewMatrix();
 	projViewMatrix = projMatrix * viewMatrix;
+
+	//update frustum
+	frameFrustum.FromMatrix(projViewMatrix);
 
 	NCLDebug::_SetDebugDrawData(
 		projMatrix,
@@ -238,7 +277,7 @@ void GraphicsPipeline::RenderScene()
 	//NCLDebug - Build render lists
 	NCLDebug::_BuildRenderLists();
 
-
+#pragma region Render Shadow Part
 	//Build shadowmaps
 	BuildShadowTransforms();
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
@@ -256,10 +295,9 @@ void GraphicsPipeline::RenderScene()
 		glUniformMatrix4fv(uModelMtx, 1, GL_FALSE, (float*)&node->GetWorldTransform());
 	}
 	);
+#pragma endregion</Render Shadow Part>
 
-
-
-
+#pragma region Render Scene Part
 	//Render scene to screen fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
 	glViewport(0, 0, screenTexWidth, screenTexHeight);
@@ -291,6 +329,8 @@ void GraphicsPipeline::RenderScene()
 	}
 	);
 
+#pragma endregion</Render Scene Part>
+
 	// Render Screen Picking ID's
 	// - This needs to be somewhere before we lose our depth buffer
 	//   BUT at the moment that means our screen picking is super sampled and rendered at 
@@ -303,8 +343,8 @@ void GraphicsPipeline::RenderScene()
 	NCLDebug::_RenderDebugDepthTested();
 	NCLDebug::_RenderDebugNonDepthTested();
 
-
-
+	
+#pragma region Post Process Part
 	//Downsample and present to screen
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, width, height);
@@ -318,6 +358,7 @@ void GraphicsPipeline::RenderScene()
 	glUniform2f(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
 	fullscreenQuad->SetTexture(screenTexColor);
 	fullscreenQuad->Draw();
+#pragma endregion</Post Process Part>
 
 	//NCLDEBUG - Text Elements (aliased)
 	NCLDebug::_RenderDebugClipSpace();
@@ -361,7 +402,17 @@ void GraphicsPipeline::BuildAndSortRenderLists()
 	std::sort(
 		renderlistTransparent.begin(),
 		renderlistTransparent.end(),
-		[](const TransparentPair& a, const TransparentPair& b)
+		[](const RenderNodePair& a, const RenderNodePair& b)
+	{
+		return a.second > b.second;
+	}
+	);
+
+	//Sort opaque objects back to front
+	std::sort(
+		renderlistOpaque.begin(),
+		renderlistOpaque.end(),
+		[](const RenderNodePair& a, const RenderNodePair& b)
 	{
 		return a.second > b.second;
 	}
@@ -370,19 +421,18 @@ void GraphicsPipeline::BuildAndSortRenderLists()
 
 void GraphicsPipeline::RecursiveAddToRenderLists(RenderNode* node)
 {
-	//If the node is renderable, add it to either a opaque or transparent render list
-	if (node->IsRenderable())
+	if (frameFrustum.InsideFrustum(*node))
 	{
-		if (node->GetColor().w > 0.999f)
-		{
-			renderlistOpaque.push_back(node);
-		}
-		else
+		//If the node is renderable, add it to either a opaque or transparent render list
+		if (node->IsRenderable())
 		{
 			Vector3 diff = node->GetWorldTransform().GetPositionVector() - camera->GetPosition();
 			float camDistSq = Vector3::Dot(diff, diff); //Same as doing .Length() without the sqrt
 
-			renderlistTransparent.push_back({ node, camDistSq });
+			if (node->GetColor().w > 0.999f)
+				renderlistOpaque.push_back({ node, camDistSq });
+			else
+				renderlistTransparent.push_back({ node, camDistSq });
 		}
 	}
 
@@ -393,32 +443,33 @@ void GraphicsPipeline::RecursiveAddToRenderLists(RenderNode* node)
 
 void GraphicsPipeline::RenderAllObjects(bool isShadowPass, std::function<void(RenderNode*)> perObjectFunc)
 {
-	for (RenderNode* node : renderlistOpaque)
+	// sort render opaque order
+	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
 	{
-		perObjectFunc(node);
-		if (node->IsCulling()) { glEnable(GL_CULL_FACE); }
+		perObjectFunc((*i).first);
+		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
 		else { glDisable(GL_CULL_FACE); }
-		node->DrawOpenGL(isShadowPass);
+		(*i).first->DrawOpenGL(isShadowPass);
 	}
 
 	if (isShadowPass)
 	{
-		for (TransparentPair& node : renderlistTransparent)
+		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
 		{
-			perObjectFunc(node.first);
-			node.first->DrawOpenGL(isShadowPass);
+			perObjectFunc((*i).first);
+			(*i).first->DrawOpenGL(isShadowPass);
 		}
 	}
 	else
 	{
-		for (TransparentPair& node : renderlistTransparent)
+		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
 		{
-			perObjectFunc(node.first);
+			perObjectFunc((*i).first);
 			glCullFace(GL_FRONT);
-			node.first->DrawOpenGL(isShadowPass);
+			(*i).first->DrawOpenGL(isShadowPass);
 
 			glCullFace(GL_BACK);
-			node.first->DrawOpenGL(isShadowPass);
+			(*i).first->DrawOpenGL(isShadowPass);
 		}
 	}
 }

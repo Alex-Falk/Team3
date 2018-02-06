@@ -33,6 +33,9 @@
     <ClInclude Include="Player.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
