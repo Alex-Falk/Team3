@@ -1,6 +1,12 @@
 #pragma once
 
-#include "Server.h"
+#include <enet\enet.h>
+#include <nclgl\GameTimer.h>
+#include <nclgl\Vector3.h>
+#include <nclgl\common.h>
+#include <ncltech\NetworkBase.h>
+#include <PC\GamePlay.h>
+#include "NetworkCommon.h"
 
 #define CLIENT_ID serverConnection->outgoingPeerID
 
@@ -17,7 +23,6 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	void UpdateClient(float dt);
 
-	PacketType FindType(ENetEvent evnt);
 	void ProcessNetworkEvent(const ENetEvent & evnt);
 
 	//--------------------------------------------------------------------------------------------//

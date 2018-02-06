@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h" />
+    <ClInclude Include="NetworkCommon.h" />
     <ClInclude Include="Server.h" />
   </ItemGroup>
   <ItemGroup>

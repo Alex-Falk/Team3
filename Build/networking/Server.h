@@ -5,35 +5,8 @@
 #include <nclgl\Vector3.h>
 #include <nclgl\common.h>
 #include <ncltech\NetworkBase.h>
-
-enum placeholder_colours {
-	RED,
-	BLUE,
-	GREEN,
-	PINK
-};
-
-struct placeholder_scores {
-	unsigned short player1;
-	unsigned short player2;
-	unsigned short player3;
-	unsigned short player4;
-};
-
-class placeholder_player;
-class placeholder_world;
-
-enum PacketType {
-	GAME_START,
-	PLAYER_POS,
-	PLAYER_ACCELERATION,
-	PLAYER_SIZES,
-	SCORES,
-	MAP_INDEX,
-	MAP_UPDATE,
-	GAME_END
-};
-
+#include <PC\GamePlay.h>
+#include "NetworkCommon.h"
 
 class Server
 {
@@ -56,8 +29,6 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Utility
 	//--------------------------------------------------------------------------------------------//
-
-	PacketType FindType(ENetEvent evnt);
 
 	std::string VectorToString(Vector3 v);
 	std::string ScoresToString(placeholder_scores s);
@@ -85,7 +56,7 @@ public:
 
 	// Updates from players
 
-	void RecievePlayerInput(); // this will be a direction vector to apply a force in
+	void RecievePlayerAcceleration(string data, int id); // this will be a direction vector to apply a force in
 
 	//--------------------------------------------------------------------------------------------//
 	// Stored Variables
@@ -97,6 +68,5 @@ public:
 	// World
 	placeholder_scores *	scores;
 	placeholder_world *		world;
-	placeholder_player **	players;
 };
 
