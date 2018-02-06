@@ -11,8 +11,8 @@
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
-GameObject* player;
-Player* p1;
+
+Player* p1ayer;
 
 class Blank : public Scene
 {
@@ -21,10 +21,6 @@ public:
 		: Scene(friendly_name)
 	{
 	}
-
-	const Vector3 ss_pos = Vector3(-5.5f, 1.5f, -5.0f);
-	const Vector3 sc_pos = Vector3(4.5f, 1.5f, -5.0f);
-	const Vector3 cc_pos = Vector3(-0.5f, 1.5f, 5.0f);
 
 	virtual void OnInitializeScene() override
 	{
@@ -41,30 +37,35 @@ public:
 
 		this->AddGameObject(ground);
 
-		p1 = new Player(Vector3(0.0, 1.0, 0.0), Green, 1.0f);
+		p1ayer = new Player(Vector3(0.0, 1.0, 0.0),PINK, 1.0f);
 
+		this->AddGameObject(p1ayer->GetGameObject());
 
-
-		player = p1->GetObj();
-
-		this->AddGameObject(player);
-
-
-		GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->Physics());
+		GraphicsPipeline::Instance()->GetCamera()->SetCenter(p1ayer->GetGameObject()->Physics());
 		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
+
+		this->AddGameObject(CommonUtils::BuildCuboidObject(
+			"box",
+			Vector3(-4.0f, 4.5f, -4.0f),
+			Vector3(3.0f, 3.0f, 3.0f),
+			true,
+			0.0f,
+			true,
+			false,
+			Vector4(0.2f, 0.5f, 1.0f, 1.0f)));
 
 		Scene::OnInitializeScene();
 	}
 
-	float m_AccumTime = 0;
+	float m_AccumTime=0;
 	virtual void OnUpdateScene(float dt) override
 	{
 		Scene::OnUpdateScene(dt);
 		m_AccumTime += dt;
 
-		p1->Input(dt);
-
+		p1ayer->Input(dt);
+		
 
 
 
