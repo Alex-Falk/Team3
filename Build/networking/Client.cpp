@@ -35,6 +35,7 @@ void Client::UpdateClient(float dt)
 
 void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 {
+	string data = GetPacketData(evnt);
 	switch (evnt.type)
 	{
 	case ENET_EVENT_TYPE_CONNECT:
@@ -48,7 +49,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 	
 	case ENET_EVENT_TYPE_RECEIVE:
 	{
-		PacketType type = FindType(evnt);
+		PacketType type = FindType(data);
 		switch (type) {
 		case GAME_START:
 		{
@@ -56,32 +57,32 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		case PLAYER_POS:
 		{
-			ReceivePositions(evnt);
+			ReceivePositions(data);
 			break;
 		}
 		case PLAYER_ACCELERATION:
 		{
-			RecieveAcceleration(evnt);
+			RecieveAcceleration(data);
 			break;
 		}
 		case PLAYER_SIZES:
 		{
-			RecieveSizes(evnt);
+			RecieveSizes(data);
 			break;
 		}
 		case SCORES:
 		{
-			RecieveScores(evnt);
+			RecieveScores(data);
 			break;
 		}
 		case MAP_INDEX:
 		{
-			RecieveMapIndex(evnt);
+			RecieveMapIndex(data);
 			break;
 		}
 		case MAP_UPDATE:
 		{
-			RecieveMapChange(evnt);
+			RecieveMapChange(data);
 			break;
 		}
 		case GAME_END:

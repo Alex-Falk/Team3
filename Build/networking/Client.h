@@ -35,12 +35,12 @@ public:
 	// Recieving
 	//--------------------------------------------------------------------------------------------//
 
-	void ReceivePositions(const ENetEvent & evnt);
-	void RecieveAcceleration(const ENetEvent & evnt);
-	void RecieveSizes(const ENetEvent & evnt);
-	void RecieveScores(const ENetEvent & evnt);
-	void RecieveMapIndex(const ENetEvent & evnt);
-	void RecieveMapChange(const ENetEvent & evnt);
+	void ReceivePositions(string data);
+	void RecieveAcceleration(string data);
+	void RecieveSizes(string data);
+	void RecieveScores(string data);
+	void RecieveMapIndex(string data);
+	void RecieveMapChange(string data);
 
 protected:
 	NetworkBase network;

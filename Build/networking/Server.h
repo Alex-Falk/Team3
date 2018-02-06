@@ -44,7 +44,7 @@ public:
 	// changes to map
 
 	void SendPositions();
-	void SendAccelerations();
+	void SendAccelerations(int id);
 	void SendScores();
 	void SendMap();
 	void SendUpdatemap();
