@@ -112,13 +112,11 @@ void Player::Input(float dt) {
 	//	force.y = 0;
 		force = Matrix3::Rotation(0, Vector3(0, 0, 10)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(3, 0, 0) * speed;
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE) && canJump) {		//Jump
+	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE) && canJump) {		//Jump
 		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x / 2, jumpImpulse, force.z / 2));
-		canJump = false;
 	}
+	canJump = false;
 	
-
-
 	if (force.x > maxForce)force.x = maxForce;
 	if (force.x < -maxForce)force.x = -maxForce;
 	if (force.z > maxForce)force.z = maxForce;
