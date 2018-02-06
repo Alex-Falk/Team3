@@ -20,3 +20,11 @@ Build/Examples_Cuda/\.vs/Examples_Cuda/v15/
 *.lastbuildstate
 
 Build/*.obj
+Build/nclgl/x64/Debug/
+
+Build/nclgl/Debug/
+
+Build/nclgl/Release/
+
+Build/ncltech/Release/
+Build/ncltech/x64/Debug/
