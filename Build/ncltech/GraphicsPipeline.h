@@ -75,6 +75,21 @@
 
 typedef std::pair<RenderNode*, float> RenderNodePair;
 
+enum SHADERTYPE
+{
+	Present_To_Window	= 0,
+	Shadow				= 1,
+	Forward_Lighting	= 2,
+
+
+	Shader_Number,
+};
+
+enum TEXTURETYPE
+{
+
+	Texture_Number,
+};
 
 class GraphicsPipeline : public TSingleton<GraphicsPipeline>, OGLRenderer
 {
@@ -116,6 +131,8 @@ public:
 	inline float& GetSpecularFactor() { return specularFactor; }
 	inline GLuint& GetShadowTex() { return shadowTex; }
 
+	inline Shader** GetAllShader() { return shaders; }
+
 protected:
 	GraphicsPipeline();
 	virtual ~GraphicsPipeline();
@@ -139,9 +156,7 @@ protected:
 	GLuint		screenTexDepth;
 
 	//Shaders
-	Shader*		shaderPresentToWindow;
-	Shader*		shaderShadow;
-	Shader*		shaderForwardLighting;
+	Shader**	shaders;
 
 	//Render Params
 	Vector3		ambientColor;

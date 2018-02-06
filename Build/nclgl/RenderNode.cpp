@@ -1,4 +1,5 @@
 #include "RenderNode.h"
+#include "../ncltech/GraphicsPipeline.h"
 
 RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
 	awake				= true;
@@ -17,6 +18,12 @@ RenderNode::~RenderNode(void)	{
 	for(unsigned int i = 0; i < children.size(); ++i) {
 		delete children[i];
 	}
+}
+
+void RenderNode::DrawOpenGL(bool isShadowPass)
+{
+	if (this->mesh && awake)
+		this->mesh->Draw();
 }
 
 void RenderNode::AddChild( RenderNode* s )	{
@@ -83,4 +90,12 @@ bool RenderNode::RemoveChild(RenderNode* s,bool recursive) {
 
 void RenderNode::AutoSetBoundingRadius()
 {
+	float farrestDistance = 0;
+	for (int i = 0; i < mesh->numVertices; i++)
+	{
+		float length = mesh->vertices[i].Length();
+		if (farrestDistance < length)
+			farrestDistance = length;
+	}
+	boundingRadius = farrestDistance;
 }

@@ -34,12 +34,7 @@ public:
 		return (this->mesh != NULL);
 	}
 
-	virtual void DrawOpenGL(bool isShadowPass)
-	{
-		if (this->mesh && awake)
-			this->mesh->Draw();
-	}
-
+	virtual void DrawOpenGL(bool isShadowPass);
 
 
 	void			SetTransform(const Matrix4 &matrix) { transform = matrix;}
