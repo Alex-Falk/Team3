@@ -27,7 +27,7 @@ class placeholder_world;
 
 void placeholder_LoadLevel(int levelID);
 
-Player * playerOne;
+Player * playerOne = new Player();
 Player * playerTwo;
 Player * playerThree;
 Player * playerFour;

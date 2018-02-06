@@ -78,7 +78,7 @@ void Server::SendAccelerations(int id)
 	// Create a string containing the type of message, user to update and new updated vector
 	//TODO replace the zero vector with the player's acceleration
 	data = to_string(PLAYER_ACCELERATION) + ":" +
-		to_string(id) + ";" + Vector3ToString(Vector3(0, 0, 0));
+		to_string(id) + ";" + Vector3ToString(playerOne->Physics()->GetAcceleration());
 
 	ENetPacket* accPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_host_broadcast(server->m_pNetwork, 0, accPacket);
