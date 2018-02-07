@@ -60,6 +60,7 @@ public:
 	void			SetChildColor(const Vector4 &c) { children[0]->color = c; }
 
 	const Vector4&	GetchildBaseColor() const { return children[0]->baseColor; }
+	void			SetChildBaseColor(const Vector4 &c) { children[0]->baseColor = c; }
 
 	const Vector3&	GetModelScale()		const			{return modelScale;}
 	void			SetModelScale(const Vector3 &s)		{modelScale = s;}

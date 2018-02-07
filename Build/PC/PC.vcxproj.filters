@@ -24,13 +24,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Blank.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GamePlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SimpleGamePlay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PaintableGameObject.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Pickup.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,7 +44,16 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SimpleGamePlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PaintableGameObject.cpp">
+      <Filter>GamePlay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Pickup.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
   </ItemGroup>

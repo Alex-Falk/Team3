@@ -44,6 +44,7 @@ public:
 	{
 		RegisterPhysicsToRenderTransformCallback();
 		SetPhysics(physicsNde);
+		physicsNde->SetName(name);
 	}
 
 	virtual ~GameObject()
