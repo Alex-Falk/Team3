@@ -5,8 +5,11 @@
 #include <nclgl\PerfTimer.h>
 
 #include "SimpleGamePlay.h"
+#include "AudioSystem.h"
 #include "GameInput.h"
 #include "Game.h"
+
+AudioSystem a;
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -38,6 +41,10 @@ void Quit(bool error = false, const std::string &reason = "") {
 	}
 }
 
+void InitialiseAudioFiles() {
+	a.createSound(MENU_MUSIC, "../AudioFiles/singing.wav");
+	a.createSound(GAME_MUSIC, "../AudioFiles/wave.mp3");
+}
 
 // Program Initialise
 //  - Generates all program wide components and enqueues all scenes
@@ -57,6 +64,7 @@ void Initialize()
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
 
+	InitialiseAudioFiles();
 }
 
 // Print Debug Info
@@ -150,6 +158,15 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
 		show_perf_metrics = !show_perf_metrics;
 
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
+		a.playSound(GAME_MUSIC, false);
+		a.SetVolume(0.2, GAME_MUSIC);
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9)) {
+		a.playSound(MENU_MUSIC, false);	
+		a.SetVolume(1.0, MENU_MUSIC);
+	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
