@@ -21,10 +21,26 @@ private:
 	float curSize;
 	float jumpImpulse = 10.f;	// Jump Power
 	float speed = 10;			// movement speed
-	float maxForce = 15;			// Sets Maximum applied Force 
+	float maxForce = 30;			// Sets Maximum applied Force 
+
+	// Boosts
+	float boostactiveTime = 15;
+
+	bool speedBoost = false;
+	float speedTimer;		// Boost timer
+
+	bool jumpBoost = false;
+	float jumpBoostTimer;	// Boost timer
+
+	bool weapon = false;			
+	float weaponAmmo;				// Weapon Ammo
+
+	float timer;
 
 	static bool canJump;
 	static bool inAir;
+			
+	Vector3 velocity;
 
 public:
 	Player();
@@ -45,6 +61,9 @@ public:
 	virtual void DecrLife(float x) { life -= x; }
 
 	virtual float GetLife() { return life; }
+
+	virtual void PickedPickUp(PickupType pickType);			//Checks if any pick up is Picked Up			Nikos 13.20
+	virtual void UpdatePickUp(float dt);			// Update Pick Ups based on time
 
 	virtual GameObject* GetGameObject() { return playerGameObject; }	//Pointer to the Player's Gameobject
 

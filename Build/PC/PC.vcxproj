@@ -142,7 +142,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Blank.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
