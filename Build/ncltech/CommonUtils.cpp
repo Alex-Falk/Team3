@@ -170,7 +170,7 @@ GameObject* CommonUtils::BuildCuboidObject(
 
 	Mesh * mesh = new Mesh();
 	*mesh = *CommonMeshes::Cube();
-	if (tex) { mesh->SetTexture(tex); }
+	//if (tex) { mesh->SetTexture(tex); }
 
 	RenderNode* dummy = new RenderNode(mesh, color);
 	

@@ -57,15 +57,15 @@ public:
 
 	void ClearBuffers();
 
-	//Sets the Mesh's diffuse map. Takes an OpenGL texture 'name'
-	void	SetTexture(GLuint tex)	{texture = tex;}
-	//Gets the Mesh's diffuse map. Returns an OpenGL texture 'name'
-	GLuint  GetTexture()			{return texture;}
+	////Sets the Mesh's diffuse map. Takes an OpenGL texture 'name'
+	//void	SetTexture(GLuint tex)	{texture = tex;}
+	////Gets the Mesh's diffuse map. Returns an OpenGL texture 'name'
+	//GLuint  GetTexture()			{return texture;}
 
-	//Sets the Mesh's bump map. Takes an OpenGL texture 'name'
-	void	SetBumpMap(GLuint tex)	{bumpTexture = tex;}
-	//Gets the Mesh's bump map. Returns an OpenGL texture 'name'
-	GLuint  GetBumpMap()			{return bumpTexture;}
+	////Sets the Mesh's bump map. Takes an OpenGL texture 'name'
+	//void	SetBumpMap(GLuint tex)	{bumpTexture = tex;}
+	////Gets the Mesh's bump map. Returns an OpenGL texture 'name'
+	//GLuint  GetBumpMap()			{return bumpTexture;}
 
 	//Extra stuff!!!! Aren't I nice?
 	void	DrawDebugNormals(float length = 5.0f);

@@ -34,3 +34,7 @@ Build/PC/x64/
 Build/x64/
 
 Build/PC/program_output\.txt
+
+Build/nclgl/x64/
+
+Build/ncltech/x64/

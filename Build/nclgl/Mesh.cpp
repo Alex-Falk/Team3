@@ -88,18 +88,7 @@ GLuint activeArrayHack = 0;
 GLuint activeTexture1Hack = 0;
 GLuint activeTexture2Hack = 0;
 void Mesh::Draw()	{
-	//if (activeTexture1Hack != texture)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		activeTexture1Hack = texture;
-	}
-	//if (activeTexture2Hack != texture)
-	{
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, bumpTexture);
-		activeTexture2Hack = texture;
-	}
+
 	//if (activeArrayHack != arrayObject)
 	{
 		glBindVertexArray(arrayObject);

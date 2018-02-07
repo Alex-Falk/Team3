@@ -81,12 +81,12 @@ enum SHADERTYPE
 	Shadow				= 1,
 	Forward_Lighting	= 2,
 
-
 	Shader_Number,
 };
 
 enum TEXTURETYPE
 {
+	Checker_Board		= 0,
 
 	Texture_Number,
 };
@@ -99,6 +99,7 @@ public:
 	//Set all defaults
 	// - Called each time a scene is swapped in/reset, so should reset camera position etc
 	void InitializeDefaults();
+	void LoadTexture();
 
 	//Add/Remove Render objects to renderable object lists
 	void AddRenderNode(RenderNode* node);
@@ -121,7 +122,9 @@ public:
 
 	inline Matrix4& GetProjMtx() { return projMatrix; }
 	inline Matrix4& GetViewMtx() { return viewMatrix; }
+	inline Matrix4& GetProjViewMtx() { return projViewMatrix; }
 
+	inline float*   GetNormalizedFarPlanes() { return normalizedFarPlanes; }
 	inline Matrix4& GetShadowViewMtx() { return shadowViewMtx; }
 	inline Matrix4* GetShadowProjMatrices() { return shadowProj; }
 	inline Matrix4* GetShadowProjViewMatrices() { return shadowProjView; }
@@ -131,7 +134,8 @@ public:
 	inline float& GetSpecularFactor() { return specularFactor; }
 	inline GLuint& GetShadowTex() { return shadowTex; }
 
-	inline Shader** GetAllShader() { return shaders; }
+	inline Shader** GetAllShaders() { return shaders; }
+	inline GLuint* GetAllTextures() { return textures; }
 
 protected:
 	GraphicsPipeline();
@@ -157,6 +161,8 @@ protected:
 
 	//Shaders
 	Shader**	shaders;
+	//Texture
+	GLuint*		textures;
 
 	//Render Params
 	Vector3		ambientColor;
