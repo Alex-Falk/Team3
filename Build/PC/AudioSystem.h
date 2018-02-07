@@ -7,7 +7,6 @@
 
 class AudioSystem {
 public:
-
 	//constructor
 	AudioSystem() {
 		FMOD::System_Create(&audioSystem);
@@ -17,8 +16,23 @@ public:
 			//warn user as they will hear no sounds
 			std::cout << "No Audio Driver Detected!" << std::endl;
 		}
+
+		masterVolume = 1.0f;
+		gameSoundsVolume = 1.0f;
+		musicVolume = 1.0f;
+
 		audioSystem->init(numSounds, FMOD_INIT_NORMAL, NULL);
 		audioSystem->set3DSettings(1.0f, 1.0f, 1.0f);
+
+		audioSystem->createChannelGroup("GameSoundsGroup", &gameSoundsGroup);
+		audioSystem->createChannelGroup("MusicGroup", &musicGroup);
+
+		audioSystem->getMasterChannelGroup(&masterGroup);
+		masterGroup->addGroup(gameSoundsGroup);
+		masterGroup->addGroup(musicGroup);
+	
+		musicGroup->setVolume(masterVolume * musicVolume);
+		gameSoundsGroup->setVolume(masterVolume * gameSoundsVolume);
 	}
 
 	//adds a sound to the system. Do this at the start for all sounds
@@ -37,15 +51,18 @@ public:
 		}
 
 		audioSystem->playSound(sounds[index], 0, false, &channels[index]);
+		if (index <= GAME_MUSIC) {
+			channels[index]->setChannelGroup(musicGroup);
+		}
+		else channels[index]->setChannelGroup(gameSoundsGroup);
 	}
 
 	//memory management, will delete the sound
 	void releaseSound(int index) {
 		sounds[index]->release();
-
 	}
 
-	//sets the volume of an individual sound
+	//sets the volume of an individual sound (overridden if group volume is called after)
 	void SetVolume(float vol, int index) {
 		channels[index]->setVolume(vol);
 	}
@@ -53,6 +70,49 @@ public:
 	//completely stops a sound
 	void stopSound(int index) {
 		channels[index]->stop();
+	}
+
+	//pause all game sounds in the game
+	void PauseGameSounds() {
+		for (int i = 0; i < numSounds; i++) {
+			gameSoundsGroup->setPaused(1);
+		}
+	}
+
+	//unpause all game sounds in the game
+	void UnpauseGameSounds() {
+		for (int i = 0; i < numSounds; i++) {
+			gameSoundsGroup->setPaused(0);
+		}
+	}
+	
+	//pause all music in the game
+	void PauseMusic() {
+		for (int i = 0; i < numSounds; i++) {
+			musicGroup->setPaused(1);
+		}
+	}
+
+	//unpause all music in the game
+	void UnpauseMusic() {
+		for (int i = 0; i < numSounds; i++) {
+			musicGroup->setPaused(0);
+		}
+	}
+
+	void SetMasterVolume(float f) {
+		masterVolume = f;
+		masterGroup->setVolume(masterVolume);
+	}
+
+	void SetGameSoundsVolume(float f) {
+		gameSoundsVolume = f;
+		gameSoundsGroup->setVolume(gameSoundsVolume);
+	}
+
+	void SetMusicVolume(float f) {
+		musicVolume = f;
+		musicGroup->setVolume(musicVolume);
 	}
 
 	//stops all sounds currently playing
@@ -106,13 +166,19 @@ private:
 	//channel the sound plays from
 	FMOD::Channel * channels[5];
 
-	//camera position for 3d sounds
+	//camera variables for 3d sounds
 	FMOD_VECTOR listenerPos;
 	FMOD_VECTOR listenerForward;
 	FMOD_VECTOR listenerUp;
 	FMOD_VECTOR listenerVelocity;
 
+	//volume levels, can be controlled in options menu
 	float masterVolume;
 	float musicVolume;
-	float gameSoundVolume;
+	float gameSoundsVolume;
+
+	//allows us to set volume levels for all sounds at once
+	FMOD::ChannelGroup * gameSoundsGroup;
+	FMOD::ChannelGroup * musicGroup;
+	FMOD::ChannelGroup * masterGroup;
 };

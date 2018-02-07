@@ -160,13 +160,23 @@ void HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
 		a.playSound(GAME_MUSIC, false);
-		a.SetVolume(0.2, GAME_MUSIC);
+
+		
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9)) {
 		a.playSound(MENU_MUSIC, false);	
-		a.SetVolume(1.0, MENU_MUSIC);
 	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
+		a.PauseMusic();
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
+		a.UnpauseMusic();
+	}
+
+
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
@@ -286,6 +296,9 @@ int main()
 		}
 		timer_render.EndTimingSection();
 
+		//update the audiosystem each frame
+		//need to add a perfTimer
+		a.Update();
 		
 
 		//Finish Timing
