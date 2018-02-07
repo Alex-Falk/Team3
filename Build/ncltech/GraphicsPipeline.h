@@ -99,7 +99,6 @@ public:
 	//Set all defaults
 	// - Called each time a scene is swapped in/reset, so should reset camera position etc
 	void InitializeDefaults();
-	void LoadTexture();
 
 	//Add/Remove Render objects to renderable object lists
 	void AddRenderNode(RenderNode* node);
@@ -135,7 +134,6 @@ public:
 	inline GLuint& GetShadowTex() { return shadowTex; }
 
 	inline Shader** GetAllShaders() { return shaders; }
-	inline GLuint* GetAllTextures() { return textures; }
 
 protected:
 	GraphicsPipeline();
@@ -161,8 +159,6 @@ protected:
 
 	//Shaders
 	Shader**	shaders;
-	//Texture
-	GLuint*		textures;
 
 	//Render Params
 	Vector3		ambientColor;

@@ -41,7 +41,6 @@ GraphicsPipeline::GraphicsPipeline()
 	camera->SetPitch(-20.f);
 
 	InitializeDefaults();
-	LoadTexture();
 	Resize(width, height);
 }
 
@@ -54,9 +53,6 @@ GraphicsPipeline::~GraphicsPipeline()
 	for (int i = 0; i < Shader_Number; i++)
 		SAFE_DELETE(shaders[i]);
 	delete[] shaders;
-
-	glDeleteTextures(Texture_Number, textures);
-	delete[] textures;
 
 	NCLDebug::_ReleaseShaders();
 
@@ -93,33 +89,6 @@ void GraphicsPipeline::InitializeDefaults()
 
 	numSuperSamples = 4;
 	gammaCorrection = 1.0f / 2.2f;
-}
-
-void GraphicsPipeline::LoadTexture()
-{
-	std::function<GLuint(std::string, int, int)> LoadTexture = [](std::string address, int wrap, int filter)
-	{
-		GLuint tex = SOIL_load_OGL_texture(address.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
-
-		if (tex)
-		{
-			glBindTexture(GL_TEXTURE_2D, tex);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); //No linear interpolation to get crisp checkerboard no matter the scalling
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
-		else
-			NCLERROR("Unable to load checkerboard texture!");
-
-		return tex;
-	};
-
-	textures = new GLuint[Texture_Number];
-	textures[TEXTURETYPE::Checker_Board] = LoadTexture(TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST);
-
-
 }
 
 
@@ -333,33 +302,6 @@ void GraphicsPipeline::RenderScene()
 	glViewport(0, 0, screenTexWidth, screenTexHeight);
 	glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	/*
-	glUseProgram(shaders[SHADERTYPE::Forward_Lighting]->GetProgram());
-	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uProjViewMtx"), 1, GL_FALSE, (float*)&projViewMatrix);
-	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uDiffuseTex"), 0);
-	glUniform3fv(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uCameraPos"), 1, (float*)&camera->GetPosition());
-	glUniform3fv(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uAmbientColor"), 1, (float*)&ambientColor);
-	glUniform3fv(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uLightDirection"), 1, (float*)&lightDirection);
-	glUniform1fv(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uSpecularFactor"), 1, &specularFactor);
-
-	glUniform1fv(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uNormalizedFarPlanes[0]"), SHADOWMAP_NUM - 1, (float*)&normalizedFarPlanes[0]);
-	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uShadowTransform[0]"), SHADOWMAP_NUM, GL_FALSE, (float*)&shadowProjView[0]);
-	glUniform2f(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uShadowSinglePixel"), 1.f / SHADOWMAP_SIZE, 1.f / SHADOWMAP_SIZE);
-	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uShadowTex"), 1);
-	glActiveTexture(GL_TEXTURE1); 
-	glBindTexture(GL_TEXTURE_2D_ARRAY, shadowTex);
-
-	uModelMtx = glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uModelMtx");
-	GLint uColor = glGetUniformLocation(shaders[SHADERTYPE::Forward_Lighting]->GetProgram(), "uColor");
-	RenderAllObjects(false,
-		[&](RenderNode* node)
-	{
-		glUniformMatrix4fv(uModelMtx, 1, GL_FALSE, (float*)&node->GetWorldTransform());
-		glUniform4fv(uColor, 1, (float*)&node->GetColor());
-	}
-	);
-	*/
 	RenderAllObjects(false,[&](RenderNode* node){});
 
 #pragma endregion</Render Scene Part>

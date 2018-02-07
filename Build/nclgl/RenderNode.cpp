@@ -1,5 +1,5 @@
 #include "RenderNode.h"
-#include "../ncltech/GraphicsPipeline.h"
+#include "../ncltech/TextureManager.h"
 
 RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
 	awake				= true;
@@ -100,6 +100,7 @@ void RenderNode::DrawOpenGL(bool isShadowPass)
 		return;
 
 	GraphicsPipeline* graphicsPipeline = GraphicsPipeline::Instance();
+	TextureManager* textureManager = TextureManager::Instance();
 	Shader* shader = graphicsPipeline->GetAllShaders()[SHADERTYPE::Forward_Lighting];
 
 	glUseProgram(shader->GetProgram()); 
@@ -107,7 +108,7 @@ void RenderNode::DrawOpenGL(bool isShadowPass)
 
 	glActiveTexture(GL_TEXTURE0); 
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "uDiffuseTex"), 0);
-	glBindTexture(GL_TEXTURE_2D, graphicsPipeline->GetAllTextures()[TEXTURETYPE::Checker_Board]);
+	glBindTexture(GL_TEXTURE_2D, textureManager->GetTexture(TEXTURETYPE::Checker_Board));
 
 	glUniform3fv(glGetUniformLocation(shader->GetProgram(), "uCameraPos"), 1, (float*)&graphicsPipeline->GetCamera()->GetPosition());
 	glUniform3fv(glGetUniformLocation(shader->GetProgram(), "uAmbientColor"), 1, (float*)&graphicsPipeline->GetAmbientColor());

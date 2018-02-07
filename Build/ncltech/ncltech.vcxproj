@@ -148,6 +148,7 @@
     <ClCompile Include="ScreenPicker.cpp" />
     <ClCompile Include="SoftBody.cpp" />
     <ClCompile Include="SphereCollisionShape.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BoundingBox.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="SoftBody.h" />
     <ClInclude Include="SphereCollisionShape.h" />
     <ClInclude Include="SpringConstraint.h" />
+    <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
