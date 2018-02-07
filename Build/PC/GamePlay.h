@@ -13,3 +13,8 @@ enum PickupType
 {
 	SPEED_BOOST, JUMP_BOOST, WEAPON 
 };
+
+enum Audio {
+	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND
+};
+
