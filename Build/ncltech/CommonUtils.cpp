@@ -287,3 +287,4 @@ GameObject* CommonUtils::BuildPlaneObject(
 
 	return obj;
 }
+

@@ -143,12 +143,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Blank.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
+    <ClInclude Include="Pickup.h" />
+    <ClInclude Include="PaintableGameObject.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Pickup.cpp" />
+    <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="SimpleGamePlay.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -129,6 +129,8 @@ public:
 		perfSolver.PrintOutputToStatusEntry(color,		"            Solver      :");
 	}
 
+	//allow the camera access to all the physics nodes
+	friend class Camera;
 protected:
 	PhysicsEngine();
 	~PhysicsEngine();
