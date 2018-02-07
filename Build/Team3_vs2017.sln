@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4DEACDB-D3BF-44F9-8968-69A2F0597D10}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,10 +17,54 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nclgl", "nclgl\nclgl.vcxpro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projects", "Projects", "{7D7B3356-FDB3-4FEB-A2EE-BA2F8D8AE6CF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Coursework A", "PC\PC.vcxproj", "{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PC", "PC\PC.vcxproj", "{FF74C3EC-6B06-4054-8829-81E6866DF745}"
 	ProjectSection(ProjectDependencies) = postProject
 		{98D6B51B-CB0A-4389-ADC6-24082B967C3F} = {98D6B51B-CB0A-4389-ADC6-24082B967C3F}
 		{AB4196E5-2488-4514-B4C2-00EAFC468A1D} = {AB4196E5-2488-4514-B4C2-00EAFC468A1D}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shader", "Shader", "{BC67E7B4-7967-46D7-8471-A8200098B81D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{931B611C-A234-49C3-944A-109E060C67E3}"
+	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\Common\EmptyFragment.glsl = ..\Data\Shaders\Common\EmptyFragment.glsl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SceneRenderer", "SceneRenderer", "{C6CAA6D3-725A-4ABC-B665-18BE70546D4D}"
+	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\SceneRenderer\TechFragForwardRender.glsl = ..\Data\Shaders\SceneRenderer\TechFragForwardRender.glsl
+		..\Data\Shaders\SceneRenderer\TechFragScreenPicker.glsl = ..\Data\Shaders\SceneRenderer\TechFragScreenPicker.glsl
+		..\Data\Shaders\SceneRenderer\TechFragScreenPicker_nsightfix.glsl = ..\Data\Shaders\SceneRenderer\TechFragScreenPicker_nsightfix.glsl
+		..\Data\Shaders\SceneRenderer\TechFragSuperSample.glsl = ..\Data\Shaders\SceneRenderer\TechFragSuperSample.glsl
+		..\Data\Shaders\SceneRenderer\TechGeomShadow.glsl = ..\Data\Shaders\SceneRenderer\TechGeomShadow.glsl
+		..\Data\Shaders\SceneRenderer\TechVertexBasic.glsl = ..\Data\Shaders\SceneRenderer\TechVertexBasic.glsl
+		..\Data\Shaders\SceneRenderer\TechVertexFull.glsl = ..\Data\Shaders\SceneRenderer\TechVertexFull.glsl
+		..\Data\Shaders\SceneRenderer\TechVertexPicker.glsl = ..\Data\Shaders\SceneRenderer\TechVertexPicker.glsl
+		..\Data\Shaders\SceneRenderer\TechVertexShadow.glsl = ..\Data\Shaders\SceneRenderer\TechVertexShadow.glsl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Particle", "Particle", "{5CC51FB4-631A-453C-9351-10CCB1CA0132}"
+	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\Particles\ParticleLightFragment.glsl = ..\Data\Shaders\Particles\ParticleLightFragment.glsl
+		..\Data\Shaders\Particles\ParticleLightGeometry.glsl = ..\Data\Shaders\Particles\ParticleLightGeometry.glsl
+		..\Data\Shaders\Particles\ParticleLightVertex.glsl = ..\Data\Shaders\Particles\ParticleLightVertex.glsl
+		..\Data\Shaders\Particles\ParticleShadowFragment.glsl = ..\Data\Shaders\Particles\ParticleShadowFragment.glsl
+		..\Data\Shaders\Particles\ParticleShadowGeometry.glsl = ..\Data\Shaders\Particles\ParticleShadowGeometry.glsl
+		..\Data\Shaders\Particles\ParticleShadowVertex.glsl = ..\Data\Shaders\Particles\ParticleShadowVertex.glsl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DebugShaders", "DebugShaders", "{BFAC61F3-3D0B-4977-B961-A8142D397CAD}"
+	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\DebugShaders\Fragment.glsl = ..\Data\Shaders\DebugShaders\Fragment.glsl
+		..\Data\Shaders\DebugShaders\LineGeometry.glsl = ..\Data\Shaders\DebugShaders\LineGeometry.glsl
+		..\Data\Shaders\DebugShaders\PointFragment.glsl = ..\Data\Shaders\DebugShaders\PointFragment.glsl
+		..\Data\Shaders\DebugShaders\PointGeometry.glsl = ..\Data\Shaders\DebugShaders\PointGeometry.glsl
+		..\Data\Shaders\DebugShaders\PointVertex.glsl = ..\Data\Shaders\DebugShaders\PointVertex.glsl
+		..\Data\Shaders\DebugShaders\TextFragment.glsl = ..\Data\Shaders\DebugShaders\TextFragment.glsl
+		..\Data\Shaders\DebugShaders\TextGeometry.glsl = ..\Data\Shaders\DebugShaders\TextGeometry.glsl
+		..\Data\Shaders\DebugShaders\TextVertex.glsl = ..\Data\Shaders\DebugShaders\TextVertex.glsl
+		..\Data\Shaders\DebugShaders\Vertex.glsl = ..\Data\Shaders\DebugShaders\Vertex.glsl
+		..\Data\Shaders\DebugShaders\VertexColOnly.glsl = ..\Data\Shaders\DebugShaders\VertexColOnly.glsl
 	EndProjectSection
 EndProject
 Global
@@ -53,23 +97,29 @@ Global
 		{98D6B51B-CB0A-4389-ADC6-24082B967C3F}.Release|x64.Build.0 = Release|x64
 		{98D6B51B-CB0A-4389-ADC6-24082B967C3F}.Release|x86.ActiveCfg = Release|Win32
 		{98D6B51B-CB0A-4389-ADC6-24082B967C3F}.Release|x86.Build.0 = Release|Win32
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Debug|ARM.ActiveCfg = Debug|Win32
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Debug|x64.ActiveCfg = Debug|x64
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Debug|x64.Build.0 = Debug|x64
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Debug|x64.Deploy.0 = Debug|x64
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Debug|x86.ActiveCfg = Debug|Win32
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Debug|x86.Build.0 = Debug|Win32
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Debug|x86.Deploy.0 = Debug|Win32
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Release|ARM.ActiveCfg = Release|Win32
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Release|x64.ActiveCfg = Release|x64
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Release|x64.Build.0 = Release|x64
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Release|x64.Deploy.0 = Release|x64
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Release|x86.ActiveCfg = Release|Win32
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Release|x86.Build.0 = Release|Win32
-		{87F0232B-B80A-4B23-89C5-5A25F89CDCB1}.Release|x86.Deploy.0 = Release|Win32
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Debug|ARM.ActiveCfg = Debug|Win32
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Debug|x64.ActiveCfg = Debug|x64
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Debug|x64.Build.0 = Debug|x64
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Debug|x64.Deploy.0 = Debug|x64
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Debug|x86.ActiveCfg = Debug|Win32
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Debug|x86.Build.0 = Debug|Win32
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Debug|x86.Deploy.0 = Debug|Win32
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Release|ARM.ActiveCfg = Release|Win32
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Release|x64.ActiveCfg = Release|x64
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Release|x64.Build.0 = Release|x64
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Release|x64.Deploy.0 = Release|x64
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Release|x86.ActiveCfg = Release|Win32
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Release|x86.Build.0 = Release|Win32
+		{FF74C3EC-6B06-4054-8829-81E6866DF745}.Release|x86.Deploy.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{931B611C-A234-49C3-944A-109E060C67E3} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
+		{C6CAA6D3-725A-4ABC-B665-18BE70546D4D} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
+		{5CC51FB4-631A-453C-9351-10CCB1CA0132} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
+		{BFAC61F3-3D0B-4977-B961-A8142D397CAD} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {906F3866-8380-435F-B2DE-2EDAF98B9FBA}

@@ -75,6 +75,21 @@
 
 typedef std::pair<RenderNode*, float> RenderNodePair;
 
+enum SHADERTYPE
+{
+	Present_To_Window	= 0,
+	Shadow				= 1,
+	Forward_Lighting	= 2,
+
+	Shader_Number,
+};
+
+enum TEXTURETYPE
+{
+	Checker_Board		= 0,
+
+	Texture_Number,
+};
 
 class GraphicsPipeline : public TSingleton<GraphicsPipeline>, OGLRenderer
 {
@@ -106,7 +121,9 @@ public:
 
 	inline Matrix4& GetProjMtx() { return projMatrix; }
 	inline Matrix4& GetViewMtx() { return viewMatrix; }
+	inline Matrix4& GetProjViewMtx() { return projViewMatrix; }
 
+	inline float*   GetNormalizedFarPlanes() { return normalizedFarPlanes; }
 	inline Matrix4& GetShadowViewMtx() { return shadowViewMtx; }
 	inline Matrix4* GetShadowProjMatrices() { return shadowProj; }
 	inline Matrix4* GetShadowProjViewMatrices() { return shadowProjView; }
@@ -115,6 +132,8 @@ public:
 	inline Vector3& GetLightDirection() { return lightDirection; }
 	inline float& GetSpecularFactor() { return specularFactor; }
 	inline GLuint& GetShadowTex() { return shadowTex; }
+
+	inline Shader** GetAllShaders() { return shaders; }
 
 protected:
 	GraphicsPipeline();
@@ -139,9 +158,7 @@ protected:
 	GLuint		screenTexDepth;
 
 	//Shaders
-	Shader*		shaderPresentToWindow;
-	Shader*		shaderShadow;
-	Shader*		shaderForwardLighting;
+	Shader**	shaders;
 
 	//Render Params
 	Vector3		ambientColor;

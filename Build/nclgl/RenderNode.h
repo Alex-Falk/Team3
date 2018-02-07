@@ -34,12 +34,7 @@ public:
 		return (this->mesh != NULL);
 	}
 
-	virtual void DrawOpenGL(bool isShadowPass)
-	{
-		if (this->mesh && awake)
-			this->mesh->Draw();
-	}
-
+	virtual void DrawOpenGL(bool isShadowPass);
 
 
 	void			SetTransform(const Matrix4 &matrix) { transform = matrix;}
@@ -69,7 +64,7 @@ public:
 
 	float			GetBoundingRadius() const	{return boundingRadius;}
 	void			SetBoundingRadius(float f)	{boundingRadius = f;}
-	void			SetBoundingRadius();
+	void			AutoSetBoundingRadius();
 
 	float			GetCameraDistance() const	{return distanceFromCamera;}
 	void			SetCameraDistance(float f)	{distanceFromCamera = f;}
