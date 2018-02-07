@@ -200,6 +200,10 @@ void HandleKeyboardInputs()
 	Input::GetInput()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
 	Input::GetInput()->SetInput(CAMERA_DOWN, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
 
+	//mouse input
+	Input::GetInput()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
+	Input::GetInput()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
+
 	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
@@ -212,6 +216,8 @@ int main()
 
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
+	//lock mouse so moving around the screen is nicer
+	Window::GetWindow().LockMouseToWindow(true);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		//Start Timing

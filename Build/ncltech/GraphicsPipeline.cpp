@@ -211,13 +211,9 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 
 void GraphicsPipeline::UpdateScene(float dt)
 {
-	if (!ScreenPicker::Instance()->HandleMouseClicks(dt))
-		camera->HandleMouse(dt);
+	//update all of the camera stuff
+	camera->UpdateCamara(dt);
 
-	camera->HandleKeyboard(dt);
-	
-	//update the distance of the camera if it is attached to an object
-	camera->UpdateDistance();
 
 	viewMatrix = camera->BuildViewMatrix();
 	projViewMatrix = projMatrix * viewMatrix;

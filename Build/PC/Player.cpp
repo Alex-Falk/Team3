@@ -144,8 +144,6 @@ void Player::OnPlayerUpdate(float dt) {
 	
 	curSize = size * (life / 100);
 
-	cout << curSize;
-
 	playerGameObject->Render()->GetChild()->SetBoundingRadius(curSize);
 	playerGameObject->RegisterPhysicsToRenderTransformCallback();
 }

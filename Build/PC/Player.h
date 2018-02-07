@@ -26,6 +26,7 @@ private:
 	static bool canJump;
 	static bool inAir;
 
+	uint playerId;
 public:
 	Player();
 	Player(Vector3 pos, Colour c, float s); //Build Player using starting possition Colour and size

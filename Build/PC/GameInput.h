@@ -20,6 +20,7 @@ enum InputType{
 	COUNT
 };
 
+
 //TODO: THIS SHOULD BE A SINGLETON BUT IT BREAKS THE CODE SO A GLOBAL VARIABLE
 //IS BEING USED INSTEAD
 class Input {
@@ -30,11 +31,11 @@ public:
 		}
 	}
 
-	bool GetInput(InputType i) {
+	inline bool GetInput(InputType i) {
 		return inputs[i]; 
 	}
 	
-	void SetInput(InputType i, bool b) {
+	inline void SetInput(InputType i, bool b) {
 		inputs[i] = b; 
 	};
 
@@ -43,9 +44,17 @@ public:
 		return inputs[i];
 	}
 
+	inline float GetLookX() { return lookX; }
+	inline void SetLookX(float x) { lookX = x; }
+
+	inline float GetLookY() { return lookY; }
+	inline void SetLookY(float y) { lookY = y; }
+
 	static Input* GetInput();
 private:
 	bool inputs[InputType::COUNT];
+	float lookX;
+	float lookY;
 };
 
 #endif
