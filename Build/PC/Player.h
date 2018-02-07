@@ -24,6 +24,7 @@ private:
 	float maxForce = 15;			// Sets Maximum applied Force 
 
 	static bool canJump;
+	static bool inAir;
 
 public:
 	Player();
@@ -39,6 +40,11 @@ public:
 
 	virtual	float GetSize() { return size; }
 	virtual void SetSize(float s) { size = s; }
+
+	virtual void IncrLife(float x) { life += x; }
+	virtual void DecrLife(float x) { life -= x; }
+
+	virtual float GetLife() { return life; }
 
 	virtual GameObject* GetGameObject() { return playerGameObject; }	//Pointer to the Player's Gameobject
 
