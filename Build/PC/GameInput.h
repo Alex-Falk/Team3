@@ -1,0 +1,51 @@
+////////////////////////////////////////////////
+//         Philip Beck 07/02/2018             //
+////////////////////////////////////////////////
+
+#pragma once
+#ifndef GAMEINPUT_H
+#define GAMEINPUT_H
+
+enum InputType{
+	FORWARD,
+	BACKWARD,
+	LEFT,
+	RIGHT,
+	JUMP,
+	SHOOT,
+	PAUSE,
+	CAMERA_UP,
+	CAMERA_DOWN,
+	//must stay at the bottom, this is the size of the array
+	COUNT
+};
+
+//TODO: THIS SHOULD BE A SINGLETON BUT IT BREAKS THE CODE SO A GLOBAL VARIABLE
+//IS BEING USED INSTEAD
+class Input {
+public:
+	Input() {
+		for (int i = 0; i < InputType::COUNT; i++) {
+			inputs[i] = false;
+		}
+	}
+
+	bool GetInput(InputType i) {
+		return inputs[i]; 
+	}
+	
+	void SetInput(InputType i, bool b) {
+		inputs[i] = b; 
+	};
+
+	bool ToggleInput(InputType i) {
+		inputs[i] = !inputs[i];
+		return inputs[i];
+	}
+
+	static Input* GetInput();
+private:
+	bool inputs[InputType::COUNT];
+};
+
+#endif

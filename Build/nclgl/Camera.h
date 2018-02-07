@@ -31,12 +31,12 @@ public:
 		free = true;
 		center = nullptr;
 		maxDistance = 10.0f;
-		minDistance = 1.0;
+		minDistance = 1.0f;
 		distance = (maxDistance + minDistance) / 2;
 		armShape = new CuboidCollisionShape();
 		//very thin so the camera moves in the right way
-		armShape->SetHalfHeight(0.001);
-		armShape->SetHalfWidth(0.001);
+		armShape->SetHalfHeight(0.001f);
+		armShape->SetHalfWidth(0.001f);
 		arm.SetCollisionShape(armShape);
 	};
 

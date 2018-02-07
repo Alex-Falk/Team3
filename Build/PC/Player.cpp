@@ -1,5 +1,6 @@
 #include "Player.h"
 #include <string.h>
+#include "GameInput.h"
 
 Player::Player() : GameObject("Player")
 {
@@ -94,29 +95,31 @@ void Player::Input(float dt) {
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 
 	if (!inAir) {
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) { 		//Front
+		if (Input::GetInput()->GetInput(FORWARD)) { 		//Front
 			if (force.z > 0)force.z /= 2;
 			force = Matrix3::Rotation(0, Vector3(10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10);
 			force.y = 0;
 		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {		//Back
+		if (Input::GetInput()->GetInput(BACKWARD)) {		//Back
 			if (force.z < 0)force.z /= 2;
 			force = Matrix3::Rotation(0, Vector3(10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, 10);
 			force.y = 0;
 		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {		//Left
+		if (Input::GetInput()->GetInput(LEFT)) {		//Left
 			if (force.x > 0)force.x /= 2;
 			force = Matrix3::Rotation(0, Vector3(-10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(-10, 0, 0);
 			force.y = 0;
 		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {		//Right
+		if (Input::GetInput()->GetInput(RIGHT)) {		//Right
 			if (force.x < 0)force.x /= 2;
 			force = Matrix3::Rotation(0, Vector3(-10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(10, 0, 0);
 			force.y = 0;
 		}
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE) && canJump) {		//Jump
-		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /1.5, jumpImpulse, force.z / 1.5));
+
+	//if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE) && canJump) {		//Jump
+	if (Input::GetInput()->GetInput(JUMP) && canJump) {		//Jump
+	playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /1.5, jumpImpulse, force.z / 1.5));
 		inAir = true;
 	}
 	canJump = false;
