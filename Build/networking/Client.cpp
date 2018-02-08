@@ -14,6 +14,16 @@ Client::Client()
 	}
 }
 
+Client::Client(IP ip) {
+	if (network.Initialize(0))
+	{
+		NCLDebug::Log("Network: Initialized!");
+		//Attempt to connect to the server on localhost:1234
+		serverConnection = network.ConnectPeer(ip.a, ip.b, ip.c, ip.d, ip.port);
+		NCLDebug::Log("Network: Attempting to connect to server.");
+	}
+}
+
 
 Client::~Client()
 {

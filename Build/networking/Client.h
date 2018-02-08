@@ -14,6 +14,7 @@ class Client
 {
 public:
 	Client();
+	Client(IP ip);
 	~Client();
 
 	
