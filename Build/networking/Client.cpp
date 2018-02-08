@@ -115,6 +115,10 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 	}
 }
 
+//--------------------------------------------------------------------------------------------//
+// Recieving
+//--------------------------------------------------------------------------------------------//
+
 void Client::ReceivePositions(string data)
 {
 	size_t colonIdx = data.find_first_of(':');
@@ -175,7 +179,9 @@ void Client::RecieveMapIndex(string data)
 }
 
 
-
+//--------------------------------------------------------------------------------------------//
+// Sending
+//--------------------------------------------------------------------------------------------//
 
 void Client::SendPosition()
 {
@@ -187,9 +193,24 @@ void Client::SendPosition()
 	enet_peer_send(serverConnection, 0, posPacket);
 }
 
-void Client::SendVelocity()
+void Client::SendLinVelocity()
 {
+	Vector3 vel = game->GetMyPlayer()->Physics()->GetLinearVelocity();
 
+	string data = Vector3ToString(vel);
+
+	ENetPacket* velPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	enet_peer_send(serverConnection, 0, velPacket);
+}
+
+void Client::SendAngVelocity()
+{
+	Vector3 vel = game->GetMyPlayer()->Physics()->GetAngularVelocity();
+
+	string data = Vector3ToString(vel);
+
+	ENetPacket* velPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	enet_peer_send(serverConnection, 0, velPacket);
 }
 
 void Client::SendAcceleration()
