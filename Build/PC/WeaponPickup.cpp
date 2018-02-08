@@ -1,11 +1,11 @@
 //Name: Nick Bedford
-//Date: 06/02/2018
-//Simple class to build on for pickup functionality
+//Date: 07/02/2018
+//Simple class to build on for weapon pickup functionality
 
-#include "Pickup.h"
+#include "WeaponPickup.h"
 #include <string.h>
 
-Pickup::Pickup()
+WeaponPickup::WeaponPickup()
 {
 	active = true;
 	respawnTime = 30.0;
@@ -20,7 +20,7 @@ Pickup::Pickup()
 		Vector4(0.0f, 1.0f, 0.0f, 1.0f));	        //Color
 }
 
-Pickup::Pickup(Vector3 pos, PickupType type, float respawnTime)
+WeaponPickup::WeaponPickup(Vector3 pos, WeaponType type, float respawnTime)
 {
 	active = true;
 	this->respawnTime = respawnTime;
@@ -44,33 +44,15 @@ Pickup::Pickup(Vector3 pos, PickupType type, float respawnTime)
 	);
 }
 
-void Pickup::Reactivate()
+void WeaponPickup::Reactivate()
 {
 	object->Render()->SetChildBaseColor(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 	active = true;
 	currentRespawnTimer = 0;
+	weaponType = static_cast<WeaponType>(rand() % NUM_OF_WEAPONS);
+	cout << weaponType << endl;
 }
 
-void Pickup::Update(float dt)
-{
-	if (!active)
-	{
-		object->Render()->SetChildBaseColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-		
-		object->Physics()->SetAngularVelocity(Vector3(0.1f, 0.4f, 0.3f));
-
-		currentRespawnTimer += dt;
-		if (currentRespawnTimer >= respawnTime)
-		{
-			Reactivate();
-		}
-	}
-	else
-	{
-		object->Physics()->SetAngularVelocity(Vector3(0.3f, 1.2f, 0.9f));
-	}
-}
-
-Pickup::~Pickup()
+WeaponPickup::~WeaponPickup()
 {
 }

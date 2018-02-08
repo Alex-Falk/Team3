@@ -88,18 +88,7 @@ GLuint activeArrayHack = 0;
 GLuint activeTexture1Hack = 0;
 GLuint activeTexture2Hack = 0;
 void Mesh::Draw()	{
-	//if (activeTexture1Hack != texture)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		activeTexture1Hack = texture;
-	}
-	//if (activeTexture2Hack != texture)
-	{
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, bumpTexture);
-		activeTexture2Hack = texture;
-	}
+
 	//if (activeArrayHack != arrayObject)
 	{
 		glBindVertexArray(arrayObject);
@@ -404,7 +393,7 @@ Mesh* Mesh::GenerateMesh(int w, int h, float s) {
 	//	}
 	//}
 
-	for (int i = 0; i < m->numVertices; ++i) {
+	for (uint i = 0; i < m->numVertices; ++i) {
 		m->colours[i] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		m->normals[i] = Vector3(0.0f, 0.0f, -1.0f);
 		m->tangents[i] = Vector3(1.0f, 0.0f, 0.0f);

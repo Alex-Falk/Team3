@@ -69,7 +69,7 @@ Vector3 CuboidCollisionShape::GetClosestPoint(const Vector3& point) const
 	Vector3 out_point;
 	for (size_t i = 0; i < cubeHull.GetNumEdges(); ++i)
 	{
-		const HullEdge& e = cubeHull.GetEdge(i);
+		const HullEdge& e = cubeHull.GetEdge((int)i);
 		Vector3 start = cubeHull.GetVertex(e._vStart)._pos;
 		Vector3 end = cubeHull.GetVertex(e._vEnd)._pos;
 

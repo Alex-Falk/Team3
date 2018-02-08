@@ -204,7 +204,7 @@ bool	OBJMesh::LoadOBJMesh(std::string filename)	{
 
 			m->SetTexturesFromMTL(sm->mtlSrc, sm->mtlType);
 
-			m->numVertices	= sm->vertIndices.size();
+			m->numVertices	= (GLuint)sm->vertIndices.size();
 
 			m->vertices		= new Vector3[m->numVertices];
 			for(unsigned int j = 0; j < sm->vertIndices.size(); ++j) {
@@ -317,11 +317,11 @@ void	OBJMesh::SetTexturesFromMTL(string &mtlFile, string &mtlType) {
 			f >> currentMTL.diffuse;
 
 			if(currentMTL.diffuse.find_last_of('/') != string::npos) {
-				int at = currentMTL.diffuse.find_last_of('/');
+				int at = (int)currentMTL.diffuse.find_last_of('/');
 				currentMTL.diffuse = currentMTL.diffuse.substr(at+1);
 			}
 			else if(currentMTL.diffuse.find_last_of('\\') != string::npos) {
-				int at = currentMTL.diffuse.find_last_of('\\');
+				int at = (int)currentMTL.diffuse.find_last_of('\\');
 				currentMTL.diffuse = currentMTL.diffuse.substr(at+1);
 			}
 
@@ -335,11 +335,11 @@ void	OBJMesh::SetTexturesFromMTL(string &mtlFile, string &mtlType) {
 			f >> currentMTL.bump;
 
 			if(currentMTL.bump.find_last_of('/') != string::npos) {
-				int at = currentMTL.bump.find_last_of('/');
+				int at = (int)currentMTL.bump.find_last_of('/');
 				currentMTL.bump = currentMTL.bump.substr(at+1);
 			}
 			else if(currentMTL.bump.find_last_of('\\') != string::npos) {
-				int at = currentMTL.bump.find_last_of('\\');
+				int at = (int)currentMTL.bump.find_last_of('\\');
 				currentMTL.bump = currentMTL.bump.substr(at+1);
 			}
 
