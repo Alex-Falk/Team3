@@ -1,3 +1,7 @@
+//Nick Bedford
+//Date: 07/02/2018
+//Added a default value to player size
+
 #pragma once
 #include <ncltech\GameObject.h>
 #include <ncltech\CommonUtils.h>
@@ -28,7 +32,7 @@ private:
 
 public:
 	Player();
-	Player(Vector3 pos, Colour c, float s); //Build Player using starting possition Colour and size
+	Player(Vector3 pos, Colour c, float s = 1.0f); //Build Player using starting possition Colour and size
 	
 	virtual void OnPlayerUpdate(float dt);
 
