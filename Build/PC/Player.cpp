@@ -78,7 +78,7 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 		break;
 	}
 
-	playerGameObject = CommonUtils::BuildSphereObject("Player" + to_string(c),
+	playerGameObject = CommonUtils::BuildSphereObject("Player",
 		Vector3(0.0f, 1.0f*s, 0.0f) + pos,
 		1.0f * size,							//Radius
 		true,									//Has Physics Object
@@ -151,6 +151,16 @@ void Player::Input(float dt) {
 	force = Vector3(0, 0, 0);
 }
 
+void Player::ChangeSize(float newSize)
+{
+	playerGameObject->Render()->GetChild()->SetBoundingRadius(newSize);
+	playerGameObject->Render()->SetBoundingRadius(newSize);
+	playerGameObject->Physics()->SetBoundingRadius(newSize);
+	((SphereCollisionShape*)playerGameObject->Physics()->GetCollisionShape())->SetRadius(newSize);
+
+	playerGameObject->Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
+}
+
 // Updates everything on player
 void Player::OnPlayerUpdate(float dt) {
 
@@ -173,12 +183,7 @@ void Player::OnPlayerUpdate(float dt) {
 	
 	curSize = size * (life / 100);
 
-	playerGameObject->Render()->GetChild()->SetBoundingRadius(curSize);
-	playerGameObject->Render()->SetBoundingRadius(curSize);
-	playerGameObject->Physics()->SetBoundingRadius(curSize);
-	((SphereCollisionShape*)playerGameObject->Physics()->GetCollisionShape())->SetRadius(curSize);
-
-	playerGameObject->Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(curSize, curSize, curSize)));
+	ChangeSize(curSize);
 	
 }
 

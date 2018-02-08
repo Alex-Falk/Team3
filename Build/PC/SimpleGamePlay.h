@@ -7,6 +7,7 @@
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
 #include "GamePlay.h"
+#include "Pickup.h"
 #include "Player.h"
 #include <ncltech\TextureManager.h> 
 
@@ -21,6 +22,7 @@ private:
 
 	float m_AccumTime = 0;
 	Player* player;
+	Pickup* pickup;
 
 public:
 	SimpleGamePlay(const std::string& friendly_name)
