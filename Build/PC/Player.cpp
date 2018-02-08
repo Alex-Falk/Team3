@@ -16,6 +16,7 @@ Player::Player() : GameObject("Player")
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
 	canJump = true;
 	playerGameObject->Physics()->SetElasticity(0);
+	playerGameObject->Physics()->SetFriction(50);
 }
 
 Player::~Player()
@@ -76,7 +77,7 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 		Colour);								//Colour
 
 	playerGameObject->Physics()->SetElasticity(0);
-	playerGameObject->Physics()->SetFriction(35);
+	playerGameObject->Physics()->SetFriction(50);
 
 }
 
@@ -100,25 +101,27 @@ void Player::Input(float dt) {
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) { 		//Front
 			if (force.z > 0)force.z /= 2;
 			force =  Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * speed;
-			velocity = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 2, 0)) * Vector3(-2, 0, 0) *dt* speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {		//Back
 			if (force.z < 0)force.z /= 2;
 			force = Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, 10) * speed;
-			velocity = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 2, 0)) * Vector3(2, 0, 0)*dt* speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {		//Left
 			if (force.x > 0)force.x /= 2;
 			force = Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(-10, 0, 0) * speed;
-			velocity = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 2, 0)) * Vector3(0, 0, 2)*dt* speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {		//Right
 			if (force.x < 0)force.x /= 2;
 			force = Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(10, 0, 0) * speed;
-			velocity = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 2, 0)) * Vector3(0, 0, -2)*dt* speed;
 		}
 		force.y = 0;
-		playerGameObject->Physics()->SetAngularVelocity(velocitys);
+		if (force != Vector3(0, 0, 0)) {
+			playerGameObject->Physics()->SetAngularVelocity(velocity);
+		}
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {

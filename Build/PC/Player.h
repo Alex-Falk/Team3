@@ -20,7 +20,7 @@ private:
 	float size;					//Player size
 	float curSize;
 	float jumpImpulse = 10.f;	// Jump Power
-	float speed = 10;			// movement speed
+	float speed = 5;			// movement speed
 	float maxForce = 30;			// Sets Maximum applied Force 
 
 	// Boosts
