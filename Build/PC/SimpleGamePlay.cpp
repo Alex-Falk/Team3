@@ -18,6 +18,17 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(player->GetGameObject());
 
+	GameObject* cube = CommonUtils::BuildCuboidObject(
+		"Cube",
+		Vector3(0.0f, 5.0f, 0.0f),
+		Vector3(1.0f, 1.0f, 1.0f),
+		true,
+		0.0f,
+		true,
+		false,
+		Vector4(0.2f, 0.5f, 1.0f, 1.0f));
+
+	this->AddGameObject(cube);
 
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
