@@ -85,7 +85,7 @@ bool RenderNode::RemoveChild(RenderNode* s,bool recursive) {
 void RenderNode::AutoSetBoundingRadius()
 {
 	float farrestDistance = 0;
-	for (int i = 0; i < mesh->numVertices; i++)
+	for (uint i = 0; i < mesh->numVertices; i++)
 	{
 		float length = mesh->vertices[i].Length();
 		if (farrestDistance < length)

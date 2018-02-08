@@ -1,6 +1,7 @@
 //Nick Bedford
-//Date: 07/02/2018
-//Added a default value to player size
+//Date: 08/02/2018
+//Removed setting values to player constructor and
+//Created a player callback function
 
 #pragma once
 #include <ncltech\GameObject.h>
@@ -13,22 +14,27 @@ private:
 
 	GameObject* playerGameObject;		//Pointer to the Player's Gameobject
 
-	Vector3 force = Vector3(0, 0, 0);	//Hold the force for smooth movement
-
 	Colour colour;				// Colour - Team
 
+	bool canJump;
+	bool inAir;
+
 	float life;
-	float maxLife = 100;
-	float minLife = 10;
+	float maxLife;
+	float minLife;
 
 	float size;					//Player size
 	float curSize;
-	float jumpImpulse = 10.f;	// Jump Power
-	float speed = 5;			// movement speed
-	float maxForce = 30;			// Sets Maximum applied Force 
+	float jumpImpulse;    	    // Jump Power
+	float standardJumpImpulse;
+	float boostedJumpImpulse;
+	float speed;			    // movement speed
+	float boostedSpeed;
+	float standardSpeed;
+	float maxForce;			// Sets Maximum applied Force 
 
 	// Boosts
-	float boostactiveTime = 15;
+	float boostactiveTime;
 
 	bool speedBoost = false;
 	float speedTimer;		// Boost timer
@@ -40,16 +46,13 @@ private:
 	float weaponAmmo;				// Weapon Ammo
 
 	float timer;
-
-	static bool canJump;
-	static bool inAir;
 			
 	Vector3 velocity;
 
 	uint playerId;
 public:
 	Player();
-	Player(Vector3 pos, Colour c, float s = 1.0f); //Build Player using starting possition Colour and size
+	Player(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
 	
 	virtual void OnPlayerUpdate(float dt);
 
@@ -76,7 +79,9 @@ public:
 
 	virtual void Input(float time);		// Takes the keyboard input to control ball
 
-	static bool SetCanJump(PhysicsNode* self, PhysicsNode* collidingObject);	//Sets player's ability to jump
+										//Example of member callback ('this' parameter is bound at bind time)
+	bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
+
 
 	~Player();
 
