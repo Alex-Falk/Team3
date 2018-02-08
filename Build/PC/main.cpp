@@ -5,6 +5,7 @@
 #include <nclgl\PerfTimer.h>
 
 #include "SimpleGamePlay.h"
+#include "GameInput.h"
 
 
 bool draw_debug = true;
@@ -189,6 +190,20 @@ void HandleKeyboardInputs()
 		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
 	}
 
+	Input::GetInput()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
+	Input::GetInput()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
+	Input::GetInput()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
+	Input::GetInput()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
+	Input::GetInput()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
+	Input::GetInput()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
+	//possibly temporary
+	Input::GetInput()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
+	Input::GetInput()->SetInput(CAMERA_DOWN, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
+
+	//mouse input
+	Input::GetInput()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
+	Input::GetInput()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
+
 	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
@@ -201,6 +216,8 @@ int main()
 
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
+	//lock mouse so moving around the screen is nicer
+	Window::GetWindow().LockMouseToWindow(true);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		//Start Timing

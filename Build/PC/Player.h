@@ -46,6 +46,7 @@ private:
 			
 	Vector3 velocity;
 
+	uint playerId;
 public:
 	Player();
 	Player(Vector3 pos, Colour c, float s = 1.0f); //Build Player using starting possition Colour and size

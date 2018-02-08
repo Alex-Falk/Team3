@@ -3,19 +3,26 @@
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\CollisionDetectionSAT.h>
 
-/*
-Polls the camera for keyboard / mouse movement.
-Should be done once per frame! Pass it the msec since
-last frame (default value is for simplicities sake...)
-*/
-void Camera::HandleMouse(float dt)
-{
+#include "..\PC\GameInput.h"
 
+//Added by phil
+//07/02/2018
+//combines the old handle mouse and handle keyboard functions
+//and makes the camera follow the ball direction
+void Camera::UpdateCamara(float dt) {
+	//used to be handle mouse:
 	//Update the mouse by how much
 	if (Window::GetMouse()->ButtonDown(MOUSE_LEFT) || !free)
 	{
-		pitch -= (Window::GetMouse()->GetRelativePosition().y);
-		yaw -= (Window::GetMouse()->GetRelativePosition().x);
+		pitch -= (Input::GetInput()->GetLookY());
+		yaw -= (Input::GetInput()->GetLookX());
+		//if the mouse hasn't moved in the x add time onto time since mouse
+		if (Input::GetInput()->GetLookX() == 0) {
+			timeSinceMouse += dt;
+		}
+		else {
+			timeSinceMouse = 0;
+		}
 	}
 
 	//float wheel_speed = Window::GetMouse()->GetWheelMovement() * 0.5f;
@@ -33,10 +40,8 @@ void Camera::HandleMouse(float dt)
 	if (yaw > 360.0f) {
 		yaw -= 360.0f;
 	}
-}
 
-void Camera::HandleKeyboard(float dt)
-{
+	//The artist formally known as handle keyboard:
 	float speed = 3.5f * dt;	//3.5m per second
 
 
@@ -49,26 +54,56 @@ void Camera::HandleKeyboard(float dt)
 	}
 
 
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) {
+	if (Input::GetInput()->GetInput(FORWARD)) {
 		position += Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {
+	if (Input::GetInput()->GetInput(BACKWARD)) {
 		position -= Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
 	}
 
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {
+	if (Input::GetInput()->GetInput(LEFT)) {
 		position += Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {
+	if (Input::GetInput()->GetInput(RIGHT)) {
 		position -= Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
 	}
 
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT)) {
+	if (Input::GetInput()->GetInput(CAMERA_UP)) {
 		position.y += speed;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE)) {
+	if (Input::GetInput()->GetInput(CAMERA_DOWN)) {
 		position.y -= speed;
 	}
+
+	//NEW STUFF!!!
+
+	//There are a lot of magic numbers here these should be dealt with
+	if (timeSinceMouse > 0.7) {
+		//the camera moves itself faster the longer you haven't moved it
+		float turnSpeed = timeSinceMouse / 30.0f;
+		turnSpeed = max(turnSpeed, 0.03);
+		turnSpeed = min(turnSpeed, 0.4);
+		//get the direction of the x and y vector and have the yaw approach it
+		float x = center->GetLinearVelocity().x;
+		float z = center->GetLinearVelocity().z;
+
+		//both are now angles between 0 and 360
+		float angle = (180 * atan2(x, z)/PI) + 180.0f;
+		//find the difference between the two angles
+		int diff = angle - yaw;
+		diff = (diff + 180) % 360 - 180;
+
+		if (diff < 0) {
+			yaw -= turnSpeed;
+		}
+		if (diff > 0) {
+			yaw += turnSpeed;
+		}
+	}
+
+
+	//update the distance
+	UpdateDistance();
 }
 
 /*

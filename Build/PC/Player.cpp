@@ -10,6 +10,7 @@
 #include "Player.h"
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
+#include "GameInput.h"
 
 Player::Player() : GameObject("Player")
 {
@@ -108,22 +109,22 @@ void Player::Input(float dt) {
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 
 	if (!inAir) {
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) { 		//Front
+		if (Input::GetInput()->GetInput(FORWARD)) { 		//Front
 			if (force.z > 0)force.z /= 2;
 			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -10) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-2, 0, 0) *dt* speed;
 		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {		//Back
+		if (Input::GetInput()->GetInput(BACKWARD)) {		//Back
 			if (force.z < 0)force.z /= 2;
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 10) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(2, 0, 0)*dt* speed;
 		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {		//Left
+		if (Input::GetInput()->GetInput(LEFT)) {		//Left
 			if (force.x > 0)force.x /= 2;
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-10, 0, 0) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 2)*dt* speed;
 		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {		//Right
+		if (Input::GetInput()->GetInput(RIGHT)) {		//Right
 			if (force.x < 0)force.x /= 2;
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(10, 0, 0) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -2)*dt* speed;
@@ -134,15 +135,9 @@ void Player::Input(float dt) {
 		}
 	}
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		PickedPickUp(SPEED_BOOST);
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		PickedPickUp(JUMP_BOOST);
-	}
-
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE) && canJump) {		//Jump
- 		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /1.5, jumpImpulse, force.z / 1.5));
+	//if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE) && canJump) {		//Jump
+	if (Input::GetInput()->GetInput(JUMP) && canJump) {		//Jump
+	playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /1.5, jumpImpulse, force.z / 1.5));
 		inAir = true;
 	}
 	canJump = false;
@@ -178,8 +173,6 @@ void Player::OnPlayerUpdate(float dt) {
 	
 	curSize = size * (life / 100);
 
-
-	
 	playerGameObject->Render()->GetChild()->SetBoundingRadius(curSize);
 	playerGameObject->Render()->SetBoundingRadius(curSize);
 	playerGameObject->Physics()->SetBoundingRadius(curSize);
