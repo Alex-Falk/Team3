@@ -227,7 +227,7 @@ void CollisionDetectionSAT::GenContactPoints(Manifold* out_manifold)
 		// face
 
 		if (adjPlanes1.size() > 0)
-			SutherlandHodgmanClipping(polygon2, adjPlanes1.size(),
+			SutherlandHodgmanClipping(polygon2, (int)adjPlanes1.size(),
 				&adjPlanes1[0], &polygon2, false);
 
 		// Finally clip (and remove ) any contact points that are above

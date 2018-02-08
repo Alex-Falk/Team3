@@ -81,8 +81,8 @@ void Camera::UpdateCamara(float dt) {
 	if (timeSinceMouse > 0.7) {
 		//the camera moves itself faster the longer you haven't moved it
 		float turnSpeed = timeSinceMouse / 30.0f;
-		turnSpeed = max(turnSpeed, 0.03);
-		turnSpeed = min(turnSpeed, 0.4);
+		turnSpeed = (float)max(turnSpeed, 0.03);
+		turnSpeed = (float)min(turnSpeed, 0.4);
 		//get the direction of the x and y vector and have the yaw approach it
 		float x = center->GetLinearVelocity().x;
 		float z = center->GetLinearVelocity().z;
@@ -90,7 +90,7 @@ void Camera::UpdateCamara(float dt) {
 		//both are now angles between 0 and 360
 		float angle = (180 * atan2(x, z)/PI) + 180.0f;
 		//find the difference between the two angles
-		int diff = angle - yaw;
+		int diff = (int)(angle - yaw);
 		diff = (diff + 180) % 360 - 180;
 
 		if (diff < 0) {

@@ -19,12 +19,12 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT, 1.0f);
+	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 
-	pickup = new WeaponPickup(Vector3(0.0f, 3.0f, 0.0f), PAINT_ROCKET, 3.0f);
-	
+	pickup = new Pickup(Vector3(0, 3, 0), SPEED_BOOST);
+
 	this->AddGameObject(pickup->GetObj());
 
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
@@ -43,8 +43,10 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	player->OnPlayerUpdate(dt);
 
-	pickup->Update(dt);
-
+	if (pickup)
+	{
+		pickup->Update(dt);
+	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }

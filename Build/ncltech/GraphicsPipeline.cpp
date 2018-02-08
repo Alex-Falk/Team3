@@ -13,6 +13,9 @@ GraphicsPipeline::GraphicsPipeline()
 	, screenFBO(NULL)
 	, screenTexColor(NULL)
 	, screenTexDepth(NULL)
+	, shaderPresentToWindow(NULL)
+	, shaderShadow(NULL)
+	, shaderForwardLighting(NULL)
 	, fullscreenQuad(NULL)
 	, shadowFBO(NULL)
 	, shadowTex(NULL)
@@ -50,9 +53,9 @@ GraphicsPipeline::~GraphicsPipeline()
 
 	SAFE_DELETE(fullscreenQuad);
 
-	for (int i = 0; i < Shader_Number; i++)
-		SAFE_DELETE(shaders[i]);
-	delete[] shaders;
+	SAFE_DELETE(shaderPresentToWindow);
+	SAFE_DELETE(shaderShadow);
+	SAFE_DELETE(shaderForwardLighting);
 
 	NCLDebug::_ReleaseShaders();
 
@@ -105,29 +108,27 @@ void GraphicsPipeline::RemoveRenderNode(RenderNode* node)
 
 void GraphicsPipeline::LoadShaders()
 {
-	shaders = new Shader*[Shader_Number];
-
-	shaders[SHADERTYPE::Present_To_Window] = new Shader(
+	shaderPresentToWindow = new Shader(
 		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
 		SHADERDIR"SceneRenderer/TechFragSuperSample.glsl");
-	if (!shaders[SHADERTYPE::Present_To_Window]->LinkProgram())
+	if (!shaderPresentToWindow->LinkProgram())
 	{
 		NCLERROR("Could not link shader: Present to window / SuperSampling");
 	}
 
-	shaders[SHADERTYPE::Shadow] = new Shader(
+	shaderShadow = new Shader(
 		SHADERDIR"SceneRenderer/TechVertexShadow.glsl",
 		SHADERDIR"Common/EmptyFragment.glsl",
 		SHADERDIR"SceneRenderer/TechGeomShadow.glsl");
-	if (!shaders[SHADERTYPE::Shadow]->LinkProgram())
+	if (!shaderShadow->LinkProgram())
 	{
 		NCLERROR("Could not link shader: Shadow Shader");
 	}
 
-	shaders[SHADERTYPE::Forward_Lighting] = new Shader(
+	shaderForwardLighting = new Shader(
 		SHADERDIR"SceneRenderer/TechVertexFull.glsl",
 		SHADERDIR"SceneRenderer/TechFragForwardRender.glsl");
-	if (!shaders[SHADERTYPE::Forward_Lighting]->LinkProgram())
+	if (!shaderForwardLighting->LinkProgram())
 	{
 		NCLERROR("Could not link shader: Forward Renderer");
 	}
@@ -208,42 +209,6 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 }
 
 
-void GraphicsPipeline::DebugRender()
-{
-	// Draw all bounding radius
-	if (debugDrawFlags & DEBUGDRAW_FLAGS_BOUNDING)
-	{
-		for each (RenderNode* var in allNodes)
-		{
-			Vector3 pos = var->GetWorldTransform().GetPositionVector();
-			float radius = var->GetBoundingRadius();
-			//Draw Perimeter Axes
-			Vector3 lastX = pos + Vector3(0.0f, 1.0f, 0.0f) * radius;
-			Vector3 lastY = pos + Vector3(1.0f, 0.0f, 0.0f) * radius;
-			Vector3 lastZ = pos + Vector3(1.0f, 0.0f, 0.0f) * radius;
-			const int nSubdivisions = 20;
-			for (int itr = 1; itr <= nSubdivisions; ++itr)
-			{
-				float angle = itr / float(nSubdivisions) * PI * 2.f;
-				float alpha = cosf(angle) * radius;
-				float beta = sinf(angle) * radius;
-
-				Vector3 newX = pos + Vector3(0.0f, alpha, beta);
-				Vector3 newY = pos + Vector3(alpha, 0.0f, beta);
-				Vector3 newZ = pos + Vector3(alpha, beta, 0.0f);
-
-				NCLDebug::DrawThickLineNDT(lastX, newX, 0.02f, Vector4(1.0f, 0.3f, 1.0f, 1.0f));
-				NCLDebug::DrawThickLineNDT(lastY, newY, 0.02f, Vector4(1.0f, 0.3f, 1.0f, 1.0f));
-				NCLDebug::DrawThickLineNDT(lastZ, newZ, 0.02f, Vector4(1.0f, 0.3f, 1.0f, 1.0f));
-
-				lastX = newX;
-				lastY = newY;
-				lastZ = newZ;
-			}
-		}
-	}
-}
-
 void GraphicsPipeline::UpdateScene(float dt)
 {
 	//update all of the camera stuff
@@ -252,9 +217,6 @@ void GraphicsPipeline::UpdateScene(float dt)
 
 	viewMatrix = camera->BuildViewMatrix();
 	projViewMatrix = projMatrix * viewMatrix;
-
-	//update frustum
-	frameFrustum.FromMatrix(projViewMatrix);
 
 	NCLDebug::_SetDebugDrawData(
 		projMatrix,
@@ -270,13 +232,13 @@ void GraphicsPipeline::RenderScene()
 	for (RenderNode* node : allNodes)
 		node->Update(0.0f); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
 
-	//Build Transparent/Opaque Renderlists
+							//Build Transparent/Opaque Renderlists
 	BuildAndSortRenderLists();
 
 	//NCLDebug - Build render lists
 	NCLDebug::_BuildRenderLists();
 
-#pragma region Render Shadow Part
+
 	//Build shadowmaps
 	BuildShadowTransforms();
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
@@ -284,9 +246,9 @@ void GraphicsPipeline::RenderScene()
 	glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(shaders[SHADERTYPE::Shadow]->GetProgram());
-	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Shadow]->GetProgram(), "uShadowTransform[0]"), SHADOWMAP_NUM, GL_FALSE, (float*)&shadowProjView[0]);
-	GLint uModelMtx = glGetUniformLocation(shaders[SHADERTYPE::Shadow]->GetProgram(), "uModelMtx");
+	glUseProgram(shaderShadow->GetProgram());
+	glUniformMatrix4fv(glGetUniformLocation(shaderShadow->GetProgram(), "uShadowTransform[0]"), SHADOWMAP_NUM, GL_FALSE, (float*)&shadowProjView[0]);
+	GLint uModelMtx = glGetUniformLocation(shaderShadow->GetProgram(), "uModelMtx");
 
 	RenderAllObjects(true,
 		[&](RenderNode* node)
@@ -294,17 +256,40 @@ void GraphicsPipeline::RenderScene()
 		glUniformMatrix4fv(uModelMtx, 1, GL_FALSE, (float*)&node->GetWorldTransform());
 	}
 	);
-#pragma endregion</Render Shadow Part>
 
-#pragma region Render Scene Part
+
+
+
 	//Render scene to screen fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
 	glViewport(0, 0, screenTexWidth, screenTexHeight);
 	glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	RenderAllObjects(false,[&](RenderNode* node){});
 
-#pragma endregion</Render Scene Part>
+	glUseProgram(shaderForwardLighting->GetProgram());
+	glUniformMatrix4fv(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uProjViewMtx"), 1, GL_FALSE, (float*)&projViewMatrix);
+	glUniform1i(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uDiffuseTex"), 0);
+	glUniform3fv(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uCameraPos"), 1, (float*)&camera->GetPosition());
+	glUniform3fv(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uAmbientColor"), 1, (float*)&ambientColor);
+	glUniform3fv(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uLightDirection"), 1, (float*)&lightDirection);
+	glUniform1fv(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uSpecularFactor"), 1, &specularFactor);
+
+	glUniform1fv(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uNormalizedFarPlanes[0]"), SHADOWMAP_NUM - 1, (float*)&normalizedFarPlanes[0]);
+	glUniformMatrix4fv(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uShadowTransform[0]"), SHADOWMAP_NUM, GL_FALSE, (float*)&shadowProjView[0]);
+	glUniform1i(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uShadowTex"), 2);
+	glUniform2f(glGetUniformLocation(shaderForwardLighting->GetProgram(), "uShadowSinglePixel"), 1.f / SHADOWMAP_SIZE, 1.f / SHADOWMAP_SIZE);
+
+	glActiveTexture(GL_TEXTURE2); glBindTexture(GL_TEXTURE_2D_ARRAY, shadowTex);
+
+	uModelMtx = glGetUniformLocation(shaderForwardLighting->GetProgram(), "uModelMtx");
+	GLint uColor = glGetUniformLocation(shaderForwardLighting->GetProgram(), "uColor");
+	RenderAllObjects(false,
+		[&](RenderNode* node)
+	{
+		glUniformMatrix4fv(uModelMtx, 1, GL_FALSE, (float*)&node->GetWorldTransform());
+		glUniform4fv(uColor, 1, (float*)&node->GetColor());
+	}
+	);
 
 	// Render Screen Picking ID's
 	// - This needs to be somewhere before we lose our depth buffer
@@ -318,27 +303,26 @@ void GraphicsPipeline::RenderScene()
 	NCLDebug::_RenderDebugDepthTested();
 	NCLDebug::_RenderDebugNonDepthTested();
 
-	
-#pragma region Post Process Part
+
+
 	//Downsample and present to screen
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, width, height);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	float superSamples = (float)(numSuperSamples);
-	glUseProgram(shaders[SHADERTYPE::Present_To_Window]->GetProgram());
+	glUseProgram(shaderPresentToWindow->GetProgram());
 
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uColorTex"), 0);
-	glBindTexture(GL_TEXTURE_2D, screenTexColor);
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uColorTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, screenTexColor);
 
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uGammaCorrection"), gammaCorrection);
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uNumSuperSamples"), superSamples);
-	glUniform2f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
-	
+	glUniform1i(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uColorTex"), 0);
+	glUniform1f(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uGammaCorrection"), gammaCorrection);
+	glUniform1f(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uNumSuperSamples"), superSamples);
+	glUniform2f(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
 
 	fullscreenQuad->Draw();
-#pragma endregion</Post Process Part>
 
 	//NCLDEBUG - Text Elements (aliased)
 	NCLDebug::_RenderDebugClipSpace();
@@ -382,17 +366,7 @@ void GraphicsPipeline::BuildAndSortRenderLists()
 	std::sort(
 		renderlistTransparent.begin(),
 		renderlistTransparent.end(),
-		[](const RenderNodePair& a, const RenderNodePair& b)
-	{
-		return a.second > b.second;
-	}
-	);
-
-	//Sort opaque objects back to front
-	std::sort(
-		renderlistOpaque.begin(),
-		renderlistOpaque.end(),
-		[](const RenderNodePair& a, const RenderNodePair& b)
+		[](const TransparentPair& a, const TransparentPair& b)
 	{
 		return a.second > b.second;
 	}
@@ -401,18 +375,19 @@ void GraphicsPipeline::BuildAndSortRenderLists()
 
 void GraphicsPipeline::RecursiveAddToRenderLists(RenderNode* node)
 {
-	if (frameFrustum.InsideFrustum(*node))
+	//If the node is renderable, add it to either a opaque or transparent render list
+	if (node->IsRenderable())
 	{
-		//If the node is renderable, add it to either a opaque or transparent render list
-		if (node->IsRenderable())
+		if (node->GetColor().w > 0.999f)
+		{
+			renderlistOpaque.push_back(node);
+		}
+		else
 		{
 			Vector3 diff = node->GetWorldTransform().GetPositionVector() - camera->GetPosition();
 			float camDistSq = Vector3::Dot(diff, diff); //Same as doing .Length() without the sqrt
 
-			if (node->GetColor().w > 0.999f)
-				renderlistOpaque.push_back({ node, camDistSq });
-			else
-				renderlistTransparent.push_back({ node, camDistSq });
+			renderlistTransparent.push_back({ node, camDistSq });
 		}
 	}
 
@@ -423,33 +398,32 @@ void GraphicsPipeline::RecursiveAddToRenderLists(RenderNode* node)
 
 void GraphicsPipeline::RenderAllObjects(bool isShadowPass, std::function<void(RenderNode*)> perObjectFunc)
 {
-	// sort render opaque order
-	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
+	for (RenderNode* node : renderlistOpaque)
 	{
-		perObjectFunc((*i).first);
-		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
+		perObjectFunc(node);
+		if (node->IsCulling()) { glEnable(GL_CULL_FACE); }
 		else { glDisable(GL_CULL_FACE); }
-		(*i).first->DrawOpenGL(isShadowPass);
+		node->DrawOpenGL(isShadowPass);
 	}
 
 	if (isShadowPass)
 	{
-		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
+		for (TransparentPair& node : renderlistTransparent)
 		{
-			perObjectFunc((*i).first);
-			(*i).first->DrawOpenGL(isShadowPass);
+			perObjectFunc(node.first);
+			node.first->DrawOpenGL(isShadowPass);
 		}
 	}
 	else
 	{
-		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
+		for (TransparentPair& node : renderlistTransparent)
 		{
-			perObjectFunc((*i).first);
+			perObjectFunc(node.first);
 			glCullFace(GL_FRONT);
-			(*i).first->DrawOpenGL(isShadowPass);
+			node.first->DrawOpenGL(isShadowPass);
 
 			glCullFace(GL_BACK);
-			(*i).first->DrawOpenGL(isShadowPass);
+			node.first->DrawOpenGL(isShadowPass);
 		}
 	}
 }

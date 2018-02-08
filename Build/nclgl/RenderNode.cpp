@@ -1,6 +1,16 @@
 #include "RenderNode.h"
 #include "../ncltech/TextureManager.h"
 
+enum SHADERTYPE
+{
+	Present_To_Window = 0,
+	Shadow = 1,
+	Forward_Lighting = 2,
+
+	Shader_Number,
+};
+
+
 RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
 	awake				= true;
 	this->mesh			= mesh;
@@ -85,7 +95,7 @@ bool RenderNode::RemoveChild(RenderNode* s,bool recursive) {
 void RenderNode::AutoSetBoundingRadius()
 {
 	float farrestDistance = 0;
-	for (int i = 0; i < mesh->numVertices; i++)
+	for (uint i = 0; i < mesh->numVertices; i++)
 	{
 		float length = mesh->vertices[i].Length();
 		if (farrestDistance < length)
@@ -101,7 +111,7 @@ void RenderNode::DrawOpenGL(bool isShadowPass)
 
 	GraphicsPipeline* graphicsPipeline = GraphicsPipeline::Instance();
 	TextureManager* textureManager = TextureManager::Instance();
-	Shader* shader = graphicsPipeline->GetAllShaders()[SHADERTYPE::Forward_Lighting];
+	Shader* shader = graphicsPipeline->GetShaderForwardLighting();
 
 	glUseProgram(shader->GetProgram()); 
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "uProjViewMtx"), 1, GL_FALSE, (float*)&graphicsPipeline->GetProjViewMtx());

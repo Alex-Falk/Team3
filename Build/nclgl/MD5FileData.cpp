@@ -250,7 +250,7 @@ void	MD5FileData::LoadShaderProxy(std::string filename, MD5SubMesh &m) {
 	//the file extension, and replace it with .proxy, the file extension I chose
 	//to keep our 'pretend' texture filenames in.
 	filename = filename.substr(1,filename.size()-2);
-	int at = filename.find_last_of('/');
+	int at = (int)filename.find_last_of('/');
 
 	std::ifstream f("../../Meshes/" + filename.substr(at+1) + ".proxy",std::ios::in);
 

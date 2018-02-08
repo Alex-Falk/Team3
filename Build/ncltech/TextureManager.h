@@ -3,12 +3,12 @@
 #include <map>
 
 
-//enum TEXTURETYPE
-//{
-//	Checker_Board = 0,
-//
-//	Texture_Number,
-//};
+enum TEXTURETYPE
+{
+	Checker_Board = 0,
+
+	Texture_Number,
+};
 
 class TextureManager : public TSingleton<TextureManager>
 {
