@@ -3,6 +3,7 @@
 #include <fmod_errors.h>
 #include <iostream>
 #include "GamePlay.h"
+#include "../nclgl/Vector3.h"
 
 //Michael Davis - 07/02/2018
 
@@ -49,7 +50,7 @@ public:
 	void SetVolume(float vol, int index); //sets the volume of an individual sound (overridden if group volume is called after)
 
 	//call each frame to update the audiosystem and pass in camera parameters
-	void Update(FMOD_VECTOR cameraPos, FMOD_VECTOR cameraForward, FMOD_VECTOR cameraUp, float dt);
+	void Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 cameraUp, float dt);
 
 	//temp update
 	void Update();
@@ -86,4 +87,7 @@ private:
 	FMOD::ChannelGroup * gameSoundsGroup;
 	FMOD::ChannelGroup * musicGroup;
 	FMOD::ChannelGroup * masterGroup;
+
+	//converts vec3 to FMODVec
+	friend FMOD_VECTOR toFMODVector(Vector3 v);
 };
