@@ -6,7 +6,7 @@
 
 #include "SimpleGamePlay.h"
 #include "GameInput.h"
-
+#include "Game.h"
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -216,6 +216,7 @@ void HandleKeyboardInputs()
 // Program Entry Point
 int main()
 {
+	Game::Instance();
 	//Initialize our Window, Physics, Scenes etc
 	Initialize();
 	GraphicsPipeline::Instance()->SetVsyncEnabled(false);
