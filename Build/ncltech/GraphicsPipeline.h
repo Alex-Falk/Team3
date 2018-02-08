@@ -3,7 +3,7 @@
 #include <nclgl\TSingleton.h>
 #include <nclgl\Camera.h>
 #include <nclgl\RenderNode.h>
-
+#include <nclgl\Frustum.h>
 //---------------------------
 //------ Base Renderer ------
 //---------------------------
@@ -71,8 +71,25 @@
 #define PROJ_NEAR     0.1f			//Nearest object @ 10cm
 #define PROJ_FOV      45.0f			//45 degree field of view
 
-typedef std::pair<RenderNode*, float> TransparentPair;
+#define DEBUGDRAW_FLAGS_BOUNDING				0x20
 
+typedef std::pair<RenderNode*, float> RenderNodePair;
+
+enum SHADERTYPE
+{
+	Present_To_Window	= 0,
+	Shadow				= 1,
+	Forward_Lighting	= 2,
+
+	Shader_Number,
+};
+
+enum TEXTURETYPE
+{
+	Checker_Board		= 0,
+
+	Texture_Number,
+};
 
 class GraphicsPipeline : public TSingleton<GraphicsPipeline>, OGLRenderer
 {
@@ -87,15 +104,15 @@ public:
 	void AddRenderNode(RenderNode* node);
 	void RemoveRenderNode(RenderNode* node);
 
-
-
+	inline uint GetDebugDrawFlags() const { return debugDrawFlags; }
+	inline void SetDebugDrawFlags(uint flags) { debugDrawFlags = flags; }
+	//Debug draw all bounding radius
+	void DebugRender();
 
 	//Called by main game loop
 	// - Naming convention from oglrenderer
 	virtual void UpdateScene(float dt) override;
 	virtual void RenderScene() override;
-
-
 
 	//Utils
 	inline Camera* GetCamera() { return camera; }
@@ -104,7 +121,9 @@ public:
 
 	inline Matrix4& GetProjMtx() { return projMatrix; }
 	inline Matrix4& GetViewMtx() { return viewMatrix; }
+	inline Matrix4& GetProjViewMtx() { return projViewMatrix; }
 
+	inline float*   GetNormalizedFarPlanes() { return normalizedFarPlanes; }
 	inline Matrix4& GetShadowViewMtx() { return shadowViewMtx; }
 	inline Matrix4* GetShadowProjMatrices() { return shadowProj; }
 	inline Matrix4* GetShadowProjViewMatrices() { return shadowProjView; }
@@ -113,6 +132,8 @@ public:
 	inline Vector3& GetLightDirection() { return lightDirection; }
 	inline float& GetSpecularFactor() { return specularFactor; }
 	inline GLuint& GetShadowTex() { return shadowTex; }
+
+	inline Shader** GetAllShaders() { return shaders; }
 
 protected:
 	GraphicsPipeline();
@@ -131,40 +152,41 @@ protected:
 	Matrix4 projViewMatrix;
 
 	//Render FBO
-	GLuint				screenTexWidth, screenTexHeight;
-	GLuint				screenFBO;
-	GLuint				screenTexColor;
-	GLuint				screenTexDepth;
+	GLuint		screenTexWidth, screenTexHeight;
+	GLuint		screenFBO;
+	GLuint		screenTexColor;
+	GLuint		screenTexDepth;
 
 	//Shaders
-	Shader* shaderPresentToWindow;
-	Shader* shaderShadow;
-	Shader* shaderForwardLighting;
+	Shader**	shaders;
 
 	//Render Params
-	Vector3	ambientColor;
-	float	gammaCorrection;	//Monitor Default: 1.0 / 2.2 (Where 2.2 here is the gamma of the monitor which we need to invert before doing lighting calculations)		
-	Vector3	lightDirection;
-	Vector3 backgroundColor;
-	float	specularFactor;
-	uint	numSuperSamples;
+	Vector3		ambientColor;
+	float		gammaCorrection;	//Monitor Default: 1.0 / 2.2 (Where 2.2 here is the gamma of the monitor which we need to invert before doing lighting calculations)		
+	Vector3		lightDirection;
+	Vector3		backgroundColor;
+	float		specularFactor;
+	uint		numSuperSamples;
 
 
 	//Shadowmaps
-	float	sceneBoundingRadius; ///Approx based on scene contents
-	GLuint	shadowFBO;
-	GLuint	shadowTex;
-	Matrix4	shadowProj[SHADOWMAP_NUM];
-	Matrix4	shadowViewMtx;
-	Matrix4	shadowProjView[SHADOWMAP_NUM];
-	float   normalizedFarPlanes[SHADOWMAP_NUM - 1];
+	float		sceneBoundingRadius; ///Approx based on scene contents
+	GLuint		shadowFBO;
+	GLuint		shadowTex;
+	Matrix4		shadowProj[SHADOWMAP_NUM];
+	Matrix4		shadowViewMtx;
+	Matrix4		shadowProjView[SHADOWMAP_NUM];
+	float		normalizedFarPlanes[SHADOWMAP_NUM - 1];
 
 	//Common
-	Mesh* fullscreenQuad;
-	Camera* camera;
-	bool isVsyncEnabled;
+	uint		debugDrawFlags;
+	Frustum		frameFrustum;
+	Mesh*		fullscreenQuad;
+	Camera*		camera;
+	bool		isVsyncEnabled;
+
 	std::vector<RenderNode*> allNodes;
 
-	std::vector<RenderNode*> renderlistOpaque;
-	std::vector<TransparentPair> renderlistTransparent;	//Also stores cameraDist in the second argument for sorting purposes
+	std::vector<RenderNodePair> renderlistOpaque;
+	std::vector<RenderNodePair> renderlistTransparent;	//Also stores cameraDist in the second argument for sorting purposes
 };
