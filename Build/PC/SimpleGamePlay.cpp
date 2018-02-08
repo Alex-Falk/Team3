@@ -23,11 +23,9 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(player->GetGameObject());
 
-	pickup = new WeaponPickup(Vector3(0.0f, 3.0f, 0.0f), PAINT_ROCKET, 3.0f);
-	
-	this->AddGameObject(pickup->GetObj());
+	pickup = new Pickup(Vector3(0, 3, 0), SPEED_BOOST);
 
-	this->AddGameObject(cube);
+	this->AddGameObject(pickup->GetObj());
 
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
@@ -45,8 +43,10 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	player->OnPlayerUpdate(dt);
 
-	pickup->Update(dt);
-
+	if (pickup)
+	{
+		pickup->Update(dt);
+	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }
