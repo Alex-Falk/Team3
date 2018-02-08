@@ -8,6 +8,7 @@
 #include <ncltech\CommonUtils.h>
 #include "GamePlay.h"
 #include "Player.h"
+#include <ncltech\TextureManager.h> 
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
@@ -24,6 +25,11 @@ private:
 public:
 	SimpleGamePlay(const std::string& friendly_name)
 		: Scene(friendly_name) {}
+
+	~SimpleGamePlay()
+	{
+		TextureManager::Instance()->RemoteAllTexture();
+	}
 
 	virtual void OnInitializeScene() override;
 	

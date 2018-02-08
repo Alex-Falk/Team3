@@ -1,6 +1,10 @@
 #include "SimpleGamePlay.h"
 
 void SimpleGamePlay::OnInitializeScene() {
+
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+		return;
+
 	//Create Ground (..everybody loves finding some common ground)
 	GameObject* ground = CommonUtils::BuildCuboidObject(
 		"Ground",
