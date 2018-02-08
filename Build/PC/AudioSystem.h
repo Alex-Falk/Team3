@@ -21,7 +21,7 @@ public:
 	void Create3DStream(int index, const char* pFile, float minDist, float maxDist);
 
 	//plays a certain sound, works for both sounds and streams
-	void PlaySound(int index, bool loop = false);
+	void PlaySound(int index, bool loop = false, FMOD_VECTOR position = { 0.f, 0.f, 0.f }, FMOD_VECTOR velocity = {0.f, 0.f, 0.f});
 
 	//memory management, will delete the sound
 	void ReleaseSound(int index);
@@ -49,7 +49,7 @@ public:
 	void SetVolume(float vol, int index); //sets the volume of an individual sound (overridden if group volume is called after)
 
 	//call each frame to update the audiosystem and pass in camera parameters
-	void Update(FMOD_VECTOR cameraPos, FMOD_VECTOR cameraForward, FMOD_VECTOR cameraUp, FMOD_VECTOR cameraVelocity);
+	void Update(FMOD_VECTOR cameraPos, FMOD_VECTOR cameraForward, FMOD_VECTOR cameraUp, float dt);
 
 	//temp update
 	void Update();
@@ -72,8 +72,9 @@ private:
 
 	//camera variables for 3d sounds
 	FMOD_VECTOR listenerPos;
-	FMOD_VECTOR listenerForward; //normalised
-	FMOD_VECTOR listenerUp; //normalised 
+	FMOD_VECTOR listenerLastPos;
+	FMOD_VECTOR listenerForward; //unit vector and perpendicular to the up vector
+	FMOD_VECTOR listenerUp; //unit vector and perpendicular to the forward vector
 	FMOD_VECTOR listenerVelocity;
 
 	//volume levels, can be controlled in options menu

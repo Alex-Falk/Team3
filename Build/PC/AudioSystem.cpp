@@ -1,5 +1,7 @@
 #include "AudioSystem.h"
 
+//Michael Davis 08/02/2018
+
 //constructor, initialises all variables automatically
 AudioSystem::AudioSystem() {
 	FMOD::System_Create(&audioSystem);
@@ -10,10 +12,18 @@ AudioSystem::AudioSystem() {
 		std::cout << "No Audio Driver Detected!" << std::endl;
 	}
 
+	//TODO implement listener properly
+	listenerPos = { 0.0f,0.0f,0.0f };
+	listenerLastPos = { 0.0f,0.0f,0.0f };
+	listenerForward = { 0.0f,0.0f, 1.f };
+	listenerUp = { 0.0f,1.0f,0.0f };
+	listenerVelocity = { 0.0f,0.0f,0.0f };
+
 	masterVolume = 1.0f;
 	gameSoundsVolume = 1.0f;
 	musicVolume = 1.0f;
 
+	//TODO determine if z axis should be inverted with OGL coord system
 	audioSystem->init(numSounds, FMOD_INIT_NORMAL, NULL);
 	audioSystem->set3DSettings(1.0f, 1.0f, 1.0f);
 
@@ -37,6 +47,7 @@ AudioSystem::~AudioSystem() {
 }
 
 //adds a sound to the system. For smaller files
+//TODO error checking for file path
 void AudioSystem::Create2DSound(int index, const char* pFile) {
 	if (sounds[index] == NULL) {
 		audioSystem->createSound(pFile, FMOD_2D, 0, &sounds[index]);
@@ -44,6 +55,20 @@ void AudioSystem::Create2DSound(int index, const char* pFile) {
 	else {
 		sounds[index]->release();
 		audioSystem->createSound(pFile, FMOD_2D, 0, &sounds[index]);
+	}
+}
+
+//3D sounds, attenuation is controlled with minDist and maxDist.
+void AudioSystem::Create3DSound(int index, const char * pFile, float minDist, float maxDist) {
+	if (sounds[index] == NULL) {
+		//TODO look into attenuation a bit more and the 3D sound types
+		audioSystem->createSound(pFile, FMOD_3D_LINEARROLLOFF, 0, &sounds[index]);
+		sounds[index]->set3DMinMaxDistance(minDist, maxDist);
+	}
+	else {
+		sounds[index]->release();
+		audioSystem->createSound(pFile, FMOD_3D_LINEARROLLOFF, 0, &sounds[index]);
+		sounds[index]->set3DMinMaxDistance(minDist, maxDist);
 	}
 }
 
@@ -58,8 +83,22 @@ void AudioSystem::Create2DStream(int index, const char* pFile) {
 	}
 }
 
+//3D streams. May be a large file that needs to be streamed constantly in 3D space. Works the same
+//as 3D sounds
+void AudioSystem::Create3DStream(int index, const char* pFile, float minDist, float maxDist) {
+	if (sounds[index] == NULL) {
+		audioSystem->createStream(pFile, FMOD_3D, 0, &sounds[index]);
+		sounds[index]->set3DMinMaxDistance(minDist, maxDist);
+	}
+	else {
+		sounds[index]->release();
+		audioSystem->createStream(pFile, FMOD_3D, 0, &sounds[index]);
+		sounds[index]->set3DMinMaxDistance(minDist, maxDist);
+	}
+}
+
 //plays a certain sound, works for both sounds and streams
-void AudioSystem::PlaySound(int index, bool loop) {
+void AudioSystem::PlaySound(int index, bool loop, FMOD_VECTOR position, FMOD_VECTOR velocity) {
 	if (!loop)
 		sounds[index]->setMode(FMOD_LOOP_OFF);
 	else
@@ -71,8 +110,12 @@ void AudioSystem::PlaySound(int index, bool loop) {
 	audioSystem->playSound(sounds[index], 0, false, &channels[index]);
 	if (index <= GAME_MUSIC) {
 		channels[index]->setChannelGroup(musicGroup);
+		channels[index]->set3DAttributes(&position, &velocity);
 	}
-	else channels[index]->setChannelGroup(gameSoundsGroup);
+	else {
+		channels[index]->setChannelGroup(gameSoundsGroup);
+		channels[index]->set3DAttributes(&position, &velocity);
+	}
 }
 
 //memory management, will delete the sound
@@ -82,15 +125,21 @@ void AudioSystem::ReleaseSound(int index) {
 
 //temp update
 void AudioSystem::Update() {
+	audioSystem->set3DListenerAttributes(0, &listenerPos, &listenerVelocity, &listenerForward, &listenerUp);
 	audioSystem->update();
 }
 
 //call each frame to update the audiosystem and pass in camera parameters
-void AudioSystem::Update(FMOD_VECTOR cameraPos, FMOD_VECTOR cameraForward, FMOD_VECTOR cameraUp, FMOD_VECTOR cameraVelocity) {
+void AudioSystem::Update(FMOD_VECTOR cameraPos, FMOD_VECTOR cameraForward, FMOD_VECTOR cameraUp, float dt) {
+	listenerLastPos = listenerPos;
 	listenerPos = cameraPos;
 	listenerForward = cameraForward;
 	listenerUp = cameraUp;
-	listenerVelocity = cameraVelocity;
+
+	listenerVelocity.x = (listenerPos.x - listenerLastPos.x) * (1000 / dt);
+	listenerVelocity.y = (listenerPos.y - listenerLastPos.y) * (1000 / dt);
+	listenerVelocity.z = (listenerPos.z - listenerLastPos.z) * (1000 / dt);
+
 	audioSystem->set3DListenerAttributes(0, &listenerPos, &listenerVelocity, &listenerForward, &listenerUp);
 	audioSystem->update();
 }
@@ -164,10 +213,12 @@ void AudioSystem::UnpauseMusic() {
 	}
 }
 
+//mutes all sounds, continue playing
 void AudioSystem::MuteAllSounds() {
 	masterGroup->setMute(1);
 }
 
+//unmutes all sounds
 void AudioSystem::UnmuteAllSounds() {
 	masterGroup->setMute(0);
 }
