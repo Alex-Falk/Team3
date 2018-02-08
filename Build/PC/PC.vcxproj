@@ -167,12 +167,17 @@
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\AudioFiles\singing.wav" />
+    <Media Include="..\AudioFiles\wave.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
