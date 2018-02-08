@@ -1,6 +1,7 @@
 #pragma once
 #include <nclgl\common.h>
 #include <PC\Player.h>
+
 enum PacketType {
 	GAME_START,
 	PLAYER_POS,
@@ -26,15 +27,28 @@ struct IP {
 
 // Setters
 struct Placeholder_Game {
+
+	// Setting player stuff
 	void SetScore(uint id, int score);
 	void SetAmmo(uint id, float ammo);
 	void SetSize(uint id, float size);
-	void LoadLevel(uint levelID);
 	void SetAcceleration(uint id, Vector3 a);
 	void SetPosition(uint id, Vector3 p);
+	
+	void SetMyId(uint id);
 
+	// Getters
+	uint GetMyId();
 	Player * GetPlayer(uint id);
+	Player * GetMyPlayer();
 	int GetMapIndex();
+
+	// General Game Functions
+	void InitializeMatch();
+	void LoadLevel(uint levelID);
+	void StartMatch();
+	void EndMatch();
+
 
 };
 

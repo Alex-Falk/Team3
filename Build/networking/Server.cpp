@@ -58,8 +58,8 @@ int Server::ServerLoop()
 
 
 
-// message in: "enum: linx liny linz; angx angy angz"
-void Server::RecievePlayerAcceleration(string data, int id)
+// message in: "enum: linx liny linz"
+void Server::RecievePlayerAcceleration(string data, uint id)
 {
 	size_t start = data.find_first_of(':');
 	size_t mid = data.find_first_of(';');
@@ -67,8 +67,17 @@ void Server::RecievePlayerAcceleration(string data, int id)
 	Vector3 linAcc = InterpretStringVector(data.substr(start, mid));
 	Vector3 angAcc = InterpretStringVector(data.substr(mid + 2));
 
-	// Apply forces accordingly
+	game->GetPlayer(id)->Physics()->SetAcceleration(linAcc);
 
+}
+
+void Server::RecievePlayerPosition(string data, uint id)
+{
+	size_t start = data.find_first_of(':');
+
+	Vector3 pos = InterpretStringVector(data.substr(start));
+
+	game->GetPlayer(id)->Physics()->SetPosition(pos);
 }
 
 void Server::SendAccelerations(int id)
