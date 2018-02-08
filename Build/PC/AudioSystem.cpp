@@ -12,7 +12,6 @@ AudioSystem::AudioSystem() {
 		std::cout << "No Audio Driver Detected!" << std::endl;
 	}
 
-	//TODO implement listener properly
 	listenerPos = { 0.0f,0.0f,0.0f };
 	listenerLastPos = { 0.0f,0.0f,0.0f };
 	listenerForward = { 0.0f,0.0f, 1.f };
@@ -23,8 +22,7 @@ AudioSystem::AudioSystem() {
 	gameSoundsVolume = 1.0f;
 	musicVolume = 1.0f;
 
-	//TODO determine if z axis should be inverted with OGL coord system
-	audioSystem->init(numSounds, FMOD_INIT_NORMAL, NULL);
+	audioSystem->init(numSounds, FMOD_INIT_3D_RIGHTHANDED, NULL);
 	audioSystem->set3DSettings(1.0f, 1.0f, 1.0f);
 
 	audioSystem->createChannelGroup("GameSoundsGroup", &gameSoundsGroup);
@@ -129,16 +127,21 @@ void AudioSystem::Update() {
 	audioSystem->update();
 }
 
-//call each frame to update the audiosystem and pass in camera parameters
-void AudioSystem::Update(FMOD_VECTOR cameraPos, FMOD_VECTOR cameraForward, FMOD_VECTOR cameraUp, float dt) {
+/*call each frame to update the audiosystem and pass in camera parameters
+forward
+The forwards orientation of the listener.This vector must be of unit length and perpendicular to the up vector.You can specify 0 or NULL to not update the forwards orientation of the listener.
+up
+The upwards orientation of the listener.This vector must be of unit length and perpendicular to the forwards vector.You can specify 0 or NULL to not update the upwards orientation of the listener.
+*/
+void AudioSystem::Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 cameraUp, float dt) {
 	listenerLastPos = listenerPos;
-	listenerPos = cameraPos;
-	listenerForward = cameraForward;
-	listenerUp = cameraUp;
+	listenerPos = toFMODVector(cameraPos);
+	listenerForward = toFMODVector(cameraForward);
+	listenerUp = toFMODVector(cameraUp);
 
-	listenerVelocity.x = (listenerPos.x - listenerLastPos.x) * (1000 / dt);
-	listenerVelocity.y = (listenerPos.y - listenerLastPos.y) * (1000 / dt);
-	listenerVelocity.z = (listenerPos.z - listenerLastPos.z) * (1000 / dt);
+	listenerVelocity.x = (listenerPos.x - listenerLastPos.x) * (dt / 1000);
+	listenerVelocity.y = (listenerPos.y - listenerLastPos.y) * (dt / 1000);
+	listenerVelocity.z = (listenerPos.z - listenerLastPos.z) * (dt / 1000);
 
 	audioSystem->set3DListenerAttributes(0, &listenerPos, &listenerVelocity, &listenerForward, &listenerUp);
 	audioSystem->update();
@@ -221,4 +224,13 @@ void AudioSystem::MuteAllSounds() {
 //unmutes all sounds
 void AudioSystem::UnmuteAllSounds() {
 	masterGroup->setMute(0);
+}
+
+//converts vec3 to FMODVec
+FMOD_VECTOR toFMODVector(Vector3 v) {
+	FMOD_VECTOR fm;
+	fm.x = v.x;
+	fm.y = v.y;
+	fm.z = v.z;
+	return fm;
 }

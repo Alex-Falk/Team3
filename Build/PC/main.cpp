@@ -16,7 +16,7 @@ const Vector4 status_colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 const Vector4 status_colour_header = Vector4(0.8f, 0.9f, 1.0f, 1.0f);
 
 bool show_perf_metrics = false;
-PerfTimer timer_total, timer_physics, timer_update, timer_render;
+PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio;
 uint shadowCycleKey = 4;
 
 
@@ -41,8 +41,8 @@ void Quit(bool error = false, const std::string &reason = "") {
 
 //initialise all audio files
 void InitialiseAudioFiles() {
-	a.Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f,5.0f);
-	a.Create3DSound(GAME_MUSIC, "../AudioFiles/wave.mp3", 0.5f, 5.0f);
+	a.Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
+	a.Create3DSound(GAME_MUSIC, "../AudioFiles/wave.mp3", 0.5f, 30.0f);
 }
 
 // Program Initialise
@@ -94,6 +94,7 @@ void PrintStatusEntries()
 		timer_physics.PrintOutputToStatusEntry(status_colour, "          Physics Update :");
 		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
 		timer_render.PrintOutputToStatusEntry(status_colour, "          Render Scene   :");
+		timer_audio.PrintOutputToStatusEntry(status_colour, "         Audio Update   :");
 	}
 
 	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
@@ -161,7 +162,7 @@ void HandleKeyboardInputs()
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9)) {
-		a.PlaySound(MENU_MUSIC, false, {-4.0f, 0.0f, 0.0f});
+		a.PlaySound(MENU_MUSIC, false, {0.0f, 10.0f, 15.0f});
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
@@ -237,6 +238,7 @@ int main()
 		timer_physics.UpdateRealElapsedTime(dt);
 		timer_update.UpdateRealElapsedTime(dt);
 		timer_render.UpdateRealElapsedTime(dt);
+		timer_audio.UpdateRealElapsedTime(dt);
 
 		//Print Status Entries
 		PrintStatusEntries();
@@ -270,14 +272,9 @@ int main()
 		}
 		timer_render.EndTimingSection();
 
-		//update the audiosystem each frame
-		//need to add a perfTimer
-		//TODO update with listener position
-		a.Update();
-		
-		//a.Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), { 0,0,1.0f }, 0, dt);	
-		//cout << GraphicsPipeline::Instance()->GetCamera()->GetViewDirection() << endl;
-		//cout << GraphicsPipeline::Instance()->GetCamera()->GetPosition() << endl;
+		timer_audio.BeginTimingSection();
+		a.Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);	
+		timer_audio.EndTimingSection();
 
 		//Finish Timing
 		timer_total.EndTimingSection();		
