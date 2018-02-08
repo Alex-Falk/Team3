@@ -110,23 +110,23 @@ void Player::Input(float dt) {
 	if (!inAir) {
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) { 		//Front
 			if (force.z > 0)force.z /= 2;
-			force =  Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * speed;
-			velocity += Matrix3::Rotation(yaw, Vector3(0, 2, 0)) * Vector3(-2, 0, 0) *dt* speed;
+			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -10) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-2, 0, 0) *dt* speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {		//Back
 			if (force.z < 0)force.z /= 2;
-			force = Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, 10) * speed;
-			velocity += Matrix3::Rotation(yaw, Vector3(0, 2, 0)) * Vector3(2, 0, 0)*dt* speed;
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 10) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(2, 0, 0)*dt* speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {		//Left
 			if (force.x > 0)force.x /= 2;
-			force = Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(-10, 0, 0) * speed;
-			velocity += Matrix3::Rotation(yaw, Vector3(0, 2, 0)) * Vector3(0, 0, 2)*dt* speed;
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-10, 0, 0) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 2)*dt* speed;
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {		//Right
 			if (force.x < 0)force.x /= 2;
-			force = Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(10, 0, 0) * speed;
-			velocity += Matrix3::Rotation(yaw, Vector3(0, 2, 0)) * Vector3(0, 0, -2)*dt* speed;
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(10, 0, 0) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -2)*dt* speed;
 		}
 		force.y = 0;
 		if (force != Vector3(0, 0, 0)) {
