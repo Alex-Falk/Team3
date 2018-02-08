@@ -3,14 +3,18 @@
 #include <PC\Player.h>
 
 enum PacketType {
-	GAME_START,
-	PLAYER_POS,
-	PLAYER_ACCELERATION,
-	PLAYER_SIZES,
-	SCORES,
-	MAP_INDEX,
-	MAP_UPDATE,
-	GAME_END
+	GAME_START,				// Informs clients the game has started
+	PLAYER_POS,				// Server->Client: Broadcast positions.		Client->Server: Inform on Update
+	PLAYER_ACCELERATION,	// Server->Client: Broadcast.				Client->Server:			"
+	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
+	PLAYER_SPRAY,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
+	PLAYER_PISTOL,			// Server->Client:			"				Client->Server:			"
+	PLAYER_AUTOMATIC,		// Server->Client:			"				Client->Server:			"
+	PLAYER_ROCKET,			// Server->Client:			"				Client->Server:			"
+	SCORES,					// Server->Client: Broadcast Scores
+	MAP_INDEX,				// Server->Client: Boradcast Map to load
+	MAP_UPDATE,				//
+	GAME_END				// Server->Client: Informs clients game has ended
 };
 
 struct IP {
