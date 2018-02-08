@@ -39,9 +39,10 @@ void Quit(bool error = false, const std::string &reason = "") {
 	}
 }
 
+//initialise all audio files
 void InitialiseAudioFiles() {
-	a.Create2DStream(MENU_MUSIC, "../AudioFiles/singing.wav");
-	a.Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+	a.Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f,5.0f);
+	a.Create3DSound(GAME_MUSIC, "../AudioFiles/wave.mp3", 0.5f, 5.0f);
 }
 
 // Program Initialise
@@ -154,14 +155,13 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
 		show_perf_metrics = !show_perf_metrics;
 
+	//audio test functionality
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
-		a.PlaySound(GAME_MUSIC, true);
-
-		
+		a.PlaySound(GAME_MUSIC, false, { 4.0f, 0.0f, 0.0f });
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9)) {
-		a.PlaySound(MENU_MUSIC, true);	
+		a.PlaySound(MENU_MUSIC, false, {-4.0f, 0.0f, 0.0f});
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
@@ -272,8 +272,12 @@ int main()
 
 		//update the audiosystem each frame
 		//need to add a perfTimer
+		//TODO update with listener position
 		a.Update();
 		
+		//a.Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), { 0,0,1.0f }, 0, dt);	
+		//cout << GraphicsPipeline::Instance()->GetCamera()->GetViewDirection() << endl;
+		//cout << GraphicsPipeline::Instance()->GetCamera()->GetPosition() << endl;
 
 		//Finish Timing
 		timer_total.EndTimingSection();		
