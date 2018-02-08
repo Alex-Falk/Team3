@@ -1,5 +1,4 @@
 #pragma once
-
 #include <enet\enet.h>
 #include <nclgl\GameTimer.h>
 #include <nclgl\Vector3.h>
@@ -8,8 +7,12 @@
 #include <PC\GamePlay.h>
 #include "NetworkCommon.h"
 
+using namespace std;
+
 class Server
 {
+protected:
+	Player * playerOne;
 public:
 
 	NetworkBase * server;
@@ -31,7 +34,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 
 	std::string VectorToString(Vector3 v);
-	std::string ScoresToString(placeholder_scores s);
+	//std::string ScoresToString(placeholder_scores s);
 
 	//--------------------------------------------------------------------------------------------//
 	// Sending / Broadcasting
@@ -49,7 +52,15 @@ public:
 	void SendMap();
 	void SendUpdatemap();
 
+	std::string GetPacketData(const ENetEvent & evnt)
+	{
+		std::string out;
+		for (int i = 0; i < evnt.packet->dataLength; ++i) {
+			out.push_back(evnt.packet->data[i]);
+		}
 
+		return out;
+	}
 	//--------------------------------------------------------------------------------------------//
 	// Recieving
 	//--------------------------------------------------------------------------------------------//
@@ -66,7 +77,5 @@ public:
 	// Players
 	// Scores
 	// World
-	placeholder_scores *	scores;
-	placeholder_world *		world;
 };
 

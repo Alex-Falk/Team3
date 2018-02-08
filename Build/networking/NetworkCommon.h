@@ -1,6 +1,6 @@
 #pragma once
+#include <nclgl\common.h>
 #include <PC\Player.h>
-
 enum PacketType {
 	GAME_START,
 	PLAYER_POS,
@@ -24,66 +24,34 @@ struct IP {
 // PLACEHOLDERS
 //--------------------------------------------------------------------------------------------//
 
-struct placeholder_scores {
-	unsigned short playerOne;
-	unsigned short playerTwo;
-	unsigned short playerThree;
-	unsigned short playerFour;
+// Setters
+struct Placeholder_Game {
+	void SetScore(uint id, int score);
+	void SetAmmo(uint id, float ammo);
+	void SetSize(uint id, float size);
+	void LoadLevel(uint levelID);
+	void SetAcceleration(uint id, Vector3 a);
+	void SetPosition(uint id, Vector3 p);
+
+	Player * GetPlayer(uint id);
+	int GetMapIndex();
+
 };
 
-class placeholder_world;
-
-void placeholder_LoadLevel(int levelID);
-
-Player * playerOne = new Player();
-Player * playerTwo;
-Player * playerThree;
-Player * playerFour;
+static Player * playerOne;
+static Placeholder_Game * game;
+static int placeholder_playerNum = 4;
 
 //--------------------------------------------------------------------------------------------//
 // Functions
 //--------------------------------------------------------------------------------------------//
 
 // Take a string in the format: "x.xx y.yy z.zz"
-Vector3 InterpretStringVector(string message) 
-{
-	Vector3 out;
+Vector3 InterpretStringVector(string message);
 
-	int xIdx = message.find_first_of(' ');
-	int yIdx = message.substr(xIdx).find_first_of(' ');
+string Vector3ToString(Vector3 in);
 
-	out.x = stof(message.substr(0, xIdx));
-	out.y = stof(message.substr(xIdx+1, yIdx));
-	out.z = stof(message.substr(yIdx+1));
+// Function to split a string into a vector of strings by a delimiter d
+vector<string> split_string(string s, char d);
 
-	return out;
-}
-
-string Vector3ToString(Vector3 in)
-{
-	string out = to_string(in.x) + " " + to_string(in.y) + " " + to_string(in.z);
-	return out;
-}
-
-std::string GetPacketData(const ENetEvent & evnt)
-{
-	std::string out;
-	for (int i = 0; i < evnt.packet->dataLength; ++i) {
-		out.push_back(evnt.packet->data[i]);
-	}
-
-	return out;
-}
-
-
-PacketType FindType(string data)
-{
-	int i = stoi(data.substr(0, data.find_first_of(':')));
-
-	return PacketType(i);
-}
-
-Player * Placeholder_GetPlayer(Colour id)
-{
-	return playerOne;
-}
+PacketType FindType(string data);

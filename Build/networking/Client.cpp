@@ -1,5 +1,4 @@
 #include "Client.h"
-#include <nclgl\NCLDebug.h>
 
 const Vector3 status_color3 = Vector3(1.0f, 0.6f, 0.6f);
 
@@ -36,7 +35,7 @@ void Client::UpdateClient(float dt)
 {
 	//Update Network
 	auto callback = std::bind(
-		&Client::ProcessNetworkEvent,	// Function to call
+		&Client::ProcessNetworkEvent,		// Function to call
 		this,								// Associated class instance
 		std::placeholders::_1);				// Where to place the first parameter
 	network.ServiceNetwork(dt, callback);
@@ -108,4 +107,63 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 	}
 
 	}
+}
+
+void Client::ReceivePositions(string data)
+{
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
+
+	uint playerID = stoi(data.substr(colonIdx+1, semicolonIdx));
+
+	string p = data.substr(semicolonIdx);
+	Vector3 pos = InterpretStringVector(p);
+
+	game->SetPosition(playerID, pos);
+}
+
+void Client::RecieveAcceleration(string data) 
+{
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
+
+	uint playerID = stoi(data.substr(colonIdx+1, semicolonIdx ));
+
+	string a = data.substr(semicolonIdx);
+	Vector3 acceleration = InterpretStringVector(a);
+
+	game->SetAcceleration(playerID, acceleration);
+}
+
+void Client::RecieveSizes(string data)
+{
+	string s = data.substr(data.find_first_of(':') + 1);
+	vector<string> splitData = split_string(s, ' ');
+
+	for (uint i = 0; i < placeholder_playerNum; ++i) 
+	{
+		game->SetSize(i, stof(splitData[i]));
+	}
+
+}
+
+void Client::RecieveScores(string data) 
+{
+
+	string s = data.substr(data.find_first_of(':') + 1);
+	vector<string> splitData = split_string(s, ' ');
+
+	for (uint i = 0; i < placeholder_playerNum; ++i)
+	{
+		game->SetScore(i, stoi(splitData[i]));
+	}
+	
+}
+
+void Client::RecieveMapIndex(string data)
+{
+	string s = data.substr(data.find_first_of(':') + 1);
+	uint mapIndex = stoi(s);
+
+	game->LoadLevel(mapIndex);
 }
