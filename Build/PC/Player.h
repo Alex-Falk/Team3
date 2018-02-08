@@ -42,6 +42,8 @@ public:
 	virtual Colour GetColour() { return colour; }
 	virtual void SetColour(Colour c) { colour = c; }
 
+	void ChangeSize(float newSize);
+
 	virtual	float GetSize() { return size; }
 	virtual void SetSize(float s) { size = s; }
 

@@ -1,3 +1,4 @@
+#include "WeaponPickup.h"
 #include "SimpleGamePlay.h"
 
 void SimpleGamePlay::OnInitializeScene() {
@@ -18,9 +19,13 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(player->GetGameObject());
 
+	pickup = new WeaponPickup(Vector3(0.0f, 3.0f, 0.0f), PAINT_ROCKET, 3.0f);
+	
+	this->AddGameObject(pickup->GetObj());
 
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+
 
 
 	Scene::OnInitializeScene();
@@ -34,7 +39,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	player->OnPlayerUpdate(dt);
 
-
+	pickup->Update(dt);
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
