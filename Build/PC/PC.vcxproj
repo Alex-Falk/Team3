@@ -169,6 +169,7 @@
     <ClInclude Include="WeaponPickup.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="main.cpp" />
@@ -177,6 +178,10 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\AudioFiles\singing.wav" />
+    <Media Include="..\AudioFiles\wave.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

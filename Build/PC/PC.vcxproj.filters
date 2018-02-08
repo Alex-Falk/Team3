@@ -101,5 +101,16 @@
     <ClCompile Include="WeaponPickup.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
+    <ClCompile Include="AudioSystem.cpp">
+      <Filter>Audio\Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\AudioFiles\wave.mp3">
+      <Filter>Audio\Resources</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Audio\Resources</Filter>
+    </Media>
   </ItemGroup>
 </Project>

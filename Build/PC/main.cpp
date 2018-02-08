@@ -42,8 +42,8 @@ void Quit(bool error = false, const std::string &reason = "") {
 }
 
 void InitialiseAudioFiles() {
-	a.createSound(MENU_MUSIC, "../AudioFiles/singing.wav");
-	a.createSound(GAME_MUSIC, "../AudioFiles/wave.mp3");
+	a.Create2DStream(MENU_MUSIC, "../AudioFiles/singing.wav");
+	a.Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
 }
 
 // Program Initialise
@@ -159,21 +159,21 @@ void HandleKeyboardInputs()
 		show_perf_metrics = !show_perf_metrics;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
-		a.playSound(GAME_MUSIC, false);
+		a.PlaySound(GAME_MUSIC, true);
 
 		
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9)) {
-		a.playSound(MENU_MUSIC, false);	
+		a.PlaySound(MENU_MUSIC, true);	
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
-		a.PauseMusic();
+		a.MuteAllSounds();
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
-		a.UnpauseMusic();
+		a.UnmuteAllSounds();
 	}
 
 
