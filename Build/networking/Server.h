@@ -67,7 +67,8 @@ public:
 
 	// Updates from players
 
-	void RecievePlayerAcceleration(string data, int id); // this will be a direction vector to apply a force in
+	void RecievePlayerAcceleration(string data, uint id); // this will be a direction vector to apply a force in
+	void RecievePlayerPosition(string data, uint id);
 
 	//--------------------------------------------------------------------------------------------//
 	// Stored Variables

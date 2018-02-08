@@ -11,6 +11,8 @@ Client::Client()
 		serverConnection = network.ConnectPeer(127, 0, 0, 1, 1234);
 		NCLDebug::Log("Network: Attempting to connect to server.");
 	}
+
+
 }
 
 Client::Client(IP ip) {
@@ -21,6 +23,8 @@ Client::Client(IP ip) {
 		serverConnection = network.ConnectPeer(ip.a, ip.b, ip.c, ip.d, ip.port);
 		NCLDebug::Log("Network: Attempting to connect to server.");
 	}
+
+	game->SetMyId(CLIENT_ID);
 }
 
 
@@ -62,6 +66,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		switch (type) {
 		case GAME_START:
 		{
+			game->InitializeMatch();
 			break;
 		}
 		case PLAYER_POS:
@@ -96,6 +101,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		case GAME_END:
 		{
+			game->EndMatch();
 			break;
 		}
 		}
@@ -166,4 +172,32 @@ void Client::RecieveMapIndex(string data)
 	uint mapIndex = stoi(s);
 
 	game->LoadLevel(mapIndex);
+}
+
+
+
+
+void Client::SendPosition()
+{
+	Vector3 pos = game->GetMyPlayer()->Physics()->GetPosition();
+
+	string data = Vector3ToString(pos);
+
+	ENetPacket* posPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	enet_peer_send(serverConnection, 0, posPacket);
+}
+
+void Client::SendVelocity()
+{
+
+}
+
+void Client::SendAcceleration()
+{
+	Vector3 acc = game->GetMyPlayer()->Physics()->GetAcceleration();
+
+	string data = Vector3ToString(acc);
+
+	ENetPacket* accPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	enet_peer_send(serverConnection, 0, accPacket);
 }
