@@ -92,7 +92,7 @@ Vector3 Camera::GetViewDirection() {
 }
 
 
-//michael davis, needed for audio
+//michael davis 08/02/2018, needed for audio
 Vector3 Camera::GetUpDirection() {
 	return Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Matrix4::Rotation(pitch, Vector3(1, 0, 0)) * Vector3(0, 1, 0);
 }
