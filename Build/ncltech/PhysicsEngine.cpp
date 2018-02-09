@@ -21,7 +21,7 @@ PhysicsEngine::PhysicsEngine()
 {
 	//Variables set here will /not/ be reset with each scene
 	isPaused = false;  
-	debugDrawFlags = DEBUGDRAW_FLAGS_MANIFOLD | DEBUGDRAW_FLAGS_CONSTRAINT;
+	debugDrawFlags = DEBUGDRAW_FLAGS_CONSTRAINT;
 	worldPartitioning = new FixedWorldPartition(limits.minVals, limits.maxVals, &physicsNodes);
 	SetDefaults();
 }
