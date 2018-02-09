@@ -1,6 +1,5 @@
 #pragma once
 
-
 enum Colour
 {
 	DEFAULT, RED, GREEN, BLUE, PINK
@@ -21,3 +20,9 @@ enum WeaponType
 {
 	PAINT_SPRAY, PAINT_PISTOL, AUTO_PAINT_LAUNCHER, PAINT_ROCKET, NUM_OF_WEAPONS
 };
+
+
+enum Audio {
+	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND
+};
+
