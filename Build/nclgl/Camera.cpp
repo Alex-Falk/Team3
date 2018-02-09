@@ -2,8 +2,19 @@
 
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\CollisionDetectionSAT.h>
+#include <ncltech\GameObject.h>
 
 #include "..\PC\GameInput.h"
+
+//the minimum time before the turning starts
+#define MIN_TURN_TIME 1.0
+//how slowly the tunrning speed increases (larger increases slower)
+#define TURN_INCREASE_RATE 30
+//minimum and maximum turn speed in degrees per second
+#define MIN_TURN_SPEED 0.03
+#define MAX_TURN_SPEED 0.25
+//how fast the player must be moving for the camera to rotate
+#define MIN_CENTER_SPEED_SQUARED 1.0
 
 //Added by phil
 //07/02/2018
@@ -76,16 +87,16 @@ void Camera::UpdateCamara(float dt) {
 	}
 
 	//NEW STUFF!!!
-
+	float x = center->GetLinearVelocity().x;
+	float z = center->GetLinearVelocity().z;
 	//There are a lot of magic numbers here these should be dealt with
-	if (timeSinceMouse > 0.7) {
+	if (timeSinceMouse > MIN_TURN_TIME && (x*x + z*z) > MIN_CENTER_SPEED_SQUARED) {
 		//the camera moves itself faster the longer you haven't moved it
-		float turnSpeed = timeSinceMouse / 30.0f;
-		turnSpeed = (float)max(turnSpeed, 0.03);
-		turnSpeed = (float)min(turnSpeed, 0.4);
+		float turnSpeed = (timeSinceMouse - MIN_TURN_TIME)/ TURN_INCREASE_RATE;
+		turnSpeed = max(turnSpeed, MIN_TURN_SPEED);
+		turnSpeed = min(turnSpeed, MAX_TURN_SPEED);
 		//get the direction of the x and y vector and have the yaw approach it
-		float x = center->GetLinearVelocity().x;
-		float z = center->GetLinearVelocity().z;
+
 
 		//both are now angles between 0 and 360
 		float angle = (180 * atan2(x, z)/PI) + 180.0f;
@@ -93,10 +104,10 @@ void Camera::UpdateCamara(float dt) {
 		int diff = (int)(angle - yaw);
 		diff = (diff + 180) % 360 - 180;
 
-		if (diff < 0) {
+		if (diff < -1) {
 			yaw -= turnSpeed;
 		}
-		if (diff > 0) {
+		if (diff > 1) {
 			yaw += turnSpeed;
 		}
 	}
@@ -154,6 +165,14 @@ void Camera::UpdateDistance() {
 		distance = maxDistance;
 		//cast a ray and check for collisions
 		for (PhysicsNode* node : PhysicsEngine::Instance()->physicsNodes) {
+			//check the item isn't something to be ignored by the spring arm
+			if (node->GetParent()) {
+				string name = node->GetParent()->GetName();
+				//ignore pickups
+				if (name == "Pickup") {
+					continue;
+				}
+			}
 			//if there is a collision move the camera to that point
 			//broadPhase
 			if ((arm.GetPosition() - node->GetPosition()).LengthSQ() < pow(arm.GetBoundingRadius() + node->GetBoundingRadius(), 2)) {
