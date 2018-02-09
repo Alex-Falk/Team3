@@ -63,6 +63,12 @@
     <ClInclude Include="Arena.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponPickup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -86,11 +92,14 @@
     <ClCompile Include="Arena.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WeaponPickup.cpp">
-      <Filter>GamePlay\Source</Filter>
-    </ClCompile>
     <ClCompile Include="AudioSystem.cpp">
       <Filter>Audio\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponPickup.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,5 +109,9 @@
     <Media Include="..\AudioFiles\singing.wav">
       <Filter>Audio\Resources</Filter>
     </Media>
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\wave.mp3" />
   </ItemGroup>
 </Project>
