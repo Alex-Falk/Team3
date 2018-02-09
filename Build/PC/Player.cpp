@@ -12,9 +12,6 @@
 
 Player::Player() : GameObject("Player")
 {
-	life = maxLife;
-	timer = 0;
-
 	playerGameObject = CommonUtils::BuildSphereObject("Player1",
 		Vector3(0.0f, 1.0f, 0.0f),
 		1.0f,									//Radius
@@ -53,7 +50,7 @@ Player::~Player()
 
 Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 {
-	colour = c;
+	col = c;
 	size = s;
 	
 	timer = 0;
@@ -67,39 +64,38 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 	jumpImpulse = 10.0f;
 	boostactiveTime = 15.0f;
 
-	Vector4 Colour;
 	canJump = true;
 
 	switch (c)
 	{
 	case DEFAULT:
 	{
-		Colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	case GREEN:
 	{
-		Colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+		colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
 	}
 	break;
 	case BLUE:
 	{
-		Colour = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+		colour = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 	break;
 	case RED:
 	{
-		Colour = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+		colour = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 	break;
 	case PINK
 		:
 	{
-		Colour = Vector4(1.0f, 0.41f, 0.7f, 1.0f);
+		colour = Vector4(1.0f, 0.41f, 0.7f, 1.0f);
 	}
 		break;
 	default:
 	{
-		Colour = Vector4(0.5, 0.5, 0.5, 1.0);
+		colour = Vector4(0.5, 0.5, 0.5, 1.0);
 	}
 		break;
 	}
@@ -111,10 +107,9 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 		1.0f,
 		true,									//Has Collision Shape
 		false,									//Dragable by the user
-		Colour);								//Colour
+		colour);								//Colour
 
 	playerGameObject->Physics()->SetElasticity(0);
-	playerGameObject->Physics()->SetFriction(0.5f);
 
 	playerGameObject->Physics()->SetOnCollisionCallback(
 		std::bind(&Player::PlayerCallbackFunction,
@@ -204,6 +199,10 @@ void Player::OnPlayerUpdate(float dt) {
 	
 	UpdatePickUp(dt);
 
+	if (weapon != NUM_OF_WEAPONS) {
+//		ManageWeapons();
+	}
+
 
 	if (life > minLife) 
 	{
@@ -236,8 +235,10 @@ void Player::PickedPickUp(PickupType pickType) {
 		jumpBoost = true;
 		jumpBoostTimer = boostactiveTime;
 		break;
-	case WEAPON:
-		weapon = true;
+	case WEAPON: {
+	//	this->weapon = 
+	}
+		weapon = PAINT_PISTOL;
 		break;
 	default:
 		break;
@@ -269,6 +270,11 @@ void Player::UpdatePickUp(float dt)
 			jumpBoost = false;
 		}
 	}
-
-
+	
 }
+
+//void Player::ManageWeapons() {
+//
+//	if (Input::GetInput()->GetInput(SHOOT)) {
+//
+//}

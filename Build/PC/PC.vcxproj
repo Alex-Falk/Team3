@@ -150,6 +150,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="WeaponPickup.h" />
+    <ClInclude Include="Weapons.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
