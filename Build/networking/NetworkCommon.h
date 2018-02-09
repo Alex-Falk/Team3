@@ -1,3 +1,7 @@
+//Alexander Falk
+// 05/02/2018
+// Common functions/enums used both by the server and the client
+
 #pragma once
 #include <nclgl\common.h>
 #include <PC\Player.h>

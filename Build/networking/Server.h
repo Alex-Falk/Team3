@@ -1,15 +1,13 @@
+//Alexander Falk
+// 05/02/2018
+// Handles Server functionality for the game. Includes Sending and Recieving updates to/from all clients
+
 #pragma once
-#include <enet\enet.h>
-#include <nclgl\GameTimer.h>
-#include <nclgl\Vector3.h>
-#include <nclgl\common.h>
-#include <ncltech\NetworkBase.h>
-#include <PC\GamePlay.h>
-#include "NetworkCommon.h"
+#include "User.h"
 
 using namespace std;
 
-class Server
+class Server : public User
 {
 protected:
 	Player * playerOne;
@@ -46,8 +44,11 @@ public:
 	// full map info - on connect -> use map index
 	// changes to map
 
-	void SendPositions();
-	void SendAccelerations(int id);
+	void SendPosition();
+	void SendLinVelocity();
+	void SendAngVelocity();
+	void SendAcceleration();
+	void SendWeaponFire();
 	void SendScores();
 	void SendMap();
 	void SendUpdatemap();

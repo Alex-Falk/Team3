@@ -9,6 +9,7 @@ Server::Server() {
 
 	//Win32_PrintAllAdapterIPAdresses();
 
+	userID = 0;
 	timer.GetTimedMS();
 }
 

@@ -24,7 +24,7 @@ Client::Client(IP ip) {
 		NCLDebug::Log("Network: Attempting to connect to server.");
 	}
 
-	game->SetMyId(CLIENT_ID);
+	userID = CLIENT_ID;
 }
 
 
@@ -71,7 +71,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		case PLAYER_POS:
 		{
-			ReceivePositions(data);
+			ReceivePosition(data);
 			break;
 		}
 		case PLAYER_ACCELERATION:
@@ -119,32 +119,6 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 // Recieving
 //--------------------------------------------------------------------------------------------//
 
-void Client::ReceivePositions(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx+1, semicolonIdx));
-
-	string p = data.substr(semicolonIdx);
-	Vector3 pos = InterpretStringVector(p);
-
-	game->SetPosition(playerID, pos);
-}
-
-void Client::RecieveAcceleration(string data) 
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx+1, semicolonIdx ));
-
-	string a = data.substr(semicolonIdx);
-	Vector3 acceleration = InterpretStringVector(a);
-
-	game->SetAcceleration(playerID, acceleration);
-}
-
 void Client::RecieveSizes(string data)
 {
 	string s = data.substr(data.find_first_of(':') + 1);
@@ -183,9 +157,9 @@ void Client::RecieveMapIndex(string data)
 // Sending
 //--------------------------------------------------------------------------------------------//
 
-void Client::SendPosition()
+void Client::SendPosition(uint ID)
 {
-	Vector3 pos = game->GetMyPlayer()->Physics()->GetPosition();
+	Vector3 pos = game->GetPlayer(userID)->Physics()->GetPosition();
 
 	string data = Vector3ToString(pos);
 
@@ -195,7 +169,7 @@ void Client::SendPosition()
 
 void Client::SendLinVelocity()
 {
-	Vector3 vel = game->GetMyPlayer()->Physics()->GetLinearVelocity();
+	Vector3 vel = game->GetPlayer(userID)->Physics()->GetLinearVelocity();
 
 	string data = Vector3ToString(vel);
 
@@ -205,7 +179,7 @@ void Client::SendLinVelocity()
 
 void Client::SendAngVelocity()
 {
-	Vector3 vel = game->GetMyPlayer()->Physics()->GetAngularVelocity();
+	Vector3 vel = game->GetPlayer(userID)->Physics()->GetAngularVelocity();
 
 	string data = Vector3ToString(vel);
 
@@ -215,10 +189,15 @@ void Client::SendAngVelocity()
 
 void Client::SendAcceleration()
 {
-	Vector3 acc = game->GetMyPlayer()->Physics()->GetAcceleration();
+	Vector3 acc = game->GetPlayer(userID)->Physics()->GetAcceleration();
 
 	string data = Vector3ToString(acc);
 
 	ENetPacket* accPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_peer_send(serverConnection, 0, accPacket);
+}
+
+void Client::SendWeaponFire() 
+{
+
 }
