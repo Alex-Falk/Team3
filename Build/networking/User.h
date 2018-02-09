@@ -1,5 +1,4 @@
 #pragma once
-#include <enet\enet.h>
 #include <nclgl\GameTimer.h>
 #include <nclgl\Vector3.h>
 #include <nclgl\common.h>
@@ -27,6 +26,8 @@ public:
 	virtual void RecieveWeapon(string data);
 
 	string GetPacketData(const ENetEvent & evnt);
+
+	void updateUser(float dt);
 
 };
 

@@ -40,7 +40,7 @@ int Server::ServerLoop()
 				case PLAYER_ACCELERATION:
 				{
 					RecievePlayerAcceleration(data, CLIENT_ID);
-					SendAccelerations(CLIENT_ID);
+					SendAcceleration(CLIENT_ID);
 					break;
 				}
 				}
@@ -57,10 +57,12 @@ int Server::ServerLoop()
 	}
 }
 
-
+//--------------------------------------------------------------------------------------------//
+// Recieving
+//--------------------------------------------------------------------------------------------//
 
 // message in: "enum: linx liny linz"
-void Server::RecievePlayerAcceleration(string data, uint id)
+void Server::RecievePlayerAcceleration(string data, uint ID)
 {
 	size_t start = data.find_first_of(':');
 	size_t mid = data.find_first_of(';');
@@ -68,28 +70,73 @@ void Server::RecievePlayerAcceleration(string data, uint id)
 	Vector3 linAcc = InterpretStringVector(data.substr(start, mid));
 	Vector3 angAcc = InterpretStringVector(data.substr(mid + 2));
 
-	game->GetPlayer(id)->Physics()->SetAcceleration(linAcc);
+	game->GetPlayer(ID)->Physics()->SetAcceleration(linAcc);
 
 }
 
-void Server::RecievePlayerPosition(string data, uint id)
+void Server::RecievePlayerPosition(string data, uint ID)
 {
 	size_t start = data.find_first_of(':');
 
 	Vector3 pos = InterpretStringVector(data.substr(start));
 
-	game->GetPlayer(id)->Physics()->SetPosition(pos);
+	game->GetPlayer(ID)->Physics()->SetPosition(pos);
 }
 
-void Server::SendAccelerations(int id)
+//--------------------------------------------------------------------------------------------//
+// Sending
+//--------------------------------------------------------------------------------------------//
+
+void Server::SendPosition(uint ID) 
 {
 	string data;
 
-	// Create a string containing the type of message, user to update and new updated vector
-	//TODO replace the zero vector with the player's acceleration
-	data = to_string(PLAYER_ACCELERATION) + ":" +
-		to_string(id) + ";" + Vector3ToString(game->GetPlayer(id)->Physics()->GetAcceleration());
+	data = to_string(PLAYER_POS) + ":" +
+		to_string(ID) + ";" + Vector3ToString(game->GetPlayer(ID)->Physics()->GetPosition());
 
-	ENetPacket* accPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
-	enet_host_broadcast(server->m_pNetwork, 0, accPacket);
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::SendLinVelocity(uint ID)
+{
+	string data;
+
+	data = to_string(PLAYER_LINVEL) + ":" +
+		to_string(ID) + ";" + Vector3ToString(game->GetPlayer(ID)->Physics()->GetLinearVelocity());
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::SendAngVelocity(uint ID)
+{
+	string data;
+
+	data = to_string(PLAYER_ANGVEL) + ":" +
+		to_string(ID) + ";" + Vector3ToString(game->GetPlayer(ID)->Physics()->GetAngularVelocity());
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::SendAcceleration(uint ID)
+{
+	string data;
+
+	data = to_string(PLAYER_ACCELERATION) + ":" +
+		to_string(ID) + ";" + Vector3ToString(game->GetPlayer(ID)->Physics()->GetAcceleration());
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+//TODO WEAPONS stuff
+
+//PACKET_TYPE:WEAPON_TYPE;XPOS YPOS ZPOS, XDIR YDIR ZDIR
+void Server::SendWeaponFire(uint ID) 
+{
+	string data;
+
+	data = to_string(PLAYER_WEAPON) + ":";
 }

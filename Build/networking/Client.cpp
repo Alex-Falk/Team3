@@ -167,7 +167,7 @@ void Client::SendPosition(uint ID)
 	enet_peer_send(serverConnection, 0, posPacket);
 }
 
-void Client::SendLinVelocity()
+void Client::SendLinVelocity(uint ID)
 {
 	Vector3 vel = game->GetPlayer(userID)->Physics()->GetLinearVelocity();
 
@@ -177,7 +177,7 @@ void Client::SendLinVelocity()
 	enet_peer_send(serverConnection, 0, velPacket);
 }
 
-void Client::SendAngVelocity()
+void Client::SendAngVelocity(uint ID)
 {
 	Vector3 vel = game->GetPlayer(userID)->Physics()->GetAngularVelocity();
 
@@ -187,7 +187,7 @@ void Client::SendAngVelocity()
 	enet_peer_send(serverConnection, 0, velPacket);
 }
 
-void Client::SendAcceleration()
+void Client::SendAcceleration(uint ID)
 {
 	Vector3 acc = game->GetPlayer(userID)->Physics()->GetAcceleration();
 
@@ -197,7 +197,7 @@ void Client::SendAcceleration()
 	enet_peer_send(serverConnection, 0, accPacket);
 }
 
-void Client::SendWeaponFire() 
+void Client::SendWeaponFire(uint ID)
 {
 
 }

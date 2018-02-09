@@ -4,11 +4,14 @@
 
 #pragma once
 #include <nclgl\common.h>
+#include <enet\enet.h>
 #include <PC\Player.h>
 
 enum PacketType {
 	GAME_START,				// Informs clients the game has started
 	PLAYER_POS,				// Server->Client: Broadcast positions.		Client->Server: Inform on Update
+	PLAYER_LINVEL,
+	PLAYER_ANGVEL,
 	PLAYER_ACCELERATION,	// Server->Client: Broadcast.				Client->Server:			"
 	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
 	PLAYER_WEAPON,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
@@ -78,3 +81,7 @@ string Vector3ToString(Vector3 in);
 vector<string> split_string(string s, char d);
 
 PacketType FindType(string data);
+
+ENetPacket* CreatePacket(string data) {
+	return enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+}

@@ -28,13 +28,6 @@ public:
 	NetworkBase * getBase() { return server; }
 
 	//--------------------------------------------------------------------------------------------//
-	// Utility
-	//--------------------------------------------------------------------------------------------//
-
-	std::string VectorToString(Vector3 v);
-	//std::string ScoresToString(placeholder_scores s);
-
-	//--------------------------------------------------------------------------------------------//
 	// Sending / Broadcasting
 	//--------------------------------------------------------------------------------------------//
 
@@ -44,11 +37,11 @@ public:
 	// full map info - on connect -> use map index
 	// changes to map
 
-	void SendPosition();
-	void SendLinVelocity();
-	void SendAngVelocity();
-	void SendAcceleration();
-	void SendWeaponFire();
+	void SendPosition(uint ID);
+	void SendLinVelocity(uint ID);
+	void SendAngVelocity(uint ID);
+	void SendAcceleration(uint ID);
+	void SendWeaponFire(uint ID);
 	void SendScores();
 	void SendMap();
 	void SendUpdatemap();
