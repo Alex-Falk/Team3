@@ -183,6 +183,10 @@
     <Media Include="..\AudioFiles\singing.wav" />
     <Media Include="..\AudioFiles\wave.mp3" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\AudioFiles\singing.wav" />
+    <Media Include="..\AudioFiles\wave.mp3" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 9.0.targets" />
