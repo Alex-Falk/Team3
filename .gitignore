@@ -22,6 +22,9 @@ Build/Examples_Cuda/\.vs/Examples_Cuda/v15/
 Build/**/*.obj
 Build/**/*.lib
 Build/**/*.exe
+*.iobj
+*.ipdb
+Build/**/**/*.lib
 
 Build/PC/program_output\.txt
 
