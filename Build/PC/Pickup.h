@@ -32,10 +32,23 @@ public:
 		return false;
 	}
 
+	virtual void Reactivate();
+
+	PickupType GetType() { return type; }
+	bool GetActive() { return active; }
+	float GetRespawnTime() { return respawnTime; }
+	float GetCurrentRespawnTimer() { return currentRespawnTimer; }
+
+	void SetType(PickupType newType) { type = newType; }
+	void SetActive(bool b) { active = b; }
+	void SetRespawnTime(float f) { respawnTime = f; }
 
 	~Pickup();
 
-private:
+//Name: Nick Bedford
+//Date: 07/02/2018
+//Changed to protected
+protected:
 
 	GameObject* object;
 	

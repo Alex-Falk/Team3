@@ -44,6 +44,13 @@ Pickup::Pickup(Vector3 pos, PickupType type, float respawnTime)
 	);
 }
 
+void Pickup::Reactivate()
+{
+	object->Render()->SetChildBaseColor(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	active = true;
+	currentRespawnTimer = 0;
+}
+
 void Pickup::Update(float dt)
 {
 	if (!active)
@@ -55,9 +62,7 @@ void Pickup::Update(float dt)
 		currentRespawnTimer += dt;
 		if (currentRespawnTimer >= respawnTime)
 		{
-			object->Render()->SetChildBaseColor(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-			active = true;
-			currentRespawnTimer = 0;
+			Reactivate();
 		}
 	}
 	else

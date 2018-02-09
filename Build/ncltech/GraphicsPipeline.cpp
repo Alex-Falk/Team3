@@ -211,13 +211,9 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 
 void GraphicsPipeline::UpdateScene(float dt)
 {
-	if (!ScreenPicker::Instance()->HandleMouseClicks(dt))
-		camera->HandleMouse(dt);
+	//update all of the camera stuff
+	camera->UpdateCamara(dt);
 
-	camera->HandleKeyboard(dt);
-	
-	//update the distance of the camera if it is attached to an object
-	camera->UpdateDistance();
 
 	viewMatrix = camera->BuildViewMatrix();
 	projViewMatrix = projMatrix * viewMatrix;
@@ -316,11 +312,16 @@ void GraphicsPipeline::RenderScene()
 
 	float superSamples = (float)(numSuperSamples);
 	glUseProgram(shaderPresentToWindow->GetProgram());
+
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uColorTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, screenTexColor);
+
 	glUniform1i(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uColorTex"), 0);
 	glUniform1f(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uGammaCorrection"), gammaCorrection);
 	glUniform1f(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uNumSuperSamples"), superSamples);
 	glUniform2f(glGetUniformLocation(shaderPresentToWindow->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
-	fullscreenQuad->SetTexture(screenTexColor);
+
 	fullscreenQuad->Draw();
 
 	//NCLDEBUG - Text Elements (aliased)

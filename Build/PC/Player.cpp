@@ -1,9 +1,19 @@
+//Nick Bedford
+//Date: 08/02/2018
+//Moved setting values from header to constructor 
+//Stopped resetting callback every up date
+//
+//
+
 #include "Player.h"
+#include <ncltech\SphereCollisionShape.h>
 #include <string.h>
+#include "GameInput.h"
 
 Player::Player() : GameObject("Player")
 {
 	life = maxLife;
+	timer = 0;
 
 	playerGameObject = CommonUtils::BuildSphereObject("Player1",
 		Vector3(0.0f, 1.0f, 0.0f),
@@ -15,17 +25,47 @@ Player::Player() : GameObject("Player")
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
 	canJump = true;
 	playerGameObject->Physics()->SetElasticity(0);
+
+	playerId = 0;
+	timer = 0;
+
+	standardSpeed = 5.0f;
+	speed = standardSpeed;
+	boostedSpeed = standardSpeed * 20;
+	
+	maxForce = 30;
+	
+	minLife = 10;
+	maxLife = 100;
+	life = maxLife;
+
+	standardJumpImpulse = 10.0f;
+	jumpImpulse = standardJumpImpulse;
+	boostedJumpImpulse = standardJumpImpulse * 2;
+
+
+	boostactiveTime = 15.0f;
 }
 
 Player::~Player()
 {
 }
 
-Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
+Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 {
 	colour = c;
 	size = s;
+	
+	timer = 0;
+	speed = 5;
+	maxForce = 30;
+	
+	minLife = 10;
+	maxLife = 100;
 	life = maxLife;
+
+	jumpImpulse = 10.0f;
+	boostactiveTime = 15.0f;
 
 	Vector4 Colour;
 	canJump = true;
@@ -34,27 +74,27 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 	{
 	case DEFAULT:
 	{
-		Colour = Vector4(1.0, 1.0, 1.0, 1.0);
+		Colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	case GREEN:
 	{
-		Colour = Vector4(0.0, 1.0, 0.0, 1.0);
+		Colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
 	}
 	break;
 	case BLUE:
 	{
-		Colour = Vector4(0.0, 0.0, 1.0, 1.0);
+		Colour = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 	break;
 	case RED:
 	{
-		Colour = Vector4(1.0, 0.0, 0.0, 1.0);
+		Colour = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 	break;
 	case PINK
 		:
 	{
-		Colour = Vector4(1.0, 0.41, 0.7, 1.0);
+		Colour = Vector4(1.0f, 0.41f, 0.7f, 1.0f);
 	}
 		break;
 	default:
@@ -64,7 +104,7 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 		break;
 	}
 
-	playerGameObject = CommonUtils::BuildSphereObject("Player" + to_string(c),
+	playerGameObject = CommonUtils::BuildSphereObject("Player",
 		Vector3(0.0f, 1.0f*s, 0.0f) + pos,
 		1.0f * size,							//Radius
 		true,									//Has Physics Object
@@ -74,73 +114,161 @@ Player::Player(Vector3 pos, Colour c, float s) : GameObject("Player")
 		Colour);								//Colour
 
 	playerGameObject->Physics()->SetElasticity(0);
+	playerGameObject->Physics()->SetFriction(0.5f);
+
+	playerGameObject->Physics()->SetOnCollisionCallback(
+		std::bind(&Player::PlayerCallbackFunction,
+			this,							//Any non-placeholder param will be passed into the function each time it is called
+			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
+			std::placeholders::_2
+		)
+	);
+
+	playerId = id;
+
 }
 
-bool Player::canJump; // Resets Players ability to jump
-bool Player::SetCanJump(PhysicsNode* self, PhysicsNode* collidingObject) {
-	canJump = true;
+bool Player::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
+	
+	if (collidingObject->getName() != "Pickup")
+	{
+		canJump = true;
+		inAir = false;
+	}
+
 	return true;
 }
 
 //Takes Player Input and move the player using force
 void Player::Input(float dt) {
 
-	playerGameObject->Physics()->SetOnCollisionCallback(SetCanJump);
-
-
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	Vector3 force(0,0,0);
 
+	if (!inAir) {
+		if (Input::GetInput()->GetInput(FORWARD)) { 		//Front
+			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -10) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-2, 0, 0) *dt* speed;
+		}
+		if (Input::GetInput()->GetInput(BACKWARD)) {		//Back
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 10) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(2, 0, 0) * dt * speed;
+		}
+		if (Input::GetInput()->GetInput(LEFT)) {		//Left
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-10, 0, 0) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 2)*dt* speed;
+		}
+		if (Input::GetInput()->GetInput(RIGHT)) {		//Right
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(10, 0, 0) * speed;
+			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -2)*dt* speed;
+		}
+		force.y = 0;
+		if (force != Vector3(0, 0, 0)) {
+			playerGameObject->Physics()->SetAngularVelocity(velocity);
+		}
+	}
 
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_W)) { 		//Front
-		if (force.z > 0)force.z /= 2;
-	//	force.y = 0;
-		force = Matrix3::Rotation(0, Vector3(10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 0, 0)) * Vector3(0, 0, -3) * speed;
+	//if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE) && canJump) {		//Jump
+	if (Input::GetInput()->GetInput(JUMP) && canJump) 
+	{		//Jump
+		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /3.0f, jumpImpulse, force.z / 3.0f));
+		inAir = true;
 	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_S)) {		//Back
-		if (force.z < 0)force.z /= 2;
-	//	force.y = 0;
-		force = Matrix3::Rotation(0, Vector3(-10, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 0, 0)) * Vector3(0, 0, 3) * speed;
-	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_A)) {		//Left
-		if (force.x > 0)force.x /= 2;
-	//	force.y = 0;
-		force = Matrix3::Rotation(0, Vector3(0, 0, -10)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(-3, 0, 0) * speed;
-	}
-	if (Window::GetKeyboard()->KeyDown(KEYBOARD_D)) {		//Right
-		if (force.x < 0)force.x /= 2;
-	//	force.y = 0;
-		force = Matrix3::Rotation(0, Vector3(0, 0, 10)) * Matrix3::Rotation(yaw, Vector3(0, 0, 3)) * Vector3(3, 0, 0) * speed;
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE) && canJump) {		//Jump
-		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x / 2, jumpImpulse, force.z / 2));
-		canJump = false;
-	}
+	canJump = false;
 	
-
-
 	if (force.x > maxForce)force.x = maxForce;
 	if (force.x < -maxForce)force.x = -maxForce;
 	if (force.z > maxForce)force.z = maxForce;
 	if (force.z < -maxForce)force.z = -maxForce;
 	playerGameObject->Physics()->SetForce(force);
-	force = Vector3(0, 0, 0);
+
+}
+
+void Player::ChangeSize(float newSize)
+{
+	playerGameObject->Render()->GetChild()->SetBoundingRadius(newSize);
+	playerGameObject->Render()->SetBoundingRadius(newSize);
+	playerGameObject->Physics()->SetBoundingRadius(newSize);
+	((SphereCollisionShape*)playerGameObject->Physics()->GetCollisionShape())->SetRadius(newSize);
+
+	playerGameObject->Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
 }
 
 // Updates everything on player
 void Player::OnPlayerUpdate(float dt) {
 
+	timer += dt;
+
 	Input(dt);
+	
+	UpdatePickUp(dt);
 
 
-	if (life > minLife) {
-		life -= 0.01;
+	if (life > minLife) 
+	{
+		life -= dt*2;
+
+		if (life < minLife)
+		{
+			life = minLife;
+		}
 	}
 	
 	curSize = size * (life / 100);
 
-	cout << curSize;
+	ChangeSize(curSize);
+	
+}
 
-	playerGameObject->Render()->GetChild()->SetBoundingRadius(curSize);
-	playerGameObject->RegisterPhysicsToRenderTransformCallback();
+
+void Player::PickedPickUp(PickupType pickType) {
+
+	switch (pickType)
+	{
+	case SPEED_BOOST:
+		speed = boostedSpeed;
+		speedBoost = true;
+		speedTimer = boostactiveTime;
+		break;
+	case JUMP_BOOST:
+		jumpImpulse = boostedJumpImpulse;
+		jumpBoost = true;
+		jumpBoostTimer = boostactiveTime;
+		break;
+	case WEAPON:
+		weapon = true;
+		break;
+	default:
+		break;
+	}
+
+
+}
+
+void Player::UpdatePickUp(float dt) 
+{
+	if (speedBoost)
+	{
+		speedTimer -= dt;
+		
+		if (speedTimer < 0)
+		{
+			speed = standardSpeed;
+			speedBoost = false;
+		}
+	}
+
+	if (jumpBoost)
+	{
+		jumpBoostTimer -= dt;
+
+		if (jumpBoostTimer < 0)
+		{
+			jumpImpulse = standardSpeed;
+			jumpBoost = false;
+		}
+	}
+
+
 }

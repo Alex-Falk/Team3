@@ -28,15 +28,15 @@ public:
 		position = Vector3(0.0f, 0.0f, 0.0f);
 		yaw = 0.0f;
 		pitch = 0.0f;
-		free = true;
+		free = false;
 		center = nullptr;
 		maxDistance = 10.0f;
-		minDistance = 1.0;
+		minDistance = 1.0f;
 		distance = (maxDistance + minDistance) / 2;
 		armShape = new CuboidCollisionShape();
 		//very thin so the camera moves in the right way
-		armShape->SetHalfHeight(0.001);
-		armShape->SetHalfWidth(0.001);
+		armShape->SetHalfHeight(0.001f);
+		armShape->SetHalfWidth(0.001f);
 		arm.SetCollisionShape(armShape);
 	};
 
@@ -48,13 +48,13 @@ public:
 
 	~Camera(void) {};
 
-	void HandleMouse(float dt);
-	void HandleKeyboard(float dt);
-
+	//TODO put all the handle stuff into this
+	void UpdateCamara(float dt);
 	//Builds a view matrix for the current camera variables, suitable for sending straight
 	//to a vertex shader (i.e it's already an 'inverse camera matrix').
 	Matrix4 BuildViewMatrix();
 	Vector3 GetViewDirection();
+	Vector3 GetUpDirection();
 
 	//Gets position in world space
 	inline const Vector3& GetPosition() const { return position; }
@@ -112,7 +112,8 @@ protected:
 
 	//current distance from object
 	float distance;
-
 	//is the camera following an object or just flying around
 	bool free;
+	//time since last mouse move (in x) for following 
+	float timeSinceMouse;
 };
