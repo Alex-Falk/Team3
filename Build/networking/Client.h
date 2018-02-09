@@ -45,6 +45,7 @@ public:
 	void RecieveScores(string data);
 	void RecieveMapIndex(string data);
 	void RecieveMapChange(string data);
+	void RecieveWeapon(string data);
 
 	std::string GetPacketData(const ENetEvent & evnt)
 	{
