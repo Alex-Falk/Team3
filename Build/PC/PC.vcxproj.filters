@@ -60,17 +60,8 @@
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameInput.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
+    <ClInclude Include="Arena.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WeaponPickup.h">
-      <Filter>GamePlay\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -92,10 +83,7 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameInput.cpp">
-      <Filter>GamePlay\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="Arena.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WeaponPickup.cpp">
