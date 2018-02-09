@@ -92,9 +92,9 @@ void Camera::UpdateCamara(float dt) {
 	//There are a lot of magic numbers here these should be dealt with
 	if (timeSinceMouse > MIN_TURN_TIME && (x*x + z*z) > MIN_CENTER_SPEED_SQUARED) {
 		//the camera moves itself faster the longer you haven't moved it
-		float turnSpeed = (timeSinceMouse - MIN_TURN_TIME)/ TURN_INCREASE_RATE;
-		turnSpeed = max(turnSpeed, MIN_TURN_SPEED);
-		turnSpeed = min(turnSpeed, MAX_TURN_SPEED);
+		float turnSpeed = (float)((timeSinceMouse - MIN_TURN_TIME)/ TURN_INCREASE_RATE);
+		turnSpeed = (float)max(turnSpeed, MIN_TURN_SPEED);
+		turnSpeed = (float)min(turnSpeed, MAX_TURN_SPEED);
 		//get the direction of the x and y vector and have the yaw approach it
 
 

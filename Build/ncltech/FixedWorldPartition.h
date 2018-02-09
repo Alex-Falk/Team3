@@ -30,6 +30,8 @@ protected:
 
 
 	std::vector<PhysicsNode*> * physicsNodes;
+	std::vector<PhysicsNode*> * bigNodes;
+
 	std::vector<PhysicsNode*> updateList;
 
 	//Draws all of the nodes to the screen
@@ -72,6 +74,7 @@ public:
 	//Repartitions the world based on current positions of objects sent
 	void RepartitionWorld(Vector3 mins, Vector3 maxs, std::vector<PhysicsNode*>  *elements);
 	
+	inline std::vector<PhysicsNode*>* GetBigNodes() { if (bigNodes) { return bigNodes; } }
 	//Checks if any objects with velocity have moved to a different leaf node and updates the elemet 
 	//lists of each node lists
 	void UpdateFixedWorldPartition();

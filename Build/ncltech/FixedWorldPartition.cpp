@@ -15,6 +15,21 @@ FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector
 	root->AABB->ExpandToFit(maxs);
 	root->children = nullptr;
 
+	physicsNodes = new std::vector<PhysicsNode*>;
+	bigNodes = new std::vector<PhysicsNode*>;
+
+	for (std::vector<PhysicsNode*>::iterator itr = elements->begin(); itr != elements->end(); ++itr)
+	{
+		if ((*itr)->getName() == "BigObject")
+		{
+			bigNodes->push_back((*itr));
+		}
+		else
+		{
+			physicsNodes->push_back((*itr));
+		}
+	}
+
 	physicsNodes = elements;
 
 	if (physicsNodes->size() > maxNumber)
@@ -242,6 +257,25 @@ std::vector<CollisionPair> FixedWorldPartition::CreatePairs(Node * node)
 							CollisionPair cp;
 							cp.pObjectA = pnodeA;
 							cp.pObjectB = pnodeB;
+							pairs.push_back(cp);
+						}
+
+						for (std::vector<PhysicsNode*>::iterator itr = bigNodes->begin(); itr != bigNodes->end(); itr++)
+						{
+							CollisionPair cp;
+							cp.pObjectA = *itr;
+							cp.pObjectB = node->elements[i];
+							pairs.push_back(cp);
+						}
+					}
+
+					if (i == node->elements.size() - 2)
+					{
+						for (std::vector<PhysicsNode*>::iterator itr = bigNodes->begin(); itr != bigNodes->end(); itr++)
+						{
+							CollisionPair cp;
+							cp.pObjectA = *itr;
+							cp.pObjectB = node->elements[i + 1];
 							pairs.push_back(cp);
 						}
 					}
