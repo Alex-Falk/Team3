@@ -1,6 +1,5 @@
 #pragma once
 #include <ncltech\GameObject.h>
-
 #include <ncltech\CommonMeshes.h>
 #include <ncltech\SphereCollisionShape.h>
 
