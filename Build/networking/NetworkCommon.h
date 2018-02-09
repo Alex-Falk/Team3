@@ -7,10 +7,7 @@ enum PacketType {
 	PLAYER_POS,				// Server->Client: Broadcast positions.		Client->Server: Inform on Update
 	PLAYER_ACCELERATION,	// Server->Client: Broadcast.				Client->Server:			"
 	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
-	PLAYER_SPRAY,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
-	PLAYER_PISTOL,			// Server->Client:			"				Client->Server:			"
-	PLAYER_AUTOMATIC,		// Server->Client:			"				Client->Server:			"
-	PLAYER_ROCKET,			// Server->Client:			"				Client->Server:			"
+	PLAYER_WEAPON,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
 	SCORES,					// Server->Client: Broadcast Scores
 	MAP_INDEX,				// Server->Client: Boradcast Map to load
 	MAP_UPDATE,				//
@@ -53,8 +50,12 @@ struct Placeholder_Game {
 	void StartMatch();
 	void EndMatch();
 
-
 };
+
+struct Placeholder_Map {
+	int numObjects;
+};
+
 
 static Player * playerOne;
 static Placeholder_Game * game;
