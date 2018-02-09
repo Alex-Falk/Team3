@@ -1,6 +1,5 @@
 #pragma once
 
-
 enum Colour
 {
 	DEFAULT, RED, GREEN, BLUE, PINK

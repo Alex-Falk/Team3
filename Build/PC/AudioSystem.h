@@ -2,12 +2,16 @@
 #include <fmod.hpp>
 #include <fmod_errors.h>
 #include <iostream>
+#include <fstream>
 #include "GamePlay.h"
 #include "../nclgl/Vector3.h"
+#include "../nclgl/TSingleton.h"
 
 //Michael Davis - 07/02/2018
 
-class AudioSystem {
+class AudioSystem : public TSingleton<AudioSystem> {
+	friend class TSingleton<AudioSystem>;
+
 public:
 	//constructor, initialises all variables automatically
 	AudioSystem();
@@ -22,7 +26,7 @@ public:
 	void Create3DStream(int index, const char* pFile, float minDist, float maxDist);
 
 	//plays a certain sound, works for both sounds and streams
-	void PlaySound(int index, bool loop = false, FMOD_VECTOR position = { 0.f, 0.f, 0.f }, FMOD_VECTOR velocity = {0.f, 0.f, 0.f});
+	void PlaySound(int index, bool loop = false, Vector3 position = { 0.f, 0.f, 0.f }, Vector3 velocity = {0.f, 0.f, 0.f});
 
 	//memory management, will delete the sound
 	void ReleaseSound(int index);
@@ -47,29 +51,25 @@ public:
 	void SetMasterVolume(float f);
 	void SetGameSoundsVolume(float f);
 	void SetMusicVolume(float f);
-	void SetVolume(float vol, int index); //sets the volume of an individual sound (overridden if group volume is called after)
 
 	//call each frame to update the audiosystem and pass in camera parameters
 	void Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 cameraUp, float dt);
-
-	//temp update
-	void Update();
 
 	//destructor
 	~AudioSystem();
 
 private:
 	//amount of sounds in the game
-	const int numSounds = 5;
+	const static int numSounds = 2;
 
 	//system that handles sounds and channels
 	FMOD::System * audioSystem;
 
 	//the actual sounds, includes music as well
-	FMOD::Sound * sounds[5];
+	FMOD::Sound * sounds[numSounds];
 
 	//channel the sound plays from
-	FMOD::Channel * channels[5];
+	FMOD::Channel * channels[numSounds];
 
 	//camera variables for 3d sounds
 	FMOD_VECTOR listenerPos;
@@ -90,4 +90,12 @@ private:
 
 	//converts vec3 to FMODVec
 	friend FMOD_VECTOR toFMODVector(Vector3 v);
+
+	//used for error checking, outputs can be found here:
+	//https://www.fmod.org/docs/content/generated/FMOD_RESULT.html
+	//0 = All good
+	//18 = file not found
+	//30 = invalid handle
+	FMOD_RESULT result;
+	std::ofstream myfile;
 };

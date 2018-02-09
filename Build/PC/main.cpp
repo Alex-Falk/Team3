@@ -9,8 +9,6 @@
 #include "GameInput.h"
 #include "Game.h"
 
-AudioSystem a;
-
 bool draw_debug = true;
 bool draw_performance = false;
 
@@ -31,6 +29,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	SceneManager::Release();
 	PhysicsEngine::Release();
 	GraphicsPipeline::Release();
+	AudioSystem::Release();
 	Window::Destroy();
 
 	//Show console reason before exit
@@ -43,8 +42,9 @@ void Quit(bool error = false, const std::string &reason = "") {
 
 //initialise all audio files
 void InitialiseAudioFiles() {
-	a.Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
-	a.Create3DSound(GAME_MUSIC, "../AudioFiles/wave.mp3", 0.5f, 30.0f);
+	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
+	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+	AudioSystem::Instance()->SetMusicVolume(0.3f);
 }
 
 // Program Initialise
@@ -64,6 +64,8 @@ void Initialize()
 
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
+
+	AudioSystem::Instance();
 
 	InitialiseAudioFiles();
 }
@@ -161,20 +163,30 @@ void HandleKeyboardInputs()
 		show_perf_metrics = !show_perf_metrics;
 
 	//audio test functionality
+	//TODO remove this when finished testing
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
-		a.PlaySound(GAME_MUSIC, false, { 4.0f, 0.0f, 0.0f });
+		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
 	}
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9)) {
-		a.PlaySound(MENU_MUSIC, false, {0.0f, 10.0f, 15.0f});
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
-		a.MuteAllSounds();
+		AudioSystem::Instance()->StopAllSounds();
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
-		a.UnmuteAllSounds();
+		AudioSystem::Instance()->UnmuteAllSounds();
 	}
 
 
@@ -299,7 +311,7 @@ int main()
 		timer_render.EndTimingSection();
 
 		timer_audio.BeginTimingSection();
-		a.Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);	
+		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
 		timer_audio.EndTimingSection();
 
 		//Finish Timing
