@@ -4,103 +4,99 @@
     <Filter Include="Header Files">
       <UniqueIdentifier>{b2dd1d5d-3110-45d7-aebc-413b7ee00bd9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{bc4f75d2-6e13-4f20-9178-8aacb5961ae9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Math">
       <UniqueIdentifier>{8305a72c-78c7-4f89-bc23-b03d048bdce2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Math">
-      <UniqueIdentifier>{fe0ac587-7a1e-4daa-937d-ac1155973f8d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\RenderNode">
       <UniqueIdentifier>{35f5f906-ad08-4a26-822a-37740550fd51}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RenderNode">
-      <UniqueIdentifier>{5b3116f3-25d9-4178-884f-fddf35e82b45}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Device">
       <UniqueIdentifier>{0cbc760c-31b5-40c3-a253-c11a5b1c08f5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Device">
-      <UniqueIdentifier>{51c246b4-e0e0-4954-9eea-70f9a65d3de2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\RenderBase">
       <UniqueIdentifier>{fa25144a-bbbc-4c6a-acea-62c0d1ecf3a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RenderBase">
-      <UniqueIdentifier>{5403aa0a-0874-4d15-a1b5-1eb8b28b5881}</UniqueIdentifier>
+    <Filter Include="Header Files\Material">
+      <UniqueIdentifier>{6be6cd9d-40d4-4a2b-9ceb-aa3097c1395e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CHANGELIST.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NCLDebug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix4.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Matrix3.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Plane.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderNode.cpp">
-      <Filter>Source Files\RenderNode</Filter>
-    </ClCompile>
     <ClCompile Include="Keyboard.cpp">
-      <Filter>Source Files\Device</Filter>
+      <Filter>Header Files\Device</Filter>
     </ClCompile>
     <ClCompile Include="Mouse.cpp">
-      <Filter>Source Files\Device</Filter>
+      <Filter>Header Files\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix3.cpp">
+      <Filter>Header Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix4.cpp">
+      <Filter>Header Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Header Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="Quaternion.cpp">
-      <Filter>Source Files\Math</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="CubeRobot.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="Frustum.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="HeightMap.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="MD5Anim.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="MD5FileData.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="MD5Mesh.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="MD5Node.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="OBJMesh.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="OGLRenderer.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\RenderBase</Filter>
+      <Filter>Header Files\RenderBase</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderNode.cpp">
+      <Filter>Header Files\RenderNode</Filter>
+    </ClCompile>
+    <ClCompile Include="NCLDebug.cpp" />
+    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Material.cpp">
+      <Filter>Header Files\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardMaterial.cpp">
+      <Filter>Header Files\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMaterial.cpp">
+      <Filter>Header Files\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="PostprocessMaterial.cpp">
+      <Filter>Header Files\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +192,18 @@
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\RenderBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardMaterial.h">
+      <Filter>Header Files\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMaterial.h">
+      <Filter>Header Files\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="PostprocessMaterial.h">
+      <Filter>Header Files\Material</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

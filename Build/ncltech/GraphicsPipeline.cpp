@@ -20,6 +20,7 @@ GraphicsPipeline::GraphicsPipeline()
 
 
 	LoadShaders();
+	LoadMaterial();
 	NCLDebug::_LoadShaders();
 
 	fullscreenQuad = Mesh::GenerateQuad();
@@ -51,8 +52,13 @@ GraphicsPipeline::~GraphicsPipeline()
 	SAFE_DELETE(fullscreenQuad);
 
 	for (int i = 0; i < Shader_Number; i++)
+	{
 		SAFE_DELETE(shaders[i]);
+		SAFE_DELETE(materials[i]);
+	}
+
 	delete[] shaders;
+	delete[] materials;
 
 	NCLDebug::_ReleaseShaders();
 
@@ -131,6 +137,14 @@ void GraphicsPipeline::LoadShaders()
 	{
 		NCLERROR("Could not link shader: Forward Renderer");
 	}
+}
+
+void GraphicsPipeline::LoadMaterial()
+{
+	materials = new Material*[Material_Number];
+	materials[MATERIALTYPE::Forward_Lighting] = new StandardMaterial();
+	materials[MATERIALTYPE::Present_To_Window] = new PresentToWindowMaterial();
+	materials[MATERIALTYPE::Shadow] = new ShadowMaterial();
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -284,16 +298,32 @@ void GraphicsPipeline::RenderScene()
 	glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(shaders[SHADERTYPE::Shadow]->GetProgram());
-	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Shadow]->GetProgram(), "uShadowTransform[0]"), SHADOWMAP_NUM, GL_FALSE, (float*)&shadowProjView[0]);
-	GLint uModelMtx = glGetUniformLocation(shaders[SHADERTYPE::Shadow]->GetProgram(), "uModelMtx");
-
-	RenderAllObjects(true,
-		[&](RenderNode* node)
+	//glUseProgram(shaders[SHADERTYPE::Shadow]->GetProgram());
+	//glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Shadow]->GetProgram(), "uShadowTransform[0]"), SHADOWMAP_NUM, GL_FALSE, (float*)&shadowProjView[0]);
+	//GLint uModelMtx = glGetUniformLocation(shaders[SHADERTYPE::Shadow]->GetProgram(), "uModelMtx");
+	// sort render opaque order
+	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
 	{
-		glUniformMatrix4fv(uModelMtx, 1, GL_FALSE, (float*)&node->GetWorldTransform());
+		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
+		else { glDisable(GL_CULL_FACE); }
+		Material* mat = (*i).first->GetMaterial();
+		(*i).first->SetMaterial(materials[MATERIALTYPE::Shadow]);
+		(*i).first->DrawOpenGL(true);
+		(*i).first->SetMaterial(mat);
 	}
-	);
+	for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
+	{
+		Material* mat = (*i).first->GetMaterial();
+		(*i).first->SetMaterial(materials[MATERIALTYPE::Shadow]);
+		(*i).first->DrawOpenGL(true);
+		(*i).first->SetMaterial(mat);
+	}
+	//RenderAllObjects(true,
+	//	[&](RenderNode* node)
+	//{
+	//	glUniformMatrix4fv(uModelMtx, 1, GL_FALSE, (float*)&node->GetWorldTransform());
+	//}
+	//);
 #pragma endregion</Render Shadow Part>
 
 #pragma region Render Scene Part
@@ -363,7 +393,7 @@ void GraphicsPipeline::Resize(int x, int y)
 	OGLRenderer::Resize(x, y);
 
 	//Update our projection matrix
-	projMatrix = Matrix4::Perspective(PROJ_NEAR, PROJ_FAR, (float)x / (float)y, PROJ_FOV);
+	projMatrix = Matrix4::Perspective(CAMERA_PROJ_NEAR, CAMERA_PROJ_FAR, (float)x / (float)y, CAMERA_PROJ_FOV);
 }
 
 void GraphicsPipeline::BuildAndSortRenderLists()
@@ -456,7 +486,7 @@ void GraphicsPipeline::RenderAllObjects(bool isShadowPass, std::function<void(Re
 
 void GraphicsPipeline::BuildShadowTransforms()
 {
-	const float proj_range = PROJ_FAR - PROJ_NEAR;
+	const float proj_range = SHADOW_PROJ_FAR - SHADOW_PROJ_NEAR;
 
 	//Variable size - shadowmap always rotated to be square with camera
 	//  Vector3 viewDir = Matrix3::Transpose(Matrix3(viewMatrix)) * Vector3(0, 0, 1);
@@ -469,7 +499,7 @@ void GraphicsPipeline::BuildShadowTransforms()
 
 	auto compute_depth = [&](float x)
 	{
-		float proj_start = -(proj_range * x + PROJ_NEAR);
+		float proj_start = -(proj_range * x + SHADOW_PROJ_NEAR);
 		return (proj_start*projMatrix[10] + projMatrix[14]) / (proj_start*projMatrix[11]);
 	};
 

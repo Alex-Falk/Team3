@@ -28,6 +28,7 @@
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="HeightMap.cpp" />
     <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Matrix3.cpp" />
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="MD5Anim.cpp" />
@@ -39,9 +40,12 @@
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="PostprocessMaterial.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="RenderNode.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShadowMaterial.cpp" />
+    <ClCompile Include="StandardMaterial.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="NCLDebug.cpp" />
   </ItemGroup>
@@ -56,6 +60,7 @@
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix3.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="MD5Anim.h" />
@@ -64,6 +69,9 @@
     <ClInclude Include="MD5Node.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="PostprocessMaterial.h" />
+    <ClInclude Include="ShadowMaterial.h" />
+    <ClInclude Include="StandardMaterial.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="OGLRenderer.h" />
     <ClInclude Include="PerfTimer.h" />

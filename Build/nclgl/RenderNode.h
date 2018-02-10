@@ -24,6 +24,8 @@ _-_-_-_-_-_-_-""  ""
 #include "Mesh.h"
 #include <vector>
 
+class Material;
+
 class RenderNode	{
 public:
 	 RenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1,1,1,1));
@@ -70,6 +72,9 @@ public:
 	float			GetCameraDistance() const	{return distanceFromCamera;}
 	void			SetCameraDistance(float f)	{distanceFromCamera = f;}
 
+	Material*		GetMaterial()const			{ return material; }
+	void			SetMaterial(Material* mat)  { material = mat; }
+
 	void			SetMesh(Mesh*m)				{mesh = m;}
 	Mesh*			GetMesh()					{return mesh;}
 
@@ -109,6 +114,7 @@ protected:
 	Vector4		baseColor;
 	Vector4		collideColor;
 	Vector3		modelScale;
+	Material*	material;
 	Mesh*		mesh;
 	bool		awake;
 	bool		isCollided = false;
