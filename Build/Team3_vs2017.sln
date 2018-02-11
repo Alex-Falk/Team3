@@ -27,7 +27,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shader", "Shader", "{BC67E7
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{931B611C-A234-49C3-944A-109E060C67E3}"
 	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\Common\ColorFragment.glsl = ..\Data\Shaders\Common\ColorFragment.glsl
 		..\Data\Shaders\Common\EmptyFragment.glsl = ..\Data\Shaders\Common\EmptyFragment.glsl
+		..\Data\Shaders\Common\EmptyVertex.glsl = ..\Data\Shaders\Common\EmptyVertex.glsl
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SceneRenderer", "SceneRenderer", "{C6CAA6D3-725A-4ABC-B665-18BE70546D4D}"
@@ -65,6 +67,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DebugShaders", "DebugShader
 		..\Data\Shaders\DebugShaders\TextVertex.glsl = ..\Data\Shaders\DebugShaders\TextVertex.glsl
 		..\Data\Shaders\DebugShaders\Vertex.glsl = ..\Data\Shaders\DebugShaders\Vertex.glsl
 		..\Data\Shaders\DebugShaders\VertexColOnly.glsl = ..\Data\Shaders\DebugShaders\VertexColOnly.glsl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{ED95B4D6-EA18-4092-8250-928DEC7E9B2A}"
+	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\Game\GroundFragment.glsl = ..\Data\Shaders\Game\GroundFragment.glsl
+		..\Data\Shaders\Game\GroundVertex.glsl = ..\Data\Shaders\Game\GroundVertex.glsl
+		..\Data\Shaders\Game\TextureUIFragment.glsl = ..\Data\Shaders\Game\TextureUIFragment.glsl
+		..\Data\Shaders\Game\TextureUIVertex.glsl = ..\Data\Shaders\Game\TextureUIVertex.glsl
 	EndProjectSection
 EndProject
 Global
@@ -120,6 +130,7 @@ Global
 		{C6CAA6D3-725A-4ABC-B665-18BE70546D4D} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
 		{5CC51FB4-631A-453C-9351-10CCB1CA0132} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
 		{BFAC61F3-3D0B-4977-B961-A8142D397CAD} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
+		{ED95B4D6-EA18-4092-8250-928DEC7E9B2A} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {906F3866-8380-435F-B2DE-2EDAF98B9FBA}

@@ -43,6 +43,7 @@ GraphicsPipeline::GraphicsPipeline()
 
 	InitializeDefaults();
 	Resize(width, height);
+	InitPath();
 }
 
 GraphicsPipeline::~GraphicsPipeline()
@@ -76,6 +77,9 @@ GraphicsPipeline::~GraphicsPipeline()
 		glDeleteFramebuffers(1, &shadowFBO);
 		shadowFBO = NULL;
 	}
+
+	playerRenderNodes.clear();
+	pathRenderNodes.clear();
 }
 
 void GraphicsPipeline::InitializeDefaults()
@@ -137,6 +141,30 @@ void GraphicsPipeline::LoadShaders()
 	{
 		NCLERROR("Could not link shader: Forward Renderer");
 	}
+
+	shaders[SHADERTYPE::Texture_UI] = new Shader(
+		SHADERDIR"Game/TextureUIVertex.glsl",
+		SHADERDIR"Game/TextureUIFragment.glsl");
+	if (!shaders[SHADERTYPE::Texture_UI]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Simple UI Renderer");
+	}
+
+	shaders[SHADERTYPE::Draw_Path] = new Shader(
+		SHADERDIR"Common/EmptyVertex.glsl",
+		SHADERDIR"Common/ColorFragment.glsl");
+	if (!shaders[SHADERTYPE::Draw_Path]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Draw Path Renderer");
+	}
+
+	shaders[SHADERTYPE::Ground] = new Shader(
+		SHADERDIR"Game/GroundVertex.glsl",
+		SHADERDIR"Game/GroundFragment.glsl");
+	if (!shaders[SHADERTYPE::Ground]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Draw Path Renderer");
+	}
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -145,6 +173,9 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::Forward_Lighting] = new StandardMaterial();
 	materials[MATERIALTYPE::Present_To_Window] = new PresentToWindowMaterial();
 	materials[MATERIALTYPE::Shadow] = new ShadowMaterial();
+	materials[MATERIALTYPE::Texture_UI] = nullptr;
+	materials[MATERIALTYPE::Draw_Path] = new DrawPathMaterial();
+	materials[MATERIALTYPE::Ground] = new GroundMaterial();
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -290,90 +321,21 @@ void GraphicsPipeline::RenderScene()
 	//NCLDebug - Build render lists
 	NCLDebug::_BuildRenderLists();
 
-#pragma region Render Shadow Part
 	//Build shadowmaps
-	BuildShadowTransforms();
-	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowTex, 0);
-	glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	RenderShadow();
 
-	//glUseProgram(shaders[SHADERTYPE::Shadow]->GetProgram());
-	//glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Shadow]->GetProgram(), "uShadowTransform[0]"), SHADOWMAP_NUM, GL_FALSE, (float*)&shadowProjView[0]);
-	//GLint uModelMtx = glGetUniformLocation(shaders[SHADERTYPE::Shadow]->GetProgram(), "uModelMtx");
-	// sort render opaque order
-	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
-	{
-		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
-		else { glDisable(GL_CULL_FACE); }
-		Material* mat = (*i).first->GetMaterial();
-		(*i).first->SetMaterial(materials[MATERIALTYPE::Shadow]);
-		(*i).first->DrawOpenGL(true);
-		(*i).first->SetMaterial(mat);
-	}
-	for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
-	{
-		Material* mat = (*i).first->GetMaterial();
-		(*i).first->SetMaterial(materials[MATERIALTYPE::Shadow]);
-		(*i).first->DrawOpenGL(true);
-		(*i).first->SetMaterial(mat);
-	}
-	//RenderAllObjects(true,
-	//	[&](RenderNode* node)
-	//{
-	//	glUniformMatrix4fv(uModelMtx, 1, GL_FALSE, (float*)&node->GetWorldTransform());
-	//}
-	//);
-#pragma endregion</Render Shadow Part>
-
-#pragma region Render Scene Part
 	//Render scene to screen fbo
-	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
-	glViewport(0, 0, screenTexWidth, screenTexHeight);
-	glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	RenderAllObjects(false,[&](RenderNode* node){});
+	RenderObject();
 
-#pragma endregion</Render Scene Part>
+	//render the path to texture
+	RenderPath();
 
-	// Render Screen Picking ID's
-	// - This needs to be somewhere before we lose our depth buffer
-	//   BUT at the moment that means our screen picking is super sampled and rendered at 
-	//   a much higher resolution. Which is silly.
-	ScreenPicker::Instance()->RenderPickingScene(projViewMatrix, Matrix4::Inverse(projViewMatrix), screenTexDepth, screenTexWidth, screenTexHeight);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
-	glViewport(0, 0, screenTexWidth, screenTexHeight);
-	//NCLDEBUG - World Debug Data (anti-aliased)		
-	NCLDebug::_RenderDebugDepthTested();
-	NCLDebug::_RenderDebugNonDepthTested();
-
-	
-#pragma region Post Process Part
-	//Downsample and present to screen
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, width, height);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	float superSamples = (float)(numSuperSamples);
-	glUseProgram(shaders[SHADERTYPE::Present_To_Window]->GetProgram());
-
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uColorTex"), 0);
-	glBindTexture(GL_TEXTURE_2D, screenTexColor);
-
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uGammaCorrection"), gammaCorrection);
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uNumSuperSamples"), superSamples);
-	glUniform2f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
-	
-
-	fullscreenQuad->Draw();
-#pragma endregion</Post Process Part>
+	//post process and present
+	RenderPostprocessAndPresent();
 
 	//NCLDEBUG - Text Elements (aliased)
 	NCLDebug::_RenderDebugClipSpace();
 	NCLDebug::_ClearDebugLists();
-
 
 	OGLRenderer::SwapBuffers();
 }
@@ -394,6 +356,7 @@ void GraphicsPipeline::Resize(int x, int y)
 
 	//Update our projection matrix
 	projMatrix = Matrix4::Perspective(CAMERA_PROJ_NEAR, CAMERA_PROJ_FAR, (float)x / (float)y, CAMERA_PROJ_FOV);
+
 }
 
 void GraphicsPipeline::BuildAndSortRenderLists()
@@ -537,4 +500,158 @@ void GraphicsPipeline::BuildShadowTransforms()
 		shadowProj[i] = Matrix4::Orthographic(bb._max.z, bb._min.z, bb._min.x, bb._max.x, bb._max.y, bb._min.y);
 		shadowProjView[i] = shadowProj[i] * shadowViewMtx;
 	}
+}
+
+void GraphicsPipeline::RenderShadow()
+{
+	BuildShadowTransforms();
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowTex, 0);
+	glViewport(0, 0, SHADOWMAP_SIZE, SHADOWMAP_SIZE);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i) {
+		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
+		else { glDisable(GL_CULL_FACE); }
+		Material* mat = (*i).first->GetMaterial();
+		(*i).first->SetMaterial(materials[MATERIALTYPE::Shadow]);
+		(*i).first->DrawOpenGL(true);
+		(*i).first->SetMaterial(mat);
+	}
+	for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i) {
+		Material* mat = (*i).first->GetMaterial();
+		(*i).first->SetMaterial(materials[MATERIALTYPE::Shadow]);
+		(*i).first->DrawOpenGL(true);
+		(*i).first->SetMaterial(mat);
+	}
+}
+
+void GraphicsPipeline::RenderObject()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
+	glViewport(0, 0, screenTexWidth, screenTexHeight);
+	glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	RenderAllObjects(false, [&](RenderNode* node) {});
+
+	// Render Screen Picking ID's
+	// - This needs to be somewhere before we lose our depth buffer
+	//   BUT at the moment that means our screen picking is super sampled and rendered at 
+	//   a much higher resolution. Which is silly.
+	ScreenPicker::Instance()->RenderPickingScene(projViewMatrix, Matrix4::Inverse(projViewMatrix), screenTexDepth, screenTexWidth, screenTexHeight);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
+	glViewport(0, 0, screenTexWidth, screenTexHeight);
+	//NCLDEBUG - World Debug Data (anti-aliased)		
+	NCLDebug::_RenderDebugDepthTested();
+	NCLDebug::_RenderDebugNonDepthTested();
+
+	//render UI to a texture
+	RenderUI();
+
+	//debug code
+	glUseProgram(shaders[SHADERTYPE::Texture_UI]->GetProgram());
+	glDisable(GL_DEPTH_TEST);
+	Matrix4 mat = Matrix4::Translation(Vector3(0.7f, 0.7f, 0.0f))* Matrix4::Scale(Vector3(0.3f, 0.3f, 1.0f));
+	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&mat);
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "diffuseTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, pathTex);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "brightness"), 1.0f);
+
+	fullscreenQuad->Draw();
+	glEnable(GL_DEPTH_TEST);
+
+
+}
+
+void GraphicsPipeline::RenderUI()
+{
+
+}
+
+void GraphicsPipeline::RenderPath()
+{
+	pathRenderNodes.clear();
+	for (int i = 0; i < playerRenderNodes.size(); ++i)
+	{
+		RecursiveAddToPathRenderLists(playerRenderNodes[i]);
+	}
+
+	Matrix4 projMatrix2 = Matrix4::Orthographic(-CAPTURE_SIZE, CAPTURE_SIZE, -CAPTURE_SIZE, CAPTURE_SIZE, -CAPTURE_SIZE, CAPTURE_SIZE);
+	Matrix4	viewMatrix2 = Matrix4::Rotation(90, Vector3(1, 0, 0)) *Matrix4::Translation(Vector3(0.0f,-20.0f,0.0f));
+	glViewport(0, 0, PATHMAP_SIZE, PATHMAP_SIZE);
+	Matrix4 temp = projViewMatrix;
+	projViewMatrix = projMatrix2 * viewMatrix2;
+	glBindFramebuffer(GL_FRAMEBUFFER, pathFBO);
+	static_cast<DrawPathMaterial*>(materials[MATERIALTYPE::Draw_Path])->SetProjViewMtx(projMatrix2 * viewMatrix2);
+	for (int i = 0; i < pathRenderNodes.size(); i++)
+	{
+		Material* mat = pathRenderNodes[i]->GetMaterial();
+		pathRenderNodes[i]->SetMaterial(materials[MATERIALTYPE::Draw_Path]);
+		pathRenderNodes[i]->DrawOpenGL(true);
+		pathRenderNodes[i]->SetMaterial(mat);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	projViewMatrix = temp;
+}
+
+void GraphicsPipeline::RenderPostprocessAndPresent()
+{
+	//Downsample and present to screen
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, width, height);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+	float superSamples = (float)(numSuperSamples);
+	glUseProgram(shaders[SHADERTYPE::Present_To_Window]->GetProgram());
+
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uColorTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, screenTexColor);
+
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uGammaCorrection"), gammaCorrection);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uNumSuperSamples"), superSamples);
+	glUniform2f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
+
+
+	fullscreenQuad->Draw();
+}
+
+void GraphicsPipeline::InitPath()
+{
+	//Color Texture
+	if (!pathTex) glGenTextures(1, &pathTex);
+	glBindTexture(GL_TEXTURE_2D, pathTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, PATHMAP_SIZE, PATHMAP_SIZE, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+
+	//Generate our Framebuffer
+	if (!pathFBO) glGenFramebuffers(1, &pathFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, pathFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pathTex, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, pathDepth, 0);
+	glClearColor(0.0f,0.0f,0.0f,1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	GLenum buf = GL_COLOR_ATTACHMENT0;
+	glDrawBuffers(1, &buf);
+	//Validate our framebuffer
+	GLuint status;
+	if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		NCLERROR("Unable to create Screen Framebuffer! StatusCode: %x", status);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
+{
+	pathRenderNodes.push_back(node);
+	//Recurse over all children and process them aswell
+	for (auto itr = node->GetChildIteratorStart(); itr != node->GetChildIteratorEnd(); itr++)
+		RecursiveAddToPathRenderLists(*itr);
 }

@@ -30,7 +30,7 @@ public:
 		pitch = 0.0f;
 		free = false;
 		center = nullptr;
-		maxDistance = 10.0f;
+		maxDistance = 1000.0f;
 		minDistance = 1.0f;
 		distance = (maxDistance + minDistance) / 2;
 		armShape = new CuboidCollisionShape();

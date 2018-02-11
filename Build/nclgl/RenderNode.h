@@ -73,7 +73,7 @@ public:
 	void			SetCameraDistance(float f)	{distanceFromCamera = f;}
 
 	Material*		GetMaterial()const			{ return material; }
-	void			SetMaterial(Material* mat)  { material = mat; }
+	void			SetMaterial(Material* mat, bool isSetChild = false);
 
 	void			SetMesh(Mesh*m)				{mesh = m;}
 	Mesh*			GetMesh()					{return mesh;}
@@ -105,6 +105,9 @@ public:
 	bool 	 IsCollide() { return isCollided; }
 
 protected:
+
+	void RecursiveSetMaterial(Material* mat, RenderNode* renderNode);
+
 	Matrix4		worldTransform;
 	Matrix4		transform;
 	RenderNode*	parent;

@@ -81,6 +81,9 @@
 #define CAMERA_PROJ_NEAR     0.1f			//Nearest object @ 10cm
 #define CAMERA_PROJ_FOV      45.0f			//45 degree field of view
 
+#define PATHMAP_SIZE 2000
+#define CAPTURE_SIZE 40	 
+
 #define DEBUGDRAW_FLAGS_BOUNDING				0x20
 
 typedef std::pair<RenderNode*, float> RenderNodePair;
@@ -90,7 +93,9 @@ enum SHADERTYPE
 	Present_To_Window	= 0,
 	Shadow				= 1,
 	Forward_Lighting	= 2,
-
+	Texture_UI			= 3,
+	Draw_Path			= 4,
+	Ground				= 5,
 	Shader_Number,
 };
 
@@ -142,6 +147,10 @@ public:
 	inline Shader** GetAllShaders() { return shaders; }
 	inline Material** GetAllMaterials() { return materials; }
 
+	inline void AddPlayerRenderNode(RenderNode* playerRenderNode){ playerRenderNodes.push_back(playerRenderNode); }
+
+	inline void RemoteAllPlayerRenderNode() { playerRenderNodes.clear(); }
+	inline GLuint& GetPathTex() { return pathTex; }
 protected:
 	GraphicsPipeline();
 	virtual ~GraphicsPipeline();
@@ -155,6 +164,15 @@ protected:
 	void RecursiveAddToRenderLists(RenderNode* node);
 	void RenderAllObjects(bool isShadowPass, std::function<void(RenderNode*)> perObjectFunc = NULL);
 	void BuildShadowTransforms(); //Builds the shadow projView matrices
+
+	void RenderShadow();
+	void RenderObject();
+	void RenderUI();
+	void RenderPath();
+	void RenderPostprocessAndPresent();
+
+	void InitPath();
+	void RecursiveAddToPathRenderLists(RenderNode* node);
 
 protected:
 	Matrix4 projViewMatrix;
@@ -199,4 +217,21 @@ protected:
 
 	std::vector<RenderNodePair> renderlistOpaque;
 	std::vector<RenderNodePair> renderlistTransparent;	//Also stores cameraDist in the second argument for sorting purposes
+
+	//path
+	std::vector<RenderNode*>	playerRenderNodes;
+	std::vector<RenderNode*>	pathRenderNodes;
+	GLuint		pathFBO;
+	GLuint		pathTex;
+	GLuint		pathDepth;
+
 };
+
+// draw opengl () default material
+// draw opengl(material) current maerial
+
+// set mat can choose if set child mat
+
+// optimise material
+
+// more player function

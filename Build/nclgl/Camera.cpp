@@ -111,7 +111,7 @@ Generates a view matrix for the camera's viewpoint. This matrix can be sent
 straight to the shader...it's already an 'inverse camera' matrix.
 */
 Matrix4 Camera::BuildViewMatrix() {
-	if (!free) {
+	if (!free && center != nullptr) {
 		position = center->GetPosition();
 		position -= GetViewDirection() * distance * center->GetBoundingRadius();
 	}
