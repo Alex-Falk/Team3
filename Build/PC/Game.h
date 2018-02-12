@@ -2,6 +2,8 @@
 
 #include "Player.h"
 #include "GamePlay.h"
+#include <networking\Client.h>
+#include <networking\Server.h>
 
 class Game: public TSingleton<Game>
 {
@@ -16,7 +18,8 @@ public:
 	inline void SetLinearVelocity(uint id, Vector3 v) { players[id]->Physics()->SetLinearVelocity(v); }
 	inline void SetAngularVelocity(uint id, Vector3 v) { players[id]->Physics()->SetAngularVelocity(v); }
 	inline void SetPosition(uint id, Vector3 p) { players[id]->Physics()->SetPosition(p); }
-
+	inline void SetServer() { user = new Server(); }
+	inline void setClient() { user = new Client(); }
 
 	// Getters
 	//STUBS
@@ -38,4 +41,5 @@ private:
 	};
 	//variables
 	Player* players[4];
+	User* user;
 };

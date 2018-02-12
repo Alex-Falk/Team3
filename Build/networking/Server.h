@@ -4,17 +4,19 @@
 
 #pragma once
 #include "User.h"
+#include <iphlpapi.h>
+#pragma comment(lib, "IPHLPAPI.lib")
+
 
 using namespace std;
 
 class Server : public User
 {
-protected:
-	Player * playerOne;
 public:
 
 	NetworkBase * server;
 	GameTimer timer;
+	uint serverPort = 1234;
 
 	Server();
 	~Server() {
@@ -23,7 +25,7 @@ public:
 		exit(0);
 	};
 
-	int ServerLoop();
+	void updateUser(float dt);
 
 	NetworkBase * getBase() { return server; }
 
@@ -42,9 +44,9 @@ public:
 	void SendAngVelocity(uint ID);
 	void SendAcceleration(uint ID);
 	void SendWeaponFire(uint ID);
-	void SendScores();
-	void SendMap();
-	void SendUpdatemap();
+	//void SendScores();
+	//void SendMap();
+	//void SendUpdatemap();
 
 	std::string GetPacketData(const ENetEvent & evnt)
 	{
@@ -55,14 +57,12 @@ public:
 
 		return out;
 	}
+
 	//--------------------------------------------------------------------------------------------//
 	// Recieving
 	//--------------------------------------------------------------------------------------------//
 
 	// Updates from players
-
-	void RecievePlayerAcceleration(string data, uint id); // this will be a direction vector to apply a force in
-	void RecievePlayerPosition(string data, uint id);
 
 	//--------------------------------------------------------------------------------------------//
 	// Stored Variables

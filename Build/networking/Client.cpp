@@ -1,5 +1,5 @@
 #include "Client.h"
-
+#include <PC/Game.h>
 const Vector3 status_color3 = Vector3(1.0f, 0.6f, 0.6f);
 
 Client::Client()
@@ -10,22 +10,24 @@ Client::Client()
 		//Attempt to connect to the server on localhost:1234
 		serverConnection = network.ConnectPeer(127, 0, 0, 1, 1234);
 		NCLDebug::Log("Network: Attempting to connect to server.");
+
+		userID = CLIENT_ID;
 	}
 
-
+	
 }
 
-Client::Client(IP ip) {
-	if (network.Initialize(0))
-	{
-		NCLDebug::Log("Network: Initialized!");
-		//Attempt to connect to the server on localhost:1234
-		serverConnection = network.ConnectPeer(ip.a, ip.b, ip.c, ip.d, ip.port);
-		NCLDebug::Log("Network: Attempting to connect to server.");
-	}
-
-	userID = CLIENT_ID;
-}
+//Client::Client(IP ip) {
+//	if (network.Initialize(0))
+//	{
+//		NCLDebug::Log("Network: Initialized!");
+//		//Attempt to connect to the server on localhost:1234
+//		serverConnection = network.ConnectPeer(ip.a, ip.b, ip.c, ip.d, ip.port);
+//		NCLDebug::Log("Network: Attempting to connect to server.");
+//	}
+//
+//	userID = CLIENT_ID;
+//}
 
 
 Client::~Client()
@@ -43,6 +45,8 @@ void Client::UpdateClient(float dt)
 		this,								// Associated class instance
 		std::placeholders::_1);				// Where to place the first parameter
 	network.ServiceNetwork(dt, callback);
+
+
 }
 
 
@@ -66,42 +70,56 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		switch (type) {
 		case GAME_START:
 		{
-			game->InitializeMatch();
+			//Game::Instance()->InitializeMatch();
 			break;
 		}
 		case PLAYER_POS:
 		{
-			ReceivePosition(data);
+			PlayerVector pvec = ReceivePosition(data);
+			temps.positions[pvec.ID] = pvec.v;
+			break;
+		}
+		case PLAYER_LINVEL:
+		{
+			PlayerVector pvec = ReceiveLinVelocity(data);
+			temps.linVelocities[pvec.ID] = pvec.v;
+			break;
+		}
+		case PLAYER_ANGVEL:
+		{
+			PlayerVector pvec = ReceiveAngVelocity(data);
+			temps.angVelocities[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_ACCELERATION:
 		{
-			RecieveAcceleration(data);
+			PlayerVector pvec = ReceiveAcceleration(data);
+			temps.accelerations[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_SIZES:
 		{
-			RecieveSizes(data);
+			ReceiveSizes(data);
 			break;
 		}
 		case SCORES:
 		{
-			RecieveScores(data);
+			ReceiveScores(data);
 			break;
 		}
 		case MAP_INDEX:
 		{
-			RecieveMapIndex(data);
+			ReceiveMapIndex(data);
 			break;
 		}
 		case MAP_UPDATE:
 		{
-			RecieveMapChange(data);
+			//ReceiveMapChange(data);
 			break;
 		}
 		case GAME_END:
 		{
-			game->EndMatch();
+			//Game::Instance()->EndMatch();
 			break;
 		}
 		}
@@ -119,19 +137,19 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 // Recieving
 //--------------------------------------------------------------------------------------------//
 
-void Client::RecieveSizes(string data)
+void Client::ReceiveSizes(string data)
 {
 	string s = data.substr(data.find_first_of(':') + 1);
 	vector<string> splitData = split_string(s, ' ');
 
 	for (uint i = 0; i < placeholder_playerNum; ++i) 
 	{
-		game->SetSize(i, stof(splitData[i]));
+		Game::Instance()->SetSize(i, stof(splitData[i]));
 	}
 
 }
 
-void Client::RecieveScores(string data) 
+void Client::ReceiveScores(string data) 
 {
 
 	string s = data.substr(data.find_first_of(':') + 1);
@@ -139,17 +157,17 @@ void Client::RecieveScores(string data)
 
 	for (uint i = 0; i < placeholder_playerNum; ++i)
 	{
-		game->SetScore(i, stoi(splitData[i]));
+		Game::Instance()->SetScore(i, stoi(splitData[i]));
 	}
 	
 }
 
-void Client::RecieveMapIndex(string data)
+void Client::ReceiveMapIndex(string data)
 {
 	string s = data.substr(data.find_first_of(':') + 1);
 	uint mapIndex = stoi(s);
 
-	game->LoadLevel(mapIndex);
+	//Game::Instance()->LoadLevel(mapIndex);
 }
 
 
@@ -159,7 +177,7 @@ void Client::RecieveMapIndex(string data)
 
 void Client::SendPosition(uint ID)
 {
-	Vector3 pos = game->GetPlayer(userID)->Physics()->GetPosition();
+	Vector3 pos = Game::Instance()->GetPlayer(userID)->Physics()->GetPosition();
 
 	string data = Vector3ToString(pos);
 
@@ -169,7 +187,7 @@ void Client::SendPosition(uint ID)
 
 void Client::SendLinVelocity(uint ID)
 {
-	Vector3 vel = game->GetPlayer(userID)->Physics()->GetLinearVelocity();
+	Vector3 vel = Game::Instance()->GetPlayer(userID)->Physics()->GetLinearVelocity();
 
 	string data = Vector3ToString(vel);
 
@@ -179,7 +197,7 @@ void Client::SendLinVelocity(uint ID)
 
 void Client::SendAngVelocity(uint ID)
 {
-	Vector3 vel = game->GetPlayer(userID)->Physics()->GetAngularVelocity();
+	Vector3 vel = Game::Instance()->GetPlayer(userID)->Physics()->GetAngularVelocity();
 
 	string data = Vector3ToString(vel);
 
@@ -189,7 +207,7 @@ void Client::SendAngVelocity(uint ID)
 
 void Client::SendAcceleration(uint ID)
 {
-	Vector3 acc = game->GetPlayer(userID)->Physics()->GetAcceleration();
+	Vector3 acc = Game::Instance()->GetPlayer(userID)->Physics()->GetAcceleration();
 
 	string data = Vector3ToString(acc);
 

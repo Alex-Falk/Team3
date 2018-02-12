@@ -1,9 +1,8 @@
 #include "User.h"
-
-
-
+#include <PC/Game.h>
 User::User()
 {
+	userID = 0;
 }
 
 
@@ -11,7 +10,7 @@ User::~User()
 {
 }
 
-void User::ReceivePosition(string data)
+PlayerVector User::ReceivePosition(string data)
 {
 	size_t colonIdx = data.find_first_of(':');
 	size_t semicolonIdx = data.find_first_of(';');
@@ -21,11 +20,48 @@ void User::ReceivePosition(string data)
 	string p = data.substr(semicolonIdx);
 	Vector3 pos = InterpretStringVector(p);
 
-	game->SetPosition(playerID, pos);
+	PlayerVector pvec;
+	pvec.ID = playerID;
+	pvec.v = pos;
+
+	return pvec;
 }
 
+PlayerVector User::ReceiveLinVelocity(string data)
+{
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
 
-void User::RecieveAcceleration(string data)
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+	string p = data.substr(semicolonIdx);
+	Vector3 vel = InterpretStringVector(p);
+
+	PlayerVector pvec;
+	pvec.ID = playerID;
+	pvec.v = vel;
+
+	return pvec;
+}
+
+PlayerVector User::ReceiveAngVelocity(string data)
+{
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
+
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+	string p = data.substr(semicolonIdx);
+	Vector3 vel = InterpretStringVector(p);
+
+	PlayerVector pvec;
+	pvec.ID = playerID;
+	pvec.v = vel;
+
+	return pvec;
+}
+
+PlayerVector User::ReceiveAcceleration(string data)
 {
 	size_t colonIdx = data.find_first_of(':');
 	size_t semicolonIdx = data.find_first_of(';');
@@ -35,11 +71,15 @@ void User::RecieveAcceleration(string data)
 	string a = data.substr(semicolonIdx);
 	Vector3 acceleration = InterpretStringVector(a);
 
-	game->SetAcceleration(playerID, acceleration);
+	PlayerVector pvec;
+	pvec.ID = playerID;
+	pvec.v = acceleration;
+
+	return pvec;
 }
 
 // PACKET_TYPE:WEAPON_TYPE;XPOS YPOS ZPOS,XDIR YDIR ZDIR
-void User::RecieveWeapon(string data) {
+void User::ReceiveWeapon(string data) {
 	uint colonPos = data.find_first_of(':');
 	uint semicolonPos = data.find_first_of(';');
 	uint commaPos = data.find_first_of(',');

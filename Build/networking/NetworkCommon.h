@@ -4,7 +4,6 @@
 
 #pragma once
 #include <nclgl\common.h>
-#include <enet\enet.h>
 #include <PC\Player.h>
 
 enum PacketType {
@@ -29,43 +28,15 @@ struct IP {
 	int port;
 };
 
+struct PlayerVector {
+	uint ID;
+	Vector3 v;
+};
 //--------------------------------------------------------------------------------------------//
 // PLACEHOLDERS
 //--------------------------------------------------------------------------------------------//
 
-// Setters
-struct Placeholder_Game {
-
-	// Setting player stuff
-	void SetScore(uint id, int score);
-	void SetAmmo(uint id, float ammo);
-	void SetSize(uint id, float size);
-	void SetAcceleration(uint id, Vector3 a);
-	void SetPosition(uint id, Vector3 p);
-	
-	void SetMyId(uint id);
-
-	// Getters
-	uint GetMyId();
-	Player * GetPlayer(uint id);
-	Player * GetMyPlayer();
-	int GetMapIndex();
-
-	// General Game Functions
-	void InitializeMatch();
-	void LoadLevel(uint levelID);
-	void StartMatch();
-	void EndMatch();
-
-};
-
-struct Placeholder_Map {
-	int numObjects;
-};
-
-
 static Player * playerOne;
-static Placeholder_Game * game;
 static int placeholder_playerNum = 4;
 
 //--------------------------------------------------------------------------------------------//
@@ -82,6 +53,3 @@ vector<string> split_string(string s, char d);
 
 PacketType FindType(string data);
 
-ENetPacket* CreatePacket(string data) {
-	return enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
-}

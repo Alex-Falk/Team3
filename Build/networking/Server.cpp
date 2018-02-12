@@ -1,5 +1,5 @@
 #include "Server.h"
-
+#include <PC/Game.h>
 #define CLIENT_ID evnt.peer->incomingPeerID
 
 Server::Server() {
@@ -7,81 +7,79 @@ Server::Server() {
 	server = new NetworkBase();
 	printf("Server Initiated\n");
 
-	//Win32_PrintAllAdapterIPAdresses();
+	server->Initialize(1234, 4);
 
 	userID = 0;
 	timer.GetTimedMS();
 }
 
-int Server::ServerLoop()
+void Server::updateUser(float dt)
 {
-	while (true) 
+	server->ServiceNetwork(dt, [&](const ENetEvent& evnt) 
 	{
-		float dt = timer.GetTimedMS() * 0.001f;
+		string data = GetPacketData(evnt);
+		PacketType type = FindType(data);
 
-		server->ServiceNetwork(dt, [&](const ENetEvent& evnt) 
+		switch (evnt.type)
 		{
-			string data = GetPacketData(evnt);
-			PacketType type = FindType(data);
+		case ENET_EVENT_TYPE_CONNECT:
+		{
+			printf(" - New Client Connected\n");
 
-			switch (evnt.type)
-			{
-			case ENET_EVENT_TYPE_CONNECT:
-			{
-				printf(" - New Client Connected\n");
+			// Send over information to new client
+		}
+		break;
 
-				// Send over information to new client
+		case ENET_EVENT_TYPE_RECEIVE:
+				
+			switch (type) {
+			case PLAYER_POS:
+			{
+				Game::Instance()->SetPosition(CLIENT_ID,ReceivePosition(data).v);
+				break;
+			}
+			case PLAYER_LINVEL:
+			{
+				Game::Instance()->SetLinearVelocity(CLIENT_ID,ReceiveLinVelocity(data).v);
+				break;
+			}
+			case PLAYER_ANGVEL:
+			{
+				Game::Instance()->SetAngularVelocity(CLIENT_ID,ReceiveAngVelocity(data).v);
+				break;
+			}
+			case PLAYER_ACCELERATION:
+			{
+				Game::Instance()->SetAcceleration(CLIENT_ID,ReceiveAcceleration(data).v);
+				break;
+			}
 			}
 			break;
 
-			case ENET_EVENT_TYPE_RECEIVE:
-				
-				switch (type) {
-				case PLAYER_ACCELERATION:
-				{
-					RecievePlayerAcceleration(data, CLIENT_ID);
-					SendAcceleration(CLIENT_ID);
-					break;
-				}
-				}
-				break;
+		case ENET_EVENT_TYPE_DISCONNECT:
+		{
+			printf(" - Client %d has disconnected.\n", CLIENT_ID);
+			break;
+		}
+		}
+	});
 
-			case ENET_EVENT_TYPE_DISCONNECT:
-			{
-				printf(" - Client %d has disconnected.\n", CLIENT_ID);
-				break;
-			}
-			}
-		});
-
+	for (uint i = 0; i < 4; ++i)
+	{
+		SendPosition(i);
+		SendLinVelocity(i);
+		SendAngVelocity(i);
+		SendAcceleration(i);
+		//SendScores();
 	}
+
 }
 
 //--------------------------------------------------------------------------------------------//
 // Recieving
 //--------------------------------------------------------------------------------------------//
 
-// message in: "enum: linx liny linz"
-void Server::RecievePlayerAcceleration(string data, uint ID)
-{
-	size_t start = data.find_first_of(':');
-	size_t mid = data.find_first_of(';');
 
-	Vector3 linAcc = InterpretStringVector(data.substr(start, mid));
-	Vector3 angAcc = InterpretStringVector(data.substr(mid + 2));
-
-	game->GetPlayer(ID)->Physics()->SetAcceleration(linAcc);
-
-}
-
-void Server::RecievePlayerPosition(string data, uint ID)
-{
-	size_t start = data.find_first_of(':');
-
-	Vector3 pos = InterpretStringVector(data.substr(start));
-
-	game->GetPlayer(ID)->Physics()->SetPosition(pos);
-}
 
 //--------------------------------------------------------------------------------------------//
 // Sending
@@ -92,7 +90,7 @@ void Server::SendPosition(uint ID)
 	string data;
 
 	data = to_string(PLAYER_POS) + ":" +
-		to_string(ID) + ";" + Vector3ToString(game->GetPlayer(ID)->Physics()->GetPosition());
+		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->Physics()->GetPosition());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -103,7 +101,7 @@ void Server::SendLinVelocity(uint ID)
 	string data;
 
 	data = to_string(PLAYER_LINVEL) + ":" +
-		to_string(ID) + ";" + Vector3ToString(game->GetPlayer(ID)->Physics()->GetLinearVelocity());
+		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->Physics()->GetLinearVelocity());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -114,7 +112,7 @@ void Server::SendAngVelocity(uint ID)
 	string data;
 
 	data = to_string(PLAYER_ANGVEL) + ":" +
-		to_string(ID) + ";" + Vector3ToString(game->GetPlayer(ID)->Physics()->GetAngularVelocity());
+		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->Physics()->GetAngularVelocity());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -125,7 +123,7 @@ void Server::SendAcceleration(uint ID)
 	string data;
 
 	data = to_string(PLAYER_ACCELERATION) + ":" +
-		to_string(ID) + ";" + Vector3ToString(game->GetPlayer(ID)->Physics()->GetAcceleration());
+		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->Physics()->GetAcceleration());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -140,3 +138,5 @@ void Server::SendWeaponFire(uint ID)
 
 	data = to_string(PLAYER_WEAPON) + ":";
 }
+
+

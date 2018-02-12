@@ -2,7 +2,6 @@
 // 05/02/2018
 // Handles Client functionality for the game. Includes Sending and Recieving updates to/from the server
 
-
 #pragma once
 
 #include "User.h"
@@ -10,11 +9,18 @@
 
 using namespace std;
 
+struct TempData {
+	Vector3 positions[4];
+	Vector3 linVelocities[4];
+	Vector3 angVelocities[4];
+	Vector3 accelerations[4];
+};
+
 class Client : public User
 {
 public:
 	Client();
-	Client(IP ip);
+	//Client(IP ip);
 	~Client();
 
 	
@@ -40,14 +46,16 @@ public:
 	// Recieving
 	//--------------------------------------------------------------------------------------------//
 
-	void RecieveSizes(string data);
-	void RecieveScores(string data);
-	void RecieveMapIndex(string data);
-	void RecieveMapChange(string data);
+	void ReceiveSizes(string data);
+	void ReceiveScores(string data);
+	void ReceiveMapIndex(string data);
+	//void ReceiveMapChange(string data);
 
 protected:
 	NetworkBase network;
 	ENetPeer* serverConnection;
+
+	TempData temps;
 
 };
 

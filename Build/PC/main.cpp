@@ -8,6 +8,8 @@
 #include "GameInput.h"
 #include "Game.h"
 
+bool chosen = false;
+
 bool draw_debug = true;
 bool draw_performance = false;
 
@@ -19,6 +21,8 @@ PerfTimer timer_total, timer_physics, timer_update, timer_render;
 uint shadowCycleKey = 4;
 
 
+
+
 // Program Deconstructor
 //  - Releases all global components and memory
 //  - Optionally prints out an error message and
@@ -28,8 +32,9 @@ void Quit(bool error = false, const std::string &reason = "") {
 	SceneManager::Release();
 	PhysicsEngine::Release();
 	GraphicsPipeline::Release();
+	enet_deinitialize();
 	Window::Destroy();
-
+	
 	//Show console reason before exit
 	if (error) {
 		std::cout << reason << std::endl;
@@ -48,11 +53,19 @@ void Initialize()
 	if (!Window::Initialise("Game Technologies", 1280, 800, false))
 		Quit(true, "Window failed to initialise!");
 
+
 	//Initialize Renderer
 	GraphicsPipeline::Instance();
 
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
+
+	//Alex Falk - 12/02/2018 Temporary Network testing stuff
+	Game::Instance();
+
+
+	
+
 
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
@@ -130,6 +143,23 @@ static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObje
 //    cycling through scenes.
 void HandleKeyboardInputs()
 {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0) && !chosen)
+	{
+		if (enet_initialize() != 0)
+		{
+			Quit(true, "ENET failed to initialize!");
+		}
+
+		Game::Instance()->SetServer();
+		chosen = true;
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1) && !chosen)
+	{
+		Game::Instance()->setClient();
+		chosen = true;
+	}
+
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
 		PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
 

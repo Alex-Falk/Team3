@@ -18,16 +18,6 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Client.h" />
-    <ClInclude Include="NetworkCommon.h" />
-    <ClInclude Include="Server.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Client.cpp" />
-    <ClCompile Include="NetworkCommon.cpp" />
-    <ClCompile Include="Server.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{467EF45B-D7EB-4E00-AF22-992C40F1C97D}</ProjectGuid>
     <RootNamespace>Examples_Cuda</RootNamespace>

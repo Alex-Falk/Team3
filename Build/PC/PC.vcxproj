@@ -141,6 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Networking\Client.h" />
+    <ClInclude Include="..\Networking\NetworkCommon.h" />
+    <ClInclude Include="..\Networking\Server.h" />
+    <ClInclude Include="..\Networking\User.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="SimpleGamePlay.h" />
@@ -152,6 +156,10 @@
     <ClInclude Include="WeaponPickup.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Networking\Client.cpp" />
+    <ClCompile Include="..\Networking\NetworkCommon.cpp" />
+    <ClCompile Include="..\Networking\Server.cpp" />
+    <ClCompile Include="..\Networking\User.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="main.cpp" />
