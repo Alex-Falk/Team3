@@ -14,6 +14,7 @@ struct TempData {
 	Vector3 linVelocities[4];
 	Vector3 angVelocities[4];
 	Vector3 accelerations[4];
+	float sizes[4];
 };
 
 class Client : public User
@@ -46,7 +47,7 @@ public:
 	// Recieving
 	//--------------------------------------------------------------------------------------------//
 
-	void ReceiveSizes(string data);
+	PlayerFloat ReceiveSizes(string data);
 	void ReceiveScores(string data);
 	void ReceiveMapIndex(string data);
 	//void ReceiveMapChange(string data);

@@ -44,6 +44,7 @@ public:
 	void SendAngVelocity(uint ID);
 	void SendAcceleration(uint ID);
 	void SendWeaponFire(uint ID);
+	void SendSize(uint ID);
 	//void SendScores();
 	//void SendMap();
 	//void SendUpdatemap();

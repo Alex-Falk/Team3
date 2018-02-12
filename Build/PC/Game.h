@@ -14,6 +14,8 @@
 	          (_/
 */
 
+//Extra functionality added by Alex Falk - 12/02/2018
+
 #pragma once
 
 #include "Player.h"
@@ -29,7 +31,7 @@ public:
 	inline void SetScore(uint id, int score) {}
 	inline void SetAmmo(uint id, float ammo) {}
 	//FINISHED FUNCTIONS
-	inline void SetSize(uint id, float size) { players[id]->SetSize(size); }
+	inline void SetSize(uint id, float size) { players[id]->SetLife(size); }
 	inline void SetAcceleration(uint id, Vector3 a) { players[id]->GetGameObject()->Physics()->SetAcceleration(a); }
 	inline void SetLinearVelocity(uint id, Vector3 v) { players[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
 	inline void SetAngularVelocity(uint id, Vector3 v) { players[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }

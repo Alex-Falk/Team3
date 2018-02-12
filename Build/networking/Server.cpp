@@ -126,6 +126,7 @@ void Server::UpdateUser(float dt)
 		SendLinVelocity(i);
 		SendAngVelocity(i);
 		SendAcceleration(i);
+		SendSize(i);
 		//SendScores();
 	}
 
@@ -180,6 +181,17 @@ void Server::SendAcceleration(uint ID)
 
 	data = to_string(PLAYER_ACCELERATION) + ":" +
 		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetAcceleration());
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::SendSize(uint ID)
+{
+	string data;
+	
+	data = to_string(PLAYER_SIZES) + ":" +
+		to_string(ID) + ";" + to_string(Game::Instance()->GetPlayer(ID)->GetLife());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);

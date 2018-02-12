@@ -70,6 +70,7 @@ public:
 	virtual void IncrLife(float x) { life += x; }
 	virtual void DecrLife(float x) { life -= x; }
 
+	virtual void SetLife(float l) { life = l; }
 	virtual float GetLife() { return life; }
 
 	virtual void PickedPickUp(PickupType pickType);			//Checks if any pick up is Picked Up			Nikos 13.20

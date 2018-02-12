@@ -52,6 +52,7 @@ void Client::UpdateUser(float dt)
 		Game::Instance()->SetLinearVelocity(i, temps.linVelocities[i]);
 		Game::Instance()->SetAngularVelocity(i, temps.angVelocities[i]);
 		Game::Instance()->SetAcceleration(i, temps.accelerations[i]);
+		Game::Instance()->SetSize(i, temps.sizes[i]);
 	}
 }
 
@@ -109,7 +110,8 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		case PLAYER_SIZES:
 		{
-			ReceiveSizes(data);
+			PlayerFloat pfloat = ReceiveSizes(data);
+			temps.sizes[pfloat.ID] = pfloat.f;
 			break;
 		}
 		case SCORES:
@@ -147,15 +149,20 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 // Recieving
 //--------------------------------------------------------------------------------------------//
 
-void Client::ReceiveSizes(string data)
+PlayerFloat Client::ReceiveSizes(string data)
 {
-	string s = data.substr(data.find_first_of(':') + 1);
-	vector<string> splitData = split_string(s, ' ');
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
 
-	for (uint i = 0; i < placeholder_playerNum; ++i) 
-	{
-		Game::Instance()->SetSize(i, stof(splitData[i]));
-	}
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+	string a = data.substr(semicolonIdx + 1);
+
+	PlayerFloat pfloat;
+	pfloat.ID = playerID;
+	pfloat.f = stof(a);
+
+	return pfloat;
 
 }
 
