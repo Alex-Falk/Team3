@@ -1,4 +1,6 @@
 #include "Weapons.h"
+#include <ncltech\CommonMeshes.h>
+#include <ncltech\SphereCollisionShape.h>
 
 GameObject* Weapons::BuildPistol(const Vector4& color, float size, Vector3 pos)
 {
@@ -79,17 +81,27 @@ GameObject* Weapons::BuildRocket(const Vector4& color, float size, Vector3 pos) 
 	return obj;
 }
 
-GameObject* ShootPistol(Vector3 pos, float size ,Vector4 colour) {
+void Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
 	GameObject* bullet = Weapons::BuildPistol(colour, size, pos);
-
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	Vector3 direction;
 
-	bullet->Physics()->SetLinearVelocity(Matrix3::Rotation(pitch, Vector3(bullerPower, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, bullerPower, 0)) * Vector3(0, 0, -bullerPower));
+	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * bulletPower;
+	bullet->Physics()->SetLinearVelocity(direction);
+//	sendbullet(pos, direction);  //to send bullet on network;
 
+}
 
+void Weapons::ShootRocket(Vector3 pos, float size, Vector4 colour) {
+	GameObject* Rocket = Weapons::BuildPistol(colour, size, pos);
 
+	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	Vector3 direction;
 
-	return bullet;
+	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * rocketPower;
+	Rocket->Physics()->SetLinearVelocity(direction);
+	//	SendRocket(pos, direction);  //to send rocket on network;
 }

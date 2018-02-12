@@ -200,7 +200,7 @@ void Player::OnPlayerUpdate(float dt) {
 	UpdatePickUp(dt);
 
 	if (weapon != NUM_OF_WEAPONS) {
-//		ManageWeapons();
+		ManageWeapons(weapon);
 	}
 
 
@@ -236,9 +236,8 @@ void Player::PickedPickUp(PickupType pickType) {
 		jumpBoostTimer = boostactiveTime;
 		break;
 	case WEAPON: {
-	//	this->weapon = 
-	}
 		weapon = PAINT_PISTOL;
+	}
 		break;
 	default:
 		break;
@@ -273,8 +272,25 @@ void Player::UpdatePickUp(float dt)
 	
 }
 
-//void Player::ManageWeapons() {
-//
-//	if (Input::GetInput()->GetInput(SHOOT)) {
-//
-//}
+void Player::ManageWeapons(WeaponType wt) {
+	
+	if (Input::GetInput()->GetInput(SHOOT)) {
+		switch (wt)
+		{
+		case PAINT_SPRAY:
+
+			break;
+		case PAINT_PISTOL:
+			Weapons::ShootPistol(this->GetPosition(), size, colour);
+			break;
+		case AUTO_PAINT_LAUNCHER:
+			break;
+		case PAINT_ROCKET:
+			Weapons::ShootRocket(this->GetPosition(), size, colour);
+			break;
+		default:
+			break;
+		}
+	}
+
+}

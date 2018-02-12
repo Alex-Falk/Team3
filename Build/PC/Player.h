@@ -14,6 +14,8 @@
 #include "GamePlay.h"
 #include <ncltech\GameObject.h>
 #include <ncltech\CommonUtils.h>
+#include "Weapons.h"
+
 
 class Player : public GameObject
 {
@@ -96,10 +98,10 @@ public:
 
 
 	// Weapon Functions
-//	virtual void GetBulletDirection(Vector3 &pos, Vector3 &dir);
+	//virtual WeaponType GetBulletDirection(Vector3 &pos, Vector3 &dir);
 	
 
-//	virtual void ManageWeapons();
+	virtual void ManageWeapons(WeaponType wt);
 
 
 										//Example of member callback ('this' parameter is bound at bind time)
