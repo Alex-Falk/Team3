@@ -12,7 +12,7 @@
 #include <ncltech\TextureManager.h> 
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
-
+//
 
 
 
