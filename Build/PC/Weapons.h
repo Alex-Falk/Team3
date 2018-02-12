@@ -19,8 +19,8 @@ namespace Weapons
 	void ShootPistol(Vector3 pos, float size, Vector4 colour);
 	void ShootRocket(Vector3 pos, float size, Vector4 colour);
 
-	float bulletPower = 10;
-	float rocketPower = 10;
+//	float bulletPower = 10;
+//	float rocketPower = 10;
 //	float sprayPower = 10;
 //	float launcherPower = 10;
 }

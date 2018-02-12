@@ -10,7 +10,6 @@
 //Created a player callback function
 
 #pragma once
-
 #include "GamePlay.h"
 #include <ncltech\GameObject.h>
 #include <ncltech\CommonUtils.h>

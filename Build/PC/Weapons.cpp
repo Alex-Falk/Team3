@@ -28,7 +28,6 @@ GameObject* Weapons::BuildPistol(const Vector4& color, float size, Vector3 pos)
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1));
 
-
 	GameObject* obj = new GameObject("Bullet", rnode, pnode);
 
 	return obj;
@@ -83,12 +82,20 @@ GameObject* Weapons::BuildRocket(const Vector4& color, float size, Vector3 pos) 
 
 void Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
 	GameObject* bullet = Weapons::BuildPistol(colour, size, pos);
+//
+//	bullet->Physics()->SetOnCollisionCallback(
+//		std::bind(&Weapons::WeaponsCallbackFunction,
+//			bullet,							//Any non-placeholder param will be passed into the function each time it is called
+//			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
+//			std::placeholders::_2
+//		)
+//	);
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	Vector3 direction;
 
-	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * bulletPower;
+	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * 10;
 	bullet->Physics()->SetLinearVelocity(direction);
 //	sendbullet(pos, direction);  //to send bullet on network;
 
@@ -101,7 +108,7 @@ void Weapons::ShootRocket(Vector3 pos, float size, Vector4 colour) {
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	Vector3 direction;
 
-	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * rocketPower;
+	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * 10;
 	Rocket->Physics()->SetLinearVelocity(direction);
 	//	SendRocket(pos, direction);  //to send rocket on network;
 }
