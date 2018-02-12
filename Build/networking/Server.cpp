@@ -59,19 +59,16 @@ Server::Server() {
 	server = new NetworkBase();
 	printf("Server Initiated\n");
 
-	server->Initialize(1234, 4);
+	server->Initialize(1234, 32);
 	Win32_PrintAllAdapterIPAddresses();
 	userID = 0;
 	timer.GetTimedMS();
 }
 
-void Server::updateUser(float dt)
+void Server::UpdateUser(float dt)
 {
 	server->ServiceNetwork(dt, [&](const ENetEvent& evnt) 
 	{
-		string data = GetPacketData(evnt);
-		PacketType type = FindType(data);
-
 		switch (evnt.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
@@ -83,31 +80,38 @@ void Server::updateUser(float dt)
 		break;
 
 		case ENET_EVENT_TYPE_RECEIVE:
-				
+		{
+			string data = GetPacketData(evnt);
+			PacketType type = FindType(data);
+
 			switch (type) {
 			case PLAYER_POS:
 			{
-				Game::Instance()->SetPosition(CLIENT_ID,ReceivePosition(data).v);
+				Game::Instance()->SetPosition(CLIENT_ID, ReceivePosition(data).v);
 				break;
 			}
 			case PLAYER_LINVEL:
 			{
-				Game::Instance()->SetLinearVelocity(CLIENT_ID,ReceiveLinVelocity(data).v);
+				Game::Instance()->SetLinearVelocity(CLIENT_ID, ReceiveLinVelocity(data).v);
 				break;
 			}
 			case PLAYER_ANGVEL:
 			{
-				Game::Instance()->SetAngularVelocity(CLIENT_ID,ReceiveAngVelocity(data).v);
+				Game::Instance()->SetAngularVelocity(CLIENT_ID, ReceiveAngVelocity(data).v);
 				break;
 			}
 			case PLAYER_ACCELERATION:
 			{
-				Game::Instance()->SetAcceleration(CLIENT_ID,ReceiveAcceleration(data).v);
+				Game::Instance()->SetAcceleration(CLIENT_ID, ReceiveAcceleration(data).v);
 				break;
+			}
+			case TEXT_PACKET:
+			{
+				cout << data.substr(data.find_first_of(':') + 1) + "\n";
 			}
 			}
 			break;
-
+		}
 		case ENET_EVENT_TYPE_DISCONNECT:
 		{
 			printf(" - Client %d has disconnected.\n", CLIENT_ID);
@@ -116,14 +120,14 @@ void Server::updateUser(float dt)
 		}
 	});
 
-	for (uint i = 0; i < 4; ++i)
-	{
-		SendPosition(i);
-		SendLinVelocity(i);
-		SendAngVelocity(i);
-		SendAcceleration(i);
-		//SendScores();
-	}
+	/*for (uint i = 0; i < 4; ++i)*/
+	//{
+	//	SendPosition(i);
+	//	SendLinVelocity(i);
+	//	SendAngVelocity(i);
+	//	SendAcceleration(i);
+	//	//SendScores();
+	//}
 
 }
 

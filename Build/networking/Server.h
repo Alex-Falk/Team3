@@ -25,7 +25,7 @@ public:
 		exit(0);
 	};
 
-	void updateUser(float dt);
+	void UpdateUser(float dt);
 
 	NetworkBase * getBase() { return server; }
 

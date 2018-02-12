@@ -28,7 +28,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Utility
 	//--------------------------------------------------------------------------------------------//
-	void UpdateClient(float dt);
+	virtual void UpdateUser(float dt);
 
 	void ProcessNetworkEvent(const ENetEvent & evnt);
 

@@ -1,3 +1,5 @@
+#include <enet\enet.h>
+
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
@@ -304,7 +306,7 @@ int main()
 		}
 		timer_render.EndTimingSection();
 
-		
+		Game::Instance()->Update(dt);
 
 		//Finish Timing
 		timer_total.EndTimingSection();		

@@ -30,7 +30,7 @@ public:
 
 	string GetPacketData(const ENetEvent & evnt);
 
-	void updateUser(float dt);
+	virtual void UpdateUser(float dt) = 0;
 
 	ENetPacket* CreatePacket(string data) {
 	return enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);

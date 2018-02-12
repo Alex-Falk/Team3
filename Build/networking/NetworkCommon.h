@@ -17,6 +17,7 @@ enum PacketType {
 	SCORES,					// Server->Client: Broadcast Scores
 	MAP_INDEX,				// Server->Client: Boradcast Map to load
 	MAP_UPDATE,				//
+	TEXT_PACKET,
 	GAME_END				// Server->Client: Informs clients game has ended
 };
 

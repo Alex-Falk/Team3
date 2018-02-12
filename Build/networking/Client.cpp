@@ -2,7 +2,7 @@
 #include <PC/Game.h>
 const Vector3 status_color3 = Vector3(1.0f, 0.6f, 0.6f);
 
-Client::Client()
+Client::Client() : serverConnection(NULL)
 {
 	if (network.Initialize(0))
 	{
@@ -37,7 +37,7 @@ Client::~Client()
 	serverConnection = NULL;
 }
 
-void Client::UpdateClient(float dt)
+void Client::UpdateUser(float dt)
 {
 	//Update Network
 	auto callback = std::bind(
@@ -52,7 +52,6 @@ void Client::UpdateClient(float dt)
 
 void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 {
-	string data = GetPacketData(evnt);
 	switch (evnt.type)
 	{
 	case ENET_EVENT_TYPE_CONNECT:
@@ -60,12 +59,17 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		if (evnt.peer == serverConnection)
 		{
 			NCLDebug::Log(status_color3, "Network: Successfully connected to server!");
+
+			string data = to_string(TEXT_PACKET) + ":Hellooo!";
+			ENetPacket* posPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+			enet_peer_send(serverConnection, 0, posPacket);
 		}
 		break;
 	}
 	
 	case ENET_EVENT_TYPE_RECEIVE:
 	{
+		string data = GetPacketData(evnt);
 		PacketType type = FindType(data);
 		switch (type) {
 		case GAME_START:
