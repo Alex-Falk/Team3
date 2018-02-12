@@ -116,6 +116,8 @@ public:
 	inline void SetIntegrator(Integrator i)		{ integrator = i; }
 	inline void SetWorldPartitionMinSize(float s)		{ worldPartitioning->SetMinSize(s); }
 
+	inline std::vector<PhysicsNode*>* GetBigNodes() {	return worldPartitioning->GetBigNodes();  }
+
 	inline void SetLimits(Vector3 minvals, Vector3 maxvals) { 
 		limits.minVals = minvals; 
 		limits.maxVals = maxvals; 

@@ -68,6 +68,8 @@ public:
 	//Returns which physics nodes in parentElems are colliding with the AABB of node
 	std::vector<PhysicsNode*> FindElementsInNode(Node * node, std::vector<PhysicsNode*> parentElems);
 
+	std::vector<PhysicsNode*>* GetBigNodes() { return bigNodes; }
+
 	//Draws the entire world partition
 	void DebugDraw() const { if (root) { DebugDraw(root); } }
 
