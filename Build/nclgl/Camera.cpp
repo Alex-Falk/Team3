@@ -42,8 +42,8 @@ void Camera::UpdateCamara(float dt) {
 
 
 	//Bounds check the pitch, to be between straight up and straight down ;)
-	pitch = min(pitch, 7.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
-	pitch = max(pitch, -90.0f);
+	pitch = (float)min(pitch, free?90.0:7.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
+	pitch = (float)max(pitch, -90.0f);
 
 	if (yaw < 0.0f) {
 		yaw += 360.0f;
@@ -92,9 +92,9 @@ void Camera::UpdateCamara(float dt) {
 	//There are a lot of magic numbers here these should be dealt with
 	if (timeSinceMouse > MIN_TURN_TIME && (x*x + z*z) > MIN_CENTER_SPEED_SQUARED) {
 		//the camera moves itself faster the longer you haven't moved it
-		float turnSpeed = (timeSinceMouse - MIN_TURN_TIME)/ TURN_INCREASE_RATE;
-		turnSpeed = max(turnSpeed, MIN_TURN_SPEED);
-		turnSpeed = min(turnSpeed, MAX_TURN_SPEED);
+		float turnSpeed = (float)((timeSinceMouse - MIN_TURN_TIME)/ TURN_INCREASE_RATE);
+		turnSpeed = (float)max(turnSpeed, MIN_TURN_SPEED);
+		turnSpeed = (float)min(turnSpeed, MAX_TURN_SPEED);
 		//get the direction of the x and y vector and have the yaw approach it
 
 
@@ -138,6 +138,12 @@ Vector3 Camera::GetViewDirection() {
 }
 
 
+//michael davis 08/02/2018, needed for audio
+Vector3 Camera::GetUpDirection() {
+	return Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Matrix4::Rotation(pitch, Vector3(1, 0, 0)) * Vector3(0, 1, 0);
+}
+
+
 bool Camera::ToggleFree() {
 	//toggle the value for free movement if there is a center object
 	if (center) {
@@ -166,12 +172,8 @@ void Camera::UpdateDistance() {
 		//cast a ray and check for collisions
 		for (PhysicsNode* node : PhysicsEngine::Instance()->physicsNodes) {
 			//check the item isn't something to be ignored by the spring arm
-			if (node->GetParent()) {
-				string name = node->GetParent()->GetName();
-				//ignore pickups
-				if (name == "Pickup") {
+			if (node->GetType() == PICKUP) {
 					continue;
-				}
 			}
 			//if there is a collision move the camera to that point
 			//broadPhase

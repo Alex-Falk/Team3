@@ -5,6 +5,7 @@
 FixedWorldPartition::FixedWorldPartition(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, std::vector<PhysicsNode*> * elements)
 {
 	FixedWorldPartition(Vector3(xmin, ymin, zmin), Vector3(xmax, ymax, zmax), elements);
+	physicsNodes = nullptr;
 }
 
 FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector<PhysicsNode*>  * elements)
@@ -14,8 +15,22 @@ FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector
 	root->AABB->ExpandToFit(mins);
 	root->AABB->ExpandToFit(maxs);
 	root->children = nullptr;
+	
 
-	physicsNodes = elements;
+	physicsNodes = new std::vector<PhysicsNode*>;
+	bigNodes = new std::vector<PhysicsNode*>;
+
+	for (std::vector<PhysicsNode*>::iterator itr = elements->begin(); itr != elements->end(); ++itr)
+	{
+		if ((*itr)->GetType() == BIG_NODE)
+		{
+			bigNodes->push_back((*itr));
+		}
+		else
+		{
+			physicsNodes->push_back((*itr));
+		}
+	}
 
 	if (physicsNodes->size() > maxNumber)
 	{
@@ -30,6 +45,16 @@ FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector
 FixedWorldPartition::~FixedWorldPartition()
 {
 	TerminateTree(&root);
+
+	if (physicsNodes)
+	{
+		delete physicsNodes;
+	}
+	if (bigNodes)
+	{
+		delete bigNodes;
+	}
+	
 }
 
 void FixedWorldPartition::TerminateTree(Node ** node) {
@@ -66,7 +91,29 @@ void FixedWorldPartition::RepartitionWorld(Vector3 mins, Vector3 maxs, std::vect
 	root->AABB->ExpandToFit(maxs);
 	root->children = nullptr;
 
-	physicsNodes = elements;
+	if (physicsNodes)
+	{
+		delete physicsNodes;
+	}
+	physicsNodes = new std::vector<PhysicsNode*>;
+	
+	if (bigNodes)
+	{
+		delete bigNodes;
+	}
+	bigNodes = new std::vector<PhysicsNode*>;
+
+	for (std::vector<PhysicsNode*>::iterator itr = elements->begin(); itr != elements->end(); ++itr)
+	{
+		if ((*itr)->GetType() == BIG_NODE)
+		{
+			bigNodes->push_back((*itr));
+		}
+		else
+		{
+			physicsNodes->push_back((*itr));
+		}
+	}
 
 	if (physicsNodes->size() > maxNumber)
 	{
@@ -215,35 +262,67 @@ std::vector<CollisionPair> FixedWorldPartition::CreatePairs(Node * node)
 		{
 			if (node->elements.size() > 0) 
 			{
-				for (size_t i = 0; i < node->elements.size() - 1; ++i)
+				if (node->elements.size() != 1)
 				{
-					for (size_t j = i + 1; j < node->elements.size(); ++j)
+					for (size_t i = 0; i < node->elements.size() - 1; ++i)
 					{
-						pnodeA = node->elements[i];
-						pnodeB = node->elements[j];
+						for (size_t j = i + 1; j < node->elements.size(); ++j)
+						{
+							pnodeA = node->elements[i];
+							pnodeB = node->elements[j];
 
-						//Check they both at least have collision shapes
-						bool siblings;
-						if (pnodeA->GetParent()) 
-						{
-							siblings = pnodeA->GetParent()->SiblingsCollide();
-						}
-						else 
-						{
-							siblings = true;
+							//Check they both at least have collision shapes
+							bool siblings;
+							if (pnodeA->GetParent())
+							{
+								siblings = pnodeA->GetParent()->SiblingsCollide();
+							}
+							else
+							{
+								siblings = true;
+							}
+
+							if (pnodeA->GetCollisionShape() != NULL
+								&& pnodeB->GetCollisionShape() != NULL
+								&& (pnodeA->GetPosition() - pnodeB->GetPosition()).Length() <= pnodeA->GetBoundingRadius() + pnodeB->GetBoundingRadius()
+								&& (pnodeA->GetParent() != pnodeB->GetParent() || (pnodeA->GetParent() == pnodeB->GetParent() && siblings))
+								)
+							{
+								CollisionPair cp;
+								cp.pObjectA = pnodeA;
+								cp.pObjectB = pnodeB;
+								pairs.push_back(cp);
+							}
+
+							for (std::vector<PhysicsNode*>::iterator itr = bigNodes->begin(); itr != bigNodes->end(); itr++)
+							{
+								CollisionPair cp;
+								cp.pObjectA = *itr;
+								cp.pObjectB = node->elements[i];
+								pairs.push_back(cp);
+							}
 						}
 
-						if (pnodeA->GetCollisionShape() != NULL
-							&& pnodeB->GetCollisionShape() != NULL
-							&& (pnodeA->GetPosition() - pnodeB->GetPosition()).Length() <= pnodeA->GetBoundingRadius() + pnodeB->GetBoundingRadius()
-							&& (pnodeA->GetParent() != pnodeB->GetParent() || (pnodeA->GetParent() == pnodeB->GetParent() && siblings))
-							)
+						if (i == node->elements.size() - 2)
 						{
-							CollisionPair cp;
-							cp.pObjectA = pnodeA;
-							cp.pObjectB = pnodeB;
-							pairs.push_back(cp);
+							for (std::vector<PhysicsNode*>::iterator itr = bigNodes->begin(); itr != bigNodes->end(); itr++)
+							{
+								CollisionPair cp;
+								cp.pObjectA = *itr;
+								cp.pObjectB = node->elements[i + 1];
+								pairs.push_back(cp);
+							}
 						}
+					}
+				}
+				else
+				{
+					for (std::vector<PhysicsNode*>::iterator itr = bigNodes->begin(); itr != bigNodes->end(); itr++)
+					{
+						CollisionPair cp;
+						cp.pObjectA = *itr;
+						cp.pObjectB = node->elements[0];
+						pairs.push_back(cp);
 					}
 				}
 			}

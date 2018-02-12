@@ -17,6 +17,7 @@ WeaponPickup::WeaponPickup()
 		0.0f,
 		true,									//Has Collision Shape
 		false,									//Dragable by the user
+		PICKUP,
 		Vector4(0.0f, 1.0f, 0.0f, 1.0f));	        //Color
 }
 
@@ -33,6 +34,7 @@ WeaponPickup::WeaponPickup(Vector3 pos, WeaponType type, float respawnTime)
 		0.0f,
 		true,									//Has Collision Shape
 		false,									//Dragable by the user
+		PICKUP,
 		Vector4(0.0f, 1.0f, 0.0f, 1.0f));		//Colour
 
 	object->Physics()->SetOnCollisionCallback(

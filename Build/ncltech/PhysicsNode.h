@@ -37,6 +37,11 @@ Description:
 
 enum Integrator { ZERO, SYMPLETIC, RK2, RK4 };
 
+//Nick Bedford
+//Date: 12/02/2018
+//Added an enum to sort nodes
+enum PhysNodeType {DEFAULT, PROJECTILE, BIG_NODE, PICKUP, PLAYER};
+
 class PhysicsNode;
 
 //Callback function called whenever a collision is detected between two objects
@@ -60,7 +65,7 @@ class GameObject;
 class PhysicsNode
 {
 public:
-	PhysicsNode(Integrator i = ZERO)
+	PhysicsNode(PhysNodeType physType = DEFAULT, Integrator i = ZERO)
 		: position(0.0f, 0.0f, 0.0f)
 		, linVelocity(0.0f, 0.0f, 0.0f)
 		, force(0.0f, 0.0f, 0.0f)
@@ -74,6 +79,7 @@ public:
 		, elasticity(0.9f)
 	{
 		integrator = i;
+		type = physType;
 	}
 
 	virtual ~PhysicsNode()
@@ -91,6 +97,8 @@ public:
 
 	//<--------- GETTERS ------------->
 	inline GameObject*			GetParent()					const { return parent; }
+
+	inline PhysNodeType			GetType()					const { return type; }
 
 	inline float				GetElasticity()				const { return elasticity; }
 	inline float				GetFriction()				const { return friction; }
@@ -133,6 +141,8 @@ public:
 	inline void SetTorque(const Vector3& v)							{ torque = v; }
 	inline void SetInverseInertia(const Matrix3& v)					{ invInertia = v; }
 
+	inline void	SetType(PhysNodeType newType)						{ type = newType; }
+
 	inline void SetBoundingRadius(const float r)					{ boundingRadius = r; }
 
 	inline void SetIntegrator(Integrator i)							{ integrator = i; }
@@ -170,6 +180,7 @@ public:
 
 protected:
 	//Useful parameters
+	PhysNodeType			type;
 	GameObject*				parent;
 	Matrix4					worldTransform;
 	PhysicsUpdateCallback	onUpdateCallback;
@@ -180,6 +191,7 @@ protected:
 	Vector3					v2;
 	Vector3					v3;
 	Vector3					v4;
+
 //Added in Tutorial 2
 	//<---------LINEAR-------------->
 	Vector3		position;

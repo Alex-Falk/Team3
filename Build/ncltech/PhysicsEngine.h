@@ -61,7 +61,7 @@ Description:
 #define DEBUGDRAW_FLAGS_MANIFOLD				0x2
 #define DEBUGDRAW_FLAGS_COLLISIONVOLUMES		0x4
 #define DEBUGDRAW_FLAGS_COLLISIONNORMALS		0x8
-#define DEBUGDRAW_FLAGS_OCTREE					0x10
+#define DEBUGDRAW_FLAGS_FIXED_WORLD				0x10
 
 struct WorldLimits
 {
@@ -115,6 +115,10 @@ public:
 
 	inline void SetIntegrator(Integrator i)		{ integrator = i; }
 	inline void SetWorldPartitionMinSize(float s)		{ worldPartitioning->SetMinSize(s); }
+
+	inline std::vector<PhysicsNode*>* GetBigNodes() {	return worldPartitioning->GetBigNodes();  }
+
+	std::vector<PhysicsNode*>* GetAllNodesOfType(PhysNodeType type);
 
 	inline void SetLimits(Vector3 minvals, Vector3 maxvals) { 
 		limits.minVals = minvals; 

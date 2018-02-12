@@ -22,6 +22,18 @@
     <Filter Include="GamePlay\Source">
       <UniqueIdentifier>{27103adf-a3a6-409f-948d-fbfb0f179103}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{9a21aa3e-e0d9-468b-a182-b5ef3792eae5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Header">
+      <UniqueIdentifier>{93a233d5-0a7e-4079-b590-58588a4fbe63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Source">
+      <UniqueIdentifier>{38740f4f-5b94-4f48-b598-2dba4710edbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Resources">
+      <UniqueIdentifier>{b47ed012-3b3e-4fd5-b8c5-9bf908251304}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePlay.h">
@@ -39,20 +51,23 @@
     <ClInclude Include="Pickup.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="AudioSystem.h">
+      <Filter>Audio\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Blank.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Arena.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameInput.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WeaponPickup.h">
-      <Filter>GamePlay\Header</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Weapons.h">
       <Filter>GamePlay\Header</Filter>
@@ -77,17 +92,32 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameInput.cpp">
-      <Filter>GamePlay\Source</Filter>
+    <ClCompile Include="Arena.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="AudioSystem.cpp">
+      <Filter>Audio\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WeaponPickup.cpp">
-      <Filter>GamePlay\Source</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Weapons.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\AudioFiles\wave.mp3">
+      <Filter>Audio\Resources</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Audio\Resources</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\wave.mp3" />
   </ItemGroup>
 </Project>

@@ -15,11 +15,12 @@ void SimpleGamePlay::OnInitializeScene() {
 		0.0f,
 		true,
 		false,
+		BIG_NODE,
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));
 
 	this->AddGameObject(ground);
 
-	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT, 0, 1.0f);
+	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 

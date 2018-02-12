@@ -5,6 +5,8 @@
 #include <nclgl\PerfTimer.h>
 
 #include "SimpleGamePlay.h"
+#include "Arena.h"
+#include "AudioSystem.h"
 #include "GameInput.h"
 #include "Game.h"
 
@@ -15,7 +17,7 @@ const Vector4 status_colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 const Vector4 status_colour_header = Vector4(0.8f, 0.9f, 1.0f, 1.0f);
 
 bool show_perf_metrics = false;
-PerfTimer timer_total, timer_physics, timer_update, timer_render;
+PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio;
 uint shadowCycleKey = 4;
 
 
@@ -28,6 +30,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	SceneManager::Release();
 	PhysicsEngine::Release();
 	GraphicsPipeline::Release();
+	AudioSystem::Release();
 	Window::Destroy();
 
 	//Show console reason before exit
@@ -38,6 +41,12 @@ void Quit(bool error = false, const std::string &reason = "") {
 	}
 }
 
+//initialise all audio files
+void InitialiseAudioFiles() {
+	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
+	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+	AudioSystem::Instance()->SetMusicVolume(0.3f);
+}
 
 // Program Initialise
 //  - Generates all program wide components and enqueues all scenes
@@ -56,7 +65,11 @@ void Initialize()
 
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
+	AudioSystem::Instance();
+
+	InitialiseAudioFiles();
 }
 
 // Print Debug Info
@@ -87,6 +100,7 @@ void PrintStatusEntries()
 		timer_physics.PrintOutputToStatusEntry(status_colour, "          Physics Update :");
 		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
 		timer_render.PrintOutputToStatusEntry(status_colour, "          Render Scene   :");
+		timer_audio.PrintOutputToStatusEntry(status_colour, "         Audio Update   :");
 	}
 
 	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
@@ -103,7 +117,7 @@ void PrintStatusEntries()
 		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] - Tut 4", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] - Tut 4+", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] - Tut 5+", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_OCTREE) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
 		//NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
 
 		NCLDebug::AddStatusEntry(status_color_debug, "");
@@ -150,6 +164,34 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
 		show_perf_metrics = !show_perf_metrics;
 
+	//audio test functionality
+	//TODO remove this when finished testing
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
+		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
+		AudioSystem::Instance()->StopAllSounds();
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
+		AudioSystem::Instance()->UnmuteAllSounds();
+	}
+
+
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
@@ -165,7 +207,7 @@ void HandleKeyboardInputs()
 		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
-		drawFlags ^= DEBUGDRAW_FLAGS_OCTREE;
+		drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
 
 	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
 		//drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
@@ -179,6 +221,7 @@ void HandleKeyboardInputs()
 			1.0f / 4.0f,							//Inverse Mass
 			true,									//Has Collision Shape
 			true,									//Dragable by the user
+			DEFAULT,
 			CommonUtils::GenColor(0.1f, 0.8f));		//Color
 
 
@@ -235,6 +278,7 @@ int main()
 		timer_physics.UpdateRealElapsedTime(dt);
 		timer_update.UpdateRealElapsedTime(dt);
 		timer_render.UpdateRealElapsedTime(dt);
+		timer_audio.UpdateRealElapsedTime(dt);
 
 		//Print Status Entries
 		PrintStatusEntries();
@@ -269,7 +313,9 @@ int main()
 		}
 		timer_render.EndTimingSection();
 
-		
+		timer_audio.BeginTimingSection();
+		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
+		timer_audio.EndTimingSection();
 
 		//Finish Timing
 		timer_total.EndTimingSection();		
