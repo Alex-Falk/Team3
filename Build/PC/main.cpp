@@ -115,7 +115,7 @@ void PrintStatusEntries()
 		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] - Tut 4", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] - Tut 4+", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] - Tut 5+", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_OCTREE) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
 		//NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
 
 		NCLDebug::AddStatusEntry(status_color_debug, "");
@@ -205,7 +205,7 @@ void HandleKeyboardInputs()
 		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
-		drawFlags ^= DEBUGDRAW_FLAGS_OCTREE;
+		drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
 
 	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
 		//drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;

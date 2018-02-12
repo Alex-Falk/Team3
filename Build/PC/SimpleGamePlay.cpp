@@ -19,7 +19,7 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT, 0, 1.0f);
+	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 

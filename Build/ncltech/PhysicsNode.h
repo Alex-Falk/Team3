@@ -65,7 +65,7 @@ class GameObject;
 class PhysicsNode
 {
 public:
-	PhysicsNode(Integrator i = ZERO)
+	PhysicsNode(PhysNodeType physType = DEFAULT, Integrator i = ZERO)
 		: position(0.0f, 0.0f, 0.0f)
 		, linVelocity(0.0f, 0.0f, 0.0f)
 		, force(0.0f, 0.0f, 0.0f)
@@ -79,6 +79,7 @@ public:
 		, elasticity(0.9f)
 	{
 		integrator = i;
+		type = physType;
 	}
 
 	virtual ~PhysicsNode()
@@ -96,6 +97,8 @@ public:
 
 	//<--------- GETTERS ------------->
 	inline GameObject*			GetParent()					const { return parent; }
+
+	inline PhysNodeType			GetType()					const { return type; }
 
 	inline float				GetElasticity()				const { return elasticity; }
 	inline float				GetFriction()				const { return friction; }
@@ -137,6 +140,8 @@ public:
 	inline void SetAngularVelocity(const Vector3& v)				{ angVelocity = v; }
 	inline void SetTorque(const Vector3& v)							{ torque = v; }
 	inline void SetInverseInertia(const Matrix3& v)					{ invInertia = v; }
+
+	inline void	SetType(PhysNodeType newType)						{ type = newType; }
 
 	inline void SetBoundingRadius(const float r)					{ boundingRadius = r; }
 
