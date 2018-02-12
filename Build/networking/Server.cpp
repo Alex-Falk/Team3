@@ -2,13 +2,65 @@
 #include <PC/Game.h>
 #define CLIENT_ID evnt.peer->incomingPeerID
 
+void Win32_PrintAllAdapterIPAddresses()
+{
+	//Initially allocate 5KB of memory to store all adapter info
+	ULONG outBufLen = 5000;
+
+
+	IP_ADAPTER_INFO* pAdapters = NULL;
+	DWORD status = ERROR_BUFFER_OVERFLOW;
+
+	//Keep attempting to fit all adapter info inside our buffer, allocating more memory if needed
+	// Note: Will exit after 5 failed attempts, or not enough memory. Lets pray it never comes to this!
+	for (int i = 0; i < 5 && (status == ERROR_BUFFER_OVERFLOW); i++)
+	{
+		pAdapters = (IP_ADAPTER_INFO *)malloc(outBufLen);
+		if (pAdapters != NULL) {
+
+			//Get Network Adapter Info
+			status = GetAdaptersInfo(pAdapters, &outBufLen);
+
+			// Increase memory pool if needed
+			if (status == ERROR_BUFFER_OVERFLOW) {
+				free(pAdapters);
+				pAdapters = NULL;
+			}
+			else {
+				break;
+			}
+		}
+	}
+
+
+	if (pAdapters != NULL)
+	{
+		//Iterate through all Network Adapters, and print all IPv4 addresses associated with them to the console
+		// - Adapters here are stored as a linked list termenated with a NULL next-pointer
+		IP_ADAPTER_INFO* cAdapter = &pAdapters[0];
+		while (cAdapter != NULL)
+		{
+			IP_ADDR_STRING* cIpAddress = &cAdapter->IpAddressList;
+			while (cIpAddress != NULL)
+			{
+				printf("\t - Listening for connections on %s:%u\n", cIpAddress->IpAddress.String, 1234);
+				cIpAddress = cIpAddress->Next;
+			}
+			cAdapter = cAdapter->Next;
+		}
+
+		free(pAdapters);
+	}
+
+}
+
 Server::Server() {
 
 	server = new NetworkBase();
 	printf("Server Initiated\n");
 
 	server->Initialize(1234, 4);
-
+	Win32_PrintAllAdapterIPAddresses();
 	userID = 0;
 	timer.GetTimedMS();
 }

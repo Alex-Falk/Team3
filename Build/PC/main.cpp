@@ -156,6 +156,11 @@ void HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1) && !chosen)
 	{
+		if (enet_initialize() != 0)
+		{
+			Quit(true, "ENET failed to initialize!");
+		}
+
 		Game::Instance()->setClient();
 		chosen = true;
 	}
