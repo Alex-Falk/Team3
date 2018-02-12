@@ -37,6 +37,11 @@ Description:
 
 enum Integrator { ZERO, SYMPLETIC, RK2, RK4 };
 
+//Nick Bedford
+//Date: 12/02/2018
+//Added an enum to sort nodes
+enum PhysNodeType {DEFAULT, PROJECTILE, BIG_NODE, PICKUP, PLAYER};
+
 class PhysicsNode;
 
 //Callback function called whenever a collision is detected between two objects
@@ -170,6 +175,7 @@ public:
 
 protected:
 	//Useful parameters
+	PhysNodeType			type;
 	GameObject*				parent;
 	Matrix4					worldTransform;
 	PhysicsUpdateCallback	onUpdateCallback;
@@ -180,6 +186,7 @@ protected:
 	Vector3					v2;
 	Vector3					v3;
 	Vector3					v4;
+
 //Added in Tutorial 2
 	//<---------LINEAR-------------->
 	Vector3		position;
