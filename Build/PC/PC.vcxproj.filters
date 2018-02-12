@@ -34,6 +34,15 @@
     <Filter Include="Audio\Resources">
       <UniqueIdentifier>{b47ed012-3b3e-4fd5-b8c5-9bf908251304}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{94190c13-82f4-466d-a1b3-c3006dce752d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Header">
+      <UniqueIdentifier>{93293a18-f1f3-45d2-88be-b1f6961bae72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Source">
+      <UniqueIdentifier>{b1273f3a-ff52-4b62-be2f-909e1e350bce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePlay.h">
@@ -68,6 +77,9 @@
     </ClInclude>
     <ClInclude Include="WeaponPickup.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NavMesh.h">
+      <Filter>AI\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +121,10 @@
     <Media Include="..\AudioFiles\singing.wav">
       <Filter>Audio\Resources</Filter>
     </Media>
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\wave.mp3" />
     <Media Include="..\AudioFiles\singing.wav">
       <Filter>Resource Files</Filter>
     </Media>

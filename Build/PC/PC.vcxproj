@@ -162,6 +162,7 @@
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
+    <ClInclude Include="NavMesh.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
