@@ -95,7 +95,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 	case PINK
 		:
 	{
-		Colour = Vector4(1.0f, 0.41f, 0.7f, 1.0f);
+		Colour = Vector4(1.0f, 0.1f, 1.0f, 1.0f);
 	}
 		break;
 	default:
