@@ -15,13 +15,14 @@ Player::Player() : GameObject("Player")
 	life = maxLife;
 	timer = 0;
 
-	playerGameObject = CommonUtils::BuildSphereObject("Player1",
+	playerGameObject = CommonUtils::BuildSphereObject("Player",
 		Vector3(0.0f, 1.0f, 0.0f),
 		1.0f,									//Radius
 		true,									//Has Physics Object
 		1.0f,
 		true,									//Has Collision Shape
 		false,									//Dragable by the user
+		PLAYER,
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
 	canJump = true;
 	playerGameObject->Physics()->SetElasticity(0);
@@ -111,6 +112,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 		1.0f,
 		true,									//Has Collision Shape
 		false,									//Dragable by the user
+		PLAYER,
 		Colour);								//Colour
 
 	playerGameObject->Physics()->SetElasticity(0);

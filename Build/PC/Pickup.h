@@ -21,11 +21,9 @@ public:
 	//Example of member callback ('this' parameter is bound at bind time)
 	bool PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
 	{
-		if (collidingObject->getName() == "Player")
+		if (collidingObject->GetType() == PLAYER)
 		{
 			this->active = false;
-
-			NCLDebug::Log(Vector3(1.0f, 0.0f, 0.0f), "Pickup collision");
 		}
 
 		//Return true to enable collision resolution, for Pickup just return false so we can drop the collision pair from the system

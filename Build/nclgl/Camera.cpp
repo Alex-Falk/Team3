@@ -42,8 +42,8 @@ void Camera::UpdateCamara(float dt) {
 
 
 	//Bounds check the pitch, to be between straight up and straight down ;)
-	pitch = min(pitch, 7.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
-	pitch = max(pitch, -90.0f);
+	pitch = (float)min(pitch, free?90.0:7.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
+	pitch = (float)max(pitch, -90.0f);
 
 	if (yaw < 0.0f) {
 		yaw += 360.0f;
@@ -173,12 +173,8 @@ void Camera::UpdateDistance() {
 		//cast a ray and check for collisions
 		for (PhysicsNode* node : PhysicsEngine::Instance()->physicsNodes) {
 			//check the item isn't something to be ignored by the spring arm
-			if (node->GetParent()) {
-				string name = node->GetParent()->GetName();
-				//ignore pickups
-				if (name == "Pickup") {
+			if (node->GetType() == PICKUP) {
 					continue;
-				}
 			}
 			//if there is a collision move the camera to that point
 			//broadPhase
