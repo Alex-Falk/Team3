@@ -16,7 +16,7 @@
 #include "Weapons.h"
 
 
-class Player : public GameObject
+class Player
 {
 private:
 
@@ -54,7 +54,7 @@ private:
 	//Weapon
 	WeaponType weapon;
 	float weaponAmmo;				// Weapon Ammo
-
+	
 
 
 	float timer;
@@ -106,6 +106,8 @@ public:
 										//Example of member callback ('this' parameter is bound at bind time)
 	bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
+
+	GameObject* ammo;
 
 	~Player();
 

@@ -33,6 +33,7 @@ void SimpleGamePlay::OnInitializeScene() {
 
 
 
+
 	Scene::OnInitializeScene();
 }
 
@@ -48,6 +49,8 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	{
 		pickup->Update(dt);
 	}
+
+	this->AddGameObject(player->ammo);
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }

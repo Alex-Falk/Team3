@@ -16,11 +16,8 @@ namespace Weapons
 	//GameObject* AUTO_PAINT_LAUNCHER();
 
 
-	void ShootPistol(Vector3 pos, float size, Vector4 colour);
-	void ShootRocket(Vector3 pos, float size, Vector4 colour);
+	GameObject* ShootPistol(Vector3 pos, float size, Vector4 colour);
+	GameObject* ShootRocket(Vector3 pos, float size, Vector4 colour);
 
-//	float bulletPower = 10;
-//	float rocketPower = 10;
-//	float sprayPower = 10;
-//	float launcherPower = 10;
+
 }

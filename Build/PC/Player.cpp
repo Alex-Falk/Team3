@@ -10,7 +10,7 @@
 #include <string.h>
 #include "GameInput.h"
 
-Player::Player() : GameObject("Player")
+Player::Player()
 {
 	life = maxLife;
 	timer = 0;
@@ -52,7 +52,7 @@ Player::~Player()
 {
 }
 
-Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
+Player::Player(Vector3 pos, Colour c, uint id, float s)
 {
 	col = c;
 	size = s;
@@ -112,7 +112,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 		true,									//Has Collision Shape
 		false,									//Dragable by the user
 		PLAYER,
-		Colour);								//Colour
+		colour);								//Colour
 
 	playerGameObject->Physics()->SetElasticity(0);
 
@@ -177,6 +177,16 @@ void Player::Input(float dt) {
 	}
 	canJump = false;
 	
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+		NCLDebug::Log("Pistol Activated");
+		weapon = PAINT_PISTOL;
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+		NCLDebug::Log("Rocket Activated");
+		weapon = PAINT_ROCKET;
+	}
+
 	if (force.x > maxForce)force.x = maxForce;
 	if (force.x < -maxForce)force.x = -maxForce;
 	if (force.z > maxForce)force.z = maxForce;
@@ -241,7 +251,7 @@ void Player::PickedPickUp(PickupType pickType) {
 		jumpBoostTimer = boostactiveTime;
 		break;
 	case WEAPON: {
-		weapon = PAINT_PISTOL;
+
 	}
 		break;
 	default:
@@ -286,12 +296,14 @@ void Player::ManageWeapons(WeaponType wt) {
 
 			break;
 		case PAINT_PISTOL:
-			Weapons::ShootPistol(this->GetPosition(), size, colour);
+			NCLDebug::Log("Pistol piou piou");
+			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
 			break;
 		case AUTO_PAINT_LAUNCHER:
 			break;
 		case PAINT_ROCKET:
-			Weapons::ShootRocket(this->GetPosition(), size, colour);
+			NCLDebug::Log("Rocket piou piou");
+			ammo = Weapons::ShootRocket(this->GetPosition(), curSize, colour);
 			break;
 		default:
 			break;

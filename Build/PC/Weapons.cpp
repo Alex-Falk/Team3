@@ -2,6 +2,11 @@
 #include <ncltech\CommonMeshes.h>
 #include <ncltech\SphereCollisionShape.h>
 
+	float bulletPower = 100;
+	float rocketPower = 70;
+	float sprayPower = 10;
+	float launcherPower = 10;
+
 GameObject* Weapons::BuildPistol(const Vector4& color, float size, Vector3 pos)
 {
 	float bulletSize = size *0.2;
@@ -27,6 +32,7 @@ GameObject* Weapons::BuildPistol(const Vector4& color, float size, Vector3 pos)
 	CollisionShape* pColshape = new SphereCollisionShape(bulletSize);
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1));
+	pnode->SetType(PROJECTILE);
 
 	GameObject* obj = new GameObject("Bullet", rnode, pnode);
 
@@ -35,8 +41,8 @@ GameObject* Weapons::BuildPistol(const Vector4& color, float size, Vector3 pos)
 
 GameObject* Weapons::BuildRocket(const Vector4& color, float size, Vector3 pos) {
 
-	Vector3 halfdims = Vector3(1, 1, 1) * size * 0.3;
-
+	Vector3 halfdims = Vector3(1, 1, 2) * size * 0.3;
+	
 	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
 	// and a parent node that will contain the world transform/physics transform
 	RenderNode* rnode = new RenderNode();
@@ -70,17 +76,20 @@ GameObject* Weapons::BuildRocket(const Vector4& color, float size, Vector3 pos) 
 	else { a = z; }
 
 	pnode->SetBoundingRadius(a * sqrt(3.0f) / 2.0f);
+	
+		
 
 	CollisionShape* pColshape = new CuboidCollisionShape(halfdims);
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1));
+	pnode->SetType(PROJECTILE);
 
 	GameObject* obj = new GameObject("Rocket", rnode, pnode);
-
+	
 	return obj;
 }
 
-void Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
+GameObject* Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
 	GameObject* bullet = Weapons::BuildPistol(colour, size, pos);
 //
 //	bullet->Physics()->SetOnCollisionCallback(
@@ -95,20 +104,24 @@ void Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	Vector3 direction;
 
-	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * 10;
+	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * bulletPower;
 	bullet->Physics()->SetLinearVelocity(direction);
 //	sendbullet(pos, direction);  //to send bullet on network;
 
+	return bullet;
 }
 
-void Weapons::ShootRocket(Vector3 pos, float size, Vector4 colour) {
-	GameObject* Rocket = Weapons::BuildPistol(colour, size, pos);
+GameObject* Weapons::ShootRocket(Vector3 pos, float size, Vector4 colour) {
+	GameObject* rocket = Weapons::BuildRocket(colour, size, pos);
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	Vector3 direction;
 
-	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 10, 0)) * Vector3(0, 0, -10) * 10;
-	Rocket->Physics()->SetLinearVelocity(direction);
+	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * rocketPower;
+	rocket->Physics()->SetLinearVelocity(direction);
+	rocket->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 1));
 	//	SendRocket(pos, direction);  //to send rocket on network;
+
+	return rocket;
 }

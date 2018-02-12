@@ -244,6 +244,7 @@ void HandleKeyboardInputs()
 	Input::GetInput()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
 	Input::GetInput()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
 	Input::GetInput()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
+	Input::GetInput()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
 	//possibly temporary
 	Input::GetInput()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
 	Input::GetInput()->SetInput(CAMERA_DOWN, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));

@@ -12,9 +12,9 @@ public:
 	inline void SetAcceleration(uint id, Vector3 a) {}
 	//FINISHED FUNCTIONS
 	inline void SetSize(uint id, float size) { players[id]->SetSize(size); }
-	inline void SetLinearVelocity(uint id, Vector3 v) { players[id]->Physics()->SetLinearVelocity(v); }
-	inline void SetAngularVelocity(uint id, Vector3 v) { players[id]->Physics()->SetAngularVelocity(v); }
-	inline void SetPosition(uint id, Vector3 p) { players[id]->Physics()->SetPosition(p); }
+	inline void SetLinearVelocity(uint id, Vector3 v) { players[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
+	inline void SetAngularVelocity(uint id, Vector3 v) { players[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }
+	inline void SetPosition(uint id, Vector3 p) { players[id]->GetGameObject()->Physics()->SetPosition(p); }
 
 
 	// Getters
