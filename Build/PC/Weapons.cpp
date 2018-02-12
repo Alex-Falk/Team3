@@ -88,6 +88,35 @@ GameObject* Weapons::BuildRocket(const Vector4& color, float size, Vector3 pos) 
 	
 	return obj;
 }
+GameObject * Weapons::BuildPaintSpray(const Vector4& color, float size, Vector3 pos) {
+	float bulletSize = size * 0.15;
+	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
+	// and a parent node that will contain the world transform/physics transform
+	RenderNode* rnode = new RenderNode();
+
+	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), color);
+	dummy->SetTransform(Matrix4::Scale(Vector3(bulletSize, bulletSize, bulletSize)));
+	rnode->AddChild(dummy);
+
+	rnode->SetTransform(Matrix4::Translation(pos));
+	rnode->SetBoundingRadius(bulletSize);
+
+	PhysicsNode* pnode = NULL;
+
+	pnode = new PhysicsNode();
+	pnode->SetPosition(pos);
+	pnode->SetInverseMass(10);
+	pnode->SetBoundingRadius(bulletSize);
+
+
+	CollisionShape* pColshape = new SphereCollisionShape(bulletSize);
+	pnode->SetCollisionShape(pColshape);
+	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1));
+
+	GameObject* obj = new GameObject("Spray", rnode, pnode);
+
+	return obj;
+}
 
 GameObject* Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
 	GameObject* bullet = Weapons::BuildPistol(colour, size, pos);
@@ -124,4 +153,18 @@ GameObject* Weapons::ShootRocket(Vector3 pos, float size, Vector4 colour) {
 	//	SendRocket(pos, direction);  //to send rocket on network;
 
 	return rocket;
+}
+
+void Weapons::ShootPaintSpray(Vector3 pos, float size, Vector4 colour) {
+	for (int i = 0; i < 15; i++) {
+		int randPitch = rand() % 180 + -90;
+		int randYaw = rand() % 360;
+	
+		GameObject * spray = Weapons::BuildPaintSpray(colour, size, pos);
+
+		Vector3 direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1);
+		spray->Physics()->SetLinearVelocity(direction * 15);
+		spray->Physics()->SetPosition(pos + direction * size);
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+	}
 }

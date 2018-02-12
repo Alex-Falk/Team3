@@ -25,10 +25,13 @@ Player::Player()
 		PLAYER,
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
 	canJump = true;
+	canShoot = true;
+
 	playerGameObject->Physics()->SetElasticity(0);
 
 	playerId = 0;
 	timer = 0;
+	shootCooldown = 0.0f;
 
 	standardSpeed = 5.0f;
 	speed = standardSpeed;
@@ -67,8 +70,10 @@ Player::Player(Vector3 pos, Colour c, uint id, float s)
 
 	jumpImpulse = 10.0f;
 	boostactiveTime = 15.0f;
+	shootCooldown = 0.0f;
 
 	canJump = true;
+	canShoot = true;
 
 	switch (c)
 	{
@@ -215,7 +220,9 @@ void Player::OnPlayerUpdate(float dt) {
 	UpdatePickUp(dt);
 
 	if (weapon != NUM_OF_WEAPONS) {
-		ManageWeapons(weapon);
+		if (Input::GetInput()->GetInput(SHOOT) && canShoot) {
+			ManageWeapons(weapon);
+		}
 	}
 
 
@@ -284,7 +291,13 @@ void Player::UpdatePickUp(float dt)
 			jumpBoost = false;
 		}
 	}
-	
+
+	if (!canShoot) {
+		shootCooldown -= dt;
+		if (shootCooldown <= 0) {
+			canShoot = true;
+		}
+	}
 }
 
 void Player::ManageWeapons(WeaponType wt) {
@@ -292,9 +305,6 @@ void Player::ManageWeapons(WeaponType wt) {
 	if (Input::GetInput()->GetInput(SHOOT)) {
 		switch (wt)
 		{
-		case PAINT_SPRAY:
-
-			break;
 		case PAINT_PISTOL:
 			NCLDebug::Log("Pistol piou piou");
 			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
@@ -308,6 +318,15 @@ void Player::ManageWeapons(WeaponType wt) {
 		default:
 			break;
 		}
+	case PAINT_SPRAY:
+		Weapons::ShootPaintSpray(this->GetPosition(), size, colour);
+		shootCooldown = 3.0f;
+		canShoot = false;
+		break;
+	case AUTO_PAINT_LAUNCHER:
+		Weapons::ShootPistol(this->GetPosition(), size, colour);
+		shootCooldown = 0.15f;
+		canShoot = false;
+		break;
 	}
-
 }
