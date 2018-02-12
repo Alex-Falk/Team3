@@ -8,7 +8,7 @@
 
 #include "SimpleGamePlay.h"
 #include "Arena.h"
-#include "AudioSystem.h"
+//#include "AudioSystem.h"
 #include "GameInput.h"
 #include "Game.h"
 
@@ -37,7 +37,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	PhysicsEngine::Release();
 	GraphicsPipeline::Release();
 	enet_deinitialize();
-	AudioSystem::Release();
+	//AudioSystem::Release();
 	Window::Destroy();
 	
 	//Show console reason before exit
@@ -49,11 +49,11 @@ void Quit(bool error = false, const std::string &reason = "") {
 }
 
 //initialise all audio files
-void InitialiseAudioFiles() {
-	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
-	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
-	AudioSystem::Instance()->SetMusicVolume(0.3f);
-}
+//void InitialiseAudioFiles() {
+//	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
+//	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+//	AudioSystem::Instance()->SetMusicVolume(0.3f);
+//}
 
 // Program Initialise
 //  - Generates all program wide components and enqueues all scenes
@@ -82,9 +82,9 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
-	AudioSystem::Instance();
+	//AudioSystem::Instance();
 
-	InitialiseAudioFiles();
+	//InitialiseAudioFiles();
 }
 
 // Print Debug Info
@@ -216,7 +216,7 @@ void HandleKeyboardInputs()
 
 	//audio test functionality
 	//TODO remove this when finished testing
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
+	/*if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
 		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
 	}
 
@@ -240,7 +240,7 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
 		AudioSystem::Instance()->UnmuteAllSounds();
 	}
-
+*/
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
@@ -364,7 +364,7 @@ int main()
 		timer_render.EndTimingSection();
 
 		timer_audio.BeginTimingSection();
-		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
+		//AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
 		timer_audio.EndTimingSection();
 		Game::Instance()->Update(dt);
 

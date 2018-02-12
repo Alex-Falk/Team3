@@ -57,7 +57,6 @@ private:
 			//probably temporary for the location
 			players[i] = nullptr;
 		}
-
 	};
 	~Game() {
 		for (int i = 0; i < 4; i++) {
