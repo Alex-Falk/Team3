@@ -135,9 +135,6 @@ bool Player::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 		canJump = true;
 		inAir = false;
 	}
-	if (collidingObject->getName() == "Spray") {
-		return false;
-	}
 
 	return true;
 }
