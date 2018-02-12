@@ -12,14 +12,16 @@ public:
 	//STUBS
 	inline void SetScore(uint id, int score) {}
 	inline void SetAmmo(uint id, float ammo) {}
-	inline void SetAcceleration(uint id, Vector3 a) {}
 	//FINISHED FUNCTIONS
 	inline void SetSize(uint id, float size) { players[id]->SetSize(size); }
-	inline void SetLinearVelocity(uint id, Vector3 v) { players[id]->Physics()->SetLinearVelocity(v); }
-	inline void SetAngularVelocity(uint id, Vector3 v) { players[id]->Physics()->SetAngularVelocity(v); }
-	inline void SetPosition(uint id, Vector3 p) { players[id]->Physics()->SetPosition(p); }
+	inline void SetAcceleration(uint id, Vector3 a) { players[id]->GetGameObject()->Physics()->SetAcceleration(a); }
+	inline void SetLinearVelocity(uint id, Vector3 v) { players[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
+	inline void SetAngularVelocity(uint id, Vector3 v) { players[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }
+	inline void SetPosition(uint id, Vector3 p) { players[id]->GetGameObject()->Physics()->SetPosition(p); }
 	inline void SetServer() { user = new Server(); }
 	inline void setClient(IP ip) { user = new Client(ip); }
+
+	inline void Setplayer(uint id, Player * p) { players[id] = p; }
 
 	// Getters
 	//STUBS
@@ -37,6 +39,7 @@ private:
 		for (int i = 0; i < 4; i++) {
 			players[i] = new Player();
 		}
+
 	};
 	~Game() {
 		for (int i = 0; i < 4; i++) {

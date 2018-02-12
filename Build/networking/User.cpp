@@ -17,7 +17,7 @@ PlayerVector User::ReceivePosition(string data)
 
 	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 
-	string p = data.substr(semicolonIdx);
+	string p = data.substr(semicolonIdx + 1);
 	Vector3 pos = InterpretStringVector(p);
 
 	PlayerVector pvec;
@@ -34,7 +34,7 @@ PlayerVector User::ReceiveLinVelocity(string data)
 
 	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 
-	string p = data.substr(semicolonIdx);
+	string p = data.substr(semicolonIdx + 1);
 	Vector3 vel = InterpretStringVector(p);
 
 	PlayerVector pvec;
@@ -51,7 +51,7 @@ PlayerVector User::ReceiveAngVelocity(string data)
 
 	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 
-	string p = data.substr(semicolonIdx);
+	string p = data.substr(semicolonIdx + 1);
 	Vector3 vel = InterpretStringVector(p);
 
 	PlayerVector pvec;
@@ -68,7 +68,7 @@ PlayerVector User::ReceiveAcceleration(string data)
 
 	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 
-	string a = data.substr(semicolonIdx);
+	string a = data.substr(semicolonIdx + 1);
 	Vector3 acceleration = InterpretStringVector(a);
 
 	PlayerVector pvec;

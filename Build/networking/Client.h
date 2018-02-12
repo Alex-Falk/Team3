@@ -20,7 +20,7 @@ class Client : public User
 {
 public:
 	Client();
-	//Client(IP ip);
+	Client(IP ip);
 	~Client();
 
 	

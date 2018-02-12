@@ -163,7 +163,20 @@ void HandleKeyboardInputs()
 			Quit(true, "ENET failed to initialize!");
 		}
 
-		Game::Instance()->setClient();
+		IP ip;
+
+		cout << "Enter the IP:\n";
+		cin >> ip.a;
+		cout << ".";
+		cin >> ip.b;
+		cout << ".";
+		cin >> ip.c;
+		cout << ".";
+		cin >> ip.d;
+		cout << ":1234";
+		ip.port = 1234;
+
+		Game::Instance()->setClient(ip);
 		chosen = true;
 	}
 

@@ -5,7 +5,7 @@ Vector3 InterpretStringVector(string message)
 	Vector3 out;
 
 	size_t xIdx = message.find_first_of(' ');
-	size_t yIdx = message.substr(xIdx).find_first_of(' ');
+	size_t yIdx = message.substr(xIdx + 1).find_first_of(' ');
 
 	out.x = stof(message.substr(0, xIdx));
 	out.y = stof(message.substr(xIdx + 1, yIdx));

@@ -120,14 +120,14 @@ void Server::UpdateUser(float dt)
 		}
 	});
 
-	/*for (uint i = 0; i < 4; ++i)*/
-	//{
-	//	SendPosition(i);
-	//	SendLinVelocity(i);
-	//	SendAngVelocity(i);
-	//	SendAcceleration(i);
-	//	//SendScores();
-	//}
+	for (uint i = 0; i < 4; ++i)
+	{
+		SendPosition(i);
+		SendLinVelocity(i);
+		SendAngVelocity(i);
+		SendAcceleration(i);
+		//SendScores();
+	}
 
 }
 
@@ -146,7 +146,7 @@ void Server::SendPosition(uint ID)
 	string data;
 
 	data = to_string(PLAYER_POS) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->Physics()->GetPosition());
+		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetPosition());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -157,7 +157,7 @@ void Server::SendLinVelocity(uint ID)
 	string data;
 
 	data = to_string(PLAYER_LINVEL) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->Physics()->GetLinearVelocity());
+		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetLinearVelocity());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -168,7 +168,7 @@ void Server::SendAngVelocity(uint ID)
 	string data;
 
 	data = to_string(PLAYER_ANGVEL) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->Physics()->GetAngularVelocity());
+		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetAngularVelocity());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -179,7 +179,7 @@ void Server::SendAcceleration(uint ID)
 	string data;
 
 	data = to_string(PLAYER_ACCELERATION) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->Physics()->GetAcceleration());
+		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetAcceleration());
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);

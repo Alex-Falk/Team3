@@ -17,17 +17,17 @@ Client::Client() : serverConnection(NULL)
 	
 }
 
-//Client::Client(IP ip) {
-//	if (network.Initialize(0))
-//	{
-//		NCLDebug::Log("Network: Initialized!");
-//		//Attempt to connect to the server on localhost:1234
-//		serverConnection = network.ConnectPeer(ip.a, ip.b, ip.c, ip.d, ip.port);
-//		NCLDebug::Log("Network: Attempting to connect to server.");
-//	}
-//
-//	userID = CLIENT_ID;
-//}
+Client::Client(IP ip) {
+	if (network.Initialize(0))
+	{
+		NCLDebug::Log("Network: Initialized!");
+		//Attempt to connect to the server on localhost:1234
+		serverConnection = network.ConnectPeer(ip.a, ip.b, ip.c, ip.d, ip.port);
+		NCLDebug::Log("Network: Attempting to connect to server.");
+	}
+
+	userID = CLIENT_ID;
+}
 
 
 Client::~Client()
@@ -46,7 +46,13 @@ void Client::UpdateUser(float dt)
 		std::placeholders::_1);				// Where to place the first parameter
 	network.ServiceNetwork(dt, callback);
 
-
+	for (uint i = 0; i < 4; ++i)
+	{
+		Game::Instance()->SetPosition(i, temps.positions[i]);
+		Game::Instance()->SetLinearVelocity(i, temps.linVelocities[i]);
+		Game::Instance()->SetAngularVelocity(i, temps.angVelocities[i]);
+		Game::Instance()->SetAcceleration(i, temps.accelerations[i]);
+	}
 }
 
 
