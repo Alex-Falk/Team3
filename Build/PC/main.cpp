@@ -5,6 +5,7 @@
 #include <nclgl\PerfTimer.h>
 
 #include "SimpleGamePlay.h"
+#include "MainMenu.h"
 #include "GameInput.h"
 
 
@@ -57,6 +58,7 @@ void Initialize()
 	PhysicsEngine::Instance();
 
 	//Enqueue All Scenes
+	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
 
 }
