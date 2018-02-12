@@ -21,7 +21,7 @@ public :
 
 	bool RemoteTexture(TEXTURETYPE type);
 
-	bool RemoteAllTexture();
+	bool RemoveAllTexture();
 
 	GLuint GetTexture(TEXTURETYPE type);
 

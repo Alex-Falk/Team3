@@ -1,13 +1,16 @@
 #include "Arena.h"
 #include <ncltech\PhysicsEngine.h>
+#include <ncltech\TextureManager.h>
 
+void Arena::OnInitializeScene() {
 
-void Environment::OnInitializeScene() {
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
 
-	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT, 1.0f);
+	player = new Player(Vector3(0.0, 2.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
-	Environment::CreateEnvironment();
+	Arena::CreateEnvironment();
 
 
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
@@ -16,7 +19,7 @@ void Environment::OnInitializeScene() {
 	Scene::OnInitializeScene();
 }
 
-void Environment::OnUpdateScene(float dt)
+void Arena::OnUpdateScene(float dt)
 {
 	Scene::OnUpdateScene(dt);
 
@@ -30,79 +33,8 @@ void Environment::OnUpdateScene(float dt)
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }
 
-void Environment::CreateEnvironment()
+void Arena::CreateEnvironment()
 {
-	PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
-
-	//// Create Ground (..everybody loves finding some common ground)
-	//GameObject* ground = CommonUtils::BuildCuboidObject(
-	//	"Ground",
-	//	Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
-	//	Vector3(80.0f, 1.5f, 40.0f),		// Scale
-	//	true,
-	//	0.0f,
-	//	true,
-	//	false,								// Dragable By User
-	//	Vector4(0.2f, 0.5f, 1.0f, 0.0f));	// Colour       Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
-
-	//this->AddGameObject(ground);
-
-
-	//// Create FrontWall (..everybody loves finding some common ground)
-	//GameObject* FrontWall = CommonUtils::BuildCuboidObject(
-	//	"FrontWall",
-	//	Vector3(0.0f, 13.5f, -40.0f),		// Position = Right+---Up+---Foward+
-	//	Vector3(80.0f, 12.0f, 1.5f),		// Scale	= Width+---Length+---Depth+
-	//	true,
-	//	0.0f,
-	//	true,
-	//	false,								// Dragable By User
-	//	Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
-
-	//this->AddGameObject(FrontWall);
-
-
-	//// Create BackWall (..everybody loves finding some common ground)
-	//GameObject* BackWall = CommonUtils::BuildCuboidObject(
-	//	"BackWall",
-	//	Vector3(0.0f, 13.5f, 40.0f),		// Position = Right+---Up+---Foward+
-	//	Vector3(80.0f, 12.0f, 1.5f),		// Scale	= Width+---Length+---Depth+
-	//	true,
-	//	0.0f,
-	//	true,
-	//	false,								// Dragable By User
-	//	Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
-
-	//this->AddGameObject(BackWall);
-
-
-	//// Create LeftWall (..everybody loves finding some common ground)
-	//GameObject* LeftWall = CommonUtils::BuildCuboidObject(
-	//	"LeftWall",
-	//	Vector3(-80.0f, 13.5f, 0.0f),		// Position = Right+---Up+---Foward+
-	//	Vector3(1.5f, 12.0f, 40.0f),		// Scale	= Width+---Length+---Depth+
-	//	true,
-	//	0.0f,
-	//	true,
-	//	false,								// Dragable By User
-	//	Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
-
-	//this->AddGameObject(LeftWall);
-
-
-	//// Create RightWall (..everybody loves finding some common ground)
-	//GameObject* RightWall = CommonUtils::BuildCuboidObject(
-	//	"RightWall",
-	//	Vector3(80.0f, 13.5f, 0.0f),		// Position = Right+---Up+---Foward+
-	//	Vector3(1.5f, 12.0f, 40.0f),		// Scale	= Width+---Length+---Depth+
-	//	true,
-	//	0.0f,
-	//	true,
-	//	false,								// Dragable By User
-	//	Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
-
-	//this->AddGameObject(RightWall);
-
 	// Create Ground (..everybody loves finding some common ground)
 	GameObject* ground = CommonUtils::BuildCuboidObject(
 		"Ground",
@@ -112,10 +44,10 @@ void Environment::CreateEnvironment()
 		0.0f,
 		true,
 		false,								// Dragable By User
+		BIG_NODE,
 		Vector4(0.2f, 0.5f, 0.0f, 1.0f));	// Colour       Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
 
 	this->AddGameObject(ground);
-
 
 	// Create FrontWall (..everybody loves finding some common ground)
 	GameObject* FrontWall = CommonUtils::BuildCuboidObject(
@@ -125,7 +57,8 @@ void Environment::CreateEnvironment()
 		true,
 		0.0f,
 		true,
-		false,								// Dragable By User
+		false,
+		BIG_NODE,// Dragable By User
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
 
 	this->AddGameObject(FrontWall);
@@ -139,7 +72,8 @@ void Environment::CreateEnvironment()
 		true,
 		0.0f,
 		true,
-		false,								// Dragable By User
+		false,
+		BIG_NODE,// Dragable By User
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
 
 	this->AddGameObject(BackWall);
@@ -153,7 +87,8 @@ void Environment::CreateEnvironment()
 		true,
 		0.0f,
 		true,
-		false,								// Dragable By User
+		false,
+		BIG_NODE,// Dragable By User
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
 
 	this->AddGameObject(LeftWall);
@@ -166,7 +101,8 @@ void Environment::CreateEnvironment()
 		true,
 		0.0f,
 		true,
-		false,								// Dragable By User
+		false,
+		BIG_NODE,// Dragable By User
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
 
 	this->AddGameObject(RightWall);

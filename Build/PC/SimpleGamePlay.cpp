@@ -8,13 +8,14 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	//Create Ground (..everybody loves finding some common ground)
 	GameObject* ground = CommonUtils::BuildCuboidObject(
-		"BigObject",
+		"Ground",
 		Vector3(0.0f, 0.0f, 0.0f),
 		Vector3(40.0f, 1.0f, 40.0f),
 		true,
 		0.0f,
 		true,
 		false,
+		BIG_NODE,
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));
 
 	this->AddGameObject(ground);

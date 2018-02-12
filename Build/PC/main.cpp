@@ -5,6 +5,7 @@
 #include <nclgl\PerfTimer.h>
 
 #include "SimpleGamePlay.h"
+#include "Arena.h"
 #include "AudioSystem.h"
 #include "GameInput.h"
 #include "Game.h"
@@ -64,6 +65,7 @@ void Initialize()
 
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
 	AudioSystem::Instance();
 
@@ -219,6 +221,7 @@ void HandleKeyboardInputs()
 			1.0f / 4.0f,							//Inverse Mass
 			true,									//Has Collision Shape
 			true,									//Dragable by the user
+			DEFAULT,
 			CommonUtils::GenColor(0.1f, 0.8f));		//Color
 
 
