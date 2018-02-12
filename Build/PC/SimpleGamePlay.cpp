@@ -15,9 +15,9 @@ void SimpleGamePlay::OnInitializeScene() {
 		0.0f,
 		true,
 		false,
-		Vector4(0.2f, 0.5f, 1.0f, 1.0f));
-	
-	ground->Render()->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Ground],true);
+		Vector4(0.2f, 0.5f, 1.0f, 1.0f),
+		MATERIALTYPE::Ground);
+
 	this->AddGameObject(ground);
 
 	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT, 0, 1.0f);
@@ -30,6 +30,8 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+
+	GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(player->GetGameObject()->Render());
 
 
@@ -49,3 +51,11 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }
+
+void SimpleGamePlay::OnCleanupScene()
+{
+	DeleteAllGameObjects();
+	TextureManager::Instance()->RemoteAllTexture();
+
+	GraphicsPipeline::Instance()->RemoteAllPlayerRenderNode();
+};

@@ -9,7 +9,9 @@
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
-
+#include <nclgl\PlayerRenderNode.h>
+#include <ncltech\CommonMeshes.h>
+#include <nclgl\PlayerRenderNode.h>
 Player::Player() : GameObject("Player")
 {
 	life = maxLife;
@@ -74,8 +76,9 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 	{
 	case DEFAULT:
 	{
-		Colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		Colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
 	}
+	break;
 	case GREEN:
 	{
 		Colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -104,14 +107,27 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 		break;
 	}
 
-	playerGameObject = CommonUtils::BuildSphereObject("Player",
-		Vector3(0.0f, 1.0f*s, 0.0f) + pos,
-		1.0f * size,							//Radius
-		true,									//Has Physics Object
-		1.0f,
-		true,									//Has Collision Shape
-		false,									//Dragable by the user
-		Colour);								//Colour
+	float radius = 1.0f * size;
+
+	RenderNode* rnode = new RenderNode();
+
+	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), Colour);
+	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
+	rnode->AddChild(dummy);
+	rnode->SetTransform(Matrix4::Translation(pos));
+	rnode->SetBoundingRadius(radius);
+
+	PhysicsNode* pnode = new PhysicsNode();
+	pnode->SetPosition(pos);
+	pnode->SetInverseMass(1.0f);
+	pnode->SetBoundingRadius(radius);
+
+	CollisionShape* pColshape = new SphereCollisionShape(radius);
+	pnode->SetCollisionShape(pColshape);
+	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1));
+
+	playerGameObject = new GameObject("Player", rnode, pnode);
 
 	playerGameObject->Physics()->SetElasticity(0);
 	playerGameObject->Physics()->SetFriction(0.5f);

@@ -40,6 +40,7 @@
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="OGLRenderer.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="PlayerRenderNode.cpp" />
     <ClCompile Include="PostprocessMaterial.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="RenderNode.cpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="MD5Node.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="PlayerRenderNode.h" />
     <ClInclude Include="PostprocessMaterial.h" />
     <ClInclude Include="ShadowMaterial.h" />
     <ClInclude Include="StandardMaterial.h" />

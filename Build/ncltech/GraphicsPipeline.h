@@ -10,6 +10,8 @@
 #include <nclgl\StandardMaterial.h>
 #include <nclgl\ShadowMaterial.h>
 #include <nclgl\PostprocessMaterial.h>
+
+#include <nclgl\PlayerRenderNode.h>
 //---------------------------
 //------ Base Renderer ------
 //---------------------------
@@ -83,6 +85,7 @@
 
 #define PATHMAP_SIZE 2000
 #define CAPTURE_SIZE 40	 
+#define PIXELPERSIZE 100
 
 #define DEBUGDRAW_FLAGS_BOUNDING				0x20
 
@@ -150,6 +153,7 @@ public:
 	inline void AddPlayerRenderNode(RenderNode* playerRenderNode){ playerRenderNodes.push_back(playerRenderNode); }
 
 	inline void RemoteAllPlayerRenderNode() { playerRenderNodes.clear(); }
+	void InitPath(Vector2 groundSize);
 	inline GLuint& GetPathTex() { return pathTex; }
 protected:
 	GraphicsPipeline();
@@ -171,7 +175,7 @@ protected:
 	void RenderPath();
 	void RenderPostprocessAndPresent();
 
-	void InitPath();
+	
 	void RecursiveAddToPathRenderLists(RenderNode* node);
 
 protected:
@@ -219,19 +223,11 @@ protected:
 	std::vector<RenderNodePair> renderlistTransparent;	//Also stores cameraDist in the second argument for sorting purposes
 
 	//path
+	Vector2		groundSize;
 	std::vector<RenderNode*>	playerRenderNodes;
 	std::vector<RenderNode*>	pathRenderNodes;
 	GLuint		pathFBO;
 	GLuint		pathTex;
-	GLuint		pathDepth;
 
 };
 
-// draw opengl () default material
-// draw opengl(material) current maerial
-
-// set mat can choose if set child mat
-
-// optimise material
-
-// more player function

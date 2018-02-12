@@ -36,7 +36,7 @@ public:
 		return (this->mesh != NULL);
 	}
 
-	virtual void DrawOpenGL(bool isShadowPass);
+	virtual void DrawOpenGL(bool isShadowPass, Material* tempMat = nullptr);
 
 
 	void			SetTransform(const Matrix4 &matrix) { transform = matrix;}

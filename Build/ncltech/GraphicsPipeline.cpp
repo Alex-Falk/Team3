@@ -16,6 +16,8 @@ GraphicsPipeline::GraphicsPipeline()
 	, fullscreenQuad(NULL)
 	, shadowFBO(NULL)
 	, shadowTex(NULL)
+	, pathFBO(NULL)
+	,pathTex(NULL)
 {
 
 
@@ -43,7 +45,6 @@ GraphicsPipeline::GraphicsPipeline()
 
 	InitializeDefaults();
 	Resize(width, height);
-	InitPath();
 }
 
 GraphicsPipeline::~GraphicsPipeline()
@@ -76,6 +77,13 @@ GraphicsPipeline::~GraphicsPipeline()
 		glDeleteTextures(1, &shadowTex);
 		glDeleteFramebuffers(1, &shadowFBO);
 		shadowFBO = NULL;
+	}
+
+	if (pathFBO)
+	{
+		glDeleteTextures(1, &pathTex);
+		glDeleteFramebuffers(1, &pathFBO);
+		pathFBO = NULL;
 	}
 
 	playerRenderNodes.clear();
@@ -513,16 +521,11 @@ void GraphicsPipeline::RenderShadow()
 	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i) {
 		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
 		else { glDisable(GL_CULL_FACE); }
-		Material* mat = (*i).first->GetMaterial();
-		(*i).first->SetMaterial(materials[MATERIALTYPE::Shadow]);
-		(*i).first->DrawOpenGL(true);
-		(*i).first->SetMaterial(mat);
+		(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
 	}
 	for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i) {
 		Material* mat = (*i).first->GetMaterial();
-		(*i).first->SetMaterial(materials[MATERIALTYPE::Shadow]);
-		(*i).first->DrawOpenGL(true);
-		(*i).first->SetMaterial(mat);
+		(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
 	}
 }
 
@@ -578,19 +581,18 @@ void GraphicsPipeline::RenderPath()
 		RecursiveAddToPathRenderLists(playerRenderNodes[i]);
 	}
 
-	Matrix4 projMatrix2 = Matrix4::Orthographic(-CAPTURE_SIZE, CAPTURE_SIZE, -CAPTURE_SIZE, CAPTURE_SIZE, -CAPTURE_SIZE, CAPTURE_SIZE);
+	Matrix4 projMatrix2 = Matrix4::Orthographic(-40, 40, -groundSize.x, groundSize.x, -groundSize.y, groundSize.y);
 	Matrix4	viewMatrix2 = Matrix4::Rotation(90, Vector3(1, 0, 0)) *Matrix4::Translation(Vector3(0.0f,-20.0f,0.0f));
-	glViewport(0, 0, PATHMAP_SIZE, PATHMAP_SIZE);
+	glViewport(0, 0, groundSize.x*PIXELPERSIZE, groundSize.y*PIXELPERSIZE);
 	Matrix4 temp = projViewMatrix;
 	projViewMatrix = projMatrix2 * viewMatrix2;
+
+	// draw the object and do not clean the color
 	glBindFramebuffer(GL_FRAMEBUFFER, pathFBO);
 	static_cast<DrawPathMaterial*>(materials[MATERIALTYPE::Draw_Path])->SetProjViewMtx(projMatrix2 * viewMatrix2);
 	for (int i = 0; i < pathRenderNodes.size(); i++)
 	{
-		Material* mat = pathRenderNodes[i]->GetMaterial();
-		pathRenderNodes[i]->SetMaterial(materials[MATERIALTYPE::Draw_Path]);
-		pathRenderNodes[i]->DrawOpenGL(true);
-		pathRenderNodes[i]->SetMaterial(mat);
+		pathRenderNodes[i]->DrawOpenGL(true, materials[MATERIALTYPE::Draw_Path]);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	projViewMatrix = temp;
@@ -618,8 +620,12 @@ void GraphicsPipeline::RenderPostprocessAndPresent()
 	fullscreenQuad->Draw();
 }
 
-void GraphicsPipeline::InitPath()
+void GraphicsPipeline::InitPath(Vector2 _groundSize)
 {
+	if (pathTex == NULL)
+		glDeleteTextures(1, &pathTex);
+
+	this->groundSize = _groundSize;
 	//Color Texture
 	if (!pathTex) glGenTextures(1, &pathTex);
 	glBindTexture(GL_TEXTURE_2D, pathTex);
@@ -627,13 +633,13 @@ void GraphicsPipeline::InitPath()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, PATHMAP_SIZE, PATHMAP_SIZE, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, groundSize.x*PIXELPERSIZE, groundSize.y*PIXELPERSIZE, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 
 	//Generate our Framebuffer
 	if (!pathFBO) glGenFramebuffers(1, &pathFBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, pathFBO);
+
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pathTex, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, pathDepth, 0);
 	glClearColor(0.0f,0.0f,0.0f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	GLenum buf = GL_COLOR_ATTACHMENT0;
@@ -650,7 +656,15 @@ void GraphicsPipeline::InitPath()
 
 void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 {
-	pathRenderNodes.push_back(node);
+	PlayerRenderNode* p = dynamic_cast<PlayerRenderNode*>(node);
+	if (p != nullptr)
+	{
+		if (!p->GetIsInAir())
+		{
+			pathRenderNodes.push_back(node);
+		}
+	}
+
 	//Recurse over all children and process them aswell
 	for (auto itr = node->GetChildIteratorStart(); itr != node->GetChildIteratorEnd(); itr++)
 		RecursiveAddToPathRenderLists(*itr);

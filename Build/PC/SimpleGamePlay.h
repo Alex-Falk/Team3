@@ -35,12 +35,10 @@ public:
 		delete pickup;
 	}
 
-	void OnCleanupScene() { 
-		DeleteAllGameObjects(); 
-		TextureManager::Instance()->RemoteAllTexture();
-	};
+	void OnCleanupScene();
 
 	virtual void OnInitializeScene() override;
 	
 	virtual void OnUpdateScene(float dt) override;
+
 };

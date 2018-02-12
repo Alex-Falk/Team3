@@ -1,6 +1,7 @@
 #include "RenderNode.h"
-#include "../ncltech/TextureManager.h"
 #include "../nclgl/Material.h"
+
+#include "../ncltech/GraphicsPipeline.h"
 RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
 	awake				= true;
 	this->mesh			= mesh;
@@ -10,10 +11,7 @@ RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
 	parent				= NULL;
 	boundingRadius		= 100.0f;
 	distanceFromCamera	= 0.0f;
-	
 	modelScale			= Vector3(1,1,1);
-
-	material = GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting];
 }
 
 RenderNode::~RenderNode(void)	{
@@ -108,21 +106,26 @@ void RenderNode::AutoSetBoundingRadius()
 void RenderNode::SetMaterial(Material * mat, bool isSetChild)
 {
 	if (!isSetChild)
-	{
 		material = mat;
-	}
 	else
-	{
 		RecursiveSetMaterial(mat,this);
-	}
 }
 
-void RenderNode::DrawOpenGL(bool isShadowPass)
+void RenderNode::DrawOpenGL(bool isShadowPass, Material* tempMat)
 {
 	if (!(this->mesh && awake))
 		return;
 
-	material->SetRenderNode(this);
-	material->Apply();
+	if (tempMat != nullptr)
+	{
+		tempMat->SetRenderNode(this);
+		tempMat->Apply();
+	}
+	else
+	{
+		material->SetRenderNode(this);
+		material->Apply();
+	}
+
 	this->mesh->Draw();
 }
