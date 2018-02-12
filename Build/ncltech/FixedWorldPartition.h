@@ -68,8 +68,6 @@ public:
 	//Returns which physics nodes in parentElems are colliding with the AABB of node
 	std::vector<PhysicsNode*> FindElementsInNode(Node * node, std::vector<PhysicsNode*> parentElems);
 
-	std::vector<PhysicsNode*>* GetBigNodes() { return bigNodes; }
-
 	//Draws the entire world partition
 	void DebugDraw() const { if (root) { DebugDraw(root); } }
 
@@ -77,6 +75,7 @@ public:
 	void RepartitionWorld(Vector3 mins, Vector3 maxs, std::vector<PhysicsNode*>  *elements);
 	
 	inline std::vector<PhysicsNode*>* GetBigNodes() { if (bigNodes) { return bigNodes; } }
+
 	//Checks if any objects with velocity have moved to a different leaf node and updates the elemet 
 	//lists of each node lists
 	void UpdateFixedWorldPartition();

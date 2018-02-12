@@ -1,0 +1,14 @@
+System created: 0
+Got Drivers: 0
+Audio System initialised: 0
+3D settings: 0
+Created GameSounds channel group: 0
+Created Music channel group: 0
+Created Master channel group: 0
+Added GameSounds group to master group: 0
+Added Music group to master group: 0
+Set musicgroup volume to 1: 0
+Set GameSoundsGroup volume to 1: 0
+Created 3D sound at index(0): 0
+Created 2D stream at index(1): 0
+Set musicgroup volume to 0.3: 0

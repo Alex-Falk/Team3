@@ -3,7 +3,7 @@
 
 enum Colour
 {
-	DEFAULT, RED, GREEN, BLUE, PINK
+	DEFAULT_COLOUR, RED, GREEN, BLUE, PINK
 };
 
 //Name: Nick Bedford

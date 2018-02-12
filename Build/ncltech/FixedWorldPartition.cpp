@@ -5,6 +5,7 @@
 FixedWorldPartition::FixedWorldPartition(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, std::vector<PhysicsNode*> * elements)
 {
 	FixedWorldPartition(Vector3(xmin, ymin, zmin), Vector3(xmax, ymax, zmax), elements);
+	physicsNodes = nullptr;
 }
 
 FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector<PhysicsNode*>  * elements)
@@ -14,13 +15,14 @@ FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector
 	root->AABB->ExpandToFit(mins);
 	root->AABB->ExpandToFit(maxs);
 	root->children = nullptr;
+	
 
 	physicsNodes = new std::vector<PhysicsNode*>;
 	bigNodes = new std::vector<PhysicsNode*>;
 
 	for (std::vector<PhysicsNode*>::iterator itr = elements->begin(); itr != elements->end(); ++itr)
 	{
-		if ((*itr)->getName() == "BigObject")
+		if ((*itr)->GetType() == BIG_NODE)
 		{
 			bigNodes->push_back((*itr));
 		}
@@ -29,8 +31,6 @@ FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector
 			physicsNodes->push_back((*itr));
 		}
 	}
-
-	physicsNodes = elements;
 
 	if (physicsNodes->size() > maxNumber)
 	{
@@ -45,6 +45,16 @@ FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector
 FixedWorldPartition::~FixedWorldPartition()
 {
 	TerminateTree(&root);
+
+	if (physicsNodes)
+	{
+		delete physicsNodes;
+	}
+	if (bigNodes)
+	{
+		delete bigNodes;
+	}
+	
 }
 
 void FixedWorldPartition::TerminateTree(Node ** node) {
@@ -81,7 +91,29 @@ void FixedWorldPartition::RepartitionWorld(Vector3 mins, Vector3 maxs, std::vect
 	root->AABB->ExpandToFit(maxs);
 	root->children = nullptr;
 
-	physicsNodes = elements;
+	if (physicsNodes)
+	{
+		delete physicsNodes;
+	}
+	physicsNodes = new std::vector<PhysicsNode*>;
+	
+	if (bigNodes)
+	{
+		delete bigNodes;
+	}
+	bigNodes = new std::vector<PhysicsNode*>;
+
+	for (std::vector<PhysicsNode*>::iterator itr = elements->begin(); itr != elements->end(); ++itr)
+	{
+		if ((*itr)->GetType() == BIG_NODE)
+		{
+			bigNodes->push_back((*itr));
+		}
+		else
+		{
+			physicsNodes->push_back((*itr));
+		}
+	}
 
 	if (physicsNodes->size() > maxNumber)
 	{
