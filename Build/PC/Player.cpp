@@ -21,10 +21,13 @@ Player::Player() : GameObject("Player")
 		false,									//Dragable by the user
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
 	canJump = true;
+	canShoot = true;
+
 	playerGameObject->Physics()->SetElasticity(0);
 
 	playerId = 0;
 	timer = 0;
+	shootCooldown = 0.0f;
 
 	standardSpeed = 5.0f;
 	speed = standardSpeed;
@@ -63,8 +66,10 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 
 	jumpImpulse = 10.0f;
 	boostactiveTime = 15.0f;
+	shootCooldown = 0.0f;
 
 	canJump = true;
+	canShoot = true;
 
 	switch (c)
 	{
@@ -129,6 +134,9 @@ bool Player::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 	{
 		canJump = true;
 		inAir = false;
+	}
+	if (collidingObject->getName() == "Spray") {
+		return false;
 	}
 
 	return true;
@@ -200,7 +208,9 @@ void Player::OnPlayerUpdate(float dt) {
 	UpdatePickUp(dt);
 
 	if (weapon != NUM_OF_WEAPONS) {
-		ManageWeapons(weapon);
+		if (Input::GetInput()->GetInput(SHOOT) && canShoot) {
+			ManageWeapons(weapon);
+		}
 	}
 
 
@@ -269,28 +279,39 @@ void Player::UpdatePickUp(float dt)
 			jumpBoost = false;
 		}
 	}
-	
+
+	if (!canShoot) {
+		shootCooldown -= dt;
+		if (shootCooldown <= 0) {
+			canShoot = true;
+		}
+	}
 }
 
 void Player::ManageWeapons(WeaponType wt) {
-	
-	if (Input::GetInput()->GetInput(SHOOT)) {
-		switch (wt)
-		{
-		case PAINT_SPRAY:
-
-			break;
-		case PAINT_PISTOL:
-			Weapons::ShootPistol(this->GetPosition(), size, colour);
-			break;
-		case AUTO_PAINT_LAUNCHER:
-			break;
-		case PAINT_ROCKET:
-			Weapons::ShootRocket(this->GetPosition(), size, colour);
-			break;
-		default:
-			break;
-		}
+	switch (wt)
+	{
+	case PAINT_SPRAY:
+		Weapons::ShootPaintSpray(this->GetPosition(), size, colour);
+		canShoot = false;
+		shootCooldown = 3.0f;
+		break;
+	case PAINT_PISTOL:
+		Weapons::ShootPistol(this->GetPosition(), size, colour);
+		canShoot = false;
+		shootCooldown = 2.0f;
+		break;
+	case AUTO_PAINT_LAUNCHER:
+		Weapons::ShootPistol(this->GetPosition(), size, colour);
+		canShoot = false;
+		shootCooldown = 0.15f;
+		break;
+	case PAINT_ROCKET:
+		Weapons::ShootRocket(this->GetPosition(), size, colour);
+		canShoot = false;
+		shootCooldown = 5.0f;
+		break;
+	default:
+		break;
 	}
-
 }

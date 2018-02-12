@@ -26,6 +26,7 @@ private:
 	Vector4 colour;				// The actual colour of the player;
 
 	bool canJump;
+	bool canShoot;
 	bool inAir;
 
 	float life;
@@ -41,6 +42,7 @@ private:
 	float boostedSpeed;
 	float standardSpeed;
 	float maxForce;			// Sets Maximum applied Force 
+	float shootCooldown;
 
 	// Boosts
 	float boostactiveTime;

@@ -4,6 +4,7 @@
 
 #pragma once
 #include <ncltech\GameObject.h>
+#include <ncltech\SceneManager.h> 
 
 namespace Weapons
 {
@@ -11,12 +12,11 @@ namespace Weapons
 
 	GameObject* BuildRocket(const Vector4& color, float size, Vector3 pos);
 
-	//GameObject* PAINT_SPRAY();
-
-	//GameObject* AUTO_PAINT_LAUNCHER();
+	GameObject* BuildPaintSpray(const Vector4& colour, float size, Vector3 pos);
 
 
 	void ShootPistol(Vector3 pos, float size, Vector4 colour);
+	void ShootPaintSpray(Vector3 pos, float size, Vector4 colour);
 	void ShootRocket(Vector3 pos, float size, Vector4 colour);
 
 //	float bulletPower = 10;
