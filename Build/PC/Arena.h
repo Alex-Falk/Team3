@@ -6,10 +6,11 @@
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
 #include "GamePlay.h"
+#include <ncltech\TextureManager.h>
 #include "Player.h"
 
 
-class Environment : public Scene
+class Arena : public Scene
 {
 private:
 
@@ -17,7 +18,7 @@ private:
 	Player* player;
 
 public:
-	Environment(const std::string& friendly_name)
+	Arena(const std::string& friendly_name)
 		: Scene(friendly_name) {}
 
 	virtual void OnInitializeScene() override;
@@ -25,5 +26,16 @@ public:
 	virtual void OnUpdateScene(float dt) override;
 
 	virtual void CreateEnvironment();
+
+	~Arena()
+	{
+		TextureManager::Instance()->RemoveAllTexture();
+		delete player;
+	}
+
+	void OnCleanupScene() {
+		DeleteAllGameObjects();
+		TextureManager::Instance()->RemoveAllTexture();
+	};
 
 };

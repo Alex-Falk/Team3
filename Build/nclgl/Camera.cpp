@@ -42,7 +42,7 @@ void Camera::UpdateCamara(float dt) {
 
 
 	//Bounds check the pitch, to be between straight up and straight down ;)
-	pitch = min(pitch, 7.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
+	pitch = min(pitch, free?90.0:7.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
 	pitch = max(pitch, -90.0f);
 
 	if (yaw < 0.0f) {
