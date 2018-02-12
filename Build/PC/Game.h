@@ -1,3 +1,19 @@
+/*
+           \\\///
+		  / ~  ~ \
+		(| (.)(.) |)
+.-----.OOOo--C---oOOO.---.
+|                        |
+|   Made By Philip Beck  |
+|      12/02/2018        |
+|                        |
+'-----.oooO--------------'
+      (   )   Oooo.
+       \ (    (   )
+	    \_)    ) /
+	          (_/
+*/
+
 #pragma once
 
 #include "Player.h"
@@ -20,6 +36,7 @@ public:
 	inline void SetPosition(uint id, Vector3 p) { players[id]->GetGameObject()->Physics()->SetPosition(p); }
 	inline void SetServer() { user = new Server(); }
 	inline void setClient(IP ip) { user = new Client(ip); }
+	inline void SetPlayer(uint id, Player* player) { players[id] = player; }
 
 	inline void Setplayer(uint id, Player * p) { players[id] = p; }
 
@@ -36,8 +53,9 @@ public:
 private:
 	//private constructor
 	Game() {
-		for (int i = 0; i < 4; i++) {
-			players[i] = new Player();
+		for (uint i = 0; i < 4; i++) {
+			//probably temporary for the location
+			players[i] = nullptr;
 		}
 
 	};

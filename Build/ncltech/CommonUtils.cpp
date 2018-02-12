@@ -106,6 +106,7 @@ GameObject* CommonUtils::BuildSphereObject(
 	float inverse_mass,
 	bool collidable,
 	bool dragable,
+	PhysNodeType objectType,
 	const Vector4& color)
 {
 	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
@@ -126,6 +127,7 @@ GameObject* CommonUtils::BuildSphereObject(
 		pnode->SetPosition(pos);
 		pnode->SetInverseMass(inverse_mass);
 		pnode->SetBoundingRadius(radius);
+		pnode->SetType(objectType);
 
 		if (!collidable)
 		{
@@ -161,6 +163,7 @@ GameObject* CommonUtils::BuildCuboidObject(
 	float inverse_mass,
 	bool collidable,
 	bool dragable,
+	PhysNodeType objectType,
 	const Vector4& color,
 	GLuint tex)
 {
@@ -189,6 +192,8 @@ GameObject* CommonUtils::BuildCuboidObject(
 		pnode = new PhysicsNode();
 		pnode->SetPosition(pos);
 		pnode->SetInverseMass(inverse_mass);
+		pnode->SetType(objectType);
+
 		float x = halfdims.x*2.0f;
 		float y = halfdims.y*2.0f;
 		float z = halfdims.z*2.0f;
@@ -233,6 +238,7 @@ GameObject* CommonUtils::BuildPlaneObject(
 	float inverse_mass,
 	bool collidable,
 	bool dragable,
+	PhysNodeType objectType,
 	const Vector4& color)
 {
 	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
@@ -252,6 +258,8 @@ GameObject* CommonUtils::BuildPlaneObject(
 		pnode = new PhysicsNode();
 		pnode->SetPosition(pos);
 		pnode->SetInverseMass(inverse_mass);
+		pnode->SetType(objectType);
+
 		float x = halfdims.x*2.0f;
 		float y = halfdims.y*2.0f;
 		float z = halfdims.z*2.0f;

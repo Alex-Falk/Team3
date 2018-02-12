@@ -19,20 +19,16 @@ Build/Examples_Cuda/\.vs/Examples_Cuda/v15/
 
 *.lastbuildstate
 
-Build/*.obj
-Build/nclgl/x64/Debug/
-
-Build/nclgl/Debug/
-
-Build/nclgl/Release/
-
-Build/ncltech/Release/
-Build/ncltech/x64/Debug/
-
-Build/x64/Debug/
-
-Build/PC/x64/Debug/
+Build/**/*.obj
+Build/**/*.lib
+Build/**/*.exe
+*.iobj
+*.ipdb
+Build/**/**/*.lib
 
 Build/networking/x64/Debug/
 
 Build/PC/program_output\.txt
+
+Build/PC/\.vs/PC/v15/
+**/AudioLog.txt

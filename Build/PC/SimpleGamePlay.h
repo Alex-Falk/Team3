@@ -30,14 +30,14 @@ public:
 
 	~SimpleGamePlay()
 	{
-		TextureManager::Instance()->RemoteAllTexture();
-		delete player;
+		TextureManager::Instance()->RemoveAllTexture();
+		//delete player;
 		delete pickup;
 	}
 
 	void OnCleanupScene() { 
 		DeleteAllGameObjects(); 
-		TextureManager::Instance()->RemoteAllTexture();
+		TextureManager::Instance()->RemoveAllTexture();
 	};
 
 	virtual void OnInitializeScene() override;

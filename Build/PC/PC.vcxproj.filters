@@ -34,6 +34,27 @@
     <Filter Include="Networking\Source Files">
       <UniqueIdentifier>{75fe373a-6635-4bd5-bf01-183a03fde668}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{9a21aa3e-e0d9-468b-a182-b5ef3792eae5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Header">
+      <UniqueIdentifier>{93a233d5-0a7e-4079-b590-58588a4fbe63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Source">
+      <UniqueIdentifier>{38740f4f-5b94-4f48-b598-2dba4710edbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Resources">
+      <UniqueIdentifier>{b47ed012-3b3e-4fd5-b8c5-9bf908251304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{94190c13-82f4-466d-a1b3-c3006dce752d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Header">
+      <UniqueIdentifier>{93293a18-f1f3-45d2-88be-b1f6961bae72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Source">
+      <UniqueIdentifier>{b1273f3a-ff52-4b62-be2f-909e1e350bce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePlay.h">
@@ -51,20 +72,26 @@
     <ClInclude Include="Pickup.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="AudioSystem.h">
+      <Filter>Audio\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Blank.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Arena.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameInput.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WeaponPickup.h">
-      <Filter>GamePlay\Header</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NavMesh.h">
+      <Filter>AI\Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Networking\User.h">
       <Filter>Networking\Header Files</Filter>
@@ -98,14 +125,17 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameInput.cpp">
-      <Filter>GamePlay\Source</Filter>
+    <ClCompile Include="Arena.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game.cpp">
+    <ClCompile Include="AudioSystem.cpp">
+      <Filter>Audio\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WeaponPickup.cpp">
-      <Filter>GamePlay\Source</Filter>
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Networking\Client.cpp">
       <Filter>Networking\Source Files</Filter>
@@ -119,5 +149,21 @@
     <ClCompile Include="..\Networking\User.cpp">
       <Filter>Networking\Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\AudioFiles\wave.mp3">
+      <Filter>Audio\Resources</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Audio\Resources</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\wave.mp3" />
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\wave.mp3" />
   </ItemGroup>
 </Project>

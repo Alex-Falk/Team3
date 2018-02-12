@@ -40,6 +40,7 @@ namespace CommonUtils
 		float inverse_mass = 0.0f,			//requires physics_enabled = true
 		bool collidable = true,				//requires physics_enabled = true
 		bool dragable = true,
+		PhysNodeType objectType = DEFAULT,
 		const Vector4& color = Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	GameObject* BuildPlaneObject(
@@ -50,6 +51,7 @@ namespace CommonUtils
 		float inverse_mass = 0.0f,			//requires physics_enabled = true
 		bool collidable = true,				//requires physics_enabled = true
 		bool dragable = true,
+		PhysNodeType objectType = DEFAULT,
 		const Vector4& color = Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
 	//Generates a default Cuboid object with the parameters specified
@@ -61,6 +63,7 @@ namespace CommonUtils
 		float inverse_mass = 0.0f,			//requires physics_enabled = true
 		bool collidable = true,				//requires physics_enabled = true
 		bool dragable = true,
+		PhysNodeType objectType = DEFAULT,
 		const Vector4& color = Vector4(1.0f, 1.0f, 1.0f, 1.0f),
 		GLuint tex = NULL);
 };
