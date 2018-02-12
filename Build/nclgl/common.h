@@ -48,5 +48,6 @@ typedef unsigned int uint;
 #define MESHDIR		"../../Data/Meshes/"
 #define TEXTUREDIR  "../../Data/Textures/"
 #define SOUNDSDIR	"../../Data/Sounds/"
+#define CEGUIDIR    "../../Data/GUIResource"
 
 #define SAFE_DELETE(x) if(x) { delete x; x = NULL; }

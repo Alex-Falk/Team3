@@ -102,6 +102,9 @@
     <ClCompile Include="PlayerRenderNode.cpp">
       <Filter>Files\RenderNode</Filter>
     </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
+      <Filter>Files\RenderBase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NCLDebug.h">
@@ -211,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="PlayerRenderNode.h">
       <Filter>Files\RenderNode</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterface.h">
+      <Filter>Files\RenderBase</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

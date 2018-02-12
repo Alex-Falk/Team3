@@ -18,6 +18,8 @@ bool show_perf_metrics = false;
 PerfTimer timer_total, timer_physics, timer_update, timer_render;
 uint shadowCycleKey = 4;
 
+//Prevent multiple clicking from happening
+int fpsCounter = 6;
 
 // Program Deconstructor
 //  - Releases all global components and memory
@@ -213,17 +215,42 @@ void HandleKeyboardInputs()
 	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
+void HandleGUIMouseCursor()
+{
+	Vector2 absPos;
+	Window::GetWindow().GetMouseScreenPos(&absPos);
+	GraphicsPipeline::Instance()->HandleGUIMousePosition(absPos.x, absPos.y);
+}
+
+void HandleGUIMouseButton()
+{
+	fpsCounter++;
+	if (fpsCounter > 5) {
+		if (Window::GetMouse()->ButtonDown(MOUSE_LEFT))
+		{
+			GraphicsPipeline::Instance()->HandleMouseButton(MOUSE_LEFT);
+		}
+		else if (Window::GetMouse()->ButtonDown(MOUSE_RIGHT))
+		{
+			GraphicsPipeline::Instance()->HandleMouseButton(MOUSE_RIGHT);
+		}
+		fpsCounter = 0;
+	}
+
+}
+
 // Program Entry Point
 int main()
 {
 	//Initialize our Window, Physics, Scenes etc
 	Initialize();
-	GraphicsPipeline::Instance()->SetVsyncEnabled(false);
+	GraphicsPipeline::Instance()->SetVsyncEnabled(true);
 
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
 	Window::GetWindow().LockMouseToWindow(true);
+	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		//Start Timing
@@ -234,6 +261,12 @@ int main()
 		timer_physics.UpdateRealElapsedTime(dt);
 		timer_update.UpdateRealElapsedTime(dt);
 		timer_render.UpdateRealElapsedTime(dt);
+
+		//Handle GUI mouseCursor
+		HandleGUIMouseCursor();
+
+		//Handle GUI mouseButton
+		HandleGUIMouseButton();
 
 		//Print Status Entries
 		PrintStatusEntries();

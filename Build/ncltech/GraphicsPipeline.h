@@ -4,14 +4,17 @@
 #include <nclgl\Camera.h>
 #include <nclgl\RenderNode.h>
 #include <nclgl\Frustum.h>
+#include <nclgl\Mouse.h>
+#include <nclgl\UserInterface.h>
 
 //material
 #include <nclgl\Material.h>
 #include <nclgl\StandardMaterial.h>
 #include <nclgl\ShadowMaterial.h>
 #include <nclgl\PostprocessMaterial.h>
-
 #include <nclgl\PlayerRenderNode.h>
+
+
 //---------------------------
 //------ Base Renderer ------
 //---------------------------
@@ -155,6 +158,14 @@ public:
 	inline void RemoteAllPlayerRenderNode() { playerRenderNodes.clear(); }
 	void InitPath(Vector2 groundSize);
 	inline GLuint& GetPathTex() { return pathTex; }
+
+	//GUI
+	//UI mouse update
+	void HandleGUIMousePosition(float x, float y);
+	void HandleMouseButton(MouseButtons button);
+
+	//Set Current Scene GUI
+	void SetCurrentSceneGUI(GUI* passInValue) { GUIsystem = passInValue; }
 protected:
 	GraphicsPipeline();
 	virtual ~GraphicsPipeline();
@@ -174,7 +185,7 @@ protected:
 	void RenderUI();
 	void RenderPath();
 	void RenderPostprocessAndPresent();
-
+	
 	
 	void RecursiveAddToPathRenderLists(RenderNode* node);
 
@@ -229,5 +240,7 @@ protected:
 	GLuint		pathFBO;
 	GLuint		pathTex;
 
+	//GUI
+	GUI* GUIsystem;
 };
 

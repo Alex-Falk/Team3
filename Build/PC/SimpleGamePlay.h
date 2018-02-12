@@ -41,4 +41,7 @@ public:
 	
 	virtual void OnUpdateScene(float dt) override;
 
+	virtual void OnInitializeGUI() override;
+
+	void onButtonClicked();
 };

@@ -39,9 +39,6 @@
     <ClInclude Include="Pickup.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Blank.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>

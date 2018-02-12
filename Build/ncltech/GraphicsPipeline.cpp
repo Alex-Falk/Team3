@@ -345,8 +345,13 @@ void GraphicsPipeline::RenderScene()
 	NCLDebug::_RenderDebugClipSpace();
 	NCLDebug::_ClearDebugLists();
 
+	//RenderUI
+	RenderUI();
+
 	OGLRenderer::SwapBuffers();
 }
+
+
 
 void GraphicsPipeline::Resize(int x, int y)
 {
@@ -549,9 +554,6 @@ void GraphicsPipeline::RenderObject()
 	NCLDebug::_RenderDebugDepthTested();
 	NCLDebug::_RenderDebugNonDepthTested();
 
-	//render UI to a texture
-	RenderUI();
-
 	//debug code
 	glUseProgram(shaders[SHADERTYPE::Texture_UI]->GetProgram());
 	glDisable(GL_DEPTH_TEST);
@@ -570,7 +572,9 @@ void GraphicsPipeline::RenderObject()
 
 void GraphicsPipeline::RenderUI()
 {
-
+	if (GUIsystem != NULL) {
+		GUIsystem->Draw();
+	}
 }
 
 void GraphicsPipeline::RenderPath()
@@ -668,4 +672,18 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 	//Recurse over all children and process them aswell
 	for (auto itr = node->GetChildIteratorStart(); itr != node->GetChildIteratorEnd(); itr++)
 		RecursiveAddToPathRenderLists(*itr);
+}
+
+void GraphicsPipeline::HandleGUIMousePosition(float x, float y)
+{
+	if (GUIsystem != NULL) {
+		GUIsystem->HandleMousePosition(x, y);
+	}
+}
+
+void GraphicsPipeline::HandleMouseButton(MouseButtons button)
+{
+	if (GUIsystem != NULL) {
+		GUIsystem->onMouseButtonPressed(button);
+	}
 }

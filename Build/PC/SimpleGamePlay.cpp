@@ -34,7 +34,7 @@ void SimpleGamePlay::OnInitializeScene() {
 	GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(player->GetGameObject()->Render());
 
-
+	OnInitializeGUI();
 	Scene::OnInitializeScene();
 }
 
@@ -59,3 +59,48 @@ void SimpleGamePlay::OnCleanupScene()
 
 	GraphicsPipeline::Instance()->RemoteAllPlayerRenderNode();
 };
+
+void SimpleGamePlay::OnInitializeGUI()
+{
+	//Call initi-function for gui
+	sceneGUI = new GUI();
+	sceneGUI->Init(CEGUIDIR);
+
+	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
+	sceneGUI->LoadScheme("TaharezLook.scheme");
+	sceneGUI->LoadScheme("AlfiskoSkin.scheme");
+
+	//Set Font sytle
+	sceneGUI->SetFont("DejaVuSans-10");
+
+	//SetMouseCursor
+	sceneGUI->SetMouseCursor("TaharezLook/MouseArrow");
+	sceneGUI->ShowMouseCursor();
+
+	//Create Push Button handle
+	CEGUI::PushButton* testButton = static_cast<CEGUI::PushButton*>(
+		sceneGUI->createWidget("AlfiskoSkin/Button",
+			Vector4(0.5f, 0.5f, 0.1f, 0.05f),
+			Vector4(),
+			"TestButton"
+		));
+
+	//Create Titlebar
+	CEGUI::Titlebar* Titlebar = static_cast<CEGUI::Titlebar*>(
+		sceneGUI->createWidget("AlfiskoSkin/Titlebar",
+			Vector4(0.0f, 0.0f, 0.1f, 0.05f),
+			Vector4(),
+			"Titlebar"
+		));
+
+	testButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&SimpleGamePlay::onButtonClicked, this));
+
+	//Set text for testButton
+	testButton->setText("Hello, world!");
+}
+
+void SimpleGamePlay::onButtonClicked()
+{
+	cout << "Zhang mingyuan idoit!" << endl;
+	SceneManager::Instance()->JumpToScene();
+}
