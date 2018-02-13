@@ -31,7 +31,7 @@ public:
 
 	~SimpleGamePlay()
 	{
-		TextureManager::Instance()->RemoveAllTexture();
+		TextureManager::Instance()->RemoteAllTexture();
 		delete player;
 		delete pickup;
 	}

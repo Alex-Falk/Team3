@@ -9,14 +9,14 @@
 #include <ncltech\TextureManager.h> 
 #include "GamePlay.h"
 #include "Pickup.h"
-#include "Player.h"
+#include "Avatar.h"
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
 class MainMenu : public Scene
 {
 private:
-	Player* player;
+	Avatar* player;
 	bool ShowOptionMenu;
 
 	CEGUI::PushButton* startButton;
@@ -65,12 +65,13 @@ public:
 			0.0f,
 			true,
 			false,
+			PhysNodeType::BIG_NODE,
 			Vector4(0.2f, 0.5f, 1.0f, 1.0f),
 			MATERIALTYPE::Ground);
 
 		this->AddGameObject(ground);
 
-		player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT, 0, 1.0f);
+		player = new Avatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
 
 		this->AddGameObject(player->GetGameObject());
 

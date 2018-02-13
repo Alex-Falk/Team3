@@ -106,6 +106,7 @@ GameObject* CommonUtils::BuildSphereObject(
 	float inverse_mass,
 	bool collidable,
 	bool dragable,
+	PhysNodeType objectType,
 	const Vector4& color,
 	MATERIALTYPE matType)
 {
@@ -241,6 +242,7 @@ GameObject* CommonUtils::BuildPlaneObject(
 	float inverse_mass,
 	bool collidable,
 	bool dragable,
+	PhysNodeType objectType,
 	const Vector4& color,
 	MATERIALTYPE matType)
 {

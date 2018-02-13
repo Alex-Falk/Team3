@@ -16,6 +16,7 @@ void SimpleGamePlay::OnInitializeScene() {
 		0.0f,
 		true,
 		false,
+		PhysNodeType::BIG_NODE,
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f),
 		MATERIALTYPE::Ground);
 
