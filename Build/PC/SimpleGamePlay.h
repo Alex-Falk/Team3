@@ -8,7 +8,7 @@
 #include <ncltech\CommonUtils.h>
 #include "GamePlay.h"
 #include "Pickup.h"
-#include "Player.h"
+#include "ControllableAvatar.h"
 #include <ncltech\TextureManager.h> 
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
@@ -21,7 +21,7 @@ class SimpleGamePlay : public Scene
 private:
 
 	float m_AccumTime = 0;
-	Player* player;
+	ControllableAvatar* player;
 	Pickup* pickup;
 
 public:

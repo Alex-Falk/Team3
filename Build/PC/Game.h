@@ -1,5 +1,5 @@
 #pragma once
-#include "Player.h"
+#include "ControllableAvatar.h"
 #include "GamePlay.h"
 
 class Game: public TSingleton<Game>
@@ -21,13 +21,13 @@ public:
 	//STUBS
 	inline Vector3 GetSpawnLocation() {}
 	//FINISHED FUNCTIONS
-	inline Player * GetPlayer(uint id) { return players[id]; }
+	inline ControllableAvatar * GetPlayer(uint id) { return players[id]; }
 	inline int GetMapIndex() { return 0; }
 private:
 	//private constructor
 	Game() {
 		for (int i = 0; i < 4; i++) {
-			players[i] = new Player();
+			players[i] = new ControllableAvatar();
 		}
 	};
 	~Game() {
@@ -36,5 +36,5 @@ private:
 		}
 	};
 	//variables
-	Player* players[4];
+	ControllableAvatar* players[4];
 };

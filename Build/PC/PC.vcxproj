@@ -158,6 +158,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AudioSystem.h" />
+    <ClInclude Include="Avatar.h" />
     <ClInclude Include="Blank.h" />
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Game.h" />
@@ -166,19 +167,19 @@
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="PaintableGameObject.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="ControllableAvatar.h" />
     <ClInclude Include="WeaponPickup.h" />
-    <ClInclude Include="Weapons.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Arena.cpp" />
+    <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />
     <ClCompile Include="Weapons.cpp" />

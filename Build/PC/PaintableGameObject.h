@@ -1,6 +1,6 @@
 #pragma once
 #include "../ncltech/GameObject.h"
-#include "Player.h"
+#include "ControllableAvatar.h"
 #include "GamePlay.h"
 
 class PaintableGameObject  {
@@ -16,7 +16,7 @@ protected:
 	bool isPaintable;
 
 public:
-	PaintableGameObject(GameObject * g, float objWorth = 0, bool paintable = true, Colour colour = DEFAULT_COLOUR);
+	PaintableGameObject(GameObject * g, float objWorth = 0, bool paintable = true, Colour colour = START_COLOUR);
 
 	GameObject * GetGameObject() {
 		return go;
@@ -43,7 +43,7 @@ public:
 	}
 
 
-	virtual void CollisionOccured(Player * p);
+	virtual void CollisionOccured(ControllableAvatar * p);
 
 	//Used for collision with player ammo if/when implemented
 	//virtual void CollisionOccured(Ammo * a);
