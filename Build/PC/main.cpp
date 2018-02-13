@@ -221,7 +221,7 @@ void HandleKeyboardInputs()
 			1.0f / 4.0f,							//Inverse Mass
 			true,									//Has Collision Shape
 			true,									//Dragable by the user
-			DEFAULT,
+			DEFAULT_PHYSICS,
 			CommonUtils::GenColor(0.1f, 0.8f));		//Color
 
 

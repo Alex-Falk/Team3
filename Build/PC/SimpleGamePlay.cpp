@@ -20,7 +20,7 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
+	player = new ControllableAvatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 
@@ -48,13 +48,6 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	if (pickup)
 	{
 		pickup->Update(dt);
-	}
-
-
-	if (player->GetShooting()) {
-		for (int i = 0; i < player->GetAmmo().size();i++) {
-			this->AddGameObject(player->GetAmmo()[i]);
-		}
 	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();

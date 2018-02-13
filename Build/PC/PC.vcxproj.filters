@@ -42,9 +42,6 @@
     <ClInclude Include="SimpleGamePlay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PaintableGameObject.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
@@ -72,15 +69,18 @@
     <ClInclude Include="Weapons.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="ControllableAvatar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Avatar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimpleGamePlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PaintableGameObject.cpp">
@@ -107,6 +107,12 @@
     <ClCompile Include="Weapons.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
+    <ClCompile Include="ControllableAvatar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Avatar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\AudioFiles\wave.mp3">
@@ -115,6 +121,10 @@
     <Media Include="..\AudioFiles\singing.wav">
       <Filter>Audio\Resources</Filter>
     </Media>
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="..\AudioFiles\wave.mp3" />
     <Media Include="..\AudioFiles\singing.wav">
       <Filter>Resource Files</Filter>
     </Media>

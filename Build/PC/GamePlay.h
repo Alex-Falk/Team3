@@ -1,8 +1,16 @@
 #pragma once
 
+
+#define DEFAULT_COLOUR Vector4(0.5f, 0.5f, 0.5f, 1.0f)
+#define GREEN_COLOUR Vector4(0.0f, 1.0f, 0.0f, 1.0f)
+#define BLUE_COLOUR Vector4(0.0f, 0.0f, 1.0f, 1.0f)
+#define RED_COLOUR Vector4(1.0f, 0.0f, 0.0f, 1.0f)
+#define PINK_COLOUR Vector4(1.0f, 0.2f, 1.0f, 1.0f)
+
+
 enum Colour
 {
-	DEFAULT_COLOUR, RED, GREEN, BLUE, PINK
+	RED, GREEN, BLUE, PINK, START_COLOUR
 };
 
 //Name: Nick Bedford
@@ -25,4 +33,6 @@ enum WeaponType
 enum Audio {
 	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND
 };
+
+
 

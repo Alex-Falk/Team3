@@ -40,7 +40,7 @@ enum Integrator { ZERO, SYMPLETIC, RK2, RK4 };
 //Nick Bedford
 //Date: 12/02/2018
 //Added an enum to sort nodes
-enum PhysNodeType {DEFAULT, PROJECTILE, BIG_NODE, PICKUP, PLAYER};
+enum PhysNodeType {DEFAULT_PHYSICS, PROJECTILE, BIG_NODE, PICKUP, PLAYER};
 
 class PhysicsNode;
 
@@ -65,7 +65,7 @@ class GameObject;
 class PhysicsNode
 {
 public:
-	PhysicsNode(PhysNodeType physType = DEFAULT, Integrator i = ZERO)
+	PhysicsNode(PhysNodeType physType = DEFAULT_PHYSICS, Integrator i = ZERO)
 		: position(0.0f, 0.0f, 0.0f)
 		, linVelocity(0.0f, 0.0f, 0.0f)
 		, force(0.0f, 0.0f, 0.0f)
