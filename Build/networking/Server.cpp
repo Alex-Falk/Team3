@@ -110,8 +110,17 @@ void Server::UpdateUser(float dt)
 
 			// Send over information to new client
 
-			connectedIDs.push_back(*(freeIDs.back));
-			freeIDs.pop_back();
+			if (freeIDs.size() > 0)
+			{
+				connectedIDs.push_back(*(freeIDs.back));
+				SendConnectionID(*(freeIDs.back));
+				freeIDs.pop_back();
+			}
+			else
+			{
+				enet_peer_disconnect(&server->m_pNetwork->peers[3], 0);
+			}
+
 		}
 		break;
 
@@ -179,6 +188,18 @@ void Server::UpdateUser(float dt)
 //--------------------------------------------------------------------------------------------//
 // Sending
 //--------------------------------------------------------------------------------------------//
+
+void Server::SendConnectionID(uint ID)
+{
+	string data;
+
+	data = to_string(CONNECTION_ID) + ":" +
+		to_string(ID);
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_peer_send(&server->m_pNetwork->peers[ID], 0, packet);
+
+}
 
 void Server::SendPosition(uint ID) 
 {

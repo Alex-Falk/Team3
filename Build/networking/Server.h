@@ -75,7 +75,8 @@ public:
 	// Player Scores
 	// full map info - on connect -> use map index
 	// changes to map
-
+	
+	void SendConnectionID(uint ID);
 	void SendPosition(uint ID);
 	void SendLinVelocity(uint ID);
 	void SendAngVelocity(uint ID);
