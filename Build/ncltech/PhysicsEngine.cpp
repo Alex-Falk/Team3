@@ -21,7 +21,7 @@ PhysicsEngine::PhysicsEngine()
 {
 	//Variables set here will /not/ be reset with each scene
 	isPaused = false;  
-	debugDrawFlags = DEBUGDRAW_FLAGS_MANIFOLD | DEBUGDRAW_FLAGS_CONSTRAINT;
+	debugDrawFlags = DEBUGDRAW_FLAGS_CONSTRAINT;
 	worldPartitioning = new FixedWorldPartition(limits.minVals, limits.maxVals, &physicsNodes);
 	SetDefaults();
 }
@@ -33,7 +33,12 @@ PhysicsEngine::~PhysicsEngine()
 
 void PhysicsEngine::AddPhysicsObject(PhysicsNode* obj)
 {
-	physicsNodes.push_back(obj);	
+	physicsNodes.push_back(obj);
+
+	if (worldPartitioning)
+	{
+		worldPartitioning->AddObject(obj);
+	}
 }
 
 void PhysicsEngine::ResetWorldPartition()
@@ -43,15 +48,50 @@ void PhysicsEngine::ResetWorldPartition()
 	worldPartitioning = new FixedWorldPartition(limits.minVals, limits.maxVals, &physicsNodes);
 }
 
+//Nick Bedford
+//Date: 12/02/2018
+//Creates a pointer to a vector that holds all of the objects of that type.
+//If null pointer is returned there are no items of that type.
+//VECTOR MUST BE DELETED AFTER USE
+//If this gets used frequently I will create vectors for the most commonly requested types in the PhysicsEngine.
+std::vector<PhysicsNode*>* PhysicsEngine::GetAllNodesOfType(PhysNodeType type)
+{
+	std::vector<PhysicsNode*>* returnNodes = new std::vector<PhysicsNode*>;
+
+	for (std::vector<PhysicsNode*>::iterator itr = physicsNodes.begin(); itr != physicsNodes.end(); ++itr)
+	{
+		if ((*itr)->GetType() == type)
+		{
+			returnNodes->push_back((*itr));
+		}
+	}
+
+	if (returnNodes->size() == 0)
+	{
+		delete returnNodes;
+		returnNodes = nullptr;
+	}
+
+	return returnNodes;
+}
+
 void PhysicsEngine::RemovePhysicsObject(PhysicsNode* obj)
 {
-	//Lookup the object in question
-	auto found_loc = std::find(physicsNodes.begin(), physicsNodes.end(), obj);
-
-	//If found, remove it from the list
-	if (found_loc != physicsNodes.end())
+	if (obj)
 	{
-		physicsNodes.erase(found_loc);
+		//Lookup the object in question
+		auto found_loc = std::find(physicsNodes.begin(), physicsNodes.end(), obj);
+
+		//If found, remove it from the list
+		if (found_loc != physicsNodes.end())
+		{
+			physicsNodes.erase(found_loc);
+		}
+
+		if (worldPartitioning)
+		{
+			worldPartitioning->RemovePhysicsObject(obj);
+		}
 	}
 }
 
@@ -281,7 +321,7 @@ void PhysicsEngine::NarrowPhaseCollisions()
 
 void PhysicsEngine::DebugRender()
 {
-	if (debugDrawFlags & DEBUGDRAW_FLAGS_OCTREE)
+	if (debugDrawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD)
 	{
 		worldPartitioning->DebugDraw();
 	}

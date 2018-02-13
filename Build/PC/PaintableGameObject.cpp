@@ -7,7 +7,7 @@ PaintableGameObject::PaintableGameObject(GameObject * g, float objWorth, bool p,
 	colour = col;
 }
 
-void PaintableGameObject::CollisionOccured(Player * p)
+void PaintableGameObject::CollisionOccured(ControllableAvatar * p)
 {
 	//don't do anything if collider already owns the object
 	if (p->GetColour() == colour) {

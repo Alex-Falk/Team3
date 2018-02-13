@@ -6,8 +6,9 @@
 #include "AudioSystem.h"
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
+#include "Arena.h"
 #include "GameInput.h"
-
+#include "Game.h"
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -66,6 +67,7 @@ void Initialize()
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
 	AudioSystem::Instance();
 
@@ -100,6 +102,7 @@ void PrintStatusEntries()
 		timer_physics.PrintOutputToStatusEntry(status_colour, "          Physics Update :");
 		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
 		timer_render.PrintOutputToStatusEntry(status_colour, "          Render Scene   :");
+		timer_audio.PrintOutputToStatusEntry(status_colour, "         Audio Update   :");
 	}
 
 	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
@@ -116,8 +119,8 @@ void PrintStatusEntries()
 		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] - Tut 4", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] - Tut 4+", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] - Tut 5+", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_OCTREE) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
+		//NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
 
 		NCLDebug::AddStatusEntry(status_color_debug, "");
 	}
@@ -163,6 +166,34 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
 		show_perf_metrics = !show_perf_metrics;
 
+	//audio test functionality
+	//TODO remove this when finished testing
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
+		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
+		AudioSystem::Instance()->StopAllSounds();
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
+		AudioSystem::Instance()->UnmuteAllSounds();
+	}
+
+
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
@@ -178,10 +209,10 @@ void HandleKeyboardInputs()
 		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
-		drawFlags ^= DEBUGDRAW_FLAGS_OCTREE;
+		drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
-		drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
+		//drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
 	{
@@ -192,6 +223,7 @@ void HandleKeyboardInputs()
 			1.0f / 4.0f,							//Inverse Mass
 			true,									//Has Collision Shape
 			true,									//Dragable by the user
+			DEFAULT_PHYSICS,
 			CommonUtils::GenColor(0.1f, 0.8f));		//Color
 
 
@@ -241,6 +273,7 @@ void HandleKeyboardInputs()
 	Input::GetInput()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
 	Input::GetInput()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
 	Input::GetInput()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
+	Input::GetInput()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
 	//possibly temporary
 	Input::GetInput()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
 	Input::GetInput()->SetInput(CAMERA_DOWN, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
@@ -250,7 +283,7 @@ void HandleKeyboardInputs()
 	Input::GetInput()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
 
 	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
-	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
+//	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
 void HandleGUIMouseCursor()
@@ -281,6 +314,7 @@ void HandleGUIMouseButton()
 // Program Entry Point
 int main()
 {
+	Game::Instance();
 	//Initialize our Window, Physics, Scenes etc
 	Initialize();
 	GraphicsPipeline::Instance()->SetVsyncEnabled(true);
@@ -332,7 +366,7 @@ int main()
 		//Render Scene
 		timer_render.BeginTimingSection();
 		GraphicsPipeline::Instance()->UpdateScene(dt);
-		GraphicsPipeline::Instance()->DebugRender();
+//		GraphicsPipeline::Instance()->DebugRender();
 		GraphicsPipeline::Instance()->RenderScene();
 		{
 			//Forces synchronisation if vsync is disabled
