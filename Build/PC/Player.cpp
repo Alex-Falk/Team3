@@ -59,6 +59,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s)
 {
 	col = c;
 	size = s;
+	lastPos = pos;
 	
 	timer = 0;
 	speed = 5;
@@ -222,6 +223,8 @@ void Player::ChangeSize(float newSize)
 
 // Updates everything on player
 void Player::OnPlayerUpdate(float dt) {
+	Vector3 diff = GetPosition() - lastPos;
+	lastPos = GetPosition(); //set lastPos after we've finished using it
 
 	shooting = false;
 
@@ -240,7 +243,7 @@ void Player::OnPlayerUpdate(float dt) {
 
 	if (life > minLife) 
 	{
-		life -= dt*2;
+		life -= (diff.Length() / 6); //lower divisor = faster loss of life
 
 		if (life < minLife)
 		{
@@ -248,7 +251,7 @@ void Player::OnPlayerUpdate(float dt) {
 		}
 	}
 	
-	curSize = size * (life / 100);
+	curSize = size * (life / maxLife); //changed 100 to maxlife
 
 	ChangeSize(curSize);
 	
