@@ -141,15 +141,29 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	break;
 	}
 
-	playerGameObject = CommonUtils::BuildSphereObject("Player",
-		Vector3(0.0f, 1.0f*s, 0.0f) + pos,
-		1.0f * size,							//Radius
-		true,									//Has Physics Object
-		1.0f,
-		true,									//Has Collision Shape
-		false,									//Dragable by the user
-		PLAYER,
-		colour);								//Colour
+	RenderNode* rnode = new RenderNode();
+	float radius = 1.0f;
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), Vector4(0.5, 0.5, 0.5, 1.0));
+	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
+
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
+
+	rnode->AddChild(dummy);
+
+	rnode->SetTransform(Matrix4::Translation(Vector3(0.0f, 1.0f, 0.0f)));
+	rnode->SetBoundingRadius(radius);
+
+	PhysicsNode* pnode = NULL;
+	pnode = new PhysicsNode();
+	pnode->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
+	pnode->SetInverseMass(1.0f);
+	pnode->SetBoundingRadius(radius);
+	pnode->SetType(PLAYER);
+	CollisionShape* pColshape = new SphereCollisionShape(radius);
+	pnode->SetCollisionShape(pColshape);
+	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1.0f));
+
+	playerGameObject = new GameObject("Player", rnode, pnode);
 
 	playerGameObject->Physics()->SetElasticity(0);
 
