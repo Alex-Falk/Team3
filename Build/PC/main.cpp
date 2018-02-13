@@ -1,11 +1,10 @@
 #include <enet\enet.h>
-
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
-#include "AudioSystem.h"
+
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
 #include "Arena.h"
@@ -52,8 +51,8 @@ void Quit(bool error = false, const std::string &reason = "") {
 
 //initialise all audio files
 void InitialiseAudioFiles() {
-	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
-	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+	//AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
+	//AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
 }
 
 // Program Initialise
@@ -72,12 +71,10 @@ void Initialize()
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
 
-	//Enqueue All Scenes
-	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
+
 	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
-	//InitialiseAudioFiles();
+	InitialiseAudioFiles();
 }
 
 // Print Debug Info
@@ -242,32 +239,6 @@ void HandleKeyboardInputs()
 
 	}
 
-	//audio test functionality
-	//TODO remove this when finished testing
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {
-		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
-		AudioSystem::Instance()->StopAllSounds();
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
-		AudioSystem::Instance()->UnmuteAllSounds();
-	}
 	//toggle the camera
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {
 		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
@@ -352,9 +323,22 @@ int main()
 		//Print Status Entries
 		PrintStatusEntries();
 
+		if (!chosen)
+		{
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0) && !chosen)
+			{
+				if (enet_initialize() != 0)
+				{
+					Quit(true, "ENET failed to initialize!");
+				}
+
+				Game::Instance()->SetServer();
+				//Enqueue All Scenes
+				SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
+				SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+
 				chosen = true;
 			}
-
 			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1) && !chosen)
 			{
 				if (enet_initialize() != 0)
@@ -377,8 +361,8 @@ int main()
 
 				Game::Instance()->setClient(ip);
 				//Enqueue All Scenes
+				SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
 				SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-				//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
 				chosen = true;
 			}

@@ -112,8 +112,8 @@ void Server::UpdateUser(float dt)
 
 			if (freeIDs.size() > 0)
 			{
-				connectedIDs.push_back(*(freeIDs.back));
-				SendConnectionID(*(freeIDs.back));
+				connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
+				SendConnectionID(freeIDs[freeIDs.size() - 1]);
 				freeIDs.pop_back();
 			}
 			else

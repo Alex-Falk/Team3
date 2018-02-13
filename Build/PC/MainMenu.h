@@ -165,7 +165,7 @@ public:
 				"masterVolumnSlider"
 			));
 		masterVolumnSlider->setMaxValue(1.0f);
-		masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		//masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		masterVolumnSlider->setVisible(false);
 		masterVolumnSlider->disable();
 		masterVolumnSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMasterVolumnChanged, this));
@@ -178,7 +178,7 @@ public:
 			));
 
 		GameSoundsSlider->setMaxValue(1.0f);
-		GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		//GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		GameSoundsSlider->setVisible(false);
 		GameSoundsSlider->disable();
 
@@ -189,7 +189,7 @@ public:
 				"MusicSlider"
 			));
 		MusicSlider->setMaxValue(1.0f);
-		MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		//MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		MusicSlider->setVisible(false);
 		MusicSlider->disable();
 
@@ -295,18 +295,18 @@ public:
 	void onMasterVolumnChanged()
 	{
 		float temp = masterVolumnSlider->getCurrentValue();
-		AudioSystem::Instance()->SetMasterVolume(temp);
+		//AudioSystem::Instance()->SetMasterVolume(temp);
 	}
 
 	void onGameSoundVolumnChanged()
 	{
 		float temp = GameSoundsSlider->getCurrentValue();
-		AudioSystem::Instance()->SetGameSoundsVolume(temp);
+		//AudioSystem::Instance()->SetGameSoundsVolume(temp);
 	}
 
 	void onMusicVolumnChanged()
 	{
 		float temp = MusicSlider->getCurrentValue();
-		AudioSystem::Instance()->SetGameSoundsVolume(temp);
+		//AudioSystem::Instance()->SetGameSoundsVolume(temp);
 	}
 };
