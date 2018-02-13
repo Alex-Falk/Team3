@@ -701,5 +701,8 @@ void GraphicsPipeline::HandleMouseButton(MouseButtons button)
 
 void GraphicsPipeline::HandleLeftMouseButtonHold(bool isHold)
 {
-	GUIsystem->onMouseButtonHold(isHold);
+	if (GUIsystem != NULL) {
+		GUIsystem->onMouseButtonHold(isHold);
+	}
+
 }

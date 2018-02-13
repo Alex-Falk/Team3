@@ -22,7 +22,7 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	player = new ControllableAvatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
+	player = new Avatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 

@@ -21,7 +21,6 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FF74C3EC-6B06-4054-8829-81E6866DF745}</ProjectGuid>
     <RootNamespace>Examples_Cuda</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <ProjectName>PC</ProjectName>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -151,7 +150,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Arena.h" />
     <ClInclude Include="AudioSystem.h" />
+    <ClInclude Include="Avatar.h" />
+    <ClInclude Include="ControllableAvatar.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="MainMenu.h" />
@@ -159,28 +161,21 @@
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="PaintableGameObject.h" />
-    <ClInclude Include="ControllableAvatar.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="WeaponPickup.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Arena.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
+    <ClCompile Include="Avatar.cpp" />
+    <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
-    <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />
-    <ClCompile Include="Weapons.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\AudioFiles\singing.wav" />
-    <Media Include="..\AudioFiles\wave.mp3" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\AudioFiles\singing.wav" />
-    <Media Include="..\AudioFiles\wave.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

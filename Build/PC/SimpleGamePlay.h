@@ -6,10 +6,12 @@
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
+#include <ncltech\TextureManager.h> 
 #include "GamePlay.h"
 #include "Pickup.h"
+#include "Avatar.h"
 #include "ControllableAvatar.h"
-#include <ncltech\TextureManager.h> 
+
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 //
@@ -21,7 +23,7 @@ class SimpleGamePlay : public Scene
 private:
 
 	float m_AccumTime = 0;
-	ControllableAvatar* player;
+	Avatar* player;
 	Pickup* pickup;
 	CEGUI::ProgressBar* energyBar;
 

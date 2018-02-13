@@ -67,7 +67,7 @@ void Initialize()
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
+	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
 	AudioSystem::Instance();
 
@@ -314,9 +314,9 @@ void HandleGUIMouseButton()
 // Program Entry Point
 int main()
 {
-	Game::Instance();
 	//Initialize our Window, Physics, Scenes etc
 	Initialize();
+	Game::Instance();
 	GraphicsPipeline::Instance()->SetVsyncEnabled(true);
 
 	Window::GetWindow().GetTimer()->GetTimedMS();
