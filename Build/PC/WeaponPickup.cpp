@@ -52,7 +52,7 @@ void WeaponPickup::Reactivate()
 	active = true;
 	currentRespawnTimer = 0;
 	weaponType = static_cast<WeaponType>(rand() % NUM_OF_WEAPONS);
-	cout << weaponType << endl;
+	//cout << weaponType << endl;
 }
 
 WeaponPickup::~WeaponPickup()
