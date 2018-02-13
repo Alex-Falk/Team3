@@ -107,21 +107,21 @@ GameObject * Weapons::BuildPaintSpray(const Vector4& color, float size, Vector3 
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1));
 	pnode->SetType(PROJECTILE);
 
+
 	GameObject* obj = new GameObject("Spray", rnode, pnode);
 
 	return obj;
 }
 
-vector<GameObject*> Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
-	vector<GameObject*> bullet;
-	 bullet.push_back(Weapons::BuildPistol(colour, size, pos));
+GameObject* Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
+	GameObject * bullet = BuildPistol(colour, size, pos);
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	Vector3 direction;
 
 	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * bulletPower;
-	bullet[0]->Physics()->SetLinearVelocity(direction);
+	//bullet->Physics()->SetLinearVelocity(direction);
 //	sendbullet(pos, direction);  //to send bullet on network;
 
 	return bullet;
@@ -152,10 +152,40 @@ vector<GameObject*> Weapons::ShootPaintSpray(Vector3 pos, float size, Vector4 co
 		spray.push_back( Weapons::BuildPaintSpray(colour, size, pos));
 
 		Vector3 direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1)*sprayPower;
-		spray[i]->Physics()->SetLinearVelocity(direction * 15);
+		spray[i]->Physics()->SetLinearVelocity(direction);
 		spray[i]->Physics()->SetPosition(pos + direction * size);
 		//SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
 	}
 
 	return spray;
 }
+
+//Projectile * Weapons::ShootPistolProj(Vector3 pos, float size, Vector4 RGBA, Colour c) {
+//	float bulletSize = size * 0.2;
+//	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
+//	// and a parent node that will contain the world transform/physics transform
+//	RenderNode* rnode = new RenderNode();
+//
+//	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), RGBA);
+//	dummy->SetTransform(Matrix4::Scale(Vector3(bulletSize, bulletSize, bulletSize)));
+//	rnode->AddChild(dummy);
+//
+//	rnode->SetTransform(Matrix4::Translation(pos));
+//	rnode->SetBoundingRadius(bulletSize);
+//
+//	PhysicsNode* pnode = NULL;
+//
+//	pnode = new PhysicsNode();
+//	pnode->SetInverseMass(1);
+//	pnode->SetBoundingRadius(bulletSize);
+//
+//
+//	CollisionShape* pColshape = new SphereCollisionShape(bulletSize);
+//	pnode->SetCollisionShape(pColshape);
+//	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1));
+//	pnode->SetType(PROJECTILE);
+//
+//	Projectile * obj = new Projectile()
+//
+//	return obj;
+//}

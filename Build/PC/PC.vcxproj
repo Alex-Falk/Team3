@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FF74C3EC-6B06-4054-8829-81E6866DF745}</ProjectGuid>
     <RootNamespace>Examples_Cuda</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectName>PC</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -162,6 +162,7 @@
     <ClInclude Include="Arena.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />
     <ClCompile Include="Weapons.cpp" />

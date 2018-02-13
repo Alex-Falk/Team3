@@ -9,6 +9,8 @@
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
+#include "Projectile.h"
+#include "../ncltech/SceneManager.h"
 
 Player::Player()
 {
@@ -57,6 +59,7 @@ Player::~Player()
 
 Player::Player(Vector3 pos, Colour c, uint id, float s)
 {
+
 	col = c;
 	size = s;
 	lastPos = pos;
@@ -79,10 +82,11 @@ Player::Player(Vector3 pos, Colour c, uint id, float s)
 
 	switch (c)
 	{
-	case DEFAULT:
+	case DEFAULT_COLOUR:
 	{
 		colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	}
+	}	
+	break;
 	case GREEN:
 	{
 		colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -316,7 +320,9 @@ void Player::UpdatePickUp(float dt)
 }
 
 void Player::ManageWeapons(WeaponType wt) {
-	
+	//Projectile * p = new Projectile(this->col, this->colour, GetPosition(), { 0, 0, 0 }, Weapons::ShootPistol(GetPosition(), size, colour));
+	//SceneManager::Instance()->GetCurrentScene()->AddGameObject(p);
+
 	if (Input::GetInput()->GetInput(SHOOT)) {
 		shooting = true;
 		switch (wt)
@@ -329,10 +335,10 @@ void Player::ManageWeapons(WeaponType wt) {
 			break;
 		case PAINT_PISTOL:
 			NCLDebug::Log("Pistol piou piou");
-			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
+			//ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
 			break;
 		case AUTO_PAINT_LAUNCHER:
-			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
+			//ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
 			shootCooldown = 0.15f;
 			canShoot = false;
 			break;

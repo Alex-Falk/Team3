@@ -5,6 +5,7 @@
 #pragma once
 #include <ncltech\GameObject.h>
 #include <ncltech\SceneManager.h> 
+#include "Projectile.h"
 
 namespace Weapons
 {
@@ -16,9 +17,11 @@ namespace Weapons
 
 
 
-	vector<GameObject*> ShootPistol(Vector3 pos, float size, Vector4 colour);
+	//vector<GameObject*> ShootPistol(Vector3 pos, float size, Vector4 colour);
 	vector<GameObject*> ShootRocket(Vector3 pos, float size, Vector4 colour);
 	vector<GameObject*> ShootPaintSpray(Vector3 pos, float size, Vector4 colour);
 
+	GameObject * ShootPistol(Vector3 pos, float size, Vector4 colour);
 
+	Projectile * ShootPistolProj(Vector3 pos, float size, Vector4 RGBA, Colour col);
 }

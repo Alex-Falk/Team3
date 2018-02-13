@@ -72,6 +72,9 @@
     <ClInclude Include="Weapons.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="Projectile.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -107,6 +110,9 @@
     <ClCompile Include="Weapons.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
+    <ClCompile Include="Projectile.cpp">
+      <Filter>GamePlay\Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\AudioFiles\wave.mp3">
@@ -119,5 +125,8 @@
       <Filter>Resource Files</Filter>
     </Media>
     <Media Include="..\AudioFiles\wave.mp3" />
+    <Media Include="..\AudioFiles\singing.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>
