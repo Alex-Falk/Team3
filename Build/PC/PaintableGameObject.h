@@ -16,7 +16,7 @@ protected:
 	bool isPaintable;
 
 public:
-	PaintableGameObject(GameObject * g, float objWorth = 0, bool paintable = true, Colour colour = DEFAULT);
+	PaintableGameObject(GameObject * g, float objWorth = 0, bool paintable = true, Colour colour = DEFAULT_COLOUR);
 
 	GameObject * GetGameObject() {
 		return go;

@@ -15,11 +15,12 @@ void SimpleGamePlay::OnInitializeScene() {
 		0.0f,
 		true,
 		false,
+		BIG_NODE,
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));
 
 	this->AddGameObject(ground);
 
-	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT, 0, 1.0f);
+	player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 
@@ -29,6 +30,7 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+
 
 
 
@@ -46,6 +48,13 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	if (pickup)
 	{
 		pickup->Update(dt);
+	}
+
+
+	if (player->GetShooting()) {
+		for (int i = 0; i < player->GetAmmo().size();i++) {
+			this->AddGameObject(player->GetAmmo()[i]);
+		}
 	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();

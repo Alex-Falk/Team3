@@ -12,7 +12,7 @@
 #include <ncltech\TextureManager.h> 
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
-
+//
 
 
 
@@ -30,14 +30,14 @@ public:
 
 	~SimpleGamePlay()
 	{
-		TextureManager::Instance()->RemoteAllTexture();
+		TextureManager::Instance()->RemoveAllTexture();
 		delete player;
 		delete pickup;
 	}
 
 	void OnCleanupScene() { 
 		DeleteAllGameObjects(); 
-		TextureManager::Instance()->RemoteAllTexture();
+		TextureManager::Instance()->RemoveAllTexture();
 	};
 
 	virtual void OnInitializeScene() override;
