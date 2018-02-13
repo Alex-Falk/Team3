@@ -237,16 +237,6 @@ void Player::OnPlayerUpdate(float dt) {
 		}
 	}
 
-
-	if (life > minLife) 
-	{
-		life -= dt*2;
-
-		if (life < minLife)
-		{
-			life = minLife;
-		}
-	}
 	
 	curSize = size * (life / 100);
 

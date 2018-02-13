@@ -43,7 +43,7 @@ void Camera::UpdateCamara(float dt) {
 
 	//Bounds check the pitch, to be between straight up and straight down ;)
 	pitch = (float)min(pitch, free?90.0:7.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
-	pitch = (float)max(pitch, -90.0f);
+	pitch = (float)max(pitch, -89.0f);
 
 	if (yaw < 0.0f) {
 		yaw += 360.0f;
@@ -164,13 +164,18 @@ void Camera::UpdateDistance() {
 	//don't do anything if the camera isn't free
 	if (!free) {
 		//testing
-		LineCollision d = PhysicsEngine::Instance()->CastRay(center->GetPosition() - GetViewDirection() * center->GetBoundingRadius(), -GetViewDirection());
+		LineCollision d = PhysicsEngine::Instance()->CastRay(center->GetPosition() - GetViewDirection() * center->GetBoundingRadius(), -GetViewDirection(), center);
 		if (d.node) {
-			distance = d.dist;
-			cout << "Ray used!";
+			distance = (d.dist < maxDistance) ? d.dist : maxDistance;
+			cout << "Ray used! collided with: " << d.node->getName() << "\n";
 			return;
 		}
+		else {
+			distance = maxDistance;
+		}
 
+		//TODO DELETE THIS WHEN CUBE WORKS
+		/*
 		//Collision Detection Algorithm to use
 		CollisionDetectionSAT colDetect;
 		Manifold manifold;
@@ -213,6 +218,7 @@ void Camera::UpdateDistance() {
 				}
 			}
 		}
+		/**/
 	}
 }
 

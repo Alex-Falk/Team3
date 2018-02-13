@@ -157,7 +157,7 @@ protected:
 	void NarrowPhaseCollisions();
 
 	//Phil 13/02/2018
-	LineCollision CastRay(Vector3 origin, Vector3 direction);
+	LineCollision CastRay(Vector3 origin, Vector3 direction, PhysicsNode* self);
 
 protected:
 	bool		isPaused;

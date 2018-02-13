@@ -12,14 +12,6 @@ Set GameSoundsGroup volume to 1: 0
 Created 3D sound at index(0): 0
 Created 2D stream at index(1): 0
 Set musicgroup volume to 0.3: 0
-Played sound at index(0): 0
-Played sound at index(0): 0
-Played sound at index(0): 0
-Played sound at index(0): 0
-Played sound at index(0): 0
-Played sound at index(0): 0
-Played sound at index(0): 0
-Played sound at index(0): 0
 Released sound at index(0): 0
 Released sound at index(1): 0
 Closed audio system: 0

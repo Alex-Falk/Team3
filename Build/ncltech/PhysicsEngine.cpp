@@ -344,17 +344,20 @@ void PhysicsEngine::DebugRender()
 }
 
 //phil 13/02/2018
-LineCollision PhysicsEngine::CastRay(Vector3 origin, Vector3 direction) {
+LineCollision PhysicsEngine::CastRay(Vector3 origin, Vector3 direction, PhysicsNode* self) {
 	LineCollision r;
 	r.node = nullptr;
 	//for each physics node
 	for (PhysicsNode* obj : physicsNodes)
 	{
+		if (obj == self) {
+			continue;
+		}
 		//the vector between the origin and the center of the physics node
-		Vector3 l = obj->GetPosition() - origin;
+		Vector3 l = origin - obj->GetPosition();
 		float dist = Vector3::Dot(direction, l);
 		//broadphase check
-		if (dist >= 0 && pow(obj->GetBoundingRadius(), 2) > pow(l.Length(), 2) - pow(dist, 2))
+		if ( pow(obj->GetBoundingRadius(), 2) > pow(l.Length(), 2) - pow(dist, 2))
 		{
 			float d = obj->GetCollisionShape()->GetRayIntersection(origin, direction);
 
