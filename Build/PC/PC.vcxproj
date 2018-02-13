@@ -173,6 +173,7 @@
     <ClInclude Include="PaintableGameObject.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="WeaponPickup.h" />
+    <ClInclude Include="Weapons.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Networking\Client.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />
+    <ClCompile Include="Weapons.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\AudioFiles\singing.wav" />

@@ -39,6 +39,7 @@ void SimpleGamePlay::OnInitializeScene() {
 
 
 
+
 	Scene::OnInitializeScene();
 }
 
@@ -56,6 +57,13 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	if (pickup)
 	{
 		pickup->Update(dt);
+	}
+
+
+	if (player->GetShooting()) {
+		for (int i = 0; i < player->GetAmmo().size();i++) {
+			this->AddGameObject(player->GetAmmo()[i]);
+		}
 	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();

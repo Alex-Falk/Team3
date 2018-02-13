@@ -10,7 +10,7 @@
 #include <string.h>
 #include "GameInput.h"
 
-Player::Player() : GameObject("Player")
+Player::Player()
 {
 	life = maxLife;
 	timer = 0;
@@ -25,10 +25,13 @@ Player::Player() : GameObject("Player")
 		PLAYER,
 		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
 	canJump = true;
+	canShoot = true;
+
 	playerGameObject->Physics()->SetElasticity(0);
 
 	playerId = 0;
 	timer = 0;
+	shootCooldown = 0.0f;
 
 	standardSpeed = 5.0f;
 	speed = standardSpeed;
@@ -43,8 +46,8 @@ Player::Player() : GameObject("Player")
 	standardJumpImpulse = 10.0f;
 	jumpImpulse = standardJumpImpulse;
 	boostedJumpImpulse = standardJumpImpulse * 2;
-
-
+	shooting = false;
+	weapon = NUM_OF_WEAPONS;
 	boostactiveTime = 15.0f;
 }
 
@@ -52,9 +55,9 @@ Player::~Player()
 {
 }
 
-Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
+Player::Player(Vector3 pos, Colour c, uint id, float s)
 {
-	colour = c;
+	col = c;
 	size = s;
 	
 	timer = 0;
@@ -67,40 +70,42 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 
 	jumpImpulse = 10.0f;
 	boostactiveTime = 15.0f;
+	shootCooldown = 0.0f;
 
-	Vector4 Colour;
 	canJump = true;
+	canShoot = true;
+	shooting = false;
 
 	switch (c)
 	{
 	case DEFAULT:
 	{
-		Colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	case GREEN:
 	{
-		Colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+		colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
 	}
 	break;
 	case BLUE:
 	{
-		Colour = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+		colour = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 	}
 	break;
 	case RED:
 	{
-		Colour = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+		colour = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 	break;
 	case PINK
 		:
 	{
-		Colour = Vector4(1.0f, 0.1f, 1.0f, 1.0f);
+		colour = Vector4(1.0f, 0.41f, 0.7f, 1.0f);
 	}
 		break;
 	default:
 	{
-		Colour = Vector4(0.5, 0.5, 0.5, 1.0);
+		colour = Vector4(0.5, 0.5, 0.5, 1.0);
 	}
 		break;
 	}
@@ -113,10 +118,9 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 		true,									//Has Collision Shape
 		false,									//Dragable by the user
 		PLAYER,
-		Colour);								//Colour
+		colour);								//Colour
 
 	playerGameObject->Physics()->SetElasticity(0);
-	playerGameObject->Physics()->SetFriction(0.5f);
 
 	playerGameObject->Physics()->SetOnCollisionCallback(
 		std::bind(&Player::PlayerCallbackFunction,
@@ -126,6 +130,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 		)
 	);
 
+	weapon = NUM_OF_WEAPONS;
 	playerId = id;
 
 }
@@ -179,6 +184,24 @@ void Player::Input(float dt) {
 	}
 	canJump = false;
 	
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+		NCLDebug::Log("Pistol Activated");
+		weapon = PAINT_PISTOL;
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+		NCLDebug::Log("Rocket Activated");
+		weapon = PAINT_ROCKET;
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+		NCLDebug::Log("Spray Activated");
+		weapon = PAINT_SPRAY;
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+		NCLDebug::Log("Auto Activated");
+		weapon = AUTO_PAINT_LAUNCHER;
+	}
+
 	if (force.x > maxForce)force.x = maxForce;
 	if (force.x < -maxForce)force.x = -maxForce;
 	if (force.z > maxForce)force.z = maxForce;
@@ -200,11 +223,19 @@ void Player::ChangeSize(float newSize)
 // Updates everything on player
 void Player::OnPlayerUpdate(float dt) {
 
+	shooting = false;
+
 	timer += dt;
 
 	Input(dt);
 	
 	UpdatePickUp(dt);
+
+	if (weapon != NUM_OF_WEAPONS) {
+		if (Input::GetInput()->GetInput(SHOOT) && canShoot) {
+			ManageWeapons(weapon);
+		}
+	}
 
 
 	if (life > minLife) 
@@ -238,8 +269,9 @@ void Player::PickedPickUp(PickupType pickType) {
 		jumpBoost = true;
 		jumpBoostTimer = boostactiveTime;
 		break;
-	case WEAPON:
-		weapon = true;
+	case WEAPON: {
+
+	}
 		break;
 	default:
 		break;
@@ -272,5 +304,41 @@ void Player::UpdatePickUp(float dt)
 		}
 	}
 
+	if (!canShoot) {
+		shootCooldown -= dt;
+		if (shootCooldown <= 0) {
+			canShoot = true;
+		}
+	}
+}
 
+void Player::ManageWeapons(WeaponType wt) {
+	
+	if (Input::GetInput()->GetInput(SHOOT)) {
+		shooting = true;
+		switch (wt)
+		{
+		case PAINT_SPRAY:
+			NCLDebug::Log("Spray splash");
+			ammo = Weapons::ShootPaintSpray(this->GetPosition(), curSize, colour);
+			shootCooldown = 3.0f;
+			canShoot = false;
+			break;
+		case PAINT_PISTOL:
+			NCLDebug::Log("Pistol piou piou");
+			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
+			break;
+		case AUTO_PAINT_LAUNCHER:
+			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
+			shootCooldown = 0.15f;
+			canShoot = false;
+			break;
+		case PAINT_ROCKET:
+			NCLDebug::Log("Rocket piou piou");
+			ammo = Weapons::ShootRocket(this->GetPosition(), curSize, colour);
+			break;
+		default:
+			break;
+		}
+	}
 }

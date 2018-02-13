@@ -105,6 +105,9 @@
     <ClInclude Include="..\Networking\Client.h">
       <Filter>Networking\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Weapons.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -148,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="..\Networking\User.cpp">
       <Filter>Networking\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapons.cpp">
+      <Filter>GamePlay\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

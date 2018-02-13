@@ -17,7 +17,6 @@
 //Extra functionality added by Alex Falk - 12/02/2018
 
 #pragma once
-
 #include "Player.h"
 #include "GamePlay.h"
 #include <networking\Client.h>
