@@ -31,9 +31,6 @@ void SimpleGamePlay::OnInitializeScene() {
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
-
-
-
 	Scene::OnInitializeScene();
 }
 
