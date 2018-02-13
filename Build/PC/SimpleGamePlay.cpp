@@ -2,6 +2,7 @@
 #include "SimpleGamePlay.h"
 
 void SimpleGamePlay::OnInitializeScene() {
+	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
@@ -49,6 +50,8 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	pickup->Update(dt);
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+
+	energyBar->setProgress(player->GetLife()/100.0f);
 }
 
 void SimpleGamePlay::OnCleanupScene()
@@ -76,29 +79,17 @@ void SimpleGamePlay::OnInitializeGUI()
 	sceneGUI->ShowMouseCursor();
 
 	//Create Push Button handle
-	CEGUI::PushButton* testButton = static_cast<CEGUI::PushButton*>(
-		sceneGUI->createWidget("AlfiskoSkin/Button",
-			Vector4(0.5f, 0.5f, 0.1f, 0.05f),
+	energyBar = static_cast<CEGUI::ProgressBar*>(
+		sceneGUI->createWidget("TaharezLook/ProgressBar",
+			Vector4(0.40f, 0.9f, 0.2f, 0.03f),
 			Vector4(),
-			"TestButton"
+			"energyBar"
 		));
 
-	//Create Titlebar
-	CEGUI::Titlebar* Titlebar = static_cast<CEGUI::Titlebar*>(
-		sceneGUI->createWidget("AlfiskoSkin/Titlebar",
-			Vector4(0.0f, 0.0f, 0.1f, 0.05f),
-			Vector4(),
-			"Titlebar"
-		));
-
-	testButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&SimpleGamePlay::onButtonClicked, this));
-
-	//Set text for testButton
-	testButton->setText("Hello, world!");
+	energyBar->setProgress(player->GetLife()/100.0f);
 }
 
 void SimpleGamePlay::onButtonClicked()
 {
-	cout << "Zhang mingyuan idoit!" << endl;
 	SceneManager::Instance()->JumpToScene();
 }

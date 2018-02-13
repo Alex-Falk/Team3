@@ -23,6 +23,7 @@ private:
 	float m_AccumTime = 0;
 	Player* player;
 	Pickup* pickup;
+	CEGUI::ProgressBar* energyBar;
 
 public:
 	SimpleGamePlay(const std::string& friendly_name)

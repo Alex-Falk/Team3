@@ -69,6 +69,7 @@ public:
 		GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(10);
 
+
 		OnInitializeGUI();
 		Scene::OnInitializeScene();
 	}
@@ -144,9 +145,13 @@ public:
 	void onOptionButtonClicked()
 	{
 		startButton->setVisible(false);
+		startButton->disable();
 		exitButton->setVisible(false);
+		exitButton->disable();
 		optionButton->setVisible(false);
+		optionButton->disable();
 		OptionMenuBack->setVisible(true);
+		OptionMenuBack->enable();
 	}
 
 	void OnOptionMenuBackClicked() 
