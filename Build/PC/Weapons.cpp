@@ -4,7 +4,7 @@
 
 	float bulletPower = 100;
 	float rocketPower = 70;
-	float sprayPower = 10;
+	float sprayPower = 3;
 	float launcherPower = 10;
 
 GameObject* Weapons::BuildPistol(const Vector4& color, float size, Vector3 pos)
@@ -41,21 +41,16 @@ GameObject* Weapons::BuildPistol(const Vector4& color, float size, Vector3 pos)
 
 GameObject* Weapons::BuildRocket(const Vector4& color, float size, Vector3 pos) {
 
-	Vector3 halfdims = Vector3(1, 1, 2) * size * 0.3;
-	
-	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
-	// and a parent node that will contain the world transform/physics transform
+	Vector3 halfdims = Vector3(0.7, 0.7, 1.5) * size * 0.3;
+
 	RenderNode* rnode = new RenderNode();
 
 	Mesh* mesh = new Mesh();
 	*mesh = *CommonMeshes::Cube();
-	//if (tex) { mesh->SetTexture(tex); }
 
 	RenderNode* dummy = new RenderNode(mesh, color);
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
-
-
 
 	rnode->AddChild(dummy);
 
@@ -90,8 +85,6 @@ GameObject* Weapons::BuildRocket(const Vector4& color, float size, Vector3 pos) 
 }
 GameObject * Weapons::BuildPaintSpray(const Vector4& color, float size, Vector3 pos) {
 	float bulletSize = size * 0.15;
-	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
-	// and a parent node that will contain the world transform/physics transform
 	RenderNode* rnode = new RenderNode();
 
 	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), color);
@@ -112,59 +105,57 @@ GameObject * Weapons::BuildPaintSpray(const Vector4& color, float size, Vector3 
 	CollisionShape* pColshape = new SphereCollisionShape(bulletSize);
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1));
+	pnode->SetType(PROJECTILE);
 
 	GameObject* obj = new GameObject("Spray", rnode, pnode);
 
 	return obj;
 }
 
-GameObject* Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
-	GameObject* bullet = Weapons::BuildPistol(colour, size, pos);
-//
-//	bullet->Physics()->SetOnCollisionCallback(
-//		std::bind(&Weapons::WeaponsCallbackFunction,
-//			bullet,							//Any non-placeholder param will be passed into the function each time it is called
-//			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
-//			std::placeholders::_2
-//		)
-//	);
+vector<GameObject*> Weapons::ShootPistol(Vector3 pos, float size, Vector4 colour) {
+	vector<GameObject*> bullet;
+	 bullet.push_back(Weapons::BuildPistol(colour, size, pos));
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	Vector3 direction;
 
 	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * bulletPower;
-	bullet->Physics()->SetLinearVelocity(direction);
+	bullet[0]->Physics()->SetLinearVelocity(direction);
 //	sendbullet(pos, direction);  //to send bullet on network;
 
 	return bullet;
 }
 
-GameObject* Weapons::ShootRocket(Vector3 pos, float size, Vector4 colour) {
-	GameObject* rocket = Weapons::BuildRocket(colour, size, pos);
+vector<GameObject*> Weapons::ShootRocket(Vector3 pos, float size, Vector4 colour) {
+	vector<GameObject*> rocket;
+	rocket.push_back( Weapons::BuildRocket(colour, size, pos));
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	Vector3 direction;
 
 	direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * rocketPower;
-	rocket->Physics()->SetLinearVelocity(direction);
-	rocket->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 1));
+	rocket[0]->Physics()->SetLinearVelocity(direction);
+	rocket[0]->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0));
 	//	SendRocket(pos, direction);  //to send rocket on network;
 
 	return rocket;
 }
 
-void Weapons::ShootPaintSpray(Vector3 pos, float size, Vector4 colour) {
+vector<GameObject*> Weapons::ShootPaintSpray(Vector3 pos, float size, Vector4 colour) {
+	vector<GameObject*> spray;
+
 	for (int i = 0; i < 15; i++) {
 		int randPitch = rand() % 180 + -90;
 		int randYaw = rand() % 360;
-	
-		GameObject * spray = Weapons::BuildPaintSpray(colour, size, pos);
+		spray.push_back( Weapons::BuildPaintSpray(colour, size, pos));
 
-		Vector3 direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1);
-		spray->Physics()->SetLinearVelocity(direction * 15);
-		spray->Physics()->SetPosition(pos + direction * size);
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+		Vector3 direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1)*sprayPower;
+		spray[i]->Physics()->SetLinearVelocity(direction * 15);
+		spray[i]->Physics()->SetPosition(pos + direction * size);
+		//SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
 	}
+
+	return spray;
 }

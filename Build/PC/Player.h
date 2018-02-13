@@ -56,8 +56,8 @@ private:
 	//Weapon
 	WeaponType weapon;
 	float weaponAmmo;				// Weapon Ammo
-	
-
+	bool shooting;
+	vector<GameObject*> ammo;
 
 	float timer;
 			
@@ -103,13 +103,10 @@ public:
 	
 
 	virtual void ManageWeapons(WeaponType wt);
-
-
+	virtual bool GetShooting() { return shooting; }
+	virtual vector<GameObject*> GetAmmo() { return ammo; }
 										//Example of member callback ('this' parameter is bound at bind time)
 	bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
-
-
-	GameObject* ammo;
 
 	~Player();
 

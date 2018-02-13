@@ -16,9 +16,9 @@ namespace Weapons
 
 
 
-	GameObject* ShootPistol(Vector3 pos, float size, Vector4 colour);
-	GameObject* ShootRocket(Vector3 pos, float size, Vector4 colour);
-	void ShootPaintSpray(Vector3 pos, float size, Vector4 colour);
+	vector<GameObject*> ShootPistol(Vector3 pos, float size, Vector4 colour);
+	vector<GameObject*> ShootRocket(Vector3 pos, float size, Vector4 colour);
+	vector<GameObject*> ShootPaintSpray(Vector3 pos, float size, Vector4 colour);
 
 
 }

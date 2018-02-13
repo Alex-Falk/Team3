@@ -46,8 +46,8 @@ Player::Player()
 	standardJumpImpulse = 10.0f;
 	jumpImpulse = standardJumpImpulse;
 	boostedJumpImpulse = standardJumpImpulse * 2;
-
-
+	shooting = false;
+	weapon = NUM_OF_WEAPONS;
 	boostactiveTime = 15.0f;
 }
 
@@ -74,6 +74,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s)
 
 	canJump = true;
 	canShoot = true;
+	shooting = false;
 
 	switch (c)
 	{
@@ -129,6 +130,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s)
 		)
 	);
 
+	weapon = NUM_OF_WEAPONS;
 	playerId = id;
 
 }
@@ -191,6 +193,14 @@ void Player::Input(float dt) {
 		NCLDebug::Log("Rocket Activated");
 		weapon = PAINT_ROCKET;
 	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+		NCLDebug::Log("Spray Activated");
+		weapon = PAINT_SPRAY;
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+		NCLDebug::Log("Auto Activated");
+		weapon = AUTO_PAINT_LAUNCHER;
+	}
 
 	if (force.x > maxForce)force.x = maxForce;
 	if (force.x < -maxForce)force.x = -maxForce;
@@ -212,6 +222,8 @@ void Player::ChangeSize(float newSize)
 
 // Updates everything on player
 void Player::OnPlayerUpdate(float dt) {
+
+	shooting = false;
 
 	timer += dt;
 
@@ -303,13 +315,23 @@ void Player::UpdatePickUp(float dt)
 void Player::ManageWeapons(WeaponType wt) {
 	
 	if (Input::GetInput()->GetInput(SHOOT)) {
+		shooting = true;
 		switch (wt)
 		{
+		case PAINT_SPRAY:
+			NCLDebug::Log("Spray splash");
+			ammo = Weapons::ShootPaintSpray(this->GetPosition(), curSize, colour);
+			shootCooldown = 3.0f;
+			canShoot = false;
+			break;
 		case PAINT_PISTOL:
 			NCLDebug::Log("Pistol piou piou");
 			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
 			break;
 		case AUTO_PAINT_LAUNCHER:
+			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
+			shootCooldown = 0.15f;
+			canShoot = false;
 			break;
 		case PAINT_ROCKET:
 			NCLDebug::Log("Rocket piou piou");
@@ -318,15 +340,5 @@ void Player::ManageWeapons(WeaponType wt) {
 		default:
 			break;
 		}
-	case PAINT_SPRAY:
-		Weapons::ShootPaintSpray(this->GetPosition(), size, colour);
-		shootCooldown = 3.0f;
-		canShoot = false;
-		break;
-	case AUTO_PAINT_LAUNCHER:
-		Weapons::ShootPistol(this->GetPosition(), size, colour);
-		shootCooldown = 0.15f;
-		canShoot = false;
-		break;
 	}
 }
