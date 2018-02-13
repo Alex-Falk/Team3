@@ -563,20 +563,20 @@ void GraphicsPipeline::RenderObject()
 	}
 
 	//debug code
-	glUseProgram(shaders[SHADERTYPE::Texture_UI]->GetProgram());
-	glDisable(GL_DEPTH_TEST);
-	Matrix4 mat = Matrix4::Translation(Vector3(0.7f, 0.7f, 0.0f))* Matrix4::Scale(Vector3(0.3f, 0.3f, 1.0f));
-	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&mat);
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "diffuseTex"), 0);
-	
-	if (isMainMenu == false) {
-		glBindTexture(GL_TEXTURE_2D, pathTex);
-		glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "brightness"), 1.0f);
-	}
-	
-	fullscreenQuad->Draw();
-	glEnable(GL_DEPTH_TEST);
+	//glUseProgram(shaders[SHADERTYPE::Texture_UI]->GetProgram());
+	//glDisable(GL_DEPTH_TEST);
+	//Matrix4 mat = Matrix4::Translation(Vector3(0.7f, 0.7f, 0.0f))* Matrix4::Scale(Vector3(0.3f, 0.3f, 1.0f));
+	//glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&mat);
+	//glActiveTexture(GL_TEXTURE0);
+	//glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "diffuseTex"), 0);
+	//
+	//if (isMainMenu == false) {
+	//	glBindTexture(GL_TEXTURE_2D, pathTex);
+	//	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "brightness"), 1.0f);
+	//}
+	//
+	//fullscreenQuad->Draw();
+	//glEnable(GL_DEPTH_TEST);
 
 
 }
