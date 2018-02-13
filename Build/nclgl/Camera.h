@@ -54,6 +54,7 @@ public:
 	//to a vertex shader (i.e it's already an 'inverse camera matrix').
 	Matrix4 BuildViewMatrix();
 	Vector3 GetViewDirection();
+	Vector3 GetUpDirection();
 
 	//Gets position in world space
 	inline const Vector3& GetPosition() const { return position; }

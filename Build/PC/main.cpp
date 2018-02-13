@@ -3,7 +3,7 @@
 #include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
-
+#include "AudioSystem.h"
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
 #include "GameInput.h"
@@ -16,7 +16,7 @@ const Vector4 status_colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 const Vector4 status_colour_header = Vector4(0.8f, 0.9f, 1.0f, 1.0f);
 
 bool show_perf_metrics = false;
-PerfTimer timer_total, timer_physics, timer_update, timer_render;
+PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio;
 uint shadowCycleKey = 4;
 
 //Prevent multiple clicking from happening
@@ -31,6 +31,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	SceneManager::Release();
 	PhysicsEngine::Release();
 	GraphicsPipeline::Release();
+	AudioSystem::Release();
 	Window::Destroy();
 
 	//Show console reason before exit
@@ -41,6 +42,11 @@ void Quit(bool error = false, const std::string &reason = "") {
 	}
 }
 
+//initialise all audio files
+void InitialiseAudioFiles() {
+	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
+	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+}
 
 // Program Initialise
 //  - Generates all program wide components and enqueues all scenes
@@ -61,6 +67,9 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
 
+	AudioSystem::Instance();
+
+	InitialiseAudioFiles();
 }
 
 // Print Debug Info
@@ -194,6 +203,33 @@ void HandleKeyboardInputs()
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
 
 	}
+
+	//audio test functionality
+	//TODO remove this when finished testing
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {
+		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
+		AudioSystem::Instance()->StopAllSounds();
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
+		AudioSystem::Instance()->UnmuteAllSounds();
+	}
 	//toggle the camera
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {
 		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
@@ -263,6 +299,7 @@ int main()
 		timer_physics.UpdateRealElapsedTime(dt);
 		timer_update.UpdateRealElapsedTime(dt);
 		timer_render.UpdateRealElapsedTime(dt);
+		timer_audio.UpdateRealElapsedTime(dt);
 
 		//Handle GUI mouseCursor
 		HandleGUIMouseCursor();
@@ -303,7 +340,9 @@ int main()
 		}
 		timer_render.EndTimingSection();
 
-		
+		timer_audio.BeginTimingSection();
+		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
+		timer_audio.EndTimingSection();
 
 		//Finish Timing
 		timer_total.EndTimingSection();		
