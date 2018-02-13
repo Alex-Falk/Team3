@@ -162,6 +162,7 @@ public:
 	//GUI
 	void HandleGUIMousePosition(float x, float y);
 	void HandleMouseButton(MouseButtons button);
+	void HandleLeftMouseButtonHold(bool isHold);
 	void SetCurrentSceneGUI(GUI* passInValue) { GUIsystem = passInValue; }
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 

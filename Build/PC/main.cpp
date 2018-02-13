@@ -275,6 +275,7 @@ void HandleGUIMouseButton()
 		fpsCounter = 0;
 	}
 
+	GraphicsPipeline::Instance()->HandleLeftMouseButtonHold(Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
 }
 
 // Program Entry Point
@@ -290,9 +291,10 @@ int main()
 	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
-	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
+	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
+		&& SceneManager::Instance()->GetExitButtonClicked() == false) 
+	{
 		//Start Timing
-		
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
 																		//Update Performance Timers (Show results every second)
 		timer_total.UpdateRealElapsedTime(dt);

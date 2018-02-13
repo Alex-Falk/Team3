@@ -52,6 +52,11 @@ public:
 	void SetGameSoundsVolume(float f);
 	void SetMusicVolume(float f);
 
+	//added by Jeffery, get volumes
+	float GetMasterVolume() { return masterVolume; }
+	float GetGameSoundsVolume() { return gameSoundsVolume; }
+	float GetMusicVolume() { return musicVolume; }
+
 	//call each frame to update the audiosystem and pass in camera parameters
 	void Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 cameraUp, float dt);
 

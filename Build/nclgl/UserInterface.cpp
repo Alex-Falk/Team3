@@ -68,7 +68,6 @@ void GUI::HideMouseCursor()
 }
 
 
-
 void GUI::HandleInput(int _case)
 {
 	switch (_case)
@@ -106,18 +105,6 @@ void GUI::HandleInput(int _case)
 	}
 }
 
-//TODO: Create tranfer table for nclgl input class to CEGUI
-CEGUI::Key::Scan GUI::TransferKeys(int Key)
-{
-	switch (Key)
-	{
-	default:
-		break;
-	}
-	return CEGUI::Key::Scan();
-}
-
-//TODO: Create transfer table between nclgl input to CEGUI
 CEGUI::MouseButton TransferMouseButton(MouseButtons button)
 {
 	switch (button)
@@ -159,9 +146,14 @@ void GUI::onMouseButtonPressed(MouseButtons button)
 	}
 }
 
-void GUI::onMouseButtonReleased(MouseButtons button)
+void GUI::onMouseButtonHold(bool isHold)
 {
-
+	if (isHold == true) {
+		m_context->injectMouseButtonDown(CEGUI::MouseButton::LeftButton);
+	}
+	else {
+		m_context->injectMouseButtonUp(CEGUI::MouseButton::LeftButton);
+	}
 }
 
 void GUI::LoadScheme(const std::string & schemeFile)

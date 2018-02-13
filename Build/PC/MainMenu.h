@@ -6,10 +6,10 @@
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
+#include <ncltech\TextureManager.h> 
 #include "GamePlay.h"
 #include "Pickup.h"
 #include "Player.h"
-#include <ncltech\TextureManager.h> 
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
@@ -20,9 +20,17 @@ private:
 	bool ShowOptionMenu;
 
 	CEGUI::PushButton* startButton;
+	CEGUI::PushButton* joinButton;
 	CEGUI::PushButton* optionButton;
 	CEGUI::PushButton* OptionMenuBack;
 
+	CEGUI::Slider* masterVolumnSlider;
+	CEGUI::Slider* GameSoundsSlider;
+	CEGUI::Slider* MusicSlider;
+
+	CEGUI::Titlebar* masterVolumnText;
+	CEGUI::Titlebar* GameSoundVolumnText;
+	CEGUI::Titlebar* MusicVolumnText;
 public:
 
 	//Exit Button
@@ -75,6 +83,9 @@ public:
 	}
 
 	virtual void OnUpdateScene(float dt) {
+		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+		yaw += 0.1;
+		GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 		Scene::OnUpdateScene(dt);
 	}
 
@@ -99,18 +110,25 @@ public:
 		//Create Push Button handle
 		startButton = static_cast<CEGUI::PushButton*>(
 			sceneGUI->createWidget("OgreTray/Button",
-				Vector4(0.40f, 0.25f, 0.2f, 0.1f),
+				Vector4(0.40f, 0.15f, 0.2f, 0.1f),
 				Vector4(),
 				"startButton"
 			));
-
-		//Set text for testButton
-		startButton->setText("NEW GAME ");
+		startButton->setText("CREATE GAME");
 		startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onButtonClicked, this));
 
+		joinButton = static_cast<CEGUI::PushButton*>(
+			sceneGUI->createWidget("OgreTray/Button",
+				Vector4(0.40f, 0.35f, 0.2f, 0.1f),
+				Vector4(),
+				"joinButton"
+			));
+		joinButton->setText("JOIN GAME");
+		joinButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onButtonClicked, this));
+
 		optionButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("WindowsLook/Button",
-				Vector4(0.40f, 0.45f, 0.2f, 0.1f),
+			sceneGUI->createWidget("OgreTray/Button",
+				Vector4(0.40f, 0.55f, 0.2f, 0.1f),
 				Vector4(),
 				"optionButton"
 			));
@@ -119,16 +137,18 @@ public:
 
 
 		exitButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("AlfiskoSkin/Button",
-				Vector4(0.40f, 0.65f, 0.2f, 0.1f),
+			sceneGUI->createWidget("OgreTray/Button",
+				Vector4(0.40f, 0.75f, 0.2f, 0.1f),
 				Vector4(),
 				"exitButton"
 			));
 		exitButton->setText(" EXIT ");
+		exitButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::Quit, this));
 
+		//Option Menu
 		OptionMenuBack = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("AlfiskoSkin/Button",
-				Vector4(0.40f, 0.65f, 0.2f, 0.1f),
+			sceneGUI->createWidget("OgreTray/Button",
+				Vector4(0.40f, 0.85f, 0.2f, 0.1f),
 				Vector4(),
 				"OptionMenuBack"
 			));
@@ -136,6 +156,71 @@ public:
 		OptionMenuBack->setVisible(false);
 		OptionMenuBack->disable();
 		OptionMenuBack->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnOptionMenuBackClicked, this));
+	
+		masterVolumnSlider = static_cast<CEGUI::Slider*>(
+			sceneGUI->createWidget("OgreTray/Slider",
+				Vector4(0.40f, 0.15f, 0.30f, 0.03f),
+				Vector4(),
+				"masterVolumnSlider"
+			));
+		masterVolumnSlider->setMaxValue(1.0f);
+		masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		masterVolumnSlider->setVisible(false);
+		masterVolumnSlider->disable();
+		masterVolumnSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMasterVolumnChanged, this));
+
+		GameSoundsSlider = static_cast<CEGUI::Slider*>(
+			sceneGUI->createWidget("OgreTray/Slider",
+				Vector4(0.40f, 0.25f, 0.30f, 0.03f),
+				Vector4(),
+				"GameSoundsSlider"
+			));
+
+		GameSoundsSlider->setMaxValue(1.0f);
+		GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		GameSoundsSlider->setVisible(false);
+		GameSoundsSlider->disable();
+
+		MusicSlider = static_cast<CEGUI::Slider*>(
+			sceneGUI->createWidget("OgreTray/Slider",
+				Vector4(0.40f, 0.35f, 0.30f, 0.03f),
+				Vector4(),
+				"MusicSlider"
+			));
+		MusicSlider->setMaxValue(1.0f);
+		MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		MusicSlider->setVisible(false);
+		MusicSlider->disable();
+
+		masterVolumnText = static_cast<CEGUI::Titlebar*>(
+			sceneGUI->createWidget("OgreTray/Title",
+				Vector4(0.28f, 0.145f, 0.12f, 0.04f),
+				Vector4(),
+				"masterVolumnText"
+			));
+		masterVolumnText->setText("Master Volumn");
+		masterVolumnText->deactivate();
+		masterVolumnText->setVisible(false);
+
+		GameSoundVolumnText = static_cast<CEGUI::Titlebar*>(
+			sceneGUI->createWidget("OgreTray/Title",
+				Vector4(0.28f, 0.245f, 0.12f, 0.04f),
+				Vector4(),
+				"GameSoundVolumnText"
+			));
+		GameSoundVolumnText->setText("Game Sound Volumn");
+		GameSoundVolumnText->deactivate();
+		GameSoundVolumnText->setVisible(false);
+
+		MusicVolumnText = static_cast<CEGUI::Titlebar*>(
+			sceneGUI->createWidget("OgreTray/Title",
+				Vector4(0.28f, 0.345f, 0.12f, 0.04f),
+				Vector4(),
+				"MusicVolumnText"
+			));
+		MusicVolumnText->setText("Music Volumn");
+		MusicVolumnText->deactivate();
+		MusicVolumnText->setVisible(false);
 	}
 
 	void onButtonClicked() {
@@ -144,25 +229,83 @@ public:
 
 	void onOptionButtonClicked()
 	{
+		//Disable MainMenu
 		startButton->setVisible(false);
 		startButton->disable();
 		exitButton->setVisible(false);
 		exitButton->disable();
 		optionButton->setVisible(false);
 		optionButton->disable();
+		joinButton->setVisible(false);
+		joinButton->disable();
+
+		//Enable Option Menu
 		OptionMenuBack->setVisible(true);
 		OptionMenuBack->enable();
+		masterVolumnSlider->setVisible(true);
+		masterVolumnSlider->enable();
+		GameSoundsSlider->setVisible(true);
+		GameSoundsSlider->enable();
+		MusicSlider->setVisible(true);
+		MusicSlider->enable();
+
+		masterVolumnText->activate();
+		masterVolumnText->setVisible(true);
+		GameSoundVolumnText->activate();
+		GameSoundVolumnText->setVisible(true);
+		MusicVolumnText->activate();
+		MusicVolumnText->setVisible(true);
 	}
 
 	void OnOptionMenuBackClicked() 
 	{
+		//Enable Main Menu
 		startButton->enable();
 		startButton->setVisible(true);
 		exitButton->enable();
 		exitButton->setVisible(true);
 		optionButton->enable();
 		optionButton->setVisible(true);
+		joinButton->setVisible(true);
+		joinButton->enable();
+
+		//Disable option menu
 		OptionMenuBack->disable();
 		OptionMenuBack->setVisible(false);
+		masterVolumnSlider->disable();
+		masterVolumnSlider->setVisible(false);
+		GameSoundsSlider->disable();
+		GameSoundsSlider->setVisible(false);
+		MusicSlider->disable();
+		MusicSlider->setVisible(false);
+
+		masterVolumnText->setVisible(false);
+		masterVolumnText->deactivate();
+		GameSoundVolumnText->setVisible(false);
+		GameSoundVolumnText->deactivate();
+		MusicVolumnText->setVisible(false);
+		MusicVolumnText->deactivate();
+	}
+
+	void Quit() {
+		SceneManager::Instance()->SetExitButtonClicked(true);
+	}
+
+	void onMasterVolumnChanged()
+	{
+		float temp = masterVolumnSlider->getCurrentValue();
+		AudioSystem::Instance()->SetMasterVolume(temp);
+	}
+
+	void onGameSoundVolumnChanged()
+	{
+		float temp = GameSoundsSlider->getCurrentValue();
+		AudioSystem::Instance()->SetGameSoundsVolume(temp);
+	}
+
+	void onMusicVolumnChanged()
+	{
+		float temp = MusicSlider->getCurrentValue();
+		AudioSystem::Instance()->SetGameSoundsVolume(temp);
 	}
 };

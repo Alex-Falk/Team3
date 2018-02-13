@@ -25,14 +25,13 @@ public:
 	void HideMouseCursor();
 
 	void HandleInput(int _case);
-	CEGUI::Key::Scan TransferKeys(int Key);
 
 	//HandleMousePosition
 	void HandleMousePosition(float x, float y);
 
 	//HandleMouseInput
 	void onMouseButtonPressed(MouseButtons button);
-	void onMouseButtonReleased(MouseButtons button);
+	void onMouseButtonHold(bool isHold);
 
 	void LoadScheme(const std::string& schemeFile);
 	void SetFont(const std::string& fontFile);

@@ -111,7 +111,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s) : GameObject("Player")
 
 	RenderNode* rnode = new RenderNode();
 
-	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), Colour);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), Colour);
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
