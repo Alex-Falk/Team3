@@ -70,6 +70,14 @@ struct WorldLimits
 
 };
 
+//phil 13/02/2018
+//holds the shape that was hit and the location where it happened
+//this might be replaced with something else in the future
+struct LineCollision {
+	PhysicsNode* node;
+	float dist;
+};
+
 class PhysicsEngine : public TSingleton<PhysicsEngine>
 {
 	friend class TSingleton < PhysicsEngine > ;
@@ -147,6 +155,9 @@ protected:
 
 	//Handles narrowphase collision detection
 	void NarrowPhaseCollisions();
+
+	//Phil 13/02/2018
+	LineCollision CastRay(Vector3 origin, Vector3 direction);
 
 protected:
 	bool		isPaused;

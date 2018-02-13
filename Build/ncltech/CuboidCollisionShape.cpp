@@ -242,3 +242,9 @@ void CuboidCollisionShape::ConstructCubeHull()
 	cubeHull.AddFace(Vector3(1.0f, 0.0f, 0.0f), 4, face5);
 	cubeHull.AddFace(Vector3(-1.0f, 0.0f, 0.0f), 4, face6);
 }
+
+float CuboidCollisionShape::GetRayIntersection(Vector3 origin, Vector3 direction) {
+	float d = -1.0f;
+
+	return d;
+}

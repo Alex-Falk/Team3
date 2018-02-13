@@ -163,6 +163,14 @@ void Camera::UpdateDistance() {
 	arm.SetPosition(armPos);
 	//don't do anything if the camera isn't free
 	if (!free) {
+		//testing
+		LineCollision d = PhysicsEngine::Instance()->CastRay(center->GetPosition() - GetViewDirection() * center->GetBoundingRadius(), -GetViewDirection());
+		if (d.node) {
+			distance = d.dist;
+			cout << "Ray used!";
+			return;
+		}
+
 		//Collision Detection Algorithm to use
 		CollisionDetectionSAT colDetect;
 		Manifold manifold;
