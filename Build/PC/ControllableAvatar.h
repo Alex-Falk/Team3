@@ -29,13 +29,17 @@
 
 class ControllableAvatar : public Avatar
 {
+private:
+
+	float lifeDrainFactor;  //The lower the value the faster the movement based life drain is.
+
 public:
 	ControllableAvatar();
 	ControllableAvatar(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
 	
-	virtual void OnPlayerUpdate(float dt);
+	virtual void OnAvatarUpdate(float dt);
 
-	void Input(float time);		// Takes the keyboard input to control ball
+	void ProcessAvatarInput(float time);		// Takes the keyboard input to control ball
 	
 	~ControllableAvatar();
 

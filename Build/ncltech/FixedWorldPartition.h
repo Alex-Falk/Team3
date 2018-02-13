@@ -80,6 +80,9 @@ public:
 	//lists of each node lists
 	void UpdateFixedWorldPartition();
 
+	void AddObject(PhysicsNode*);
+	void RemovePhysicsObject(PhysicsNode* obj);
+
 	~FixedWorldPartition();
 
 };

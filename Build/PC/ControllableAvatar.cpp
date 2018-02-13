@@ -44,7 +44,6 @@ ControllableAvatar::ControllableAvatar()
 	playerGameObject->Physics()->SetElasticity(0);
 
 	playerId = 0;
-	timer = 0;
 	shootCooldown = 0.0f;
 
 	standardSpeed = 5.0f;
@@ -150,13 +149,14 @@ ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s)
 
 
 //Takes Player Input and move the player using force
-void ControllableAvatar::Input(float dt) {
-
-	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+void ControllableAvatar::ProcessAvatarInput(float dt) 
+{
 	Vector3 force(0,0,0);
 
-	if (!inAir) {
+	if (!inAir) 
+	{
+		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+
 		if (Input::GetInput()->GetInput(FORWARD)) { 		//Front
 			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -10) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-2, 0, 0) *dt* speed;
@@ -206,7 +206,7 @@ void ControllableAvatar::Input(float dt) {
 
 	if (Input::GetInput()->GetInput(SHOOT))
 	{
-
+		shooting = true;
 	}
 
 	if (force.x > maxForce)force.x = maxForce;
@@ -219,11 +219,11 @@ void ControllableAvatar::Input(float dt) {
 
 
 // Updates everything on player
-void ControllableAvatar::OnPlayerUpdate(float dt) {
+void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
 
-	Input(dt);
+	ProcessAvatarInput(dt);
 	
 	UpdatePickUp(dt);
 
@@ -238,7 +238,7 @@ void ControllableAvatar::OnPlayerUpdate(float dt) {
 
 	if (life > minLife) 
 	{
-		life -= dt*2;
+		life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
 
 		if (life < minLife)
 		{

@@ -63,17 +63,14 @@
     <ClInclude Include="GameInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WeaponPickup.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Weapons.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
     <ClInclude Include="ControllableAvatar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Avatar.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponPickup.h">
+      <Filter>GamePlay\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -101,9 +98,6 @@
     <ClCompile Include="GameInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WeaponPickup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Weapons.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
@@ -112,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="Avatar.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponPickup.cpp">
+      <Filter>GamePlay\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

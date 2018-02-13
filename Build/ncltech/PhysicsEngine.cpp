@@ -33,7 +33,12 @@ PhysicsEngine::~PhysicsEngine()
 
 void PhysicsEngine::AddPhysicsObject(PhysicsNode* obj)
 {
-	physicsNodes.push_back(obj);	
+	physicsNodes.push_back(obj);
+
+	if (worldPartitioning)
+	{
+		worldPartitioning->AddObject(obj);
+	}
 }
 
 void PhysicsEngine::ResetWorldPartition()
@@ -72,13 +77,21 @@ std::vector<PhysicsNode*>* PhysicsEngine::GetAllNodesOfType(PhysNodeType type)
 
 void PhysicsEngine::RemovePhysicsObject(PhysicsNode* obj)
 {
-	//Lookup the object in question
-	auto found_loc = std::find(physicsNodes.begin(), physicsNodes.end(), obj);
-
-	//If found, remove it from the list
-	if (found_loc != physicsNodes.end())
+	if (obj)
 	{
-		physicsNodes.erase(found_loc);
+		//Lookup the object in question
+		auto found_loc = std::find(physicsNodes.begin(), physicsNodes.end(), obj);
+
+		//If found, remove it from the list
+		if (found_loc != physicsNodes.end())
+		{
+			physicsNodes.erase(found_loc);
+		}
+
+		if (worldPartitioning)
+		{
+			worldPartitioning->RemovePhysicsObject(obj);
+		}
 	}
 }
 

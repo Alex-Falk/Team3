@@ -43,7 +43,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	m_AccumTime += dt;
 
-	player->OnPlayerUpdate(dt);
+	player->OnAvatarUpdate(dt);
 
 	if (pickup)
 	{

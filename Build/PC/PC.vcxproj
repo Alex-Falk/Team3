@@ -169,7 +169,6 @@
     <ClInclude Include="PaintableGameObject.h" />
     <ClInclude Include="ControllableAvatar.h" />
     <ClInclude Include="WeaponPickup.h" />
-    <ClInclude Include="Weapons.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioSystem.cpp" />

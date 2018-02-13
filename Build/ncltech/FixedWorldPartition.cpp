@@ -125,6 +125,31 @@ void FixedWorldPartition::RepartitionWorld(Vector3 mins, Vector3 maxs, std::vect
 	}
 }
 
+
+void FixedWorldPartition::AddObject(PhysicsNode* newNode)
+{
+	if (newNode && physicsNodes)
+	{
+		physicsNodes->push_back(newNode);
+	}
+}
+
+void FixedWorldPartition::RemovePhysicsObject(PhysicsNode* obj)
+{
+	if (obj)
+	{
+		//Lookup the physics node
+		auto found_loc = std::find(physicsNodes->begin(), physicsNodes->end(), obj);
+
+		//If found, remove it from the list
+		if (found_loc != physicsNodes->end())
+		{
+			physicsNodes->erase(found_loc);
+		}
+	}
+}
+
+
 void FixedWorldPartition::SplitBox(Node * node, std::vector<PhysicsNode*> parentElements)
 {
 	Vector3 max = node->AABB->_max;

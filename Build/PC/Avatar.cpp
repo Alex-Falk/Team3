@@ -174,8 +174,6 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
 	
-	Input(dt);
-
 	ManageWeapons();
 	
 	UpdatePickUp(dt);
@@ -183,8 +181,6 @@ void Avatar::OnAvatarUpdate(float dt) {
 	if (life > minLife)
 	{
 		
-		life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / 2500.0f, 2.0f);
-
 		if (life < minLife)
 		{
 			life = minLife;
@@ -229,7 +225,7 @@ void Avatar::UpdatePickUp(float dt)
 	{
 		speedTimer -= dt;
 
-		if (speedTimer < 0)
+		if (speedTimer <= 0)
 		{
 			speed = standardSpeed;
 			speedBoost = false;
@@ -240,16 +236,19 @@ void Avatar::UpdatePickUp(float dt)
 	{
 		jumpBoostTimer -= dt;
 
-		if (jumpBoostTimer < 0)
+		if (jumpBoostTimer <= 0)
 		{
 			jumpImpulse = standardSpeed;
 			jumpBoost = false;
 		}
 	}
 
-	if (!canShoot) {
+	if (!canShoot) 
+	{
 		shootCooldown -= dt;
-		if (shootCooldown <= 0) {
+
+		if (shootCooldown <= 0) 
+		{
 			canShoot = true;
 		}
 	}
@@ -313,7 +312,7 @@ void Avatar::ManageWeapons()
 			case PAINT_SPRAY:
 				
 				Spray();
-				shootCooldown = 3.0f;
+				shootCooldown = 1.0f;
 				canShoot = false;
 				break;
 
@@ -333,7 +332,7 @@ void Avatar::ManageWeapons()
 			case PAINT_ROCKET:
 				
 				ShootRocket();
-				shootCooldown = 0.15f;
+				shootCooldown = 0.5f;
 				canShoot = false;
 				
 				break;
