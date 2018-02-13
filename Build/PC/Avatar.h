@@ -69,6 +69,7 @@ protected:
 	bool shooting;
 
 	Vector3 velocity;
+	Vector3 lastPos; //used to determine distance travelled each frame for life
 
 	uint playerId;
 
