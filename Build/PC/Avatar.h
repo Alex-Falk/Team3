@@ -24,6 +24,7 @@
 #include "GamePlay.h"
 #include <ncltech\GameObject.h>
 #include <ncltech\CommonUtils.h>
+#include "Projectile.h"
 
 
 class Avatar

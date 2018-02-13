@@ -80,6 +80,9 @@ public:
 	//Returns a vector of all collision pairs within a node and its children
 	std::vector<CollisionPair> CreatePairs(Node * node);
 
+	void RemoveObjectFromNode(Node* node, PhysicsNode* obj);
+
+	
 	//Destroys the tree and its children
 	void TerminateTree(Node ** node);
 

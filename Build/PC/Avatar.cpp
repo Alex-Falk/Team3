@@ -256,26 +256,23 @@ void Avatar::UpdatePickUp(float dt)
 
 void Avatar::Spray()
 {
-	/*int randPitch;
+	int randPitch;
 	int randYaw;
-	Vector3 direction;*/
+	Vector3 direction;
 	
-	//Projectile** spray = new Projectile*[15];
-
-
-
-	//for (int i = 0; i < 15; i++)
-	//{
-
-	//	randPitch = rand() % 180 + -90;
-	//	randYaw = rand() % 360;
-
-	//	direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 3;
-
-	//  spray[i] = new Projectile(position, velocity, size, enum Colour, Vector4 RGBA);
 	
-	//  SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray[i]);
-	//}
+
+		randPitch = rand() % 180 + -90;
+		randYaw = rand() % 360;
+		float a = rand() % 10;
+		float b = rand() % 10;
+		float c = rand() % 10;
+		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 3;
+
+		Projectile * spray = new Projectile(col, colour, { 2, 10, 2 }, { 0,0,0 }, 0.2f, "Spray");
+	
+	  SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+	
 }
 
 void Avatar::ShootRocket()
