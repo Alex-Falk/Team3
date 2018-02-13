@@ -17,7 +17,7 @@
 //Extra functionality added by Alex Falk - 12/02/2018
 
 #pragma once
-#include "Player.h"
+#include "ControllableAvatar.h"
 #include "GamePlay.h"
 #include <networking\Client.h>
 #include <networking\Server.h>
@@ -45,7 +45,7 @@ public:
 	//STUBS
 	inline Vector3 GetSpawnLocation() {}
 	//FINISHED FUNCTIONS
-	inline Player * GetPlayer(uint id) { return players[id]; }
+	inline ControllableAvatar * GetPlayer(uint id) { return players[id]; }
 	inline int GetMapIndex() { return 0; }
 	inline int GetScore(uint id) { return scores[id]; }
 
@@ -56,7 +56,6 @@ private:
 	//private constructor
 	Game() {
 		for (uint i = 0; i < 4; i++) {
-			//probably temporary for the location
 			players[i] = nullptr;
 		}
 	};
@@ -66,6 +65,7 @@ private:
 		}
 	};
 	//variables
+	ControllableAvatar* players[4];
 	Player* players[4];
 	int scores[4];
 	User* user = nullptr;

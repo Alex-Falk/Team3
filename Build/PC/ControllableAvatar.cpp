@@ -1,19 +1,33 @@
-//Nick Bedford
-//Date: 08/02/2018
-//Moved setting values from header to constructor 
-//Stopped resetting callback every up date
-//
-//
+//					,.ood888888888888boo.,
+//              .od888P^""            ""^Y888bo.
+//          .od8P''   ..oood88888888booo.    ``Y8bo.
+//       .odP'"  .ood8888888888888888888888boo.  "`Ybo.
+//     .d8'   od8'd888888888f`8888't888888888b`8bo   `Yb.
+//    d8'  od8^   8888888888[  `'  ]8888888888   ^8bo  `8b
+//  .8P  d88'     8888888888P      Y8888888888     `88b  Y8.
+// d8' .d8'       `Y88888888'      `88888888P'       `8b. `8b
+//.8P .88P            """"            """"            Y88. Y8.
+//88  888                 Nick Bedford                 888  88
+//88  888           ControllableAvatar Class           888  88
+//88  888.        ..       13/02/2018       ..        .888  88
+//`8b `88b,     d8888b.od8bo.      .od8bo.d8888b     ,d88' d8'
+// Y8. `Y88.    8888888888888b    d8888888888888    .88P' .8P
+//  `8b  Y88b.  `88888888888888  88888888888888'  .d88P  d8'
+//    Y8.  ^Y88bod8888888888888..8888888888888bod88P^  .8P
+//     `Y8.   ^Y888888888888888LS888888888888888P^   .8P'
+//       `^Yb.,  `^^Y8888888888888888888888P^^'  ,.dP^'
+//          `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
+//              `^Y888bo.,            ,.od888P^'
+//                   "`^^Y888888888888P^^'"      
 
-#include "Player.h"
+#include "ControllableAvatar.h"
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
 
-Player::Player()
+ControllableAvatar::ControllableAvatar()
 {
 	life = maxLife;
-	timer = 0;
 
 	playerGameObject = CommonUtils::BuildSphereObject("Player",
 		Vector3(0.0f, 1.0f, 0.0f),
@@ -51,16 +65,15 @@ Player::Player()
 	boostactiveTime = 15.0f;
 }
 
-Player::~Player()
+ControllableAvatar::~ControllableAvatar()
 {
 }
 
-Player::Player(Vector3 pos, Colour c, uint id, float s)
+ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s)
 {
 	col = c;
 	size = s;
 	
-	timer = 0;
 	speed = 5;
 	maxForce = 30;
 	
@@ -78,34 +91,34 @@ Player::Player(Vector3 pos, Colour c, uint id, float s)
 
 	switch (c)
 	{
-	case DEFAULT:
+	case START_COLOUR:
 	{
-		colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		colour = DEFAULT_COLOUR;
 	}
 	case GREEN:
 	{
-		colour = Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+		colour = GREEN_COLOUR;
 	}
 	break;
 	case BLUE:
 	{
-		colour = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+		colour = BLUE_COLOUR;
 	}
 	break;
 	case RED:
 	{
-		colour = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+		colour = RED_COLOUR;
 	}
 	break;
 	case PINK
 		:
 	{
-		colour = Vector4(1.0f, 0.41f, 0.7f, 1.0f);
+		colour = PINK_COLOUR;
 	}
 		break;
 	default:
 	{
-		colour = Vector4(0.5, 0.5, 0.5, 1.0);
+		colour = DEFAULT_COLOUR;
 	}
 		break;
 	}
@@ -123,7 +136,7 @@ Player::Player(Vector3 pos, Colour c, uint id, float s)
 	playerGameObject->Physics()->SetElasticity(0);
 
 	playerGameObject->Physics()->SetOnCollisionCallback(
-		std::bind(&Player::PlayerCallbackFunction,
+		std::bind(&Avatar::PlayerCallbackFunction,
 			this,							//Any non-placeholder param will be passed into the function each time it is called
 			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
 			std::placeholders::_2
@@ -135,19 +148,9 @@ Player::Player(Vector3 pos, Colour c, uint id, float s)
 
 }
 
-bool Player::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
-	
-	if (collidingObject->getName() != "Pickup")
-	{
-		canJump = true;
-		inAir = false;
-	}
-
-	return true;
-}
 
 //Takes Player Input and move the player using force
-void Player::Input(float dt) {
+void ControllableAvatar::Input(float dt) {
 
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
@@ -176,7 +179,6 @@ void Player::Input(float dt) {
 		}
 	}
 
-	//if (Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE) && canJump) {		//Jump
 	if (Input::GetInput()->GetInput(JUMP) && canJump) 
 	{		//Jump
 		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /3.0f, jumpImpulse, force.z / 3.0f));
@@ -202,6 +204,11 @@ void Player::Input(float dt) {
 		weapon = AUTO_PAINT_LAUNCHER;
 	}
 
+	if (Input::GetInput()->GetInput(SHOOT))
+	{
+
+	}
+
 	if (force.x > maxForce)force.x = maxForce;
 	if (force.x < -maxForce)force.x = -maxForce;
 	if (force.z > maxForce)force.z = maxForce;
@@ -210,30 +217,21 @@ void Player::Input(float dt) {
 
 }
 
-void Player::ChangeSize(float newSize)
-{
-	playerGameObject->Render()->GetChild()->SetBoundingRadius(newSize);
-	playerGameObject->Render()->SetBoundingRadius(newSize);
-	playerGameObject->Physics()->SetBoundingRadius(newSize);
-	((SphereCollisionShape*)playerGameObject->Physics()->GetCollisionShape())->SetRadius(newSize);
-
-	playerGameObject->Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
-}
 
 // Updates everything on player
-void Player::OnPlayerUpdate(float dt) {
+void ControllableAvatar::OnPlayerUpdate(float dt) {
 
 	shooting = false;
-
-	timer += dt;
 
 	Input(dt);
 	
 	UpdatePickUp(dt);
 
-	if (weapon != NUM_OF_WEAPONS) {
-		if (Input::GetInput()->GetInput(SHOOT) && canShoot) {
-			ManageWeapons(weapon);
+	if (weapon != NUM_OF_WEAPONS) 
+	{
+		if (canShoot) 
+		{
+			ManageWeapons();
 		}
 	}
 
@@ -254,91 +252,3 @@ void Player::OnPlayerUpdate(float dt) {
 	
 }
 
-
-void Player::PickedPickUp(PickupType pickType) {
-
-	switch (pickType)
-	{
-	case SPEED_BOOST:
-		speed = boostedSpeed;
-		speedBoost = true;
-		speedTimer = boostactiveTime;
-		break;
-	case JUMP_BOOST:
-		jumpImpulse = boostedJumpImpulse;
-		jumpBoost = true;
-		jumpBoostTimer = boostactiveTime;
-		break;
-	case WEAPON: {
-
-	}
-		break;
-	default:
-		break;
-	}
-
-
-}
-
-void Player::UpdatePickUp(float dt) 
-{
-	if (speedBoost)
-	{
-		speedTimer -= dt;
-		
-		if (speedTimer < 0)
-		{
-			speed = standardSpeed;
-			speedBoost = false;
-		}
-	}
-
-	if (jumpBoost)
-	{
-		jumpBoostTimer -= dt;
-
-		if (jumpBoostTimer < 0)
-		{
-			jumpImpulse = standardSpeed;
-			jumpBoost = false;
-		}
-	}
-
-	if (!canShoot) {
-		shootCooldown -= dt;
-		if (shootCooldown <= 0) {
-			canShoot = true;
-		}
-	}
-}
-
-void Player::ManageWeapons(WeaponType wt) {
-	
-	if (Input::GetInput()->GetInput(SHOOT)) {
-		shooting = true;
-		switch (wt)
-		{
-		case PAINT_SPRAY:
-			NCLDebug::Log("Spray splash");
-			ammo = Weapons::ShootPaintSpray(this->GetPosition(), curSize, colour);
-			shootCooldown = 3.0f;
-			canShoot = false;
-			break;
-		case PAINT_PISTOL:
-			NCLDebug::Log("Pistol piou piou");
-			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
-			break;
-		case AUTO_PAINT_LAUNCHER:
-			ammo = Weapons::ShootPistol(this->GetPosition(), curSize, colour);
-			shootCooldown = 0.15f;
-			canShoot = false;
-			break;
-		case PAINT_ROCKET:
-			NCLDebug::Log("Rocket piou piou");
-			ammo = Weapons::ShootRocket(this->GetPosition(), curSize, colour);
-			break;
-		default:
-			break;
-		}
-	}
-}
