@@ -102,6 +102,7 @@ public:
 
 	void RestoreLife() { life = maxLife; }
 	float GetLife() { return life; }
+	void SetLife(float l) { life = l; }
 
 	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is Picked Up			Nikos 13.20
 	void UpdatePickUp(float dt);			// Update Pick Ups based on time

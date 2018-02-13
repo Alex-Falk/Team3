@@ -23,9 +23,21 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	//player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
 	for (uint i = 0; i < 4; i++) {
-		Player* p = new Player(Vector3(i * 3, 1.0, 0.0), Colour(i + 1), i, 1.0f);
-		this->AddGameObject(p->GetGameObject());
-		Game::Instance()->SetPlayer(i, p);
+		if (Game::Instance()->GetUser())
+		{
+			Avatar * p = nullptr;
+			if (i == Game::Instance()->getUserID())
+			{
+				p = new ControllableAvatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+			else
+			{
+				p = new Avatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+
+			this->AddGameObject(p->GetGameObject());
+			Game::Instance()->SetAvatar(i, p);
+		}
 	}
 	//this->AddGameObject(player->GetGameObject());
 
@@ -34,7 +46,7 @@ void SimpleGamePlay::OnInitializeScene() {
 	this->AddGameObject(pickup->GetObj());
 
 	//GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(3)->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
 
@@ -51,7 +63,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	//player->OnPlayerUpdate(dt);
 	for (uint i = 0; i < 4; i++) {
-		Game::Instance()->GetPlayer(i)->OnPlayerUpdate(dt);
+		Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
 	}
 
 	if (pickup)

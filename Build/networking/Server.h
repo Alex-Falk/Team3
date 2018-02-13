@@ -43,11 +43,17 @@ using namespace std;
 
 class Server : public User
 {
-public:
-
+private:
 	NetworkBase * server;
 	GameTimer timer;
 	uint serverPort = 1234;
+
+	vector<uint> connectedIDs;
+	vector<uint> freeIDs;
+
+public:
+
+
 
 	Server();
 	~Server() {

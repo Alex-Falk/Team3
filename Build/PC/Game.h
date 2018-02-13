@@ -30,24 +30,24 @@ public:
 	inline void SetScore(uint id, int score) { scores[id] = score; }
 	inline void SetAmmo(uint id, float ammo) {}
 	//FINISHED FUNCTIONS
-	inline void SetSize(uint id, float size) { players[id]->SetLife(size); }
-	inline void SetAcceleration(uint id, Vector3 a) { players[id]->GetGameObject()->Physics()->SetAcceleration(a); }
-	inline void SetLinearVelocity(uint id, Vector3 v) { players[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
-	inline void SetAngularVelocity(uint id, Vector3 v) { players[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }
-	inline void SetPosition(uint id, Vector3 p) { players[id]->GetGameObject()->Physics()->SetPosition(p); }
+	inline void SetSize(uint id, float size) { avatars[id]->SetLife(size); }
+	inline void SetAcceleration(uint id, Vector3 a) { avatars[id]->GetGameObject()->Physics()->SetAcceleration(a); }
+	inline void SetLinearVelocity(uint id, Vector3 v) { avatars[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
+	inline void SetAngularVelocity(uint id, Vector3 v) { avatars[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }
+	inline void SetPosition(uint id, Vector3 p) { avatars[id]->GetGameObject()->Physics()->SetPosition(p); }
 	inline void SetServer() { user = new Server(); }
 	inline void setClient(IP ip) { user = new Client(ip); }
-	inline void SetPlayer(uint id, Player* player) { players[id] = player; }
-
-	inline void Setplayer(uint id, Player * p) { players[id] = p; }
+	inline void SetAvatar(uint id, Avatar * p) { avatars[id] = p; }
 
 	// Getters
 	//STUBS
 	inline Vector3 GetSpawnLocation() {}
 	//FINISHED FUNCTIONS
-	inline ControllableAvatar * GetPlayer(uint id) { return players[id]; }
+	inline Avatar * GetPlayer(uint id) { return avatars[id]; }
 	inline int GetMapIndex() { return 0; }
 	inline int GetScore(uint id) { return scores[id]; }
+	inline uint getUserID() { return user->GetUserID(); }
+	inline User * GetUser() { return user; }
 
 
 
@@ -56,17 +56,16 @@ private:
 	//private constructor
 	Game() {
 		for (uint i = 0; i < 4; i++) {
-			players[i] = nullptr;
+			avatars[i] = nullptr;
 		}
 	};
 	~Game() {
 		for (int i = 0; i < 4; i++) {
-			delete players[i];
+			delete avatars[i];
 		}
 	};
 	//variables
-	ControllableAvatar* players[4];
-	Player* players[4];
+	Avatar* avatars[4];
 	int scores[4];
 	User* user = nullptr;
 };

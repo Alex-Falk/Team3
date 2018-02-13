@@ -3,7 +3,6 @@
 #include <nclgl\GameTimer.h>
 #include <nclgl\Vector3.h>
 #include <nclgl\common.h>
-#include <PC\GamePlay.h>
 #include <ncltech\NetworkBase.h>
 #include "NetworkCommon.h"
 
@@ -29,6 +28,8 @@ public:
 	void ReceiveWeapon(string data);
 
 	string GetPacketData(const ENetEvent & evnt);
+	
+	inline uint GetUserID() { return userID; }
 
 	virtual void UpdateUser(float dt) = 0;
 

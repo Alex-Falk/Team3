@@ -71,17 +71,6 @@ void Initialize()
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
 
-	//Alex Falk - 12/02/2018 Temporary Network testing stuff
-	Game::Instance();
-
-
-	
-
-
-	//Enqueue All Scenes
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
-
 	//AudioSystem::Instance();
 
 	//InitialiseAudioFiles();
@@ -159,41 +148,6 @@ static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObje
 //    cycling through scenes.
 void HandleKeyboardInputs()
 {
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0) && !chosen)
-	{
-		if (enet_initialize() != 0)
-		{
-			Quit(true, "ENET failed to initialize!");
-		}
-
-		Game::Instance()->SetServer();
-		chosen = true;
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1) && !chosen)
-	{
-		if (enet_initialize() != 0)
-		{
-			Quit(true, "ENET failed to initialize!");
-		}
-
-		IP ip;
-
-		cout << "Enter the IP:\n";
-		cin >> ip.a;
-		cout << ".";
-		cin >> ip.b;
-		cout << ".";
-		cin >> ip.c;
-		cout << ".";
-		cin >> ip.d;
-		cout << ":1234";
-		ip.port = 1234;
-
-		Game::Instance()->setClient(ip);
-		chosen = true;
-	}
-
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
 		PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
 
@@ -319,58 +273,109 @@ int main()
 
 	//lock mouse so moving around the screen is nicer
 	Window::GetWindow().LockMouseToWindow(false);
+
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		//Start Timing
 		
-		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
-																		//Update Performance Timers (Show results every second)
-		timer_total.UpdateRealElapsedTime(dt);
-		timer_physics.UpdateRealElapsedTime(dt);
-		timer_update.UpdateRealElapsedTime(dt);
-		timer_render.UpdateRealElapsedTime(dt);
-		timer_audio.UpdateRealElapsedTime(dt);
-
-		//Print Status Entries
-		PrintStatusEntries();
-
-		//Handle Keyboard Inputs
-		HandleKeyboardInputs();
-
-		
-		timer_total.BeginTimingSection();
-
-		//Update Scene
-		timer_update.BeginTimingSection();
-		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
-		timer_update.EndTimingSection();
-
-		//Update Physics	
-		timer_physics.BeginTimingSection();
-		PhysicsEngine::Instance()->Update(dt);
-		timer_physics.EndTimingSection();
-		PhysicsEngine::Instance()->DebugRender();
-
-		//Render Scene
-		timer_render.BeginTimingSection();
-		GraphicsPipeline::Instance()->UpdateScene(dt);
-//		GraphicsPipeline::Instance()->DebugRender();
-		GraphicsPipeline::Instance()->RenderScene();
+		if (!chosen)
 		{
-			//Forces synchronisation if vsync is disabled
-			// - This is solely to allow accurate estimation of render time
-			// - We should NEVER normally lock our render or game loop!		
-		//	glClientWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL), GL_SYNC_FLUSH_COMMANDS_BIT, 1000000);
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0) && !chosen)
+			{
+				if (enet_initialize() != 0)
+				{
+					Quit(true, "ENET failed to initialize!");
+				}
+
+				Game::Instance()->SetServer();
+				//Enqueue All Scenes
+				SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+				//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
+
+				chosen = true;
+			}
+
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1) && !chosen)
+			{
+				if (enet_initialize() != 0)
+				{
+					Quit(true, "ENET failed to initialize!");
+				}
+
+				IP ip;
+
+				cout << "Enter the IP:\n";
+				cin >> ip.a;
+				cout << ".";
+				cin >> ip.b;
+				cout << ".";
+				cin >> ip.c;
+				cout << ".";
+				cin >> ip.d;
+				cout << ":1234";
+				ip.port = 1234;
+
+				Game::Instance()->setClient(ip);
+				//Enqueue All Scenes
+				SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+				//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
+
+				chosen = true;
+			}
 		}
-		timer_render.EndTimingSection();
+		else
+		{
+			float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
+																				//Update Performance Timers (Show results every second)
+			timer_total.UpdateRealElapsedTime(dt);
+			timer_physics.UpdateRealElapsedTime(dt);
+			timer_update.UpdateRealElapsedTime(dt);
+			timer_render.UpdateRealElapsedTime(dt);
+			timer_audio.UpdateRealElapsedTime(dt);
 
-		timer_audio.BeginTimingSection();
-		//AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
-		timer_audio.EndTimingSection();
-		Game::Instance()->Update(dt);
+			//Print Status Entries
+			PrintStatusEntries();
 
-		//Finish Timing
-		timer_total.EndTimingSection();		
+			//Handle Keyboard Inputs
+			HandleKeyboardInputs();
+
+
+			timer_total.BeginTimingSection();
+
+			//Update Scene
+			timer_update.BeginTimingSection();
+			SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
+			timer_update.EndTimingSection();
+
+			//Update Physics	
+			timer_physics.BeginTimingSection();
+			PhysicsEngine::Instance()->Update(dt);
+			timer_physics.EndTimingSection();
+			PhysicsEngine::Instance()->DebugRender();
+
+			//Render Scene
+			timer_render.BeginTimingSection();
+			GraphicsPipeline::Instance()->UpdateScene(dt);
+			//		GraphicsPipeline::Instance()->DebugRender();
+			GraphicsPipeline::Instance()->RenderScene();
+			{
+				//Forces synchronisation if vsync is disabled
+				// - This is solely to allow accurate estimation of render time
+				// - We should NEVER normally lock our render or game loop!		
+				//	glClientWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL), GL_SYNC_FLUSH_COMMANDS_BIT, 1000000);
+			}
+			timer_render.EndTimingSection();
+
+			timer_audio.BeginTimingSection();
+			//AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
+			timer_audio.EndTimingSection();
+			Game::Instance()->Update(dt);
+
+			//Finish Timing
+			timer_total.EndTimingSection();
+		}
+
+
 	}
 
 	//Cleanup

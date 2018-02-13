@@ -7,7 +7,7 @@ void Arena::OnInitializeScene() {
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
 
-	player = new ControllableAvatar(Vector3(0.0, 2.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
+	//player = new ControllableAvatar(Vector3(0.0, 2.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 	Arena::CreateEnvironment();
@@ -25,7 +25,7 @@ void Arena::OnUpdateScene(float dt)
 
 	m_AccumTime += dt;
 
-	player->OnPlayerUpdate(dt);
+	player->OnAvatarUpdate(dt);
 
 
 

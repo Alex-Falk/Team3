@@ -44,7 +44,6 @@ ControllableAvatar::ControllableAvatar()
 	playerGameObject->Physics()->SetElasticity(0);
 
 	playerId = 0;
-	timer = 0;
 	shootCooldown = 0.0f;
 
 	standardSpeed = 5.0f;
@@ -219,7 +218,7 @@ void ControllableAvatar::Input(float dt) {
 
 
 // Updates everything on player
-void ControllableAvatar::OnPlayerUpdate(float dt) {
+void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
 
@@ -238,7 +237,7 @@ void ControllableAvatar::OnPlayerUpdate(float dt) {
 
 	if (life > minLife) 
 	{
-		life -= dt*2;
+		life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / 2500.0f, 2.0f);
 
 		if (life < minLife)
 		{

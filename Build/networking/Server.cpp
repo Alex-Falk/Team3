@@ -94,6 +94,8 @@ Server::Server() {
 	Win32_PrintAllAdapterIPAddresses();
 	userID = 0;
 	timer.GetTimedMS();
+
+	freeIDs = { 3,2,1 };
 }
 
 void Server::UpdateUser(float dt)
@@ -107,6 +109,9 @@ void Server::UpdateUser(float dt)
 			printf(" - New Client Connected\n");
 
 			// Send over information to new client
+
+			connectedIDs.push_back(*(freeIDs.back));
+			freeIDs.pop_back();
 		}
 		break;
 

@@ -174,7 +174,7 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
 	
-	Input(dt);
+	//Input(dt);
 
 	ManageWeapons();
 	
@@ -183,7 +183,7 @@ void Avatar::OnAvatarUpdate(float dt) {
 	if (life > minLife)
 	{
 		
-		life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / 2500.0f, 2.0f);
+		//life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / 2500.0f, 2.0f);
 
 		if (life < minLife)
 		{

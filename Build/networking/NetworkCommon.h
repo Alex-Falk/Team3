@@ -32,7 +32,7 @@
 
 #pragma once
 #include <nclgl\common.h>
-#include <PC\Player.h>
+#include <PC\Avatar.h>
 
 enum PacketType {
 	GAME_START,				// Informs clients the game has started
@@ -66,12 +66,6 @@ struct PlayerFloat {
 	uint ID;
 	float f;
 };
-//--------------------------------------------------------------------------------------------//
-// PLACEHOLDERS
-//--------------------------------------------------------------------------------------------//
-
-static Player * playerOne;
-static int placeholder_playerNum = 4;
 
 //--------------------------------------------------------------------------------------------//
 // Functions
