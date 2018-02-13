@@ -160,12 +160,11 @@ public:
 	inline GLuint& GetPathTex() { return pathTex; }
 
 	//GUI
-	//UI mouse update
 	void HandleGUIMousePosition(float x, float y);
 	void HandleMouseButton(MouseButtons button);
-
-	//Set Current Scene GUI
 	void SetCurrentSceneGUI(GUI* passInValue) { GUIsystem = passInValue; }
+	void SetIsMainMenu(bool a) { isMainMenu = a; }
+
 protected:
 	GraphicsPipeline();
 	virtual ~GraphicsPipeline();
@@ -242,5 +241,6 @@ protected:
 
 	//GUI
 	GUI* GUIsystem;
+	bool isMainMenu = false;
 };
 

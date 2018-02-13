@@ -336,14 +336,19 @@ void GraphicsPipeline::RenderScene()
 	RenderObject();
 
 	//render the path to texture
-	RenderPath();
+	if (isMainMenu == false) {
+		RenderPath();
+	}
 
 	//post process and present
 	RenderPostprocessAndPresent();
 
 	//NCLDEBUG - Text Elements (aliased)
-	NCLDebug::_RenderDebugClipSpace();
+	if (isMainMenu == false) {
+		NCLDebug::_RenderDebugClipSpace();
+	}
 	NCLDebug::_ClearDebugLists();
+
 
 	//RenderUI
 	RenderUI();
@@ -550,9 +555,12 @@ void GraphicsPipeline::RenderObject()
 
 	glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
 	glViewport(0, 0, screenTexWidth, screenTexHeight);
-	//NCLDEBUG - World Debug Data (anti-aliased)		
-	NCLDebug::_RenderDebugDepthTested();
-	NCLDebug::_RenderDebugNonDepthTested();
+
+	//NCLDEBUG - World Debug Data (anti-aliased)
+	if (isMainMenu == false) {
+		NCLDebug::_RenderDebugDepthTested();
+		NCLDebug::_RenderDebugNonDepthTested();
+	}
 
 	//debug code
 	glUseProgram(shaders[SHADERTYPE::Texture_UI]->GetProgram());
@@ -561,9 +569,12 @@ void GraphicsPipeline::RenderObject()
 	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&mat);
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "diffuseTex"), 0);
-	glBindTexture(GL_TEXTURE_2D, pathTex);
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "brightness"), 1.0f);
-
+	
+	if (isMainMenu == false) {
+		glBindTexture(GL_TEXTURE_2D, pathTex);
+		glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "brightness"), 1.0f);
+	}
+	
 	fullscreenQuad->Draw();
 	glEnable(GL_DEPTH_TEST);
 

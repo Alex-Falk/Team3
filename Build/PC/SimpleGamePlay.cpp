@@ -48,7 +48,6 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	pickup->Update(dt);
 
-
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }
 
@@ -56,7 +55,6 @@ void SimpleGamePlay::OnCleanupScene()
 {
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoteAllTexture();
-
 	GraphicsPipeline::Instance()->RemoteAllPlayerRenderNode();
 };
 
