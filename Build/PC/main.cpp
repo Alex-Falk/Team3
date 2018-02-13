@@ -1,3 +1,5 @@
+#include <enet\enet.h>
+
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
@@ -9,6 +11,8 @@
 #include "Arena.h"
 #include "GameInput.h"
 #include "Game.h"
+
+bool chosen = false;
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -23,6 +27,8 @@ uint shadowCycleKey = 4;
 //Prevent multiple clicking from happening
 int fpsCounter = 6;
 
+
+
 // Program Deconstructor
 //  - Releases all global components and memory
 //  - Optionally prints out an error message and
@@ -32,9 +38,10 @@ void Quit(bool error = false, const std::string &reason = "") {
 	SceneManager::Release();
 	PhysicsEngine::Release();
 	GraphicsPipeline::Release();
-	AudioSystem::Release();
+	enet_deinitialize();
+	//AudioSystem::Release();
 	Window::Destroy();
-
+	
 	//Show console reason before exit
 	if (error) {
 		std::cout << reason << std::endl;
@@ -58,6 +65,7 @@ void Initialize()
 	if (!Window::Initialise("Game Technologies", 1280, 800, false))
 		Quit(true, "Window failed to initialise!");
 
+
 	//Initialize Renderer
 	GraphicsPipeline::Instance();
 
@@ -69,9 +77,7 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
 	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
-	AudioSystem::Instance();
-
-	InitialiseAudioFiles();
+	//InitialiseAudioFiles();
 }
 
 // Print Debug Info
@@ -168,7 +174,7 @@ void HandleKeyboardInputs()
 
 	//audio test functionality
 	//TODO remove this when finished testing
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
+	/*if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
 		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
 	}
 
@@ -192,7 +198,7 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
 		AudioSystem::Instance()->UnmuteAllSounds();
 	}
-
+*/
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
@@ -346,42 +352,90 @@ int main()
 		//Print Status Entries
 		PrintStatusEntries();
 
-		//Handle Keyboard Inputs
-		HandleKeyboardInputs();
+				chosen = true;
+			}
 
-		
-		timer_total.BeginTimingSection();
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1) && !chosen)
+			{
+				if (enet_initialize() != 0)
+				{
+					Quit(true, "ENET failed to initialize!");
+				}
 
-		//Update Scene
-		timer_update.BeginTimingSection();
-		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
-		timer_update.EndTimingSection();
+				IP ip;
 
-		//Update Physics	
-		timer_physics.BeginTimingSection();
-		PhysicsEngine::Instance()->Update(dt);
-		timer_physics.EndTimingSection();
-		PhysicsEngine::Instance()->DebugRender();
+				cout << "Enter the IP:\n";
+				cin >> ip.a;
+				cout << ".";
+				cin >> ip.b;
+				cout << ".";
+				cin >> ip.c;
+				cout << ".";
+				cin >> ip.d;
+				cout << ":1234";
+				ip.port = 1234;
 
-		//Render Scene
-		timer_render.BeginTimingSection();
-		GraphicsPipeline::Instance()->UpdateScene(dt);
-//		GraphicsPipeline::Instance()->DebugRender();
-		GraphicsPipeline::Instance()->RenderScene();
-		{
-			//Forces synchronisation if vsync is disabled
-			// - This is solely to allow accurate estimation of render time
-			// - We should NEVER normally lock our render or game loop!		
-		//	glClientWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL), GL_SYNC_FLUSH_COMMANDS_BIT, 1000000);
+				Game::Instance()->setClient(ip);
+				//Enqueue All Scenes
+				SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+				//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
+
+				chosen = true;
+			}
 		}
-		timer_render.EndTimingSection();
+		else
+		{
+			float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
+																				//Update Performance Timers (Show results every second)
+			timer_total.UpdateRealElapsedTime(dt);
+			timer_physics.UpdateRealElapsedTime(dt);
+			timer_update.UpdateRealElapsedTime(dt);
+			timer_render.UpdateRealElapsedTime(dt);
+			timer_audio.UpdateRealElapsedTime(dt);
 
-		timer_audio.BeginTimingSection();
-		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
-		timer_audio.EndTimingSection();
+			//Print Status Entries
+			PrintStatusEntries();
 
-		//Finish Timing
-		timer_total.EndTimingSection();		
+			//Handle Keyboard Inputs
+			HandleKeyboardInputs();
+
+
+			timer_total.BeginTimingSection();
+
+			//Update Scene
+			timer_update.BeginTimingSection();
+			SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
+			timer_update.EndTimingSection();
+
+			//Update Physics	
+			timer_physics.BeginTimingSection();
+			PhysicsEngine::Instance()->Update(dt);
+			timer_physics.EndTimingSection();
+			PhysicsEngine::Instance()->DebugRender();
+
+			//Render Scene
+			timer_render.BeginTimingSection();
+			GraphicsPipeline::Instance()->UpdateScene(dt);
+			//		GraphicsPipeline::Instance()->DebugRender();
+			GraphicsPipeline::Instance()->RenderScene();
+			{
+				//Forces synchronisation if vsync is disabled
+				// - This is solely to allow accurate estimation of render time
+				// - We should NEVER normally lock our render or game loop!		
+				//	glClientWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL), GL_SYNC_FLUSH_COMMANDS_BIT, 1000000);
+			}
+			timer_render.EndTimingSection();
+
+			timer_audio.BeginTimingSection();
+			//AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
+			timer_audio.EndTimingSection();
+			Game::Instance()->Update(dt);
+
+			//Finish Timing
+			timer_total.EndTimingSection();
+		}
+
+
 	}
 
 	//Cleanup

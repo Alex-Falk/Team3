@@ -1,5 +1,6 @@
 #include "WeaponPickup.h"
 #include "SimpleGamePlay.h"
+#include "Game.h"
 
 void SimpleGamePlay::OnInitializeScene() {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
@@ -22,15 +23,32 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	player = new ControllableAvatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
+	//player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
+	for (uint i = 0; i < 4; i++) {
+		if (Game::Instance()->GetUser())
+		{
+			Avatar * p = nullptr;
+			if (i == Game::Instance()->getUserID())
+			{
+				p = new ControllableAvatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+			else
+			{
+				p = new Avatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
 
-	this->AddGameObject(player->GetGameObject());
+			this->AddGameObject(p->GetGameObject());
+			Game::Instance()->SetAvatar(i, p);
+		}
+	}
+	//this->AddGameObject(player->GetGameObject());
 
 	pickup = new Pickup(Vector3(0, 3, 0), SPEED_BOOST);
 
 	this->AddGameObject(pickup->GetObj());
 
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
+	//GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
 	GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));
@@ -46,7 +64,10 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	m_AccumTime += dt;
 
-	player->OnAvatarUpdate(dt);
+	//player->OnPlayerUpdate(dt);
+	for (uint i = 0; i < 4; i++) {
+		Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
+	}
 
 	if (pickup)
 	{

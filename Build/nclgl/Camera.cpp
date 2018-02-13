@@ -92,35 +92,36 @@ void Camera::UpdateCamara(float dt) {
 		position.y -= speed;
 	}
 
-	//NEW STUFF!!!
-	float x = center->GetLinearVelocity().x;
-	float z = center->GetLinearVelocity().z;
-	//There are a lot of magic numbers here these should be dealt with
-	if (timeSinceMouse > MIN_TURN_TIME && (x*x + z*z) > MIN_CENTER_SPEED_SQUARED) {
-		//the camera moves itself faster the longer you haven't moved it
-		float turnSpeed = (float)((timeSinceMouse - MIN_TURN_TIME)/ TURN_INCREASE_RATE);
-		turnSpeed = (float)max(turnSpeed, MIN_TURN_SPEED);
-		turnSpeed = (float)min(turnSpeed, MAX_TURN_SPEED);
-		//get the direction of the x and y vector and have the yaw approach it
+	//changed by phil 12/02/2018
+	if (!free && center) {
+		float x = center->GetLinearVelocity().x;
+		float z = center->GetLinearVelocity().z;
+		//There are a lot of magic numbers here these should be dealt with
+		if (timeSinceMouse > MIN_TURN_TIME && (x*x + z*z) > MIN_CENTER_SPEED_SQUARED) {
+			//the camera moves itself faster the longer you haven't moved it
+			float turnSpeed = (float)((timeSinceMouse - MIN_TURN_TIME) / TURN_INCREASE_RATE);
+			turnSpeed = (float)max(turnSpeed, MIN_TURN_SPEED);
+			turnSpeed = (float)min(turnSpeed, MAX_TURN_SPEED);
+			//get the direction of the x and y vector and have the yaw approach it
 
 
-		//both are now angles between 0 and 360
-		float angle = (180 * atan2(x, z)/PI) + 180.0f;
-		//find the difference between the two angles
-		int diff = (int)(angle - yaw);
-		diff = (diff + 180) % 360 - 180;
+			//both are now angles between 0 and 360
+			float angle = (180 * atan2(x, z) / PI) + 180.0f;
+			//find the difference between the two angles
+			int diff = (int)(angle - yaw);
+			diff = (diff + 180) % 360 - 180;
 
-		if (diff < -1) {
-			yaw -= turnSpeed;
+			if (diff < -1) {
+				yaw -= turnSpeed;
+			}
+			if (diff > 1) {
+				yaw += turnSpeed;
+			}
 		}
-		if (diff > 1) {
-			yaw += turnSpeed;
-		}
+
+		//update the distance
+		UpdateDistance();
 	}
-
-
-	//update the distance
-	UpdateDistance();
 }
 
 /*
@@ -215,7 +216,9 @@ void Camera::UpdateDistance() {
 }
 
 void Camera::ResizeArm() {
-	float r = center->GetBoundingRadius();
-	armShape->SetHalfDepth((maxDistance*r / 2) - r);
-	arm.SetBoundingRadius(armShape->GetHalfDepth());
+	if (center) {
+		float r = center->GetBoundingRadius();
+		armShape->SetHalfDepth((maxDistance*r / 2) - r);
+		arm.SetBoundingRadius(armShape->GetHalfDepth());
+	}
 }
