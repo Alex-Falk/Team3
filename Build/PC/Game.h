@@ -27,7 +27,7 @@ class Game: public TSingleton<Game>
 	friend class TSingleton <Game>;
 public:
 	//STUBS
-	inline void SetScore(uint id, int score) {}
+	inline void SetScore(uint id, int score) { scores[id] = score; }
 	inline void SetAmmo(uint id, float ammo) {}
 	//FINISHED FUNCTIONS
 	inline void SetSize(uint id, float size) { players[id]->SetLife(size); }
@@ -47,10 +47,11 @@ public:
 	//FINISHED FUNCTIONS
 	inline Player * GetPlayer(uint id) { return players[id]; }
 	inline int GetMapIndex() { return 0; }
+	inline int GetScore(uint id) { return scores[id]; }
 
 
 
-	inline void Update(float dt) { if (user) { user->UpdateUser(dt); }  }
+	void Update(float dt);
 private:
 	//private constructor
 	Game() {
@@ -66,5 +67,6 @@ private:
 	};
 	//variables
 	Player* players[4];
+	int scores[4];
 	User* user = nullptr;
 };

@@ -60,9 +60,9 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	}
 
 
-	if (player->GetShooting()) {
-		for (int i = 0; i < player->GetAmmo().size();i++) {
-			this->AddGameObject(player->GetAmmo()[i]);
+	if (Game::Instance()->GetPlayer(0)->GetShooting()) {
+		for (int i = 0; i < Game::Instance()->GetPlayer(0)->GetAmmo().size();i++) {
+			this->AddGameObject(Game::Instance()->GetPlayer(0)->GetAmmo()[i]);
 		}
 	}
 
