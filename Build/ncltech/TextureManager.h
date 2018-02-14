@@ -19,9 +19,9 @@ public :
 
 	bool LoadTexture(TEXTURETYPE type, std::string address, int wrap, int filter);
 
-	bool RemoteTexture(TEXTURETYPE type);
+	bool RemoveTexture(TEXTURETYPE type);
 
-	bool RemoteAllTexture();
+	bool RemoveAllTexture();
 
 	GLuint GetTexture(TEXTURETYPE type);
 

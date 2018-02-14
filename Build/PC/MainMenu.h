@@ -41,14 +41,14 @@ public:
 
 	~MainMenu()
 	{
-		TextureManager::Instance()->RemoteAllTexture();
+		TextureManager::Instance()->RemoveAllTexture();
 		delete player;
 	}
 
 	void OnCleanupScene() {
 		DeleteAllGameObjects();
-		TextureManager::Instance()->RemoteAllTexture();
-		GraphicsPipeline::Instance()->RemoteAllPlayerRenderNode();
+		TextureManager::Instance()->RemoveAllTexture();
+		GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
 	}
 
 	virtual void OnInitializeScene() {

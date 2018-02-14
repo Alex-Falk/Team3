@@ -35,7 +35,8 @@ public:
 	GameObject(const std::string& name = "")
 		: friendlyName(name)
 		, renderNode(NULL)
-		, physicsNode(NULL) {}
+		, physicsNode(NULL)
+	    {}
 
 	GameObject(const std::string& name, RenderNode* renderNde, PhysicsNode* physicsNde = NULL)
 		: friendlyName(name)

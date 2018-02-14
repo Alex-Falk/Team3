@@ -29,13 +29,13 @@ public:
 
 	~Arena()
 	{
-		TextureManager::Instance()->RemoteAllTexture();
+		TextureManager::Instance()->RemoveAllTexture();
 		delete player;
 	}
 
 	void OnCleanupScene() {
 		DeleteAllGameObjects();
-		TextureManager::Instance()->RemoteAllTexture();
+		TextureManager::Instance()->RemoveAllTexture();
 	};
 
 };

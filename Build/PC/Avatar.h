@@ -27,13 +27,13 @@
 
 
 
-class Avatar
+class Avatar : public GameObject
 {
 protected:
 
-	GameObject* playerGameObject;		//Pointer to the Player's Gameobject
+	//GameObject* playerGameObject;		//Pointer to the Player's Gameobject
 
-	Colour col;				// Colour - Team
+	Colour col;				    // Colour - Team
 	Vector4 colour;				// The actual colour of the player;
 
 	bool canJump;
@@ -82,7 +82,7 @@ public:
 
 	virtual void OnAvatarUpdate(float dt);
 
-	Vector3 GetPosition() { return playerGameObject->Physics()->GetPosition(); }
+	Vector3 GetPosition() { return Physics()->GetPosition(); }
 
 	float GetMaxLife() { return maxLife; }
 	void SetMaxLife(float x) { maxLife = x; }
@@ -99,7 +99,7 @@ public:
 	float GetSize() { return size; }
 	void SetSize(float s) { size = s; }
 
-	void ChangeLife(float x) { life += x; }
+	void ChangeLife(float x) { life += x; if (life < minLife) { life = minLife; } }
 
 	void RestoreLife() { life = maxLife; }
 	float GetLife() { return life; }
@@ -107,7 +107,7 @@ public:
 	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is Picked Up			Nikos 13.20
 	void UpdatePickUp(float dt);			// Update Pick Ups based on time
 
-	GameObject* GetGameObject() { return playerGameObject; }	//Pointer to the Player's Gameobject
+	GameObject* GetGameObject() { return this; }	//Pointer to the Player's Gameobject
 
 	
 	virtual void ManageWeapons();
