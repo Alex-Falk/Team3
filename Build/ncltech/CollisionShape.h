@@ -85,6 +85,9 @@ public:
 		Vector3& out_normal,
 		std::vector<Plane>& out_adjacent_planes) const = 0;
 
+	//Phil 13/02/2018
+	//retruns the distance from the center to the first intersection, will return a negative number if there is no collision
+	virtual float GetRayIntersection(Vector3 origin, Vector3 direction) = 0;
 protected:
 	PhysicsNode* m_Parent;
 };

@@ -48,8 +48,8 @@ void Camera::UpdateCamara(float dt) {
 
 
 	//Bounds check the pitch, to be between straight up and straight down ;)
-	pitch = (float)min(pitch, free?90.0:7.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
-	pitch = (float)max(pitch, -90.0f);
+	pitch = (float)min(pitch, free?90.0:25.0f);//capped at 7 instead of 90 to stop the floor making the spring arm jerky
+	pitch = (float)max(pitch, -89.0f);
 
 	if (yaw < 0.0f) {
 		yaw += 360.0f;
@@ -160,62 +160,15 @@ bool Camera::ToggleFree() {
 }
 
 void Camera::UpdateDistance() {
-
-	//put the arm in the right place
-	arm.SetOrientation(Quaternion::FromMatrix(Matrix4::Rotation(-pitch, Vector3(1, 0, 0)) *
-		Matrix4::Rotation(-yaw, Vector3(0, 1, 0))));
-	//the center of the arm it starts at the edge of the centered object so it doesn't collide with that
-	Vector3 armPos = center->GetPosition() + (GetViewDirection() * -(maxDistance + center->GetBoundingRadius())) / 2;
-	arm.SetPosition(armPos);
 	//don't do anything if the camera isn't free
 	if (!free) {
-		//Collision Detection Algorithm to use
-		CollisionDetectionSAT colDetect;
-		Manifold manifold;
-
-		//set the distance to the maximum to start with
-		distance = maxDistance;
-		//cast a ray and check for collisions
-		for (PhysicsNode* node : PhysicsEngine::Instance()->physicsNodes) {
-			//check the item isn't something to be ignored by the spring arm
-			if (node->GetType() == PICKUP) {
-					continue;
-			}
-			//if there is a collision move the camera to that point
-			//broadPhase
-			if ((arm.GetPosition() - node->GetPosition()).LengthSQ() < pow(arm.GetBoundingRadius() + node->GetBoundingRadius(), 2)) {
-				//narrow
-				colDetect.BeginNewPair(&arm, node, arm.GetCollisionShape(), node->GetCollisionShape());
-
-				//if there is a collision
-				if (colDetect.AreColliding()) {
-					//use the new shape
-					manifold.Initiate(&arm, node);
-
-					//make contact points
-					colDetect.GenContactPoints(&manifold);
-
-					//the new distance is the length of the nearest contanct point
-					for (ContactPoint p : manifold.contactPoints) {
-						float newDist = ((arm.GetPosition() + p.relPosA) - center->GetPosition()).Length();
-						if (newDist < distance) {
-							distance = newDist;
-						}
-					}
-					
-					//if the minimum distance has been reached end the checking
-					if (distance <= minDistance) {
-						distance = minDistance;
-						return;
-					}
-				}
-			}
+		//testing
+		LineCollision d = PhysicsEngine::Instance()->CastRay(center->GetPosition() - GetViewDirection() * center->GetBoundingRadius(), -GetViewDirection(), center);
+		if (d.node) {
+			distance = (d.dist < maxDistance) ? d.dist : maxDistance;
+		}
+		else {
+			distance = maxDistance;
 		}
 	}
-}
-
-void Camera::ResizeArm() {
-	float r = center->GetBoundingRadius();
-	armShape->SetHalfDepth((maxDistance*r / 2) - r);
-	arm.SetBoundingRadius(armShape->GetHalfDepth());
 }

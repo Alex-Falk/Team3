@@ -108,3 +108,24 @@ void SphereCollisionShape::DebugDraw() const
 		lastZ = newZ;
 	}
 }
+
+//phil 13/02/2018
+float SphereCollisionShape::GetRayIntersection(Vector3 origin, Vector3 direction) {
+	Vector3 pos = Parent()->GetPosition();
+	
+	//this part has been translated from haskell
+	//p is the point where the center is perpendicular to the line
+	Vector3 p = origin + (direction * Vector3::Dot(pos - origin, direction));
+	//distance of the center from p
+	float distP = (p - pos).Length();
+	//distance of the first point of intersection from center
+	float d = (p - origin).Length() - sqrt(pow(m_Radius, 2) - pow(distP, 2));
+
+	//if the sphere isn't on the line or the intersection is behind return -1
+	//(this shouldn't happen in the ray collision function but the function might be used in other times)
+	if (distP >= m_Radius || d <= 0) {
+		return -1.0f;
+	}
+	//otherwise return d
+	return d;
+}
