@@ -40,7 +40,7 @@ enum Integrator { ZERO, SYMPLETIC, RK2, RK4 };
 //Nick Bedford
 //Date: 12/02/2018
 //Added an enum to sort nodes
-enum PhysNodeType {DEFAULT_PHYSICS, PROJECTILE, BIG_NODE, PICKUP, PLAYER};
+enum PhysNodeType {DEFAULT_PHYSICS, PROJECTILE, SPRAY, BIG_NODE, PICKUP, PLAYER};
 
 class PhysicsNode;
 

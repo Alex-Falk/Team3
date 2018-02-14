@@ -5,7 +5,7 @@ Projectile::Projectile() : GameObject() {
 }
 
 
-Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, float size, float inverseMass, const std::string& name) : GameObject(name) {
+Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, float size, float inverseMass, PhysNodeType type, const std::string& name) : GameObject(name) {
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
@@ -21,7 +21,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	rnode->SetBoundingRadius(size);
 	pnode->SetLinearVelocity(vel);
 	pnode->SetPosition(pos);
-	pnode->SetType(PROJECTILE);
+	pnode->SetType(type);
 	pnode->SetInverseMass(inverseMass);
 	
 	colour = col;
@@ -47,7 +47,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	destroy = false;
 }
 
-Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, const std::string& name) : GameObject(name) {
+Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, PhysNodeType type, const std::string& name) : GameObject(name) {
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
@@ -71,7 +71,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	rnode->SetBoundingRadius(size.Length());
 	pnode->SetLinearVelocity(vel);
 	pnode->SetPosition(pos);
-	pnode->SetType(PROJECTILE);
+	pnode->SetType(type);
 	pnode->SetInverseMass(inverseMass);
 
 	colour = col;
@@ -113,6 +113,9 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 		return false;
 	}
 	if (collidingObject->GetType() == PROJECTILE) {
+		return false;
+	}
+	if (collidingObject->GetType() == SPRAY) {
 		return false;
 	}
 	if (collidingObject->GetType() == BIG_NODE) {
