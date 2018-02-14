@@ -37,3 +37,11 @@ Build/PC/program_output\.txt
 
 Build/PC/\.vs/PC/v15/
 **/AudioLog.txt
+
+Build/PC/x64/
+
+Build/nclgl/x64/
+
+Build/ncltech/x64/
+
+Build/x64/

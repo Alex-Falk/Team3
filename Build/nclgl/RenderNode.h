@@ -104,6 +104,9 @@ public:
 	}
 	bool 	 IsCollide() { return isCollided; }
 
+	float GetSmoothness() { return smoothness; }
+	void SetSmoothness(float smoothness) { this->smoothness = smoothness; }
+
 protected:
 
 	void RecursiveSetMaterial(Material* mat, RenderNode* renderNode);
@@ -124,5 +127,8 @@ protected:
 	bool		cullFaces = true;
 	string		name;
 	std::vector<RenderNode*>		children;
+
+protected :
+	float smoothness;
 };
 

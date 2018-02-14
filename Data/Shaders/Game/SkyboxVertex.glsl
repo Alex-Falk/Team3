@@ -7,7 +7,7 @@
  ___________)______________          _____
 |                         \          \ U \__      _______
 |        Yesheng Su        \__________\   \/_______\___\_____________
-|        10/02/2018        /          < /_/   ..................... ^`-._
+|        14/02/2018        /          < /_/   ..................... ^`-._
 |_________________________/            `-----------,----,--------------'
                       )                          _/____/_
 -.                .    ):::::::::::::::::::::::::::::.::..:... ..  .
@@ -16,18 +16,21 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
 															
 *****************************************************************************/
-#pragma once
+#version 150 core
 
-#include <nclgl\RenderNode.h>
+uniform mat4 viewMatrix;
+uniform mat4 projMatrix;
+in vec3 position;
 
-class PlayerRenderNode : public RenderNode
-{
-public :
-	PlayerRenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1, 1, 1, 1));
-	virtual ~PlayerRenderNode();
+out Vertex{
+	vec3 normal;
+} OUT;
 
-	void SetIsInAir(bool _IsInAir){}
-	bool GetIsInAir()const { return isInAir; }
-protected:
-	bool isInAir;
-};
+void main(void) {
+	vec3 tempPos = position - vec3(0, 0, 1);
+	tempPos.y = -tempPos.y;
+	OUT.normal = normalize(tempPos) * mat3(viewMatrix);
+	gl_Position = projMatrix * vec4(tempPos, 1.0);
+}
+
+

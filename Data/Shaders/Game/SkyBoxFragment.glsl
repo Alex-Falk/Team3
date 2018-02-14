@@ -7,7 +7,7 @@
  ___________)______________          _____
 |                         \          \ U \__      _______
 |        Yesheng Su        \__________\   \/_______\___\_____________
-|        10/02/2018        /          < /_/   ..................... ^`-._
+|        14/02/2018        /          < /_/   ..................... ^`-._
 |_________________________/            `-----------,----,--------------'
                       )                          _/____/_
 -.                .    ):::::::::::::::::::::::::::::.::..:... ..  .
@@ -16,18 +16,20 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
 															
 *****************************************************************************/
-#pragma once
+# version 150 core
 
-#include <nclgl\RenderNode.h>
+uniform samplerCube cubeTex;
+uniform float brightness;
 
-class PlayerRenderNode : public RenderNode
+in Vertex {
+	vec3 normal;
+} IN;
+
+out vec4 FragColor;
+
+void main()
 {
-public :
-	PlayerRenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1, 1, 1, 1));
-	virtual ~PlayerRenderNode();
+	FragColor = texture(cubeTex, normalize(IN.normal))*brightness;
+}
 
-	void SetIsInAir(bool _IsInAir){}
-	bool GetIsInAir()const { return isInAir; }
-protected:
-	bool isInAir;
-};
+
