@@ -11,8 +11,6 @@
 #include "GameInput.h"
 #include "Game.h"
 
-bool chosen = false;
-
 bool draw_debug = true;
 bool draw_performance = false;
 
@@ -75,7 +73,8 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
-	InitialiseAudioFiles();
+	//AudioSystem::Instance();
+	//InitialiseAudioFiles();
 }
 
 // Print Debug Info
@@ -160,12 +159,12 @@ void HandleKeyboardInputs()
 	uint sceneMax = SceneManager::Instance()->SceneCount();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Y))
 	{
-		if (enet_initialize() != 0)
-		{
-			//Quit(true, "ENET failed to initialize!");
-		}
+		//if (enet_initialize() != 0)
+		//{
+		//	//Quit(true, "ENET failed to initialize!");
+		//}
 
-		Game::Instance()->SetServer();
+		//Game::Instance()->SetServer();
 		SceneManager::Instance()->JumpToScene((sceneIdx + 1) % sceneMax);
 	}
 
@@ -308,7 +307,7 @@ int main()
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
-	Window::GetWindow().LockMouseToWindow(false);
+	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
@@ -361,6 +360,12 @@ int main()
 		timer_update.UpdateRealElapsedTime(dt);
 		timer_render.UpdateRealElapsedTime(dt);
 		timer_audio.UpdateRealElapsedTime(dt);
+
+		//Handle GUI mouseCursor
+		HandleGUIMouseCursor();
+
+		//Handle GUI mouseButton
+		HandleGUIMouseButton();
 
 		//Print Status Entries
 		PrintStatusEntries();

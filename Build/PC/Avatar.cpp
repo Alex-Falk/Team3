@@ -19,13 +19,12 @@
 //          `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"         
+// Nikos Fragkas 05/02/2018
 
 #include "Avatar.h"
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
-#include <ncltech\CommonMeshes.h>
-#include <nclgl\PlayerRenderNode.h>
 Avatar::Avatar()
 {
 	life = maxLife;

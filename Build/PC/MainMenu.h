@@ -117,7 +117,7 @@ public:
 				"startButton"
 			));
 		startButton->setText("CREATE GAME");
-		startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onButtonClicked, this));
+		startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onStartGameClicked, this));
 
 		joinButton = static_cast<CEGUI::PushButton*>(
 			sceneGUI->createWidget("OgreTray/Button",
@@ -236,6 +236,7 @@ public:
 		}
 
 		Game::Instance()->SetServer();
+		SceneManager::Instance()->JumpToScene();
 	}
 
 	void onOptionButtonClicked()
