@@ -374,10 +374,5 @@ LineCollision PhysicsEngine::CastRay(Vector3 origin, Vector3 direction, PhysicsN
 		}
 	}
 
-	//testing 
-	if (r.node) {
-		cout << r.dist << "\n";
-	}
-
 	return r;
 }

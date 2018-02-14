@@ -246,8 +246,7 @@ void CuboidCollisionShape::ConstructCubeHull()
 float CuboidCollisionShape::GetRayIntersection(Vector3 origin, Vector3 direction) {
 	float d = -1.0f;
 
-	std::vector<Vector3> points;
-	//botht the position and the normal of the untranslated face
+	//both the position and the normal of the untranslated face
 	Vector3 vectors[6] = {
 		Vector3(halfDims.x,0,0),
 		Vector3(-halfDims.x,0,0),
@@ -267,9 +266,20 @@ float CuboidCollisionShape::GetRayIntersection(Vector3 origin, Vector3 direction
 		Vector3 diff = point - origin;
 		//first make sure the collision happened on the right side
 		if (Vector3::Dot(diff, direction) > 0) {
-			//TODO check if the point is actually on the square 
-
 			if (d < 0 || diff.Length() < d) {
+				//check if the point is actually on the square
+				Matrix4 inverse = Matrix4::Inverse(Parent()->GetWorldSpaceTransform());
+				Vector3 newPoint = inverse * point;
+				if (abs(vectors[i].x) < 0.001 && (newPoint.x > halfDims.x || newPoint.x < -halfDims.x)) {
+					continue;
+				}
+				if (abs(vectors[i].y) < 0.001 && (newPoint.y > halfDims.y || newPoint.y < -halfDims.y)) {
+					continue;
+				}
+				if (abs(vectors[i].z) < 0.001 && (newPoint.z > halfDims.z || newPoint.z < -halfDims.z)) {
+					continue;
+				}
+				//set d to the new value
 				d = diff.Length();
 			}
 		}
@@ -279,6 +289,5 @@ float CuboidCollisionShape::GetRayIntersection(Vector3 origin, Vector3 direction
 }
 
 Vector3 CuboidCollisionShape::GetPlaneIntersection(Vector3 pCenter, Vector3 pNormal, Vector3 lCenter, Vector3 lDirection) {
-	//magical
 	return lCenter + lDirection * (Vector3::Dot(pNormal, (pCenter - lCenter))) / Vector3::Dot(pNormal, lDirection);
 }
