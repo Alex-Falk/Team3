@@ -1,11 +1,14 @@
+//Michael Davis 14/02/2018
+
 #include "Projectile.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;
+	projectileWorth = 0;
 }
 
 
-Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, float size, float inverseMass, PhysNodeType type, const std::string& name) : GameObject(name) {
+Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, float size, float inverseMass, PhysNodeType type, int projWorth, const std::string& name) : GameObject(name) {
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
@@ -45,9 +48,10 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	SetPhysics(physicsNode);
 	physicsNode->SetName(name);
 	destroy = false;
+	projectileWorth = projWorth;
 }
 
-Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, PhysNodeType type, const std::string& name) : GameObject(name) {
+Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, PhysNodeType type, int projWorth, const std::string& name) : GameObject(name) {
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
@@ -95,6 +99,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	SetPhysics(physicsNode);
 	physicsNode->SetName(name);
 	destroy = false;
+	projectileWorth = projWorth;
 }
 
 Projectile::~Projectile() {
@@ -104,7 +109,9 @@ Projectile::~Projectile() {
 
 //projectiles go through players and pickups currently.
 bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
-	//TODO what happens when a projectile hits another player
+	//TODO add player hit implementation
+	//Don't think theres any way to do it right now as the colliding object isn't linked to the player in anyway
+	//The parent of the colliding object is just a game object with no reference to the actual avatar
 	if (collidingObject->GetType() == PLAYER) {
 		return false;
 	}
