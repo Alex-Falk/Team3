@@ -22,18 +22,6 @@
     <Filter Include="GamePlay\Source">
       <UniqueIdentifier>{27103adf-a3a6-409f-948d-fbfb0f179103}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Networking">
-      <UniqueIdentifier>{03f75dc3-258b-4e3a-b1b5-ff36cfe474a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Gameplay">
-      <UniqueIdentifier>{f3953f96-dbfd-492d-b53e-20d7b73c9e02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Networking\Header Files">
-      <UniqueIdentifier>{267cbb21-2b4f-4124-99be-283f3b236e9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Networking\Source Files">
-      <UniqueIdentifier>{75fe373a-6635-4bd5-bf01-183a03fde668}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Audio">
       <UniqueIdentifier>{d1f0b957-2c52-4d2d-ac44-833bdd9cf1ea}</UniqueIdentifier>
     </Filter>
@@ -46,14 +34,8 @@
     <Filter Include="Audio\Resource Files">
       <UniqueIdentifier>{89a30854-5191-471d-a9b6-e02e4ba035ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="AI">
-      <UniqueIdentifier>{94190c13-82f4-466d-a1b3-c3006dce752d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AI\Header">
-      <UniqueIdentifier>{93293a18-f1f3-45d2-88be-b1f6961bae72}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="AI\Source">
-      <UniqueIdentifier>{b1273f3a-ff52-4b62-be2f-909e1e350bce}</UniqueIdentifier>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{b8902088-ba15-4644-a525-fd1e7d22ec8d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -87,23 +69,6 @@
     <ClInclude Include="MainMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NavMesh.h">
-      <Filter>AI\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Networking\User.h">
-      <Filter>Networking\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Networking\Server.h">
-      <Filter>Networking\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Networking\NetworkCommon.h">
-      <Filter>Networking\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Networking\Client.h">
-      <Filter>Networking\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Weapons.h">
-      <Filter>GamePlay\Header</Filter>
     <ClInclude Include="AudioSystem.h">
       <Filter>Audio\Header</Filter>
     </ClInclude>
@@ -115,6 +80,18 @@
     </ClInclude>
     <ClInclude Include="ControllableAvatar.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\Client.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\NetworkCommon.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\Server.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\User.h">
+      <Filter>Networking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -151,23 +128,20 @@
     <ClCompile Include="Avatar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Networking\Client.cpp">
-      <Filter>Networking\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Networking\NetworkCommon.cpp">
-      <Filter>Networking\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Networking\Server.cpp">
-      <Filter>Networking\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Networking\User.cpp">
-      <Filter>Networking\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Weapons.cpp">
-      <Filter>GamePlay\Source</Filter>
-    </ClCompile>
     <ClCompile Include="ControllableAvatar.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\Client.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\NetworkCommon.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\Server.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\User.cpp">
+      <Filter>Networking</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -150,11 +150,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\networking\Client.h" />
+    <ClInclude Include="..\networking\NetworkCommon.h" />
+    <ClInclude Include="..\networking\Server.h" />
+    <ClInclude Include="..\networking\User.h" />
     <ClInclude Include="Arena.h" />
-    <ClInclude Include="..\Networking\Client.h" />
-    <ClInclude Include="..\Networking\NetworkCommon.h" />
-    <ClInclude Include="..\Networking\Server.h" />
-    <ClInclude Include="..\Networking\User.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Avatar.h" />
     <ClInclude Include="ControllableAvatar.h" />
@@ -169,11 +169,10 @@
     <ClInclude Include="WeaponPickup.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Networking\Client.cpp" />
-    <ClCompile Include="..\Networking\NetworkCommon.cpp" />
-    <ClCompile Include="..\Networking\Server.cpp" />
-    <ClCompile Include="..\Networking\User.cpp" />
-    <ClCompile Include="AudioSystem.cpp" />
+    <ClCompile Include="..\networking\Client.cpp" />
+    <ClCompile Include="..\networking\NetworkCommon.cpp" />
+    <ClCompile Include="..\networking\Server.cpp" />
+    <ClCompile Include="..\networking\User.cpp" />
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Avatar.cpp" />
