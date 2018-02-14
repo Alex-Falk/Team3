@@ -113,8 +113,11 @@ void Server::UpdateUser(float dt)
 
 			if (freeIDs.size() > 0)
 			{
+
 				connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 				SendConnectionID(freeIDs[freeIDs.size() - 1]);
+				enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1],10,10,10);
+
 				freeIDs.pop_back();
 			}
 			else
@@ -170,7 +173,15 @@ void Server::UpdateUser(float dt)
 		}
 		case ENET_EVENT_TYPE_DISCONNECT:
 		{
-			printf(" - Client %d has disconnected.\n", CLIENT_ID);
+			printf(" - Client %d has disconnected.\n", CLIENT_ID + 1);
+			for (uint i = 0; i < connectedIDs.size(); ++i)
+			{
+				if (connectedIDs[i] - 1 == CLIENT_ID)
+				{
+					freeIDs.push_back(connectedIDs[i]);
+					connectedIDs.erase(connectedIDs.begin() + i);
+				}
+			}
 			break;
 		}
 		}
