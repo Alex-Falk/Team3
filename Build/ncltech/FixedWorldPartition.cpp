@@ -167,6 +167,35 @@ void FixedWorldPartition::RemovePhysicsObject(PhysicsNode* obj)
 		{
 			physicsNodes->erase(found_loc);
 		}
+
+		if (root)
+		{
+			RemoveObjectFromNode(root, obj);
+		}
+
+	}
+}
+
+void FixedWorldPartition::RemoveObjectFromNode(Node* node, PhysicsNode* obj)
+{
+	if (node)
+	{
+		if (node->children)
+		{
+			for (int i = 0; i < 8; ++i)
+			{
+				RemoveObjectFromNode(node->children[i], obj);
+			}
+		}
+
+		//Lookup the physics node
+		auto found_loc = std::find(node->elements.begin(), node->elements.end(), obj);
+
+		//If found, remove it from the list
+		if (found_loc != node->elements.end())
+		{
+			node->elements.erase(found_loc);
+		}
 	}
 }
 

@@ -24,6 +24,7 @@
 #include "GamePlay.h"
 #include <ncltech\GameObject.h>
 #include <ncltech\CommonUtils.h>
+#include "Projectile.h"
 
 
 class Avatar
@@ -69,6 +70,7 @@ protected:
 	bool shooting;
 
 	Vector3 velocity;
+	Vector3 lastPos; //used to determine distance travelled each frame for life
 
 	uint playerId;
 
