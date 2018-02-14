@@ -21,7 +21,7 @@ position/orientation each frame.
 #include "PhysicsNode.h"
 #include <vector>
 #include <functional>
-
+#include "CommonMeshes.h"
 
 class Scene;
 class PhysicsEngine;
