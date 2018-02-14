@@ -169,12 +169,15 @@ void Server::UpdateUser(float dt)
 
 	for (uint i = 0; i < 4; ++i)
 	{
-		SendPosition(i);
-		SendLinVelocity(i);
-		SendAngVelocity(i);
-		SendAcceleration(i);
-		SendSize(i);
-		SendScores();
+		if (Game::Instance()->GetPlayer(i))
+		{
+			SendPosition(i);
+			SendLinVelocity(i);
+			SendAngVelocity(i);
+			SendAcceleration(i);
+			SendSize(i);
+			SendScores();
+		}
 	}
 
 }

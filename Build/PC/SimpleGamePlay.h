@@ -23,7 +23,7 @@ class SimpleGamePlay : public Scene
 private:
 
 	float m_AccumTime = 0;
-	Avatar* player;
+	//Avatar* player;
 	Pickup* pickup;
 	CEGUI::ProgressBar* energyBar;
 
@@ -34,7 +34,7 @@ public:
 	~SimpleGamePlay()
 	{
 		TextureManager::Instance()->RemoteAllTexture();
-		delete player;
+		//delete player;
 		delete pickup;
 	}
 

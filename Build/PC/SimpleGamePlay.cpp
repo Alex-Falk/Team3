@@ -24,7 +24,7 @@ void SimpleGamePlay::OnInitializeScene() {
 	this->AddGameObject(ground);
 
 	//player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
-	for (uint i = 0; i < 4; i++) {
+	for (uint i = 0; i < 1; i++) {
 		if (Game::Instance()->GetUser())
 		{
 			Avatar * p = nullptr;
@@ -48,11 +48,14 @@ void SimpleGamePlay::OnInitializeScene() {
 	this->AddGameObject(pickup->GetObj());
 
 	//GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
-	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+	if (Game::Instance()->GetUser())
+	{
+		GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
-	GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));
-	GraphicsPipeline::Instance()->AddPlayerRenderNode(player->GetGameObject()->Render());
+		GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));
+		GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Render());
+	}
 
 	OnInitializeGUI();
 	Scene::OnInitializeScene();
@@ -66,7 +69,8 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	//player->OnPlayerUpdate(dt);
 	for (uint i = 0; i < 4; i++) {
-		Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
+		if (Game::Instance()->GetPlayer(i))
+			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
 	}
 
 	if (pickup)
@@ -76,7 +80,8 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
-	energyBar->setProgress(player->GetLife()/100.0f);
+	if (Game::Instance()->GetUser())
+		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife()/100.0f);
 }
 
 void SimpleGamePlay::OnCleanupScene()
@@ -111,7 +116,8 @@ void SimpleGamePlay::OnInitializeGUI()
 			"energyBar"
 		));
 
-	energyBar->setProgress(player->GetLife()/100.0f);
+	if (Game::Instance()->GetUser())
+		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife()/100.0f);
 }
 
 void SimpleGamePlay::onButtonClicked()

@@ -10,6 +10,7 @@
 #include "GamePlay.h"
 #include "Pickup.h"
 #include "Avatar.h"
+#include "Game.h"
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
@@ -226,6 +227,15 @@ public:
 
 	void onButtonClicked() {
 		SceneManager::Instance()->JumpToScene();
+	}
+
+	void onStartGameClicked() {
+		if (enet_initialize() != 0)
+		{
+			//Quit(true, "ENET failed to initialize!");
+		}
+
+		Game::Instance()->SetServer();
 	}
 
 	void onOptionButtonClicked()
