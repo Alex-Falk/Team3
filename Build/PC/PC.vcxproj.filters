@@ -34,6 +34,9 @@
     <Filter Include="Audio\Resource Files">
       <UniqueIdentifier>{89a30854-5191-471d-a9b6-e02e4ba035ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{14bfba3d-6c0b-4fcc-85da-07eb93980237}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePlay.h">
@@ -63,9 +66,6 @@
     <ClInclude Include="WeaponPickup.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="AudioSystem.h">
       <Filter>Audio\Header</Filter>
     </ClInclude>
@@ -77,6 +77,9 @@
     </ClInclude>
     <ClInclude Include="ControllableAvatar.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

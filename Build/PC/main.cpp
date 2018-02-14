@@ -311,6 +311,12 @@ void HandleGUIMouseButton()
 	GraphicsPipeline::Instance()->HandleLeftMouseButtonHold(Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
 }
 
+//Handle GUI text input
+void HandleGUITextInput()
+{
+	
+}
+
 // Program Entry Point
 int main()
 {

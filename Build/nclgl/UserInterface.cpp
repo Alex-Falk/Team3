@@ -68,40 +68,91 @@ void GUI::HideMouseCursor()
 }
 
 
-void GUI::HandleInput(int _case)
+void GUI::HandleTextInput(KeyboardKeys pressedKey)
 {
-	switch (_case)
+	CEGUI::utf32 codePoint = 61;
+	switch (pressedKey)
 	{
-		//Detect if the mouse has moved
-	case 1:
-		//m_context->injectMousePosition();
+	case KEYBOARD_A:
+		m_context->injectChar(61);
 		break;
-
-		//Detect keyboard key has been pressed down
-	case 2:
-		//m_context->injectKeyDown();
+	case KEYBOARD_B:
+		m_context->injectChar(62);
 		break;
-
-		//Detect if the keyboard key released
-	case 3:
-		//m_context->injectKeyUp();
+	case KEYBOARD_C:
+		m_context->injectChar(63);
 		break;
-
-		//Detect unicode input
-	case 4:
-
+	case KEYBOARD_D:
+		m_context->injectChar(64);
 		break;
-
-		//Detect if mouse button pressed
-	case 5:
-		//m_context->injectMouseButtonDown();
+	case KEYBOARD_E:
+		m_context->injectChar(65);
 		break;
-
-		//Detect if mouse button released
-	case 6:
-		//m_context->injectMouseButtonUp();
+	case KEYBOARD_F:
+		m_context->injectChar(66);
 		break;
-
+	case KEYBOARD_G:
+		m_context->injectChar(67);
+		break;
+	case KEYBOARD_H:
+		m_context->injectChar(68);
+		break;
+	case KEYBOARD_I:
+		m_context->injectChar(69);
+		break;
+	case KEYBOARD_J:
+		m_context->injectChar(70);
+		break;
+	case KEYBOARD_K:
+		m_context->injectChar(71);
+		break;
+	case KEYBOARD_L:
+		m_context->injectChar(72);
+		break;
+	case KEYBOARD_M:
+		m_context->injectChar(73);
+		break;
+	case KEYBOARD_N:
+		m_context->injectChar(74);
+		break;
+	case KEYBOARD_O:
+		m_context->injectChar(75);
+		break;
+	case KEYBOARD_P:
+		m_context->injectChar(76);
+		break;
+	case KEYBOARD_Q:
+		m_context->injectChar(77);
+		break;
+	case KEYBOARD_R:
+		m_context->injectChar(78);
+		break;
+	case KEYBOARD_S:
+		m_context->injectChar(79);
+		break;
+	case KEYBOARD_T:
+		m_context->injectChar(80);
+		break;
+	case KEYBOARD_U:
+		m_context->injectChar(81);
+		break;
+	case KEYBOARD_V:
+		m_context->injectChar(82);
+		break;
+	case KEYBOARD_W:
+		m_context->injectChar(83);
+		break;
+	case KEYBOARD_X:
+		m_context->injectChar(84);
+		break;
+	case KEYBOARD_Y:
+		m_context->injectChar(85);
+		break;
+	case KEYBOARD_Z:
+		m_context->injectChar(86);
+		break;
+	default:
+		break;
 	}
 }
 

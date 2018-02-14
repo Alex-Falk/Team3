@@ -1,8 +1,12 @@
-/***************************************************************
+/*********************************************************************************
 Author: Jeffery Zhou
 Data: 2018-02-08
 Basic Class for setup CEGUI
-*/
+Give the basic communication access to mouse and keyboard for further interaction
+***********************************************************************************/
+
+//TODO:
+//Create Keyboard Text inputting function
 
 #pragma once
 #include <nclgl\Vector4.h>
@@ -24,7 +28,8 @@ public:
 	void ShowMouseCursor();
 	void HideMouseCursor();
 
-	void HandleInput(int _case);
+	//HandleTextInput
+	void HandleTextInput(KeyboardKeys pressedKey);
 
 	//HandleMousePosition
 	void HandleMousePosition(float x, float y);
@@ -33,12 +38,14 @@ public:
 	void onMouseButtonPressed(MouseButtons button);
 	void onMouseButtonHold(bool isHold);
 
+	//Load style for the GUI
 	void LoadScheme(const std::string& schemeFile);
+
 	void SetFont(const std::string& fontFile);
 
+	//GUI create helper function
 	CEGUI::Window* createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name = "");
 
-	//Getter
 	static CEGUI::OpenGL3Renderer* GetRenderer() { return m_renderer; }
 	const CEGUI::GUIContext* GetContext() { return m_context; }
 protected:
