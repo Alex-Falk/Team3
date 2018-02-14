@@ -46,6 +46,7 @@ private:
 	CEGUI::PushButton* DebugButton;
 
 	//Testing text box for creating game
+	CEGUI::Combobox* textBox;
 public:
 
 	//Exit Button
@@ -125,60 +126,29 @@ public:
 
 		SetUpMainMenu();
 		SetUpOptionMenu();
+		SetUpCreateGameMenu();
 		HideOptionMenu();
 	}
 
-	//GUI interation event
-	void onButtonClicked() {
-		SceneManager::Instance()->JumpToScene();
-	}
-
-	void onOptionButtonClicked()
+	void onOptionButtonClicked(){HideMainMenu();ShowOptionMenu1();}
+	void onCreateGameButtonClicked()
 	{
 		HideMainMenu();
-		ShowOptionMenu1();
+		
 	}
 
-	void OnOptionMenuBackClicked()
-	{
-		ShowMainMenu();
-		HideOptionMenu();
-	}
-
-	void onMasterVolumnChanged()
-	{
-		float temp = masterVolumnSlider->getCurrentValue();
-		AudioSystem::Instance()->SetMasterVolume(temp);
-	}
-
-	void onGameSoundVolumnChanged()
-	{
-		float temp = GameSoundsSlider->getCurrentValue();
-		AudioSystem::Instance()->SetGameSoundsVolume(temp);
-	}
-
-	void onMusicVolumnChanged()
-	{
-		float temp = MusicSlider->getCurrentValue();
-		AudioSystem::Instance()->SetGameSoundsVolume(temp);
-	}
-
-	void OnEnableVsyncClicked()
-	{
-		GraphicsPipeline::Instance()->SetVsyncEnabled(true);
-	}
-
-	void OnDisableVsyncClicked()
-	{
-		GraphicsPipeline::Instance()->SetVsyncEnabled(false);
-	}
-
-	void OnDebugRenderClicked()
-	{
-		GraphicsPipeline::Instance()->SetIsMainMenu(!GraphicsPipeline::Instance()->GetIsMainMenu());
-	}
+	void OnOptionMenuBackClicked(){ShowMainMenu();HideOptionMenu();}
+	void onMasterVolumnChanged(){float temp = masterVolumnSlider->getCurrentValue();AudioSystem::Instance()->SetMasterVolume(temp);}
+	void onGameSoundVolumnChanged(){float temp = GameSoundsSlider->getCurrentValue();AudioSystem::Instance()->SetGameSoundsVolume(temp);}
+	void onMusicVolumnChanged(){float temp = MusicSlider->getCurrentValue();AudioSystem::Instance()->SetGameSoundsVolume(temp);}
+	//GUI interation event
+	void onButtonClicked() { SceneManager::Instance()->JumpToScene(); }
+	void OnEnableVsyncClicked() {GraphicsPipeline::Instance()->SetVsyncEnabled(true);}
+	void OnDisableVsyncClicked() {GraphicsPipeline::Instance()->SetVsyncEnabled(false);}
+	void OnDebugRenderClicked() {GraphicsPipeline::Instance()->SetIsMainMenu(!GraphicsPipeline::Instance()->GetIsMainMenu());}
 
 	//GUI setting up helper function
+	// 1. Setting up Main Menu
 	void SetUpMainMenu()
 	{
 		//Create Push Button handle
@@ -220,6 +190,8 @@ public:
 		exitButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::Quit, this));
 	}
 
+
+	// 2. Setting up option Menu
 	void SetUpOptionMenu()
 	{
 		OptionMenuBack = static_cast<CEGUI::PushButton*>(
@@ -324,6 +296,7 @@ public:
 				"VsyncText"
 			));
 		VsyncText->setText("Vsync Setting");
+		VsyncText->disable();
 
 		enableVsync = static_cast<CEGUI::RadioButton*>(
 			sceneGUI->createWidget("OgreTray/RadioButton",
@@ -352,7 +325,25 @@ public:
 		DebugButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDebugRenderClicked, this));
 	}
 
+	//Setting up Create Game Function
+	void SetUpCreateGameMenu()
+	{
+		textBox = static_cast<CEGUI::Combobox*>(
+			sceneGUI->createWidget("OgreTray/Combobox",
+				Vector4(0.10f, 0.65f, 0.2f, 0.1f),
+				Vector4(),
+				"textBox")
+		);
+		textBox->disable();
+		textBox->setVisible(false);
+	}
+
 	//GUI Menu switch helper function
+	void ShowCreateMainMenu()
+	{
+		
+	}
+
 	void ShowMainMenu()
 	{
 		//Enable Main Menu
