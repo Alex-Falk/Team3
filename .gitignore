@@ -48,3 +48,5 @@ Build/ncltech/x64/Release/
 Build/PC/x64/Release/
 
 *.exe
+
+Build/PC/x64/Debug/
