@@ -141,24 +141,23 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	}
 
 	RenderNode* rnode = new RenderNode();
-	float radius = 1.0f;
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), Vector4(0.5, 0.5, 0.5, 1.0));
-	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), colour);
+	dummy->SetTransform(Matrix4::Scale(Vector3(s, s, s)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 
 	rnode->AddChild(dummy);
 
-	rnode->SetTransform(Matrix4::Translation(Vector3(0.0f, 1.0f, 0.0f)));
-	rnode->SetBoundingRadius(radius);
+	rnode->SetTransform(Matrix4::Translation(pos));
+	rnode->SetBoundingRadius(s);
 
 	PhysicsNode* pnode = NULL;
 	pnode = new PhysicsNode();
-	pnode->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
+	pnode->SetPosition(pos);
 	pnode->SetInverseMass(1.0f);
-	pnode->SetBoundingRadius(radius);
+	pnode->SetBoundingRadius(s);
 	pnode->SetType(PLAYER);
-	CollisionShape* pColshape = new SphereCollisionShape(radius);
+	CollisionShape* pColshape = new SphereCollisionShape(s);
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1.0f));
 

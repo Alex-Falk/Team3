@@ -24,7 +24,7 @@ void SimpleGamePlay::OnInitializeScene() {
 	this->AddGameObject(ground);
 
 	//player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
-	for (uint i = 0; i < 1; i++) {
+	for (uint i = 0; i < 4; i++) {
 		if (Game::Instance()->GetUser())
 		{
 			Avatar * p = nullptr;
