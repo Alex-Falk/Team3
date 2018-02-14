@@ -84,22 +84,22 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	canJump = false;
 	
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		NCLDebug::Log("Pistol Activated");
-		weapon = PAINT_PISTOL;
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		NCLDebug::Log("Rocket Activated");
-		weapon = PAINT_ROCKET;
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-		NCLDebug::Log("Spray Activated");
-		weapon = PAINT_SPRAY;
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-		NCLDebug::Log("Auto Activated");
-		weapon = AUTO_PAINT_LAUNCHER;
-	}
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+	//	NCLDebug::Log("Pistol Activated");
+	//	weapon = PAINT_PISTOL;
+	//}
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+	//	NCLDebug::Log("Rocket Activated");
+	//	weapon = PAINT_ROCKET;
+	//}
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+	//	NCLDebug::Log("Spray Activated");
+	//	weapon = PAINT_SPRAY;
+	//}
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+	//	NCLDebug::Log("Auto Activated");
+	//	weapon = AUTO_PAINT_LAUNCHER;
+	//}
 
 	if (Input::GetInput()->GetInput(SHOOT))
 	{

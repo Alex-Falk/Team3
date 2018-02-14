@@ -157,6 +157,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Projectile.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
+    <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />
   </ItemGroup>

@@ -24,7 +24,10 @@ Build/**/*.lib
 Build/**/*.exe
 *.iobj
 *.ipdb
+Build/**/**/*.obj
 Build/**/**/*.lib
+Build/**/**/**/*.obj
+Build/**/**/**/*.lib
 
 Build/nclgl/Debug/
 
@@ -37,3 +40,11 @@ Build/PC/program_output\.txt
 
 Build/PC/\.vs/PC/v15/
 **/AudioLog.txt
+
+Build/nclgl/x64/Release/
+
+Build/ncltech/x64/Release/
+
+Build/PC/x64/Release/
+
+*.exe

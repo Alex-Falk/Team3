@@ -26,6 +26,7 @@
 #include "GameInput.h"
 #include <ncltech\CommonMeshes.h>
 #include <nclgl\PlayerRenderNode.h>
+#include "Projectile.h"
 Avatar::Avatar()
 {
 	life = maxLife;
@@ -303,7 +304,7 @@ void Avatar::Spray()
 		float c = rand() % 10;
 		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 3;
 
-		Projectile * spray = new Projectile(col, colour, { 2, 10, 2 }, { 0,0,0 }, 0.5f, 1.0f, "Spray");
+		Projectile * spray = new Projectile(col, colour, playerGameObject->Physics()->GetPosition(), direction, 0.5f, 1.0f, "Spray");
 	
 	  SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
 	

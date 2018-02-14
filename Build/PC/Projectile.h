@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../ncltech/GameObject.h"
+#include <ncltech/GameObject.h>
 #include "Gameplay.h"
-#include "../ncltech/SceneManager.h"
-#include "../ncltech/SphereCollisionShape.h"
-#include "../ncltech/CuboidCollisionShape.h"
+#include <ncltech/SceneManager.h>
+#include <ncltech\SphereCollisionShape.h>
+#include <ncltech\CuboidCollisionShape.h>
 
 
 class Projectile : public GameObject {
