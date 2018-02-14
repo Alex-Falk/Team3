@@ -1,5 +1,7 @@
 #include "WeaponPickup.h"
 #include "SimpleGamePlay.h"
+#include "GamePlay.h"
+
 
 void SimpleGamePlay::OnInitializeScene() {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
@@ -11,7 +13,7 @@ void SimpleGamePlay::OnInitializeScene() {
 	GameObject* ground = CommonUtils::BuildCuboidObject(
 		"Ground",
 		Vector3(0.0f, 0.0f, 0.0f),
-		Vector3(40.0f, 1.0f, 40.0f),
+		Vector3(DIMENSION_X, 1.0f, DIMENSION_Y),
 		true,
 		0.0f,
 		true,
@@ -22,18 +24,20 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	player = new ControllableAvatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
+	//BuildGroundScore();
+
+	player = new ControllableAvatar(Vector3(4.0, 7.0, 300.0), START_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 
-	pickup = new Pickup(Vector3(0, 3, 0), SPEED_BOOST);
+	pickup = new Pickup(Vector3(0, 3, 0), JUMP_BOOST);
 
 	this->AddGameObject(pickup->GetObj());
 
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
-	GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));
+	GraphicsPipeline::Instance()->InitPath(Vector2(DIMENSION_X, DIMENSION_Y));
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(player->GetGameObject()->Render());
 
 	OnInitializeGUI();
@@ -52,6 +56,10 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	{
 		pickup->Update(dt);
 	}
+
+	//UpdateGroundScore(groundScore, player->GetPosition(),player->GetSize());
+
+	//PrintScore();
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 

@@ -1,5 +1,8 @@
 #pragma once
 
+// Level dimensions
+#define DIMENSION_X (80.0f)
+#define DIMENSION_Y (80.0f)
 
 #define DEFAULT_COLOUR Vector4(0.5f, 0.5f, 0.5f, 1.0f)
 #define GREEN_COLOUR Vector4(0.0f, 1.0f, 0.0f, 1.0f)
@@ -18,7 +21,7 @@ enum Colour
 //Added PickupType
 enum PickupType 
 {
-	SPEED_BOOST, JUMP_BOOST, WEAPON 
+	SPEED_BOOST, JUMP_BOOST, WEAPON
 };
 
 //Name: Nick Bedford

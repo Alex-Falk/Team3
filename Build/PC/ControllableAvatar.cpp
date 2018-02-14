@@ -56,29 +56,22 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 
 		if (Input::GetInput()->GetInput(FORWARD)) { 		//Front
 			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -10) * speed;
-			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-2, 0, 0) *dt* speed;
 		}
 		if (Input::GetInput()->GetInput(BACKWARD)) {		//Back
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 10) * speed;
-			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(2, 0, 0) * dt * speed;
 		}
 		if (Input::GetInput()->GetInput(LEFT)) {		//Left
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-10, 0, 0) * speed;
-			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 2)*dt* speed;
 		}
 		if (Input::GetInput()->GetInput(RIGHT)) {		//Right
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(10, 0, 0) * speed;
-			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -2)*dt* speed;
 		}
 		force.y = 0;
-		if (force != Vector3(0, 0, 0)) {
-			playerGameObject->Physics()->SetAngularVelocity(velocity);
-		}
 	}
 
 	if (Input::GetInput()->GetInput(JUMP) && canJump) 
 	{		//Jump
-		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /3.0f, jumpImpulse, force.z / 3.0f));
+		force +=(Vector3(-abs(force.x /2.0f), jumpImpulse, -abs(force.z / 2.0f)));
 		inAir = true;
 	}
 	canJump = false;
@@ -105,11 +98,6 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	{
 		shooting = true;
 	}
-
-	if (force.x > maxForce)force.x = maxForce;
-	if (force.x < -maxForce)force.x = -maxForce;
-	if (force.z > maxForce)force.z = maxForce;
-	if (force.z < -maxForce)force.z = -maxForce;
 	playerGameObject->Physics()->SetForce(force);
 
 }
