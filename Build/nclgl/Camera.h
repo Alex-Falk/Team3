@@ -30,7 +30,7 @@ public:
 		pitch = 0.0f;
 		free = false;
 		center = nullptr;
-		maxDistance = 10.0f;
+		maxDistance = 1000.0f;
 		minDistance = 1.0f;
 		distance = (maxDistance + minDistance) / 2;
 		armShape = new CuboidCollisionShape();
@@ -54,7 +54,7 @@ public:
 	//to a vertex shader (i.e it's already an 'inverse camera matrix').
 	Matrix4 BuildViewMatrix();
 	Vector3 GetViewDirection();
-	Vector3 GetUpDirection();
+	Vector3 GetUpDirection();
 
 	//Gets position in world space
 	inline const Vector3& GetPosition() const { return position; }

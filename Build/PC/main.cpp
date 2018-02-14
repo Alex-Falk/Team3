@@ -3,10 +3,10 @@
 #include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
-
-#include "SimpleGamePlay.h"
-#include "Arena.h"
 #include "AudioSystem.h"
+#include "SimpleGamePlay.h"
+#include "MainMenu.h"
+#include "Arena.h"
 #include "GameInput.h"
 #include "Game.h"
 
@@ -20,6 +20,8 @@ bool show_perf_metrics = false;
 PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio;
 uint shadowCycleKey = 4;
 
+//Prevent multiple clicking from happening
+int fpsCounter = 6;
 
 // Program Deconstructor
 //  - Releases all global components and memory
@@ -45,7 +47,6 @@ void Quit(bool error = false, const std::string &reason = "") {
 void InitialiseAudioFiles() {
 	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
 	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
-	AudioSystem::Instance()->SetMusicVolume(0.3f);
 }
 
 // Program Initialise
@@ -64,8 +65,9 @@ void Initialize()
 	PhysicsEngine::Instance();
 
 	//Enqueue All Scenes
+	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
+	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
 	AudioSystem::Instance();
 
@@ -233,6 +235,33 @@ void HandleKeyboardInputs()
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
 
 	}
+
+	//audio test functionality
+	//TODO remove this when finished testing
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {
+		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
+		AudioSystem::Instance()->StopAllSounds();
+	}
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
+		AudioSystem::Instance()->UnmuteAllSounds();
+	}
 	//toggle the camera
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {
 		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
@@ -257,22 +286,49 @@ void HandleKeyboardInputs()
 //	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
+void HandleGUIMouseCursor()
+{
+	Vector2 absPos;
+	Window::GetWindow().GetMouseScreenPos(&absPos);
+	GraphicsPipeline::Instance()->HandleGUIMousePosition(absPos.x, absPos.y);
+}
+
+void HandleGUIMouseButton()
+{
+	fpsCounter++;
+	if (fpsCounter > 5) {
+		if (Window::GetMouse()->ButtonDown(MOUSE_LEFT))
+		{
+			GraphicsPipeline::Instance()->HandleMouseButton(MOUSE_LEFT);
+		}
+		else if (Window::GetMouse()->ButtonDown(MOUSE_RIGHT))
+		{
+			GraphicsPipeline::Instance()->HandleMouseButton(MOUSE_RIGHT);
+		}
+		fpsCounter = 0;
+	}
+
+	GraphicsPipeline::Instance()->HandleLeftMouseButtonHold(Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
+}
+
 // Program Entry Point
 int main()
 {
-	Game::Instance();
 	//Initialize our Window, Physics, Scenes etc
 	Initialize();
-	GraphicsPipeline::Instance()->SetVsyncEnabled(false);
+	Game::Instance();
+	GraphicsPipeline::Instance()->SetVsyncEnabled(true);
 
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
 	Window::GetWindow().LockMouseToWindow(true);
+	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
-	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
+	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
+		&& SceneManager::Instance()->GetExitButtonClicked() == false) 
+	{
 		//Start Timing
-		
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
 																		//Update Performance Timers (Show results every second)
 		timer_total.UpdateRealElapsedTime(dt);
@@ -280,6 +336,12 @@ int main()
 		timer_update.UpdateRealElapsedTime(dt);
 		timer_render.UpdateRealElapsedTime(dt);
 		timer_audio.UpdateRealElapsedTime(dt);
+
+		//Handle GUI mouseCursor
+		HandleGUIMouseCursor();
+
+		//Handle GUI mouseButton
+		HandleGUIMouseButton();
 
 		//Print Status Entries
 		PrintStatusEntries();

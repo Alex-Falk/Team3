@@ -107,7 +107,8 @@ GameObject* CommonUtils::BuildSphereObject(
 	bool collidable,
 	bool dragable,
 	PhysNodeType objectType,
-	const Vector4& color)
+	const Vector4& color,
+	MATERIALTYPE matType)
 {
 	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
 	// and a parent node that will contain the world transform/physics transform
@@ -115,6 +116,9 @@ GameObject* CommonUtils::BuildSphereObject(
 
 	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), color);
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
+
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
+
 	rnode->AddChild(dummy);
 
 	rnode->SetTransform(Matrix4::Translation(pos));
@@ -165,7 +169,7 @@ GameObject* CommonUtils::BuildCuboidObject(
 	bool dragable,
 	PhysNodeType objectType,
 	const Vector4& color,
-	GLuint tex)
+	MATERIALTYPE matType)
 {
 	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
 	// and a parent node that will contain the world transform/physics transform
@@ -179,7 +183,7 @@ GameObject* CommonUtils::BuildCuboidObject(
 	
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
-	
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
 
 	rnode->AddChild(dummy);
 
@@ -239,7 +243,8 @@ GameObject* CommonUtils::BuildPlaneObject(
 	bool collidable,
 	bool dragable,
 	PhysNodeType objectType,
-	const Vector4& color)
+	const Vector4& color,
+	MATERIALTYPE matType)
 {
 	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
 	// and a parent node that will contain the world transform/physics transform
@@ -247,6 +252,9 @@ GameObject* CommonUtils::BuildPlaneObject(
 
 	RenderNode* dummy = new RenderNode(Mesh::GenerateQuad(), color);
 	dummy->SetTransform(Matrix4::Scale(halfdims));
+
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
+
 	rnode->AddChild(dummy);
 
 	rnode->SetTransform(Matrix4::Translation(pos));

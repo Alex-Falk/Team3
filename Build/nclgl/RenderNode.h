@@ -24,6 +24,8 @@ _-_-_-_-_-_-_-""  ""
 #include "Mesh.h"
 #include <vector>
 
+class Material;
+
 class RenderNode	{
 public:
 	 RenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1,1,1,1));
@@ -34,7 +36,7 @@ public:
 		return (this->mesh != NULL);
 	}
 
-	virtual void DrawOpenGL(bool isShadowPass);
+	virtual void DrawOpenGL(bool isShadowPass, Material* tempMat = nullptr);
 
 
 	void			SetTransform(const Matrix4 &matrix) { transform = matrix;}
@@ -70,6 +72,9 @@ public:
 	float			GetCameraDistance() const	{return distanceFromCamera;}
 	void			SetCameraDistance(float f)	{distanceFromCamera = f;}
 
+	Material*		GetMaterial()const			{ return material; }
+	void			SetMaterial(Material* mat, bool isSetChild = false);
+
 	void			SetMesh(Mesh*m)				{mesh = m;}
 	Mesh*			GetMesh()					{return mesh;}
 
@@ -100,6 +105,9 @@ public:
 	bool 	 IsCollide() { return isCollided; }
 
 protected:
+
+	void RecursiveSetMaterial(Material* mat, RenderNode* renderNode);
+
 	Matrix4		worldTransform;
 	Matrix4		transform;
 	RenderNode*	parent;
@@ -109,6 +117,7 @@ protected:
 	Vector4		baseColor;
 	Vector4		collideColor;
 	Vector3		modelScale;
+	Material*	material;
 	Mesh*		mesh;
 	bool		awake;
 	bool		isCollided = false;

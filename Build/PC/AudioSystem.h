@@ -20,13 +20,13 @@ public:
 	void Create2DSound(int index, const char* pFile);
 	void Create3DSound(int index, const char* pFile, float minDist, float maxDist); //minDist is when attenuation starts, maxDist is when sound is inaudible 
 
-	//makes the sound a stream. For larger files that may take a while to load
-	//can't have multiple streams in 1 channel, mainly for music
+																					//makes the sound a stream. For larger files that may take a while to load
+																					//can't have multiple streams in 1 channel, mainly for music
 	void Create2DStream(int index, const char* pFile);
 	void Create3DStream(int index, const char* pFile, float minDist, float maxDist);
 
 	//plays a certain sound, works for both sounds and streams
-	void PlaySound(int index, bool loop = false, Vector3 position = { 0.f, 0.f, 0.f }, Vector3 velocity = {0.f, 0.f, 0.f});
+	void PlaySound(int index, bool loop = false, Vector3 position = { 0.f, 0.f, 0.f }, Vector3 velocity = { 0.f, 0.f, 0.f });
 
 	//memory management, will delete the sound
 	void ReleaseSound(int index);
@@ -51,6 +51,11 @@ public:
 	void SetMasterVolume(float f);
 	void SetGameSoundsVolume(float f);
 	void SetMusicVolume(float f);
+
+	//added by Jeffery, get volumes
+	float GetMasterVolume() { return masterVolume; }
+	float GetGameSoundsVolume() { return gameSoundsVolume; }
+	float GetMusicVolume() { return musicVolume; }
 
 	//call each frame to update the audiosystem and pass in camera parameters
 	void Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 cameraUp, float dt);

@@ -29,10 +29,7 @@ enum WeaponType
 	PAINT_SPRAY, PAINT_PISTOL, AUTO_PAINT_LAUNCHER, PAINT_ROCKET, NUM_OF_WEAPONS
 };
 
-
+//Game music should always be the last music. So if you add more music, put it before Game music
 enum Audio {
 	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND
 };
-
-
-

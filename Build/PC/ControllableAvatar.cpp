@@ -24,127 +24,24 @@
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
+#include <ncltech\CommonMeshes.h>
+#include <nclgl\PlayerRenderNode.h>
+#include <nclgl\common.h>
 
-ControllableAvatar::ControllableAvatar()
+//I blame Microsoft...
+#define max(a,b)    (((a) > (b)) ? (a) : (b))
+#define min(a,b)    (((a) < (b)) ? (a) : (b))
+
+ControllableAvatar::ControllableAvatar() : Avatar()
 {
-	life = maxLife;
-
-	playerGameObject = CommonUtils::BuildSphereObject("Player",
-		Vector3(0.0f, 1.0f, 0.0f),
-		1.0f,									//Radius
-		true,									//Has Physics Object
-		1.0f,
-		true,									//Has Collision Shape
-		false,									//Dragable by the user
-		PLAYER,
-		Vector4(0.5, 0.5, 0.5, 1.0));	//Color
-	canJump = true;
-	canShoot = true;
-
-	playerGameObject->Physics()->SetElasticity(0);
-
-	playerId = 0;
-	shootCooldown = 0.0f;
-
-	standardSpeed = 5.0f;
-	speed = standardSpeed;
-	boostedSpeed = standardSpeed * 20;
-	
-	maxForce = 30;
-	
-	minLife = 10;
-	maxLife = 100;
-	life = maxLife;
-
-	standardJumpImpulse = 10.0f;
-	jumpImpulse = standardJumpImpulse;
-	boostedJumpImpulse = standardJumpImpulse * 2;
-	shooting = false;
-	weapon = NUM_OF_WEAPONS;
-	boostactiveTime = 15.0f;
 }
 
 ControllableAvatar::~ControllableAvatar()
 {
 }
 
-ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s)
+ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) : Avatar(pos, c, id, s)
 {
-	col = c;
-	size = s;
-	
-	speed = 5;
-	maxForce = 30;
-	
-	minLife = 10;
-	maxLife = 100;
-	life = maxLife;
-
-	jumpImpulse = 10.0f;
-	boostactiveTime = 15.0f;
-	shootCooldown = 0.0f;
-
-	canJump = true;
-	canShoot = true;
-	shooting = false;
-
-	switch (c)
-	{
-	case START_COLOUR:
-	{
-		colour = DEFAULT_COLOUR;
-	}
-	case GREEN:
-	{
-		colour = GREEN_COLOUR;
-	}
-	break;
-	case BLUE:
-	{
-		colour = BLUE_COLOUR;
-	}
-	break;
-	case RED:
-	{
-		colour = RED_COLOUR;
-	}
-	break;
-	case PINK
-		:
-	{
-		colour = PINK_COLOUR;
-	}
-		break;
-	default:
-	{
-		colour = DEFAULT_COLOUR;
-	}
-		break;
-	}
-
-	playerGameObject = CommonUtils::BuildSphereObject("Player",
-		Vector3(0.0f, 1.0f*s, 0.0f) + pos,
-		1.0f * size,							//Radius
-		true,									//Has Physics Object
-		1.0f,
-		true,									//Has Collision Shape
-		false,									//Dragable by the user
-		PLAYER,
-		colour);								//Colour
-
-	playerGameObject->Physics()->SetElasticity(0);
-
-	playerGameObject->Physics()->SetOnCollisionCallback(
-		std::bind(&Avatar::PlayerCallbackFunction,
-			this,							//Any non-placeholder param will be passed into the function each time it is called
-			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
-			std::placeholders::_2
-		)
-	);
-
-	weapon = NUM_OF_WEAPONS;
-	playerId = id;
-
 }
 
 

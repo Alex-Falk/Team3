@@ -6,7 +6,7 @@ TextureManager::TextureManager()
 
 TextureManager::~TextureManager()
 {
-	RemoveAllTexture();
+	RemoteAllTexture();
 }
 
 bool TextureManager::LoadTexture(TEXTURETYPE type, std::string address, int wrap, int filter)
@@ -46,7 +46,7 @@ bool TextureManager::RemoteTexture(TEXTURETYPE type)
 	return true; // remote succeed
 }
 
-bool TextureManager::RemoveAllTexture()
+bool TextureManager::RemoteAllTexture()
 {
 	for (TextureMap::iterator i = textures.begin(); i != textures.end(); ++i)
 	{

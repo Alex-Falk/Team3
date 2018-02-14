@@ -76,6 +76,9 @@ void SceneManager::JumpToScene(int idx)
 	scene->OnInitializeScene();
 	Window::GetWindow().SetWindowTitle("NCLTech - [%d/%d] %s", idx + 1, m_vpAllScenes.size(), scene->GetSceneName().c_str());
 	NCLLOG("[SceneManager] - Scene switched to: \"%s\"", scene->GetSceneName().c_str());
+
+	//Set GUI for individual Scene
+	GraphicsPipeline::Instance()->SetCurrentSceneGUI(scene->getSceneGUIPointer());
 }
 
 void SceneManager::JumpToScene(const std::string& friendly_name)

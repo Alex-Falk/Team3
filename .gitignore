@@ -26,6 +26,13 @@ Build/**/*.exe
 *.ipdb
 Build/**/**/*.lib
 
+Build/nclgl/Debug/
+
+Build/nclgl/Release/
+
+Build/ncltech/Release/
+Build/ncltech/x64/Debug/
+
 Build/PC/program_output\.txt
 
 Build/PC/\.vs/PC/v15/

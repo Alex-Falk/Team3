@@ -17,10 +17,10 @@ AudioSystem::AudioSystem() {
 		std::cout << "No Audio Driver Detected!" << std::endl;
 	}
 
-	listenerPos =	   { 0.0f, 0.0f, 0.0f };
-	listenerLastPos =  { 0.0f, 0.0f, 0.0f };
-	listenerForward =  { 0.0f, 0.0f, 1.0f };
-	listenerUp =       { 0.0f, 1.0f, 0.0f };
+	listenerPos = { 0.0f, 0.0f, 0.0f };
+	listenerLastPos = { 0.0f, 0.0f, 0.0f };
+	listenerForward = { 0.0f, 0.0f, 1.0f };
+	listenerUp = { 0.0f, 1.0f, 0.0f };
 	listenerVelocity = { 0.0f, 0.0f, 0.0f };
 
 	masterVolume = 1.0f;
@@ -40,12 +40,8 @@ AudioSystem::AudioSystem() {
 	result = audioSystem->getMasterChannelGroup(&masterGroup);
 	myfile << "Created Master channel group: " << result << std::endl;
 	result = masterGroup->addGroup(gameSoundsGroup);
-	myfile << "Added GameSounds group to master group: " << result << std::endl;
-	result = masterGroup->addGroup(musicGroup);
-	myfile << "Added Music group to master group: " << result << std::endl;
-
-	SetMusicVolume(masterVolume * musicVolume);
-	SetGameSoundsVolume(gameSoundsVolume * masterVolume);
+	myfile << "Released Audio System: " << result << std::endl;
+	myfile.close();
 }
 
 //destructor
@@ -200,7 +196,6 @@ void AudioSystem::PauseGameSounds() {
 	result = gameSoundsGroup->setPaused(1);
 	myfile << "Paused game sounds: " << result << std::endl;
 }
-
 //unpause all game sounds in the game
 void AudioSystem::UnpauseGameSounds() {
 	result = gameSoundsGroup->setPaused(0);

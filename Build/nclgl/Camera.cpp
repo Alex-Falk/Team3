@@ -6,6 +6,10 @@
 
 #include "..\PC\GameInput.h"
 
+//I blame Microsoft...
+#define max(a,b)    (((a) > (b)) ? (a) : (b))
+#define min(a,b)    (((a) < (b)) ? (a) : (b))
+
 //the minimum time before the turning starts
 #define MIN_TURN_TIME 1.0
 //how slowly the tunrning speed increases (larger increases slower)
@@ -15,6 +19,8 @@
 #define MAX_TURN_SPEED 0.25
 //how fast the player must be moving for the camera to rotate
 #define MIN_CENTER_SPEED_SQUARED 1.0
+
+
 
 //Added by phil
 //07/02/2018
@@ -122,7 +128,7 @@ Generates a view matrix for the camera's viewpoint. This matrix can be sent
 straight to the shader...it's already an 'inverse camera' matrix.
 */
 Matrix4 Camera::BuildViewMatrix() {
-	if (!free) {
+	if (!free && center != nullptr) {
 		position = center->GetPosition();
 		position -= GetViewDirection() * distance * center->GetBoundingRadius();
 	}
@@ -137,11 +143,11 @@ Vector3 Camera::GetViewDirection() {
 	return Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1);
 }
 
-
 //michael davis 08/02/2018, needed for audio
 Vector3 Camera::GetUpDirection() {
 	return Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Matrix4::Rotation(pitch, Vector3(1, 0, 0)) * Vector3(0, 1, 0);
 }
+
 
 
 bool Camera::ToggleFree() {

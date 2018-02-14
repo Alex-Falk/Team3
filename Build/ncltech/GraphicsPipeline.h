@@ -3,6 +3,17 @@
 #include <nclgl\TSingleton.h>
 #include <nclgl\Camera.h>
 #include <nclgl\RenderNode.h>
+#include <nclgl\Frustum.h>
+#include <nclgl\Mouse.h>
+#include <nclgl\UserInterface.h>
+
+//material
+#include <nclgl\Material.h>
+#include <nclgl\StandardMaterial.h>
+#include <nclgl\ShadowMaterial.h>
+#include <nclgl\PostprocessMaterial.h>
+#include <nclgl\PlayerRenderNode.h>
+
 
 //---------------------------
 //------ Base Renderer ------
@@ -67,12 +78,35 @@
 #define SHADOWMAP_SIZE 4096
 
 
-#define PROJ_FAR      50.0f			//Can see for 50m - setting this too far really hurts shadow quality as they attempt to cover the entirety of the view frustum
-#define PROJ_NEAR     0.1f			//Nearest object @ 10cm
-#define PROJ_FOV      45.0f			//45 degree field of view
+#define SHADOW_PROJ_FAR      50.0f			//Can see for 50m - setting this too far really hurts shadow quality as they attempt to cover the entirety of the view frustum
+#define SHADOW_PROJ_NEAR     0.1f			//Nearest object @ 10cm
+#define SHADOW_PROJ_FOV      45.0f			//45 degree field of view
 
-typedef std::pair<RenderNode*, float> TransparentPair;
+#define CAMERA_PROJ_FAR      5000.0f		//Can see for 5000m - setting this too far really hurts shadow quality as they attempt to cover the entirety of the view frustum
+#define CAMERA_PROJ_NEAR     0.1f			//Nearest object @ 10cm
+#define CAMERA_PROJ_FOV      45.0f			//45 degree field of view
 
+#define PATHMAP_SIZE 2000
+#define CAPTURE_SIZE 40	 
+#define PIXELPERSIZE 100
+
+#define DEBUGDRAW_FLAGS_BOUNDING				0x20
+
+typedef std::pair<RenderNode*, float> RenderNodePair;
+
+enum SHADERTYPE
+{
+	Present_To_Window	= 0,
+	Shadow				= 1,
+	Forward_Lighting	= 2,
+	Texture_UI			= 3,
+	Draw_Path			= 4,
+	Ground				= 5,
+	Shader_Number,
+};
+
+typedef SHADERTYPE MATERIALTYPE;
+const short Material_Number = Shader_Number;
 
 class GraphicsPipeline : public TSingleton<GraphicsPipeline>, OGLRenderer
 {
@@ -87,15 +121,15 @@ public:
 	void AddRenderNode(RenderNode* node);
 	void RemoveRenderNode(RenderNode* node);
 
-
-
+	inline uint GetDebugDrawFlags() const { return debugDrawFlags; }
+	inline void SetDebugDrawFlags(uint flags) { debugDrawFlags = flags; }
+	//Debug draw all bounding radius
+	void DebugRender();
 
 	//Called by main game loop
 	// - Naming convention from oglrenderer
 	virtual void UpdateScene(float dt) override;
 	virtual void RenderScene() override;
-
-
 
 	//Utils
 	inline Camera* GetCamera() { return camera; }
@@ -104,7 +138,8 @@ public:
 
 	inline Matrix4& GetProjMtx() { return projMatrix; }
 	inline Matrix4& GetViewMtx() { return viewMatrix; }
-	inline Matrix4& GetProjViewMtx() { return projViewMatrix; }
+	inline Matrix4& GetProjViewMtx() { return projViewMatrix; }
+
 	inline float*   GetNormalizedFarPlanes() { return normalizedFarPlanes; }
 	inline Matrix4& GetShadowViewMtx() { return shadowViewMtx; }
 	inline Matrix4* GetShadowProjMatrices() { return shadowProj; }
@@ -115,9 +150,21 @@ public:
 	inline float& GetSpecularFactor() { return specularFactor; }
 	inline GLuint& GetShadowTex() { return shadowTex; }
 
-	inline Shader* GetShaderPresentToWindow() { return shaderPresentToWindow; }
-	inline Shader* GetShaderShadow()		  { return shaderShadow; }
-	inline Shader* GetShaderForwardLighting() { return shaderForwardLighting; }
+	inline Shader** GetAllShaders() { return shaders; }
+	inline Material** GetAllMaterials() { return materials; }
+
+	inline void AddPlayerRenderNode(RenderNode* playerRenderNode){ playerRenderNodes.push_back(playerRenderNode); }
+
+	inline void RemoteAllPlayerRenderNode() { playerRenderNodes.clear(); }
+	void InitPath(Vector2 groundSize);
+	inline GLuint& GetPathTex() { return pathTex; }
+
+	//GUI
+	void HandleGUIMousePosition(float x, float y);
+	void HandleMouseButton(MouseButtons button);
+	void HandleLeftMouseButtonHold(bool isHold);
+	void SetCurrentSceneGUI(GUI* passInValue) { GUIsystem = passInValue; }
+	void SetIsMainMenu(bool a) { isMainMenu = a; }
 
 protected:
 	GraphicsPipeline();
@@ -126,50 +173,75 @@ protected:
 	virtual void Resize(int x, int y) override; //Called by window when it is resized
 
 	void LoadShaders();
+	void LoadMaterial();
 	void UpdateAssets(int width, int height);
 	void BuildAndSortRenderLists();
 	void RecursiveAddToRenderLists(RenderNode* node);
 	void RenderAllObjects(bool isShadowPass, std::function<void(RenderNode*)> perObjectFunc = NULL);
 	void BuildShadowTransforms(); //Builds the shadow projView matrices
 
+	void RenderShadow();
+	void RenderObject();
+	void RenderUI();
+	void RenderPath();
+	void RenderPostprocessAndPresent();
+	
+	
+	void RecursiveAddToPathRenderLists(RenderNode* node);
+
 protected:
 	Matrix4 projViewMatrix;
 
 	//Render FBO
-	GLuint				screenTexWidth, screenTexHeight;
-	GLuint				screenFBO;
-	GLuint				screenTexColor;
-	GLuint				screenTexDepth;
+	GLuint		screenTexWidth, screenTexHeight;
+	GLuint		screenFBO;
+	GLuint		screenTexColor;
+	GLuint		screenTexDepth;
 
 	//Shaders
-	Shader* shaderPresentToWindow;
-	Shader* shaderShadow;
-	Shader* shaderForwardLighting;
+	Shader**	shaders;
+	//Material
+	Material**	materials;
 
 	//Render Params
-	Vector3	ambientColor;
-	float	gammaCorrection;	//Monitor Default: 1.0 / 2.2 (Where 2.2 here is the gamma of the monitor which we need to invert before doing lighting calculations)		
-	Vector3	lightDirection;
-	Vector3 backgroundColor;
-	float	specularFactor;
-	uint	numSuperSamples;
+	Vector3		ambientColor;
+	float		gammaCorrection;	//Monitor Default: 1.0 / 2.2 (Where 2.2 here is the gamma of the monitor which we need to invert before doing lighting calculations)		
+	Vector3		lightDirection;
+	Vector3		backgroundColor;
+	float		specularFactor;
+	uint		numSuperSamples;
 
 
 	//Shadowmaps
-	float	sceneBoundingRadius; ///Approx based on scene contents
-	GLuint	shadowFBO;
-	GLuint	shadowTex;
-	Matrix4	shadowProj[SHADOWMAP_NUM];
-	Matrix4	shadowViewMtx;
-	Matrix4	shadowProjView[SHADOWMAP_NUM];
-	float   normalizedFarPlanes[SHADOWMAP_NUM - 1];
+	float		sceneBoundingRadius; ///Approx based on scene contents
+	GLuint		shadowFBO;
+	GLuint		shadowTex;
+	Matrix4		shadowProj[SHADOWMAP_NUM];
+	Matrix4		shadowViewMtx;
+	Matrix4		shadowProjView[SHADOWMAP_NUM];
+	float		normalizedFarPlanes[SHADOWMAP_NUM - 1];
 
 	//Common
-	Mesh* fullscreenQuad;
-	Camera* camera;
-	bool isVsyncEnabled;
+	uint		debugDrawFlags;
+	Frustum		frameFrustum;
+	Mesh*		fullscreenQuad;
+	Camera*		camera;
+	bool		isVsyncEnabled;
+
 	std::vector<RenderNode*> allNodes;
 
-	std::vector<RenderNode*> renderlistOpaque;
-	std::vector<TransparentPair> renderlistTransparent;	//Also stores cameraDist in the second argument for sorting purposes
+	std::vector<RenderNodePair> renderlistOpaque;
+	std::vector<RenderNodePair> renderlistTransparent;	//Also stores cameraDist in the second argument for sorting purposes
+
+	//path
+	Vector2		groundSize;
+	std::vector<RenderNode*>	playerRenderNodes;
+	std::vector<RenderNode*>	pathRenderNodes;
+	GLuint		pathFBO;
+	GLuint		pathTex;
+
+	//GUI
+	GUI* GUIsystem;
+	bool isMainMenu = false;
 };
+

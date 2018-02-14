@@ -220,9 +220,9 @@ bool ScreenPicker::HandleMouseClicks(float dt)
 		{
 			if (Window::GetMouse()->GetWheelMovement() != 0)
 			{
-				const float projD = PROJ_FAR - PROJ_NEAR;
-				const float projFN = PROJ_FAR + PROJ_NEAR;
-				const float projWP = 2.0f * PROJ_NEAR * PROJ_FAR;
+				const float projD = CAMERA_PROJ_FAR - CAMERA_PROJ_NEAR;
+				const float projFN = CAMERA_PROJ_FAR + CAMERA_PROJ_NEAR;
+				const float projWP = 2.0f * CAMERA_PROJ_NEAR * CAMERA_PROJ_FAR;
 				const float proj10 = projFN / projD;
 				const float proj14 = projWP / projD;
 
