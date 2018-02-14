@@ -41,6 +41,8 @@ public:
 	void OnCleanupScene();
 
 	virtual void OnInitializeScene() override;
+
+	void onConnectToScene() override;
 	
 	virtual void OnUpdateScene(float dt) override;
 

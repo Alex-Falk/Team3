@@ -70,12 +70,12 @@ public:
 	void SendAngVelocity(uint ID);
 	void SendAcceleration(uint ID);
 	void SendWeaponFire(uint ID);
+	void SendSize(uint ID);
 
 	//--------------------------------------------------------------------------------------------//
 	// Recieving
 	//--------------------------------------------------------------------------------------------//
 
-	PlayerFloat ReceiveSizes(string data);
 	void ReceiveScores(string data);
 	void ReceiveMapIndex(string data);
 	//void ReceiveMapChange(string data);

@@ -237,6 +237,9 @@ public:
 
 		Game::Instance()->SetServer();
 		SceneManager::Instance()->JumpToScene();
+		SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+		GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 	}
 
 	void onJoinGameClicked() {
@@ -259,7 +262,6 @@ public:
 		ip.port = 1234;
 
 		Game::Instance()->setClient(ip);
-		SceneManager::Instance()->JumpToScene();
 	}
 
 	void onOptionButtonClicked()

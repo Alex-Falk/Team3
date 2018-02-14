@@ -37,7 +37,12 @@ public:
 	inline void SetPosition(uint id, Vector3 p) { avatars[id]->GetGameObject()->Physics()->SetPosition(p); }
 	inline void SetServer() { user = new Server(); }
 	inline void setClient(IP ip) { user = new Client(ip); }
-	inline void SetAvatar(uint id, Avatar * p) { avatars[id] = p; }
+	inline void SetAvatar(uint id, Avatar * p)
+	{
+		if (avatars[id])
+			delete avatars[id];
+		avatars[id] = p; 
+	}
 
 	// Getters
 	//STUBS

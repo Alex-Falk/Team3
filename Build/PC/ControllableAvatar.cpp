@@ -135,7 +135,7 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	if (life > minLife) 
 	{
-		life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
+		//life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
 
 		if (life < minLife)
 		{

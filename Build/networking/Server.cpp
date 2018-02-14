@@ -30,6 +30,7 @@
 */
 
 #include "Server.h"
+#include <ncltech\SceneManager.h>
 #include <PC/Game.h>
 #define CLIENT_ID evnt.peer->incomingPeerID
 
@@ -131,25 +132,35 @@ void Server::UpdateUser(float dt)
 
 			switch (type) {
 			case PLAYER_POS:
-			{
-				Game::Instance()->SetPosition(CLIENT_ID, ReceivePosition(data).v);
+			{	
+				PlayerVector pvec = ReceivePosition(data);
+				Game::Instance()->SetPosition(pvec.ID, pvec.v);
 				break;
 			}
 			case PLAYER_LINVEL:
 			{
-				Game::Instance()->SetLinearVelocity(CLIENT_ID, ReceiveLinVelocity(data).v);
+				PlayerVector pvec = ReceiveLinVelocity(data);
+				Game::Instance()->SetLinearVelocity(pvec.ID, pvec.v);
 				break;
 			}
 			case PLAYER_ANGVEL:
 			{
-				Game::Instance()->SetAngularVelocity(CLIENT_ID, ReceiveAngVelocity(data).v);
+				PlayerVector pvec = ReceiveAngVelocity(data);
+				Game::Instance()->SetAngularVelocity(pvec.ID, pvec.v);
 				break;
 			}
 			case PLAYER_ACCELERATION:
 			{
-				Game::Instance()->SetAcceleration(CLIENT_ID, ReceiveAcceleration(data).v);
+				PlayerVector pvec = ReceiveAcceleration(data);
+				Game::Instance()->SetAcceleration(pvec.ID, pvec.v);
 				break;
 			}
+			case PLAYER_SIZES:
+			{
+				PlayerFloat pfloat = ReceiveSizes(data);
+				Game::Instance()->SetSize(pfloat.ID, pfloat.f);
+			}
+
 			case TEXT_PACKET:
 			{
 				cout << data.substr(data.find_first_of(':') + 1) + "\n";
@@ -199,8 +210,8 @@ void Server::SendConnectionID(uint ID)
 	data = to_string(CONNECTION_ID) + ":" +
 		to_string(ID);
 
-	ENetPacket* packet = CreatePacket(data);
-	enet_peer_send(&server->m_pNetwork->peers[ID], 0, packet);
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_peer_send(&server->m_pNetwork->peers[ID-1], 0, packet);
 
 }
 

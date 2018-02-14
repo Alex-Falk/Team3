@@ -30,6 +30,7 @@
 */
 
 #include "Client.h"
+#include <ncltech\SceneManager.h>
 #include <PC/Game.h>
 const Vector3 status_color3 = Vector3(1.0f, 0.6f, 0.6f);
 
@@ -42,10 +43,7 @@ Client::Client() : serverConnection(NULL)
 		serverConnection = network.ConnectPeer(127, 0, 0, 1, 1234);
 		NCLDebug::Log("Network: Attempting to connect to server.");
 
-		userID = CLIENT_ID;
 	}
-
-	
 }
 
 Client::Client(IP ip) {
@@ -56,8 +54,6 @@ Client::Client(IP ip) {
 		serverConnection = network.ConnectPeer(ip.a, ip.b, ip.c, ip.d, ip.port);
 		NCLDebug::Log("Network: Attempting to connect to server.");
 	}
-
-	userID = CLIENT_ID;
 }
 
 
@@ -77,16 +73,30 @@ void Client::UpdateUser(float dt)
 		std::placeholders::_1);				// Where to place the first parameter
 	network.ServiceNetwork(dt, callback);
 
-	for (uint i = 0; i < 4; ++i)
-	{
-		Game::Instance()->SetPosition(i, temps.positions[i]);
-		Game::Instance()->SetLinearVelocity(i, temps.linVelocities[i]);
-		Game::Instance()->SetAngularVelocity(i, temps.angVelocities[i]);
-		Game::Instance()->SetAcceleration(i, temps.accelerations[i]);
-		Game::Instance()->SetSize(i, temps.sizes[i]);
+	if (userID != 0) {
+		SendPosition(userID);
+		SendLinVelocity(userID);
+		SendAngVelocity(userID);
+		SendAcceleration(userID);
+		SendSize(userID);
+
+		for (uint i = 0; i < 4; ++i)
+		{
+			if (i != userID)
+			{
+				Game::Instance()->SetPosition(i, temps.positions[i]);
+				Game::Instance()->SetLinearVelocity(i, temps.linVelocities[i]);
+				Game::Instance()->SetAngularVelocity(i, temps.angVelocities[i]);
+				Game::Instance()->SetAcceleration(i, temps.accelerations[i]);
+				Game::Instance()->SetSize(i, temps.sizes[i]);
+			}
+
+		}
 	}
 
-	NCLDebug::Log(to_string(Game::Instance()->GetScore(0)));
+
+
+
 }
 
 
@@ -117,34 +127,50 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			//Game::Instance()->InitializeMatch();
 			break;
 		}
+		case CONNECTION_ID:
+		{
+			userID = stoi(data.substr(data.find_first_of(':') + 1));
+			NCLDebug::Log("Connection ID recieved");
+
+			SceneManager::Instance()->JumpToScene();
+			SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+			GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics());
+			GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+			break;
+		}
 		case PLAYER_POS:
 		{
 			PlayerVector pvec = ReceivePosition(data);
-			temps.positions[pvec.ID] = pvec.v;
+			if (pvec.ID != userID)
+				temps.positions[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_LINVEL:
 		{
 			PlayerVector pvec = ReceiveLinVelocity(data);
-			temps.linVelocities[pvec.ID] = pvec.v;
+			if (pvec.ID != userID)
+				temps.linVelocities[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_ANGVEL:
 		{
 			PlayerVector pvec = ReceiveAngVelocity(data);
-			temps.angVelocities[pvec.ID] = pvec.v;
+			if (pvec.ID != userID)
+				temps.angVelocities[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_ACCELERATION:
 		{
 			PlayerVector pvec = ReceiveAcceleration(data);
-			temps.accelerations[pvec.ID] = pvec.v;
+			if (pvec.ID != userID)
+				temps.accelerations[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_SIZES:
 		{
 			PlayerFloat pfloat = ReceiveSizes(data);
-			temps.sizes[pfloat.ID] = pfloat.f;
+			if (pfloat.ID != userID)
+				temps.sizes[pfloat.ID] = pfloat.f;
 			break;
 		}
 		case PLAYER_SCORES:
@@ -182,23 +208,6 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 // Recieving
 //--------------------------------------------------------------------------------------------//
 
-PlayerFloat Client::ReceiveSizes(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
-	string a = data.substr(semicolonIdx + 1);
-
-	PlayerFloat pfloat;
-	pfloat.ID = playerID;
-	pfloat.f = stof(a);
-
-	return pfloat;
-
-}
-
 void Client::ReceiveScores(string data) 
 {
 
@@ -229,7 +238,9 @@ void Client::SendPosition(uint ID)
 {
 	Vector3 pos = Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetPosition();
 
-	string data = Vector3ToString(pos);
+	string data = to_string(PLAYER_POS) + ":" 
+		+ to_string(ID) + ";" 
+		+ Vector3ToString(pos);
 
 	ENetPacket* posPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_peer_send(serverConnection, 0, posPacket);
@@ -239,7 +250,9 @@ void Client::SendLinVelocity(uint ID)
 {
 	Vector3 vel = Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetLinearVelocity();
 
-	string data = Vector3ToString(vel);
+	string data = to_string(PLAYER_LINVEL) + ":" 
+		+ to_string(ID) + ";"
+		+ Vector3ToString(vel);
 
 	ENetPacket* velPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_peer_send(serverConnection, 0, velPacket);
@@ -249,7 +262,9 @@ void Client::SendAngVelocity(uint ID)
 {
 	Vector3 vel = Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetAngularVelocity();
 
-	string data = Vector3ToString(vel);
+	string data = to_string(PLAYER_ANGVEL) + ":" 
+		+ to_string(ID) + ";" 
+		+ Vector3ToString(vel);
 
 	ENetPacket* velPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_peer_send(serverConnection, 0, velPacket);
@@ -259,7 +274,9 @@ void Client::SendAcceleration(uint ID)
 {
 	Vector3 acc = Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetAcceleration();
 
-	string data = Vector3ToString(acc);
+	string data = to_string(PLAYER_ACCELERATION) + ":" 
+		+ to_string(ID) + ";" 
+		+ Vector3ToString(acc);
 
 	ENetPacket* accPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_peer_send(serverConnection, 0, accPacket);
@@ -268,4 +285,15 @@ void Client::SendAcceleration(uint ID)
 void Client::SendWeaponFire(uint ID)
 {
 
+}
+
+void Client::SendSize(uint ID)
+{
+	string data;
+
+	data = to_string(PLAYER_SIZES) + ":" +
+		to_string(ID) + ";" + to_string(Game::Instance()->GetPlayer(ID)->GetLife());
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_peer_send(serverConnection, 0, packet);
 }

@@ -103,3 +103,20 @@ string User::GetPacketData(const ENetEvent & evnt)
 
 	return out;
 }
+
+PlayerFloat User::ReceiveSizes(string data)
+{
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
+
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+	string a = data.substr(semicolonIdx + 1);
+
+	PlayerFloat pfloat;
+	pfloat.ID = playerID;
+	pfloat.f = stof(a);
+
+	return pfloat;
+
+}

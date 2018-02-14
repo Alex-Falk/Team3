@@ -9,7 +9,7 @@
 class User
 {
 protected: 
-	uint userID;
+	uint userID = 0;
 
 public:
 	User();
@@ -25,6 +25,7 @@ public:
 	PlayerVector ReceiveLinVelocity(string data);
 	PlayerVector ReceiveAngVelocity(string data);
 	PlayerVector ReceiveAcceleration(string data);
+	PlayerFloat ReceiveSizes(string data);
 	void ReceiveWeapon(string data);
 
 	string GetPacketData(const ENetEvent & evnt);
