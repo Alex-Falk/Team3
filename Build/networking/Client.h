@@ -59,6 +59,8 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	virtual void UpdateUser(float dt);
 
+	virtual void Disconnect();
+
 	void ProcessNetworkEvent(const ENetEvent & evnt);
 
 	//--------------------------------------------------------------------------------------------//

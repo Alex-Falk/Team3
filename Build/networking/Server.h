@@ -87,6 +87,8 @@ public:
 	//void SendMap();
 	//void SendUpdatemap();
 
+	void Disconnect();
+
 	std::string GetPacketData(const ENetEvent & evnt)
 	{
 		std::string out;

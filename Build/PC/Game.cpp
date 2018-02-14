@@ -8,3 +8,15 @@ void Game::Update(float dt)
 	} 
 
 }
+
+void Game::ResetGame()
+{
+	for (uint i = 0; i < 4; ++i)
+	{
+		delete avatars[i];
+		avatars[i] = nullptr;
+	}
+	delete user;
+	user = nullptr;
+	enet_deinitialize();
+}

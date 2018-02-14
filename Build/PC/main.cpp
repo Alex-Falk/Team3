@@ -159,20 +159,23 @@ void HandleKeyboardInputs()
 	uint sceneMax = SceneManager::Instance()->SceneCount();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Y))
 	{
-		//if (enet_initialize() != 0)
-		//{
-		//	//Quit(true, "ENET failed to initialize!");
-		//}
-
-		//Game::Instance()->SetServer();
+		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene((sceneIdx + 1) % sceneMax);
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_T))
+	{
+		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene((sceneIdx == 0 ? sceneMax : sceneIdx) - 1);
+	}
+		
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
+	{
+		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene(sceneIdx);
+	}
+		
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
 		show_perf_metrics = !show_perf_metrics;

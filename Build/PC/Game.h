@@ -57,6 +57,7 @@ public:
 
 
 	void Update(float dt);
+	void ResetGame();
 private:
 	//private constructor
 	Game() {
@@ -73,4 +74,5 @@ private:
 	Avatar* avatars[4];
 	int scores[4];
 	User* user = nullptr;
+	bool active = false;
 };
