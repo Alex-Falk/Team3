@@ -127,8 +127,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 		colour = RED_COLOUR;
 	}
 	break;
-	case PINK
-		:
+	case PINK:
 	{
 		colour = PINK_COLOUR;
 	}

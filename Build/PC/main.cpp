@@ -307,54 +307,17 @@ int main()
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
-	Window::GetWindow().LockMouseToWindow(true);
+	Window::GetWindow().LockMouseToWindow(false);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
 		&& SceneManager::Instance()->GetExitButtonClicked() == false) 
 	{
-
-		//if (!chosen)
-		//{
-		//	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0) && !chosen)
-		//	{
-
-		//		//Enqueue All Scenes
-		//		
-		//		SceneManager::Instance()->JumpToScene();
-		//		chosen = true;
-		//	}
-		//	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1) && !chosen)
-		//	{
-		//		if (enet_initialize() != 0)
-		//		{
-		//			Quit(true, "ENET failed to initialize!");
-		//		}
-
-		//		IP ip;
-
-		//		cout << "Enter the IP:\n";
-		//		cin >> ip.a;
-		//		cout << ".";
-		//		cin >> ip.b;
-		//		cout << ".";
-		//		cin >> ip.c;
-		//		cout << ".";
-		//		cin >> ip.d;
-		//		cout << ":1234";
-		//		ip.port = 1234;
-
-		//		Game::Instance()->setClient(ip);
-		//		//Enqueue All Scenes
-		//		SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-		//		SceneManager::Instance()->JumpToScene();
-		//		chosen = true;
-		//	}
-		//}
-		//else
-		//{
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
 																			//Update Performance Timers (Show results every second)
+		
+		GraphicsPipeline::Instance()->GetCamera()->SetPosition(Vector3(0, 1, 0));
+
 		timer_total.UpdateRealElapsedTime(dt);
 		timer_physics.UpdateRealElapsedTime(dt);
 		timer_update.UpdateRealElapsedTime(dt);

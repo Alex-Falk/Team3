@@ -126,7 +126,7 @@ public:
 				"joinButton"
 			));
 		joinButton->setText("JOIN GAME");
-		joinButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onButtonClicked, this));
+		joinButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onJoinGameClicked, this));
 
 		optionButton = static_cast<CEGUI::PushButton*>(
 			sceneGUI->createWidget("OgreTray/Button",
@@ -236,6 +236,29 @@ public:
 		}
 
 		Game::Instance()->SetServer();
+		SceneManager::Instance()->JumpToScene();
+	}
+
+	void onJoinGameClicked() {
+		if (enet_initialize() != 0)
+		{
+			//Quit(true, "ENET failed to initialize!");
+		}
+
+		IP ip;
+
+		cout << "Enter the IP:\n";
+		cin >> ip.a;
+		cout << ".";
+		cin >> ip.b;
+		cout << ".";
+		cin >> ip.c;
+		cout << ".";
+		cin >> ip.d;
+		cout << ":1234";
+		ip.port = 1234;
+
+		Game::Instance()->setClient(ip);
 		SceneManager::Instance()->JumpToScene();
 	}
 
