@@ -56,6 +56,7 @@ protected:
 	float shootCooldown;
 
 	// Boosts
+	PickupType activePickUp;
 	float boostactiveTime;
 
 	bool speedBoost = false;
@@ -104,7 +105,7 @@ public:
 	void RestoreLife() { life = maxLife; }
 	float GetLife() { return life; }
 
-	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is Picked Up			Nikos 13.20
+	virtual void PickUpBuffActivated();			//Checks if any pick up is picked up			Nikos 13.20
 	void UpdatePickUp(float dt);			// Update Pick Ups based on time
 
 	GameObject* GetGameObject() { return playerGameObject; }	//Pointer to the Player's Gameobject

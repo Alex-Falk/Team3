@@ -27,6 +27,7 @@
 #include <ncltech\CommonMeshes.h>
 #include <nclgl\PlayerRenderNode.h>
 #include "Projectile.h"
+#include "Pickup.h"
 Avatar::Avatar()
 {
 	life = maxLife;
@@ -183,11 +184,24 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
 
-	if (collidingObject->GetType() != PICKUP)
+	if (collidingObject->GetType() == PICKUP)
+	{
+		activePickUp = ((Pickup*)(collidingObject->GetParent()))->GetType();
+		if(activePickUp == WEAPON)
+		{
+			weapon = ((WeaponPickup*)(collidingObject->GetParent()))->GetType();
+		}
+		PickUpBuffActivated();
+	}
+	else
 	{
 		canJump = true;
 		inAir = false;
 	}
+
+
+
+
 
 	return true;
 }
@@ -228,24 +242,26 @@ void Avatar::OnAvatarUpdate(float dt) {
 }
 
 
-void Avatar::PickUpBuffActivated(PickupType pickType) {
+void Avatar::PickUpBuffActivated() {
 
-	switch (pickType)
+	switch (activePickUp)
 	{
-	case SPEED_BOOST:
+	case SPEED_BOOST: {
 		speed = boostedSpeed;
 		speedBoost = true;
 		speedTimer = boostactiveTime;
 		break;
-	case JUMP_BOOST:
+	}
+	case JUMP_BOOST: {
 		jumpImpulse = boostedJumpImpulse;
 		jumpBoost = true;
 		jumpBoostTimer = boostactiveTime;
 		break;
-	case WEAPON: {
-
 	}
-				 break;
+	case WEAPON: {
+	
+	}
+	break;
 	default:
 		break;
 	}
