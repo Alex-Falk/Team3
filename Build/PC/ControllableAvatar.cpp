@@ -54,19 +54,19 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	{
 		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
-		if (Input::GetInput()->GetInput(FORWARD)) { 		//Front
+		if (Input::Instance()->GetInput(FORWARD)) { 		//Front
 			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -10) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-2, 0, 0) *dt* speed;
 		}
-		if (Input::GetInput()->GetInput(BACKWARD)) {		//Back
+		if (Input::Instance()->GetInput(BACKWARD)) {		//Back
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 10) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(2, 0, 0) * dt * speed;
 		}
-		if (Input::GetInput()->GetInput(LEFT)) {		//Left
+		if (Input::Instance()->GetInput(LEFT)) {		//Left
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-10, 0, 0) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 2)*dt* speed;
 		}
-		if (Input::GetInput()->GetInput(RIGHT)) {		//Right
+		if (Input::Instance()->GetInput(RIGHT)) {		//Right
 			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(10, 0, 0) * speed;
 			velocity += Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -2)*dt* speed;
 		}
@@ -76,7 +76,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 		}
 	}
 
-	if (Input::GetInput()->GetInput(JUMP) && canJump) 
+	if (Input::Instance()->GetInput(JUMP) && canJump)
 	{		//Jump
 		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /3.0f, jumpImpulse, force.z / 3.0f));
 		inAir = true;
@@ -101,7 +101,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	//	weapon = AUTO_PAINT_LAUNCHER;
 	//}
 
-	if (Input::GetInput()->GetInput(SHOOT))
+	if (Input::Instance()->GetInput(SHOOT))
 	{
 		shooting = true;
 	}
