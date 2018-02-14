@@ -148,6 +148,9 @@ protected:
 	//Handles narrowphase collision detection
 	void NarrowPhaseCollisions();
 
+	//Destroys Unwanted objects
+	void CleanUpPhase();
+
 protected:
 	bool		isPaused;
 	float		updateTimestep, updateRealTimeAccum;

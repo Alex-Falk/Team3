@@ -35,12 +35,16 @@ public:
 	GameObject(const std::string& name = "")
 		: friendlyName(name)
 		, renderNode(NULL)
-		, physicsNode(NULL) {}
+		, physicsNode(NULL)
+		, destroy(false)
+		, timeInScene(0.0f){}
 
 	GameObject(const std::string& name, RenderNode* renderNde, PhysicsNode* physicsNde = NULL)
 		: friendlyName(name)
 		, renderNode(renderNde)
 		, physicsNode(physicsNde)
+		, destroy(false)
+		, timeInScene(0.0f)
 	{
 		RegisterPhysicsToRenderTransformCallback();
 		SetPhysics(physicsNde);
@@ -67,6 +71,11 @@ public:
 	inline const Scene* GetScene() const	{ return scene; }
 	inline		 Scene* GetScene()			{ return scene; }
 
+	bool GetDestroy() { return destroy; }
+	void SetToDestroy() { destroy = true; }
+
+	void SetTimeInScene(float f) { timeInScene = f; }
+	float GetTimeInScene() { return timeInScene; }
 
 	//<---------- PHYSICS ------------>
 	virtual inline bool  HasPhysics() const					{ return (physicsNode != NULL); }
@@ -151,6 +160,8 @@ protected:
 	//Scene  
 	std::string					friendlyName;
 	Scene*						scene;
+	bool destroy;
+	float timeInScene;
 
 	//Components
 	RenderNode*					renderNode;

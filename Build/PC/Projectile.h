@@ -18,5 +18,6 @@ public:
 	virtual void OnDetachedFromScene();
 
 protected:
+	
 	Colour colour;
 };
