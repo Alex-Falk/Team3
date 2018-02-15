@@ -11,6 +11,7 @@
 #include "Pickup.h"
 #include "Avatar.h"
 #include "ControllableAvatar.h"
+#include "MinionCamp.h"
 
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
@@ -24,6 +25,7 @@ private:
 
 	float m_AccumTime = 0;
 	Avatar* player;
+	MinionCamp * minionCamp;
 	Pickup* pickup;
 	CEGUI::ProgressBar* energyBar;
 
@@ -36,6 +38,7 @@ public:
 		TextureManager::Instance()->RemoteAllTexture();
 		delete player;
 		delete pickup;
+		delete minionCamp;
 	}
 
 	void OnCleanupScene();

@@ -81,6 +81,12 @@
     <ClInclude Include="Projectile.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="Minion.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionCamp.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -120,6 +126,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Projectile.cpp">
+      <Filter>GamePlay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Minion.cpp">
+      <Filter>GamePlay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionCamp.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
   </ItemGroup>

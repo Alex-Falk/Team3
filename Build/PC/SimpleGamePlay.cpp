@@ -27,6 +27,7 @@ void SimpleGamePlay::OnInitializeScene() {
 	this->AddGameObject(player->GetGameObject());
 
 	pickup = new Pickup(Vector3(0, 3, 0), SPEED_BOOST);
+	minionCamp = new MinionCamp();
 
 	this->AddGameObject(pickup->GetObj());
 
@@ -47,6 +48,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	m_AccumTime += dt;
 
 	player->OnAvatarUpdate(dt);
+	minionCamp->Update(dt);
 
 	if (pickup)
 	{
