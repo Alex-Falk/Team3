@@ -32,64 +32,12 @@
 #include "WeaponPickup.h"
 Avatar::Avatar()
 {
-	life = maxLife;
+	Vector3 pos = Vector3(0.0f, 1.0f, 0.0f);
+	Colour c = START_COLOUR;
+	uint id = 0;
+	float s = 1.0f;
 
-
-	//Due to the way SceneNode/RenderNode's were setup, we have to make a dummy node which has the mesh and scaling transform
-	// and a parent node that will contain the world transform/physics transform
-	RenderNode* rnode = new RenderNode();
-	float radius = 1.0f;
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), Vector4(0.5, 0.5, 0.5, 1.0));
-	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
-
-	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
-
-	rnode->AddChild(dummy);
-
-	rnode->SetTransform(Matrix4::Translation(Vector3(0.0f, 1.0f, 0.0f)));
-	rnode->SetBoundingRadius(radius);
-
-	PhysicsNode* pnode = NULL;
-	pnode = new PhysicsNode();
-	pnode->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
-	pnode->SetInverseMass(1.0f);
-	pnode->SetBoundingRadius(radius);
-	pnode->SetType(PLAYER);
-	CollisionShape* pColshape = new SphereCollisionShape(radius);
-	pnode->SetCollisionShape(pColshape);
-	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1.0f));
-
-	this->friendlyName = "Player";
-	this->renderNode = rnode;
-	this->physicsNode = pnode;
-	RegisterPhysicsToRenderTransformCallback();
-	SetPhysics(pnode);
-	pnode->SetName("Player");
-
-	canJump = true;
-	canShoot = true;
-
-	Physics()->SetElasticity(0);
-
-	playerId = 0;
-	shootCooldown = 0.0f;
-
-	standardSpeed = 5.0f;
-	speed = standardSpeed;
-	boostedSpeed = standardSpeed * 20;
-
-	maxForce = 30;
-
-	minLife = 10;
-	maxLife = 100;
-	life = maxLife;
-
-	standardJumpImpulse = 8.0f;
-	jumpImpulse = standardJumpImpulse;
-	boostedJumpImpulse = standardJumpImpulse * 2;
-	shooting = false;
-	weapon = NUM_OF_WEAPONS;
-	boostactiveTime = 15.0f;
+	Avatar(pos, c, id, s);
 }
 
 Avatar::~Avatar()
@@ -116,7 +64,8 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	jumpImpulse = standardJumpImpulse;
 	boostedJumpImpulse = standardJumpImpulse * 2;
 
-	canJump = true;
+	canJump = false;
+	inAir = true;
 	canShoot = true;
 	shooting = false;
 

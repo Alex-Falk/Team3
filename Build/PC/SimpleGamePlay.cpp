@@ -1,12 +1,17 @@
 #include "WeaponPickup.h"
 #include "SimpleGamePlay.h"
-#include "Game.h"
-#include "GamePlay.h"
 
-
+//--------------------------------------------------------------------------------------------//
+// Initialisation and Cleanup
+//--------------------------------------------------------------------------------------------//
 void SimpleGamePlay::OnInitializeScene() {
-	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 
+	spawnPositions[0] = Vector3(35, 5, 35);
+	spawnPositions[1] = Vector3(35, 5, -35);
+	spawnPositions[2] = Vector3(-35, 5, 35);
+	spawnPositions[3] = Vector3(-35, 5, -35);
+
+	// Loading Textures -----------------------------------------------------------------------------------------------------------
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
 
@@ -14,11 +19,13 @@ void SimpleGamePlay::OnInitializeScene() {
 		TEXTUREDIR"SkyBox\\skybottom.jpg", TEXTUREDIR"SkyBox\\skyback.jpg", TEXTUREDIR"SkyBox\\skyfront.jpg"))
 		NCLERROR("Texture not loaded");
 
-	//Create Ground (..everybody loves finding some common ground)
+	GraphicsPipeline::Instance()->InitPath(Vector2(xDimension, yDimension));
+
+	// Adding Scene Specific objects ----------------------------------------------------------------------------------------------
 	GameObject* ground = CommonUtils::BuildCuboidObject(
 		"Ground",
 		Vector3(0.0f, 0.0f, 0.0f),
-		Vector3(DIMENSION_X, 1.0f, DIMENSION_Y),
+		Vector3(xDimension, 1.0f, yDimension),
 		true,
 		0.0f,
 		true,
@@ -29,79 +36,16 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	//BuildGroundScore();
-
-	//player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
-
-	//this->AddGameObject(player->GetGameObject());
-
 	pickup = new Pickup(Vector3(0, 3, 0), SPEED_BOOST);
 
 	this->AddGameObject(pickup->GetObj());
 
-	GraphicsPipeline::Instance()->InitPath(Vector2(DIMENSION_X, DIMENSION_Y));
+	// Score & GUI initialisation -------------------------------------------------------------------------------------------------
 	BuildGroundScore();
 	OnInitializeGUI();
-	Scene::OnInitializeScene();
 
-
-}
-
-void SimpleGamePlay::onConnectToScene()
-{
-	for (uint i = 0; i < 4; i++) {
-		if (Game::Instance()->GetUser())
-		{
-			Avatar * p = nullptr;
-			if (i == Game::Instance()->getUserID())
-			{
-				p = new ControllableAvatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
-			}
-			else
-			{
-				p = new Avatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
-			}
-
-			this->AddGameObject(p->GetGameObject());
-			Game::Instance()->SetAvatar(i, p);
-
-			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render());
-		}
-	}
-}
-
-void SimpleGamePlay::OnUpdateScene(float dt)
-{
-	Scene::OnUpdateScene(dt);
-
-	m_AccumTime += dt;
-
-	//player->OnPlayerUpdate(dt);
-	for (uint i = 0; i < 4; i++) {
-		if (Game::Instance()->GetPlayer(i))
-			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
-		UpdateGroundScore(Game::Instance()->GetPlayer(i));
-	}
-
-	if (pickup)
-	{
-		pickup->Update(dt);
-	}
-
-	
-
-	
-	int score = groundTeamScore[0];
-	
-	PrintScore(score);
-
-	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-
-	if (Game::Instance()->GetUser())
-	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
-	}
+	// General Initialization -----------------------------------------------------------------------------------------------------
+	Map::OnInitializeScene();
 }
 
 void SimpleGamePlay::OnCleanupScene()
@@ -111,44 +55,23 @@ void SimpleGamePlay::OnCleanupScene()
 	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
 };
 
-void SimpleGamePlay::OnInitializeGUI()
+//--------------------------------------------------------------------------------------------//
+// Special Object udpates (e.g. Pickups)
+//--------------------------------------------------------------------------------------------//
+void SimpleGamePlay::OnUpdateScene(float dt)
 {
-	//Call initi-function for gui
-	sceneGUI = new GUI();
-	sceneGUI->Init(CEGUIDIR);
+	Map::OnUpdateScene(dt);
 
-	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
-	sceneGUI->LoadScheme("TaharezLook.scheme");
-	sceneGUI->LoadScheme("AlfiskoSkin.scheme");
-
-	//Set Font sytle
-	sceneGUI->SetFont("DejaVuSans-10");
-
-	//SetMouseCursor
-	sceneGUI->SetMouseCursor("TaharezLook/MouseArrow");
-	sceneGUI->ShowMouseCursor();
-
-	//Create Push Button handle
-	energyBar = static_cast<CEGUI::ProgressBar*>(
-		sceneGUI->createWidget("TaharezLook/ProgressBar",
-			Vector4(0.40f, 0.9f, 0.2f, 0.03f),
-			Vector4(),
-			"energyBar"
-		));
-
-	if (Game::Instance()->GetUser())
+	if (pickup)
 	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+		pickup->Update(dt);
 	}
-		
 }
 
-void SimpleGamePlay::onButtonClicked()
-{
-	SceneManager::Instance()->JumpToScene();
-}
-
+//--------------------------------------------------------------------------------------------//
+// Score Related Functions
+//--------------------------------------------------------------------------------------------//
+// These two need to be in each scene because they are dependent on the array which is defined in the scene itself
 
 void SimpleGamePlay::BuildGroundScore() {
 
@@ -194,12 +117,11 @@ void SimpleGamePlay::UpdateGroundScore(Avatar* player) {
 	}
 }
 
-// Decreases the score from previous team and increases the score to the new team.
-void SimpleGamePlay::ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease) {
-	groundTeamScore[teamToDecrease] -= 1;
-	groundTeamScore[teamToIncrease] += 1;
-}
 
-void SimpleGamePlay::PrintScore(int score) {
-	NCLDebug::Log(to_string(score/1000));
+//--------------------------------------------------------------------------------------------//
+// Utility. TODO: can probably (re)move this
+//--------------------------------------------------------------------------------------------//
+void SimpleGamePlay::onButtonClicked()
+{
+	SceneManager::Instance()->JumpToScene();
 }
