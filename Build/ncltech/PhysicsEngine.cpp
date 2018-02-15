@@ -206,6 +206,9 @@ void PhysicsEngine::UpdatePhysics()
 	}
 	perfSolver.EndTimingSection();
 
+
+CleanUpPhase();
+
 //6. Update Positions (with final 'real' velocities)
 	perfUpdate.BeginTimingSection();
 	for (PhysicsNode* obj : physicsNodes) obj->IntegrateForPosition(updateTimestep, integrator);
@@ -235,7 +238,6 @@ void PhysicsEngine::BroadPhaseCollisions()
 	//			physicsNodes[i]->GetParent()->SetColliding(false);
 	//	}
 	//}
-
 }
 
 
@@ -318,6 +320,23 @@ void PhysicsEngine::NarrowPhaseCollisions()
 	}
 }
 
+void PhysicsEngine::CleanUpPhase()
+{
+	std::vector<GameObject*> objectsToDestroy;
+
+	for (std::vector<PhysicsNode*>::iterator itr = physicsNodes.begin(); itr != physicsNodes.end(); ++itr)
+	{
+		if ((*itr)->GetParent()->GetDestroy())
+		{
+			objectsToDestroy.push_back((*itr)->GetParent());
+		}
+	}
+
+	for (std::vector<GameObject*>::iterator itr = objectsToDestroy.begin(); itr != objectsToDestroy.end(); ++itr)
+	{
+		delete *itr;
+	}
+}
 
 void PhysicsEngine::DebugRender()
 {

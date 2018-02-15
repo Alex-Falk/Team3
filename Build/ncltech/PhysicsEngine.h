@@ -158,6 +158,9 @@ protected:
 
 	//Phil 13/02/2018
 	LineCollision CastRay(Vector3 origin, Vector3 direction, PhysicsNode* self = nullptr);
+	//Destroys Unwanted objects
+	void CleanUpPhase();
+
 protected:
 	bool		isPaused;
 	float		updateTimestep, updateRealTimeAccum;

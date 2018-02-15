@@ -124,6 +124,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	{
 		colour = DEFAULT_COLOUR;
 	}
+
 	case GREEN:
 	{
 		colour = GREEN_COLOUR;
@@ -191,7 +192,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 		)
 	);
 
-	weapon = NUM_OF_WEAPONS;
+	weapon = PAINT_SPRAY;
 	playerId = id;
 
 }
@@ -315,18 +316,19 @@ void Avatar::Spray()
 	Vector3 direction;
 	
 	
-	//TODO re-implement for loop
-	randPitch = rand() % 180 + -90;
-	randYaw = rand() % 360;
-	float a = rand() % 10;
-	float b = rand() % 10;
-	float c = rand() % 10;
-	direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 3;
+	for (int i = 0; i < 10; ++i)
+	{
+		randPitch = rand() % 90 + 0;
+		randYaw = rand() % 360;
+		float a = rand() % 10;
+		float b = rand() % 10;
+		float c = rand() % 10;
+		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 15;
 
-	Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.5f, 1.0f, "Spray");
-	
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
-	
+		Projectile * spray = new Projectile(col, colour, playerGameObject->Physics()->GetPosition(), direction, 0.2f, 5.0f, SPRAY, 2, "Spray");
+
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+	}
 }
 
 void Avatar::ShootRocket()
@@ -363,7 +365,7 @@ void Avatar::ManageWeapons()
 			case PAINT_SPRAY:
 				
 				Spray();
-				shootCooldown = 1.0f;
+				shootCooldown = 2.5f;
 				canShoot = false;
 				break;
 

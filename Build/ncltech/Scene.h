@@ -85,8 +85,22 @@ public:
 	// Update Scene Logic
 	//   - Called once per frame and should contain time-sensitive update logic
 	//	   Note: This is time relative to seconds not milliseconds! (e.g. msec / 1000)
-	virtual void OnUpdateScene(float dt) {}
 	virtual void onConnectToScene() {}
+	virtual void OnUpdateScene(float dt) {
+		vector<GameObject*> tempVec;
+		for (int i = 0; i < m_vpObjects.size(); i++) {
+			m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
+			if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE) {
+				if (m_vpObjects[i]->GetTimeInScene() > 15.0f) {
+					m_vpObjects[i]->SetToDestroy();
+					tempVec.push_back(m_vpObjects[i]);
+				}
+			}
+		}
+		for (int i = 0; i < tempVec.size(); i++) {
+			RemoveGameObject(tempVec[i]);
+		}
+	}
 
 
 	// Should be the action fired by the main game loop when updating a scene
