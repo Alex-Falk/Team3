@@ -5,11 +5,13 @@
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
 
+#include "AudioSystem.h"
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
 #include "Arena.h"
 #include "GameInput.h"
 #include "Game.h"
+
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -36,7 +38,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	PhysicsEngine::Release();
 	GraphicsPipeline::Release();
 	enet_deinitialize();
-	//AudioSystem::Release();
+	AudioSystem::Release();
 	Window::Destroy();
 	
 	//Show console reason before exit
@@ -49,8 +51,8 @@ void Quit(bool error = false, const std::string &reason = "") {
 
 //initialise all audio files
 void InitialiseAudioFiles() {
-	//AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
-	//AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
+	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
 }
 
 // Program Initialise
@@ -73,8 +75,8 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
-	//AudioSystem::Instance();
-	//InitialiseAudioFiles();
+	AudioSystem::Instance();
+	InitialiseAudioFiles();
 }
 
 // Print Debug Info
@@ -182,21 +184,21 @@ void HandleKeyboardInputs()
 
 	//audio test functionality
 	//TODO remove this when finished testing
-	/*if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
-		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
+		AudioSystem::Instance()->PlayASound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
+		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
 	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
+		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
 	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
+		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
 	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
+		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
@@ -206,7 +208,7 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
 		AudioSystem::Instance()->UnmuteAllSounds();
 	}
-*/
+
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
@@ -367,7 +369,7 @@ int main()
 		timer_render.EndTimingSection();
 
 		timer_audio.BeginTimingSection();
-		//AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
+		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
 		timer_audio.EndTimingSection();
 		Game::Instance()->Update(dt);
 
