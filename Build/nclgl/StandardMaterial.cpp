@@ -1,3 +1,21 @@
+
+/*****************************************************************************
+:;-"""-::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+(      .)::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+        )-:::::::::::::::::::::::::::::::::::::::::::::::.::..:... .. .
+      -'   )-"-:::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+ ___________)______________          _____
+|                         \          \ U \__      _______
+|        Yesheng Su        \__________\   \/_______\___\_____________
+|        10/02/2018        /          < /_/   ..................... ^`-._
+|_________________________/            `-----------,----,--------------'
+                      )                          _/____/_
+-.                .    ):::::::::::::::::::::::::::::.::..:... ..  .
+  )--.__..--"-.__,'---':::::::::::::::::::::::::::::::::.::..:... ..  .
+-':::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+:::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+															
+*****************************************************************************/
 #include "StandardMaterial.h"
 #include "../ncltech/GraphicsPipeline.h"
 #include "../ncltech/TextureManager.h"
@@ -27,6 +45,11 @@ bool StandardMaterial::Apply()
 	glActiveTexture(GL_TEXTURE4);
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "uShadowTex"), 4);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, graphicsPipeline->GetShadowTex());
+
+	glUniform1f(glGetUniformLocation(shader->GetProgram(), "smoothness"), renderNode->GetSmoothness());
+	glActiveTexture(GL_TEXTURE6);
+	glUniform1i(glGetUniformLocation(shader->GetProgram(), "cubeTex"), 6);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureManager::Instance()->GetTexture(TEXTURETYPE::Sky_Box));
 
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "uModelMtx"), 1, GL_FALSE, (float*)&renderNode->GetWorldTransform());
 	glUniform4fv(glGetUniformLocation(shader->GetProgram(), "uColor"), 1, (float*)&renderNode->GetColor());
@@ -76,5 +99,11 @@ bool GroundMaterial::Apply()
 	glActiveTexture(GL_TEXTURE5);
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "uPathTex"), 5);
 	glBindTexture(GL_TEXTURE_2D, graphicsPipeline->GetPathTex());
+
+	glUniform1f(glGetUniformLocation(shader->GetProgram(), "smoothness"), renderNode->GetSmoothness());
+	glActiveTexture(GL_TEXTURE6);
+	glUniform1i(glGetUniformLocation(shader->GetProgram(), "cubeTex"), 6);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureManager::Instance()->GetTexture(TEXTURETYPE::Sky_Box));
+
 	return true;
 }

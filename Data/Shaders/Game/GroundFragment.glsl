@@ -1,7 +1,28 @@
+
+/*****************************************************************************
+:;-"""-::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+(      .)::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+        )-:::::::::::::::::::::::::::::::::::::::::::::::.::..:... .. .
+      -'   )-"-:::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+ ___________)______________          _____
+|                         \          \ U \__      _______
+|        Yesheng Su        \__________\   \/_______\___\_____________
+|        10/02/2018        /          < /_/   ..................... ^`-._
+|_________________________/            `-----------,----,--------------'
+                      )                          _/____/_
+-.                .    ):::::::::::::::::::::::::::::.::..:... ..  .
+  )--.__..--"-.__,'---':::::::::::::::::::::::::::::::::.::..:... ..  .
+-':::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+:::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+															
+*****************************************************************************/
 #version 330 core
 #define SHADOWMAP_NUM  4
 
 //Per object
+uniform float		smoothness;
+uniform samplerCube	cubeTex;
+
 uniform sampler2D	uPathTex;
 uniform sampler2D  	uDiffuseTex;
 uniform vec4		uColor;
@@ -108,6 +129,10 @@ void main(void)	{
 	finalLightColor.xyz 	= diffuse + specular + color.rgb* uAmbientColor;
 	finalLightColor.a 		= color.a;
 
+	vec3 toWPos = normalize(IN.worldPos - uCameraPos);
+	vec4 reflection = texture(cubeTex, reflect(toWPos, normalize(IN.normal)))*smoothness;
+	reflection = reflection * vec4(diffuse,0.0f);
+	finalLightColor = finalLightColor + reflection;
 
 	vec2 coord = vec2(-IN.texCoord.x, -IN.texCoord.y);
 	vec4 pathColor = texture(uPathTex, coord);
@@ -116,4 +141,6 @@ void main(void)	{
 		OutFrag = pathColor + finalLightColor;
 	else
 		OutFrag = finalLightColor;
+
+
 }

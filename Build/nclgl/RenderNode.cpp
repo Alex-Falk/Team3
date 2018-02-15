@@ -12,6 +12,7 @@ RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
 	boundingRadius		= 100.0f;
 	distanceFromCamera	= 0.0f;
 	modelScale			= Vector3(1,1,1);
+	smoothness = 0.3f;
 }
 
 RenderNode::~RenderNode(void)	{

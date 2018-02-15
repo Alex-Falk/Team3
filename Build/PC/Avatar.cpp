@@ -153,6 +153,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
+	dummy->SetSmoothness(0.7f);
 
 	rnode->AddChild(dummy);
 

@@ -1,9 +1,27 @@
+
+/*****************************************************************************
+:;-"""-::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+(      .)::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+        )-:::::::::::::::::::::::::::::::::::::::::::::::.::..:... .. .
+      -'   )-"-:::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+ ___________)______________          _____
+|                         \          \ U \__      _______
+|        Yesheng Su        \__________\   \/_______\___\_____________
+|        14/02/2018        /          < /_/   ..................... ^`-._
+|_________________________/            `-----------,----,--------------'
+                      )                          _/____/_
+-.                .    ):::::::::::::::::::::::::::::.::..:... ..  .
+  )--.__..--"-.__,'---':::::::::::::::::::::::::::::::::.::..:... ..  .
+-':::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+:::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+															
+*****************************************************************************/
 #include "GraphicsPipeline.h"
 #include "ScreenPicker.h"
 #include "BoundingBox.h"
 #include <nclgl\NCLDebug.h>
 #include <algorithm>
-
+#include <ncltech\TextureManager.h>
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
 	, camera(new Camera())
@@ -35,7 +53,7 @@ GraphicsPipeline::GraphicsPipeline()
 	glEnable(GL_FRAMEBUFFER_SRGB);
 	glDepthFunc(GL_LEQUAL);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	sceneBoundingRadius = 30.f; ///Approx based on scene contents
 
@@ -171,7 +189,15 @@ void GraphicsPipeline::LoadShaders()
 		SHADERDIR"Game/GroundFragment.glsl");
 	if (!shaders[SHADERTYPE::Ground]->LinkProgram())
 	{
-		NCLERROR("Could not link shader: Draw Path Renderer");
+		NCLERROR("Could not link shader: Ground");
+	}
+
+	shaders[SHADERTYPE::SkyBox] = new Shader(
+		SHADERDIR"Game/SkyBoxVertex.glsl",
+		SHADERDIR"Game/SkyBoxFragment.glsl");
+	if (!shaders[SHADERTYPE::SkyBox]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: SkyBox");
 	}
 }
 
@@ -184,6 +210,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::Texture_UI] = nullptr;
 	materials[MATERIALTYPE::Draw_Path] = new DrawPathMaterial();
 	materials[MATERIALTYPE::Ground] = new GroundMaterial();
+	materials[MATERIALTYPE::SkyBox] = nullptr;
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -545,6 +572,19 @@ void GraphicsPipeline::RenderObject()
 	glViewport(0, 0, screenTexWidth, screenTexHeight);
 	glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, 1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+	glUseProgram(shaders[SHADERTYPE::SkyBox]->GetProgram());
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::SkyBox]->GetProgram(), "cubeTex"), 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureManager::Instance()->GetTexture(TEXTURETYPE::Sky_Box));
+	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::SkyBox]->GetProgram(), "viewMatrix"), 1, false, (float*)&camera->BuildViewMatrix());
+	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::SkyBox]->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::SkyBox]->GetProgram(), "brightness"), 1.0f);
+
+	glDisable(GL_DEPTH_TEST);
+	fullscreenQuad->Draw(); //Draw sky box
+	glEnable(GL_DEPTH_TEST);
+
 	RenderAllObjects(false, [&](RenderNode* node) {});
 
 	// Render Screen Picking ID's
@@ -563,20 +603,20 @@ void GraphicsPipeline::RenderObject()
 	}
 
 	//debug code
-	//glUseProgram(shaders[SHADERTYPE::Texture_UI]->GetProgram());
-	//glDisable(GL_DEPTH_TEST);
-	//Matrix4 mat = Matrix4::Translation(Vector3(0.7f, 0.7f, 0.0f))* Matrix4::Scale(Vector3(0.3f, 0.3f, 1.0f));
-	//glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&mat);
-	//glActiveTexture(GL_TEXTURE0);
-	//glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "diffuseTex"), 0);
-	//
-	//if (isMainMenu == false) {
-	//	glBindTexture(GL_TEXTURE_2D, pathTex);
-	//	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "brightness"), 1.0f);
-	//}
-	//
-	//fullscreenQuad->Draw();
-	//glEnable(GL_DEPTH_TEST);
+	/*glUseProgram(shaders[SHADERTYPE::Texture_UI]->GetProgram());
+	glDisable(GL_DEPTH_TEST);
+	Matrix4 mat = Matrix4::Translation(Vector3(0.7f, 0.7f, 0.0f))* Matrix4::Scale(Vector3(0.3f, 0.3f, 1.0f));
+	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&mat);
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "diffuseTex"), 0);
+	
+	if (isMainMenu == false) {
+		glBindTexture(GL_TEXTURE_2D, pathTex);
+		glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Texture_UI]->GetProgram(), "brightness"), 1.0f);
+	}
+	
+	fullscreenQuad->Draw();
+	glEnable(GL_DEPTH_TEST);*/
 
 
 }
