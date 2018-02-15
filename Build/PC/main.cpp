@@ -7,6 +7,7 @@
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
 #include "Arena.h"
+#include "TestMap.h"
 #include "GameInput.h"
 #include "Game.h"
 
@@ -67,7 +68,8 @@ void Initialize()
 	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
-	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
+	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - BattleGround"));
+	SceneManager::Instance()->EnqueueScene(new TestMap("TestMap - Testing Shit"));
 
 	AudioSystem::Instance();
 
