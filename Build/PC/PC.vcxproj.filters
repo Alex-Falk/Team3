@@ -119,5 +119,8 @@
     <ClCompile Include="ControllableAvatar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

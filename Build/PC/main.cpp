@@ -314,7 +314,22 @@ void HandleGUIMouseButton()
 //Handle GUI text input
 void HandleGUITextInput()
 {
-	
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN)) {
+		GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(KEYBOARD_RETURN);
+		GraphicsPipeline::Instance()->GetGUISystem()->SetIsTyping(false);
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_BACK)) {
+		GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(KEYBOARD_BACK);
+		return;
+	}
+	for (int i = KeyboardKeys::KEYBOARD_A; i <= KeyboardKeys::KEYBOARD_Z; i++) {
+		//TODO: Is there a better way to achieve this?
+		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
+			GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(static_cast<KeyboardKeys>(i));
+			break; //Or maybe just return
+		}
+	}
 }
 
 // Program Entry Point
@@ -353,9 +368,14 @@ int main()
 		PrintStatusEntries();
 
 		//Handle Keyboard Inputs
-		HandleKeyboardInputs();
+		if (GraphicsPipeline::Instance()->GetGUISystem()->GetIsTyping() == false) {
+			HandleKeyboardInputs();
+		}
+		else {
+			//Handle User Typing input
+			HandleGUITextInput();
+		}
 
-		
 		timer_total.BeginTimingSection();
 
 		//Update Scene

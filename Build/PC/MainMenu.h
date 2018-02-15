@@ -10,6 +10,7 @@
 #include "GamePlay.h"
 #include "Pickup.h"
 #include "Avatar.h"
+#include "AudioSystem.h"
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
@@ -46,7 +47,7 @@ private:
 	CEGUI::PushButton* DebugButton;
 
 	//Testing text box for creating game
-	CEGUI::Combobox* textBox;
+	CEGUI::Editbox* textBox;
 public:
 
 	//Exit Button
@@ -325,17 +326,28 @@ public:
 		DebugButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDebugRenderClicked, this));
 	}
 
-	//Setting up Create Game Function
+	// 3. Setting up Create Game Function
 	void SetUpCreateGameMenu()
 	{
-		textBox = static_cast<CEGUI::Combobox*>(
-			sceneGUI->createWidget("OgreTray/Combobox",
-				Vector4(0.10f, 0.65f, 0.2f, 0.1f),
+		inputBox temp;
+		userInput temp1;
+		temp.editbox = static_cast<CEGUI::Editbox*>(
+			sceneGUI->createWidget("OgreTray/Editbox",
+				Vector4(0.40f, 0.65f, 0.2f, 0.1f),
 				Vector4(),
-				"textBox")
-		);
-		textBox->disable();
-		textBox->setVisible(false);
+				"textBox"
+			));
+		temp.editbox->setText("Test");
+		temp.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnTextBoxClicked, this));
+		temp.type = "test";
+		temp1.type = temp.type;
+		sceneGUI->inputBox.push_back(temp);
+		sceneGUI->userTyping.push_back(temp1);
+	}
+
+	void OnTextBoxClicked() {
+		sceneGUI->SetIsTyping(true);
+		sceneGUI->currentType = "test";
 	}
 
 	//GUI Menu switch helper function

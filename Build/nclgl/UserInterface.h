@@ -16,9 +16,27 @@ Give the basic communication access to mouse and keyboard for further interactio
 #include <nclgl\Keyboard.h>
 #include <nclgl\Vector2.h>
 
+struct inputBox
+{
+	std::string type;
+	CEGUI::Editbox* editbox;
+};
+
+struct userInput
+{
+	std::string type;
+	std::string content;
+};
+
 class GUI
 {
 public:
+	std::vector<inputBox> inputBox;
+	std::vector<userInput> userTyping;
+
+	//Tell which textBox is typing now?
+	std::string currentType;
+
 	void Init(const std::string& resourceDirectory);
 	void Destory();
 
@@ -48,13 +66,16 @@ public:
 
 	static CEGUI::OpenGL3Renderer* GetRenderer() { return m_renderer; }
 	const CEGUI::GUIContext* GetContext() { return m_context; }
-protected:
 
-private:
+	bool GetIsTyping() { return isTyping; }
+	void SetIsTyping(bool a) { isTyping = a; }
+
+protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
 	CEGUI::Window* m_root = NULL;
 
 	Vector2 realMousePos;
 	float mouseSensitivity;
+	bool isTyping;
 };
