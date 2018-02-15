@@ -161,12 +161,12 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="PaintableGameObject.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="TestMap.h" />
     <ClInclude Include="WeaponPickup.h" />
   </ItemGroup>
@@ -181,6 +181,7 @@
     <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="Projectile.cpp" />

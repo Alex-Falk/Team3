@@ -13,15 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="GamePlay">
-      <UniqueIdentifier>{9eaceda8-8b8a-4006-bb0e-2c52ade02b6a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GamePlay\Header">
-      <UniqueIdentifier>{bb78d5f4-5521-46c1-8645-b0271f911958}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GamePlay\Source">
-      <UniqueIdentifier>{27103adf-a3a6-409f-948d-fbfb0f179103}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Audio">
       <UniqueIdentifier>{d1f0b957-2c52-4d2d-ac44-833bdd9cf1ea}</UniqueIdentifier>
     </Filter>
@@ -37,28 +28,37 @@
     <Filter Include="Networking">
       <UniqueIdentifier>{b8902088-ba15-4644-a525-fd1e7d22ec8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Maps">
+      <UniqueIdentifier>{7a33102e-9953-4f88-9ebf-d8fd7ed1153a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Maps\Header Files">
+      <UniqueIdentifier>{eca51961-5d47-4f98-a60b-9e232dc1c49d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Maps\Source Files">
+      <UniqueIdentifier>{443ded0c-6ee1-45ec-be7a-2786b8d0e1ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Networking\Source Files">
+      <UniqueIdentifier>{b4e540b4-1803-46ea-84ef-b507854a392b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Networking\Header Files">
+      <UniqueIdentifier>{0114eef2-5203-4013-9f4e-815373036d13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gameplay">
+      <UniqueIdentifier>{9eaceda8-8b8a-4006-bb0e-2c52ade02b6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gameplay\Header">
+      <UniqueIdentifier>{bb78d5f4-5521-46c1-8645-b0271f911958}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gameplay\Source">
+      <UniqueIdentifier>{27103adf-a3a6-409f-948d-fbfb0f179103}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GamePlay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SimpleGamePlay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PaintableGameObject.h">
-      <Filter>GamePlay\Header</Filter>
+      <Filter>Gameplay\Header</Filter>
     </ClInclude>
     <ClInclude Include="Pickup.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameInput.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
+      <Filter>Gameplay\Header</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
@@ -69,94 +69,106 @@
     <ClInclude Include="AudioSystem.h">
       <Filter>Audio\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Arena.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Avatar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ControllableAvatar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\networking\Client.h">
-      <Filter>Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\networking\NetworkCommon.h">
-      <Filter>Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\networking\Server.h">
-      <Filter>Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="..\networking\User.h">
-      <Filter>Networking</Filter>
-    </ClInclude>
-    <ClInclude Include="Weapons.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Projectile.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMap.h">
-      <Filter>Header Files</Filter>
+      <Filter>Gameplay\Header</Filter>
     </ClInclude>
     <ClInclude Include="WeaponPickup.h">
-      <Filter>GamePlay\Header</Filter>
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMap.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleGamePlay.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Arena.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\Client.h">
+      <Filter>Networking\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\NetworkCommon.h">
+      <Filter>Networking\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\Server.h">
+      <Filter>Networking\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\User.h">
+      <Filter>Networking\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Avatar.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllableAvatar.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="GamePlay.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInput.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleGamePlay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PaintableGameObject.cpp">
-      <Filter>GamePlay\Source</Filter>
+      <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="Pickup.cpp">
-      <Filter>GamePlay\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WeaponPickup.cpp">
-      <Filter>GamePlay\Source</Filter>
+      <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="AudioSystem.cpp">
       <Filter>Audio\Source</Filter>
     </ClCompile>
-    <ClCompile Include="Arena.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Avatar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ControllableAvatar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\networking\Client.cpp">
-      <Filter>Networking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\networking\NetworkCommon.cpp">
-      <Filter>Networking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\networking\Server.cpp">
-      <Filter>Networking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\networking\User.cpp">
-      <Filter>Networking</Filter>
-    </ClCompile>
     <ClCompile Include="Projectile.cpp">
-      <Filter>GamePlay\Source</Filter>
+      <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Arena.cpp">
+      <Filter>Maps\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleGamePlay.cpp">
+      <Filter>Maps\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestMap.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Maps\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Weapons.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Map.cpp">
+      <Filter>Maps\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\Client.cpp">
+      <Filter>Networking\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\NetworkCommon.cpp">
+      <Filter>Networking\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\Server.cpp">
+      <Filter>Networking\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\User.cpp">
+      <Filter>Networking\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Avatar.cpp">
+      <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllableAvatar.cpp">
+      <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Gameplay\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
