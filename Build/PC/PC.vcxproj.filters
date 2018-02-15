@@ -114,6 +114,9 @@
     <ClInclude Include="GameInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PaintPool.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -172,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PaintPool.cpp">
+      <Filter>GamePlay\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

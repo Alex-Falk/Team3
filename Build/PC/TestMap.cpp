@@ -20,15 +20,14 @@ void TestMap::OnInitializeScene()
 		TEXTUREDIR"SkyBox\\skybottom.jpg", TEXTUREDIR"SkyBox\\skyback.jpg", TEXTUREDIR"SkyBox\\skyfront.jpg"))
 		NCLERROR("Texture not loaded");
 	
-	// Adding Scene Specific objects ----------------------------------------------------------------------------------------------
-	pickupSpeedBoost = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
-	this->AddGameObject(pickupSpeedBoost->GetObj());
+	pickup_SpeedBoost = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
+	this->AddGameObject(pickup_SpeedBoost);
 
-	pickupJumpBoost = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
-	this->AddGameObject(pickupJumpBoost->GetObj());
+	pickup_JumpBoost = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
+	this->AddGameObject(pickup_JumpBoost);
 	
-	pickupWeapon = new Pickup(Vector3(1, 3, -5.5), WEAPON);
-	this->AddGameObject(pickupWeapon->GetObj());
+	pickup_Weapon = new Pickup(Vector3(1, 3, -5.5), WEAPON);
+	this->AddGameObject(pickup_Weapon);
 	
 	CreateEnvironment();	// creates environment & elements within.
 	GameplayTesting();		// gameplay functionality testing.

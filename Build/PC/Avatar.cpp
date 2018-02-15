@@ -49,12 +49,15 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	col = c;
 	size = s;
 
-	speed = 5;
+	standardSpeed = 5.0f;
+	speed = standardSpeed;
+	boostedSpeed = standardSpeed * 20;
+
 	maxForce = 30;
 
 	minLife = 10;
 	maxLife = 100;
-	life = maxLife;
+	life = maxLife/2;
 
 	jumpImpulse = 8.0f;
 	boostactiveTime = 15.0f;
@@ -68,6 +71,8 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	inAir = true;
 	canShoot = true;
 	shooting = false;
+
+	weapon = NUM_OF_WEAPONS;
 
 	switch (c)
 	{
@@ -143,14 +148,14 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 		)
 	);
 
-	weapon = PAINT_SPRAY;
 	playerId = id;
+	
 
 }
 
 bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
 
-	if (collidingObject->GetType() == PICKUP)
+	if (collidingObject->GetType() != PICKUP && collidingObject->GetType() != PROJECTILE && collidingObject->GetType() != SPRAY)
 	{
 		if ((Pickup*)(collidingObject->GetParent())) 
 		{
@@ -168,11 +173,7 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 		inAir = false;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 	}
-
-
-
-
-
+	
 	return true;
 }
 
@@ -230,11 +231,10 @@ void Avatar::PickUpBuffActivated() {
 		jumpBoost = true;
 		jumpBoostTimer = boostactiveTime;
 		break;
-	}
-	case WEAPON: {
-	
-	}
-	break;
+	case WEAPON:
+		weaponActive = true;
+		weaponTimer = boostactiveTime;
+		break;
 	default:
 		break;
 	}
@@ -265,8 +265,18 @@ void Avatar::UpdatePickUp(float dt)
 			jumpBoost = false;
 		}
 	}
+	
+	if (weaponActive)
+	{
+		weaponTimer -= dt;
 
-	if (!canShoot) 
+		if (weaponTimer <= 0)
+		{
+			weaponActive = false;
+		}
+	}
+
+	if (weaponActive && !canShoot) 
 	{
 		shootCooldown -= dt;
 
@@ -326,8 +336,7 @@ void Avatar::ShootProjectile()
 
 void Avatar::ManageWeapons() 
 {
-
-	if (shooting)
+	if (weaponActive && shooting)
 	{
 		switch (weapon)
 		{

@@ -8,8 +8,8 @@
 // d8' .d8'       `Y88888888'      `88888888P'       `8b. `8b
 //.8P .88P            """"            """"            Y88. Y8.
 //88  888                 Nick Bedford                 888  88
-//88  888                 Weapon Class                 888  88
-//88  888.        ..       07/02/2018       ..        .888  88
+//88  888                PaintPool Class               888  88
+//88  888.        ..       15/02/2018       ..        .888  88
 //`8b `88b,     d8888b.od8bo.      .od8bo.d8888b     ,d88' d8'
 // Y8. `Y88.    8888888888888b    d8888888888888    .88P' .8P
 //  `8b  Y88b.  `88888888888888  88888888888888'  .d88P  d8'
@@ -23,25 +23,23 @@
 
 #include "Pickup.h"
 
-class WeaponPickup : public Pickup 
+class PaintPool : public Pickup
 {
 public:
-	WeaponPickup();
-	WeaponPickup(Vector3 pos, WeaponType type, float respawnTime = 30.0);
+	PaintPool();
+	PaintPool(Vector3 pos, Colour colour, float respawnTime = 30.0);
 	
-	void Reactivate();
-
 	bool PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
+	void Update(float dt);
 
-	WeaponType GetWeaponType() { return weaponType; }
-	
-	void SetType(WeaponType newType) { weaponType = newType; }
+	void ChangeColour(Colour newColour);
+	void ChangeSize(Vector3 newSize);
 
-	~WeaponPickup();
+	~PaintPool();
 
 private:
 
-	WeaponType weaponType;
-	
+	Colour colour;
+
 };
 

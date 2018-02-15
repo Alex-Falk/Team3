@@ -21,7 +21,7 @@ enum Colour
 //Added PickupType
 enum PickupType 
 {
-	SPEED_BOOST, JUMP_BOOST, WEAPON
+	SPEED_BOOST, JUMP_BOOST, WEAPON, PAINTPOOL
 };
 
 //Name: Nick Bedford

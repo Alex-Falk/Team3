@@ -1,4 +1,4 @@
-//					,.ood888888888888boo.,
+//					 ,.ood888888888888boo.,
 //              .od888P^""            ""^Y888bo.
 //          .od8P''   ..oood88888888booo.    ``Y8bo.
 //       .odP'"  .ood8888888888888888888888boo.  "`Ybo.
@@ -26,30 +26,21 @@
 #include <nclgl\NCLDebug.h>
 #include "GamePlay.h"
 
-class Pickup : GameObject
+class Pickup : public GameObject
 {
 public:
 	Pickup();
 	Pickup(Vector3 pos, PickupType type, float respawnTime = 30.0);
 
-	void Update(float dt);
-	GameObject* GetObj() { return object; }
+	virtual void Update(float dt);
 	
 	//Example of member callback ('this' parameter is bound at bind time)
-	bool PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
-	{
-		if (collidingObject->GetType() == PLAYER)
-		{
-			this->active = false;
-		}
-
-		//Return true to enable collision resolution, for Pickup just return false so we can drop the collision pair from the system
-		return false;
-	}
+	virtual bool PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
+	
 
 	virtual void Reactivate();
 
-	PickupType GetType() { return type; }
+	PickupType GetPickupType() { return type; }
 	bool GetActive() { return active; }
 	float GetRespawnTime() { return respawnTime; }
 	float GetCurrentRespawnTimer() { return currentRespawnTimer; }
@@ -64,8 +55,6 @@ public:
 //Date: 07/02/2018
 //Changed to protected
 protected:
-
-	GameObject* object;
 	
 	PickupType type;
 
