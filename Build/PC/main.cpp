@@ -357,10 +357,6 @@ int main()
 			HandleGUITextInput();
 		}
 
-<<<<<<< HEAD
-
-=======
->>>>>>> GraphicsAudioGUI
 		timer_total.BeginTimingSection();
 
 		//Update Scene

@@ -10,11 +10,8 @@
 #include "GamePlay.h"
 #include "Pickup.h"
 #include "Avatar.h"
-<<<<<<< HEAD
 #include "Game.h"
-=======
 #include "AudioSystem.h"
->>>>>>> GraphicsAudioGUI
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
@@ -220,13 +217,10 @@ public:
 				"masterVolumnSlider"
 			));
 		masterVolumnSlider->setMaxValue(1.0f);
-<<<<<<< HEAD
 		//masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		masterVolumnSlider->setVisible(false);
 		masterVolumnSlider->disable();
-=======
 		masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
->>>>>>> GraphicsAudioGUI
 		masterVolumnSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMasterVolumnChanged, this));
 
 		GameSoundsSlider = static_cast<CEGUI::Slider*>(
@@ -237,15 +231,11 @@ public:
 			));
 
 		GameSoundsSlider->setMaxValue(1.0f);
-<<<<<<< HEAD
 		//GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		GameSoundsSlider->setVisible(false);
 		GameSoundsSlider->disable();
-=======
 		GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		GameSoundsSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onGameSoundVolumnChanged, this));
->>>>>>> GraphicsAudioGUI
-
 		MusicSlider = static_cast<CEGUI::Slider*>(
 			sceneGUI->createWidget("OgreTray/Slider",
 				Vector4(0.40f, 0.35f, 0.30f, 0.03f),
@@ -253,14 +243,11 @@ public:
 				"MusicSlider"
 			));
 		MusicSlider->setMaxValue(1.0f);
-<<<<<<< HEAD
 		//MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		MusicSlider->setVisible(false);
 		MusicSlider->disable();
-=======
 		MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		MusicSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMusicVolumnChanged, this));
->>>>>>> GraphicsAudioGUI
 
 		masterVolumnText = static_cast<CEGUI::Titlebar*>(
 			sceneGUI->createWidget("OgreTray/Title",
@@ -351,7 +338,6 @@ public:
 		DebugButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDebugRenderClicked, this));
 	}
 
-<<<<<<< HEAD
 	void onStartGameClicked() {
 		if (enet_initialize() != 0)
 		{
@@ -387,11 +373,8 @@ public:
 		Game::Instance()->setClient(ip);
 	}
 
-	void onOptionButtonClicked()
-=======
 	// 3. Setting up Create Game Function
 	void SetUpCreateGameMenu()
->>>>>>> GraphicsAudioGUI
 	{
 		inputBox temp;
 		userInput temp1;
@@ -471,10 +454,8 @@ public:
 
 	void HideMainMenu()
 	{
-<<<<<<< HEAD
 		float temp = masterVolumnSlider->getCurrentValue();
 		//AudioSystem::Instance()->SetMasterVolume(temp);
-=======
 		//Disable MainMenu
 		startButton->setVisible(false);
 		startButton->disable();
@@ -484,58 +465,16 @@ public:
 		optionButton->disable();
 		joinButton->setVisible(false);
 		joinButton->disable();
->>>>>>> GraphicsAudioGUI
 	}
 
 	void ShowOptionMenu1()
 	{
-<<<<<<< HEAD
 		float temp = GameSoundsSlider->getCurrentValue();
 		//AudioSystem::Instance()->SetGameSoundsVolume(temp);
-	}
-
-	void onMusicVolumnChanged()
-	{
-		float temp = MusicSlider->getCurrentValue();
-		//AudioSystem::Instance()->SetGameSoundsVolume(temp);
-=======
-		//Enable Option Menu
-		OptionMenuBack->setVisible(true);
-		OptionMenuBack->enable();
-		masterVolumnSlider->setVisible(true);
-		masterVolumnSlider->enable();
-		GameSoundsSlider->setVisible(true);
-		GameSoundsSlider->enable();
-		MusicSlider->setVisible(true);
-		MusicSlider->enable();
-
-		masterVolumnText->activate();
-		masterVolumnText->setVisible(true);
-		GameSoundVolumnText->activate();
-		GameSoundVolumnText->setVisible(true);
-		MusicVolumnText->activate();
-		MusicVolumnText->setVisible(true);
-
-		CameraSensitivity->activate();
-		CameraSensitivity->setVisible(true);
-		CameraSensitivityText->activate();
-		CameraSensitivityText->setVisible(true);
-
-		VsyncText->activate();
-		VsyncText->setVisible(true);
-		enableVsync->activate();
-		enableVsync->setVisible(true);
-		disableVsync->activate();
-		disableVsync->setVisible(true);
-		background->setVisible(true);
-
-		DebugButton->enable();
-		DebugButton->setVisible(true);
 	}
 
 	//Quit the whole program cleanly
 	void Quit() {
 		SceneManager::Instance()->SetExitButtonClicked(true);
->>>>>>> GraphicsAudioGUI
 	}
 };

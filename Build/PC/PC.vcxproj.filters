@@ -170,5 +170,8 @@
     <ClCompile Include="Game.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
