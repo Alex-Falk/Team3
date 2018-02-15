@@ -12,6 +12,7 @@
 #include "ControllableAvatar.h"
 #include "Game.h"
 #include "GamePlay.h"
+#include "WeaponPickup.h"
 
 //#include "GroundScore.h"
 
