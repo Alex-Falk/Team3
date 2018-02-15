@@ -11,6 +11,7 @@
 #include "Pickup.h"
 #include "Avatar.h"
 #include "ControllableAvatar.h"
+//#include "GroundScore.h"
 
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
@@ -26,6 +27,7 @@ private:
 	//Avatar* player;
 	Pickup* pickup;
 	CEGUI::ProgressBar* energyBar;
+	//GroundScore* groundScore;
 
 public:
 	SimpleGamePlay(const std::string& friendly_name)
@@ -48,4 +50,17 @@ public:
 	virtual void OnInitializeGUI() override;
 
 	void onButtonClicked();
+
+	// Everything about score
+	static const int groundScoreAccuracy = 100;
+	static const int xOnGrid = (int)2 * (DIMENSION_X + 10)*groundScoreAccuracy; //Array cordinates for the x position of the player on the grid
+	static const int yOnGrid = (int)2 * (DIMENSION_Y + 10)*groundScoreAccuracy; //Array cordinates for the y position of the player on the grid
+	Colour ground[xOnGrid][yOnGrid];
+	int groundTeamScore[5];
+	int teamScores[5];
+
+	void BuildGroundScore(); //Builds the array for the ground score
+	void UpdateGroundScore(Avatar* player); //Updates the ground cells 
+	void ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease); // updates the score
+	void PrintScore(int x); // debug
 };

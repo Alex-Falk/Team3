@@ -90,6 +90,9 @@
     <ClInclude Include="..\networking\User.h">
       <Filter>Networking</Filter>
     </ClInclude>
+    <ClInclude Include="Weapons.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Projectile.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
@@ -150,6 +153,9 @@
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
     <ClCompile Include="TestMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Weapons.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
