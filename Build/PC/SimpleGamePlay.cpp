@@ -1,5 +1,6 @@
 #include "WeaponPickup.h"
 #include "SimpleGamePlay.h"
+#include "PaintPool.h"
 #include "Game.h"
 
 void SimpleGamePlay::OnInitializeScene() {
@@ -33,9 +34,9 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	//this->AddGameObject(player->GetGameObject());
 
-	pickup = new Pickup(Vector3(0, 3, 0), SPEED_BOOST);
+	pickup = new PaintPool(Vector3(0, 0.6f, 0), RED);
 
-	this->AddGameObject(pickup->GetObj());
+	this->AddGameObject(pickup);
 
 	//GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	OnInitializeGUI();

@@ -161,6 +161,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="PaintPool.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
@@ -181,6 +182,7 @@
     <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PaintPool.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="Projectile.cpp" />

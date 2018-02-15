@@ -99,6 +99,9 @@
     <ClInclude Include="WeaponPickup.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="PaintPool.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -151,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="TestMap.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PaintPool.cpp">
+      <Filter>GamePlay\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

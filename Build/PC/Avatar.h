@@ -67,7 +67,8 @@ protected:
 
 							//Weapon
 	WeaponType weapon;
-	float weaponAmmo;				// Weapon Ammo
+	bool weaponActive = false;
+	float weaponTimer;				// Weapon timer
 	bool shooting;
 
 	Vector3 velocity;
@@ -90,6 +91,9 @@ public:
 
 	Colour GetColour() { return col; }
 	void SetColour(Colour c) { col = c; }
+
+	WeaponType GetWeapon() { return weapon; }
+	void SetWeapon(WeaponType newWeapon) { weapon = newWeapon; }
 	
 	Vector4 GetColourRGBA() { return colour; }
 
@@ -100,9 +104,9 @@ public:
 	float GetSize() { return size; }
 	void SetSize(float s) { size = s; }
 
-	void ChangeLife(float x) { life += x; if (life < minLife) { life = minLife; } }
+	void ChangeLife(float x) { life += x; if (life < minLife) { life = minLife; } else if (life > maxLife) { life = maxLife; }	}
 
-	void RestoreLife() { life = maxLife; }
+	void RestoreLife() { life = maxLife/2; }
 	float GetLife() { return life; }
 	void SetLife(float l) { life = l; }
 

@@ -18,13 +18,13 @@ void TestMap::OnInitializeScene()
 		NCLERROR("Texture not loaded");
 	
 	pickup_SpeedBoost = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
-	this->AddGameObject(pickup_SpeedBoost->GetObj());
+	this->AddGameObject(pickup_SpeedBoost);
 
 	pickup_JumpBoost = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
-	this->AddGameObject(pickup_JumpBoost->GetObj());
+	this->AddGameObject(pickup_JumpBoost);
 	
 	pickup_Weapon = new Pickup(Vector3(1, 3, -5.5), WEAPON);
-	this->AddGameObject(pickup_Weapon->GetObj());
+	this->AddGameObject(pickup_Weapon);
 	
 	TestMap::CreateEnvironment();	// creates environment & elements within.
 	TestMap::GameplayTesting();	   // gameplay functionality testing.
