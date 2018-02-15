@@ -50,6 +50,7 @@ public:
 	inline Vector3 GetSpawnLocation() {}
 	//FINISHED FUNCTIONS
 	inline Avatar * GetPlayer(uint id) { return avatars[id]; }
+	inline Avatar * GetCurrentAvatar() { return avatars[user->GetUserID()]; }
 	inline int GetMapIndex() { return 0; }
 	inline int GetScore(uint id) { return teamScores[id]; }
 	inline uint getUserID() { return user->GetUserID(); }

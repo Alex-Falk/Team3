@@ -1,0 +1,107 @@
+#include "Map.h"
+
+//--------------------------------------------------------------------------------------------//
+// Initialization
+//--------------------------------------------------------------------------------------------//
+void Map::onConnectToScene()
+{
+	for (uint i = 0; i < 4; i++) {
+		if (Game::Instance()->GetUser())
+		{
+			Avatar * p = nullptr;
+			if (i == Game::Instance()->getUserID())
+			{
+				p = new ControllableAvatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+			else
+			{
+				p = new Avatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+
+			this->AddGameObject(p->GetGameObject());
+			Game::Instance()->SetAvatar(i, p);
+
+			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render());
+		}
+	}
+}
+
+void Map::OnInitializeScene() {
+	GraphicsPipeline::Instance()->SetIsMainMenu(false);
+	Scene::OnInitializeScene();
+}
+
+void Map::OnInitializeGUI()
+{
+	//Call initi-function for gui
+	sceneGUI = new GUI();
+	sceneGUI->Init(CEGUIDIR);
+
+	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
+	sceneGUI->LoadScheme("TaharezLook.scheme");
+	sceneGUI->LoadScheme("AlfiskoSkin.scheme");
+
+	//Set Font sytle
+	sceneGUI->SetFont("DejaVuSans-10");
+
+	//SetMouseCursor
+	sceneGUI->SetMouseCursor("TaharezLook/MouseArrow");
+	sceneGUI->ShowMouseCursor();
+
+	//Create Push Button handle
+	energyBar = static_cast<CEGUI::ProgressBar*>(
+		sceneGUI->createWidget("TaharezLook/ProgressBar",
+			Vector4(0.40f, 0.9f, 0.2f, 0.03f),
+			Vector4(),
+			"energyBar"
+		));
+
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	}
+
+}
+
+
+//--------------------------------------------------------------------------------------------//
+// Updating Avatars and Scores
+//--------------------------------------------------------------------------------------------//
+void Map::OnUpdateScene(float dt)
+{
+	Scene::OnUpdateScene(dt);
+
+	m_AccumTime += dt;
+
+	//player->OnPlayerUpdate(dt);
+	for (uint i = 0; i < 4; i++) {
+		if (Game::Instance()->GetPlayer(i))
+			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
+		UpdateGroundScore(Game::Instance()->GetPlayer(i));
+	}
+
+	int score = groundTeamScore[0];
+
+	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+	}
+}
+
+
+//--------------------------------------------------------------------------------------------//
+// Score Related Functions
+//--------------------------------------------------------------------------------------------//
+// Decreases the score from previous team and increases the score to the new team.
+void Map::ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease) {
+	groundTeamScore[teamToDecrease] -= 1;
+	groundTeamScore[teamToIncrease] += 1;
+}
+
+void Map::PrintScore(int score) {
+	NCLDebug::Log(to_string(score / 1000));
+}

@@ -90,7 +90,7 @@ void TestMap::OnUpdateScene(float dt)
 	if (Game::Instance()->GetUser())
 	{
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+			energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
 
 	Vector3 pickup_SpeedBoost = Vector3(0.0, 2.0, 0.0);
@@ -130,7 +130,7 @@ void TestMap::OnInitializeGUI()
 	if (Game::Instance()->GetUser())
 	{
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+			energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
 }
 
