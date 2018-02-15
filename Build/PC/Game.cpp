@@ -1,5 +1,5 @@
 #include "Game.h"
-
+#include <ncltech\SceneManager.h>
 void Game::Update(float dt)
 { 
 	if (user) 
@@ -13,6 +13,7 @@ void Game::ResetGame()
 {
 	for (uint i = 0; i < 4; ++i)
 	{
+		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(avatars[i]);
 		delete avatars[i];
 		avatars[i] = nullptr;
 	}

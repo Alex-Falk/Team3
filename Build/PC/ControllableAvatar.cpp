@@ -72,13 +72,23 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 		force.y = 0;
 	}
 
+	if (force.x > maxForce)force.x = maxForce;
+	if (force.x < -maxForce)force.x = -maxForce;
+	if (force.z > maxForce)force.z = maxForce;
+	if (force.z < -maxForce)force.z = -maxForce;
+
+	Physics()->SetForce(force);
+
 	if (Input::Instance()->GetInput(JUMP) && canJump)
 	{		//Jump
-		force +=(Vector3(-abs(force.x /2.0f), jumpImpulse, -abs(force.z / 2.0f)));
+		Vector3 vel = Physics()->GetLinearVelocity();
+		Physics()->SetLinearVelocity(Vector3(vel.x*.8f,jumpImpulse,vel.z*.8f));
+		//force +=(Vector3(-(force.x /2.0f), 10, -(force.z / 2.0f)));
 		inAir = true;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+		canJump = false;
 	}
-	canJump = false;
+	
 	
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
@@ -102,8 +112,6 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	{
 		shooting = true;
 	}
-	playerGameObject->Physics()->SetForce(force);
-
 }
 
 

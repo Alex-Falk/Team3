@@ -82,7 +82,7 @@ Avatar::Avatar()
 	maxLife = 100;
 	life = maxLife;
 
-	standardJumpImpulse = 250.0f;
+	standardJumpImpulse = 8.0f;
 	jumpImpulse = standardJumpImpulse;
 	boostedJumpImpulse = standardJumpImpulse * 2;
 	shooting = false;
@@ -106,9 +106,13 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	maxLife = 100;
 	life = maxLife;
 
-	jumpImpulse = 250.0f;
+	jumpImpulse = 8.0f;
 	boostactiveTime = 15.0f;
 	shootCooldown = 0.0f;
+
+	standardJumpImpulse = 8.0f;
+	jumpImpulse = standardJumpImpulse;
+	boostedJumpImpulse = standardJumpImpulse * 2;
 
 	canJump = true;
 	canShoot = true;

@@ -159,23 +159,11 @@ void HandleKeyboardInputs()
 
 	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
 	uint sceneMax = SceneManager::Instance()->SceneCount();
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Y))
-	{
-		Game::Instance()->ResetGame();
-		SceneManager::Instance()->JumpToScene((sceneIdx + 1) % sceneMax);
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_T))
-	{
-		Game::Instance()->ResetGame();
-		SceneManager::Instance()->JumpToScene((sceneIdx == 0 ? sceneMax : sceneIdx) - 1);
-	}
-		
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
 	{
 		Game::Instance()->ResetGame();
-		SceneManager::Instance()->JumpToScene(sceneIdx);
+		SceneManager::Instance()->JumpToScene(0);
 	}
 		
 
