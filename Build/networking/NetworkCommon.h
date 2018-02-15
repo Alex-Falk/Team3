@@ -28,65 +28,57 @@
                         .:d0K00KKkl,.                       
                            .,cl:.                            
 */
-// Handles Client functionality for the game. Includes Sending and Recieving updates to/from the server
+// Common functions/enums used both by the server and the client
 
 #pragma once
+#include <nclgl\common.h>
+#include <PC\Avatar.h>
 
-#include "User.h"
-#define CLIENT_ID serverConnection->outgoingPeerID
-
-using namespace std;
-
-struct TempData {
-	Vector3 positions[4];
-	Vector3 linVelocities[4];
-	Vector3 angVelocities[4];
-	Vector3 accelerations[4];
-	float sizes[4];
+enum PacketType {
+	GAME_START,				// Informs clients the game has started
+	CONNECTION_ID,
+	PLAYER_POS,				// Server->Client: Broadcast positions.		Client->Server: Inform on Update
+	PLAYER_LINVEL,
+	PLAYER_ANGVEL,
+	PLAYER_ACCELERATION,	// Server->Client: Broadcast.				Client->Server:			"
+	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
+	PLAYER_WEAPON,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
+	PLAYER_SCORES,			// Server->Client: Broadcast Scores
+	MAP_INDEX,				// Server->Client: Boradcast Map to load
+	MAP_UPDATE,				//
+	TEXT_PACKET,
+	GAME_END				// Server->Client: Informs clients game has ended
 };
 
-class Client : public User
-{
-public:
-	Client();
-	Client(IP ip);
-	~Client();
-
-	
-
-	//--------------------------------------------------------------------------------------------//
-	// Utility
-	//--------------------------------------------------------------------------------------------//
-	virtual void UpdateUser(float dt);
-
-	virtual void Disconnect();
-
-	void ProcessNetworkEvent(const ENetEvent & evnt);
-
-	//--------------------------------------------------------------------------------------------//
-	// Sending
-	//--------------------------------------------------------------------------------------------//
-
-	void SendPosition(uint ID);
-	void SendLinVelocity(uint ID);
-	void SendAngVelocity(uint ID);
-	void SendAcceleration(uint ID);
-	void SendWeaponFire(uint ID);
-	void SendSize(uint ID);
-
-	//--------------------------------------------------------------------------------------------//
-	// Recieving
-	//--------------------------------------------------------------------------------------------//
-
-	void ReceiveScores(string data);
-	void ReceiveMapIndex(string data);
-	//void ReceiveMapChange(string data);
-
-protected:
-	NetworkBase network;
-	ENetPeer* serverConnection;
-
-	TempData temps;
-
+struct IP {
+	int a;
+	int b;
+	int c;
+	int d;
+	int port;
 };
+
+struct PlayerVector {
+	uint ID;
+	Vector3 v;
+};
+
+struct PlayerFloat {
+	uint ID;
+	float f;
+};
+
+//--------------------------------------------------------------------------------------------//
+// Functions
+//--------------------------------------------------------------------------------------------//
+
+// Take a string in the format: "x.xx y.yy z.zz"
+Vector3 InterpretStringVector(string message);
+
+string Vector3ToString(Vector3 in);
+
+// Function to split a string into a vector of strings by a delimiter d
+vector<string> split_string(string s, char d);
+
+PacketType FindType(string data);
 

@@ -24,9 +24,9 @@
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
-#include <ncltech\CommonMeshes.h>
-#include <nclgl\PlayerRenderNode.h>
-#include <nclgl\common.h>
+#include <ncltech\CommonMeshes.h> 
+#include <nclgl\PlayerRenderNode.h> 
+#include <nclgl\common.h> 
 
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
@@ -139,7 +139,7 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	if (life > minLife) 
 	{
-		life -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
+		//life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
 
 		if (life < minLife)
 		{

@@ -10,6 +10,7 @@
 #include "GamePlay.h"
 #include "Pickup.h"
 #include "Avatar.h"
+#include "Game.h"
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
@@ -116,7 +117,7 @@ public:
 				"startButton"
 			));
 		startButton->setText("CREATE GAME");
-		startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onButtonClicked, this));
+		startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onStartGameClicked, this));
 
 		joinButton = static_cast<CEGUI::PushButton*>(
 			sceneGUI->createWidget("OgreTray/Button",
@@ -125,7 +126,7 @@ public:
 				"joinButton"
 			));
 		joinButton->setText("JOIN GAME");
-		joinButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onButtonClicked, this));
+		joinButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onJoinGameClicked, this));
 
 		optionButton = static_cast<CEGUI::PushButton*>(
 			sceneGUI->createWidget("OgreTray/Button",
@@ -165,7 +166,7 @@ public:
 				"masterVolumnSlider"
 			));
 		masterVolumnSlider->setMaxValue(1.0f);
-		masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		//masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		masterVolumnSlider->setVisible(false);
 		masterVolumnSlider->disable();
 		masterVolumnSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMasterVolumnChanged, this));
@@ -178,7 +179,7 @@ public:
 			));
 
 		GameSoundsSlider->setMaxValue(1.0f);
-		GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		//GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		GameSoundsSlider->setVisible(false);
 		GameSoundsSlider->disable();
 
@@ -189,7 +190,7 @@ public:
 				"MusicSlider"
 			));
 		MusicSlider->setMaxValue(1.0f);
-		MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		//MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		MusicSlider->setVisible(false);
 		MusicSlider->disable();
 
@@ -226,6 +227,41 @@ public:
 
 	void onButtonClicked() {
 		SceneManager::Instance()->JumpToScene();
+	}
+
+	void onStartGameClicked() {
+		if (enet_initialize() != 0)
+		{
+			//Quit(true, "ENET failed to initialize!");
+		}
+
+		Game::Instance()->SetServer();
+		SceneManager::Instance()->JumpToScene();
+		SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+		GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+	}
+
+	void onJoinGameClicked() {
+		if (enet_initialize() != 0)
+		{
+			//Quit(true, "ENET failed to initialize!");
+		}
+
+		IP ip;
+
+		cout << "Enter the IP:\n";
+		cin >> ip.a;
+		cout << ".";
+		cin >> ip.b;
+		cout << ".";
+		cin >> ip.c;
+		cout << ".";
+		cin >> ip.d;
+		cout << ":1234";
+		ip.port = 1234;
+
+		Game::Instance()->setClient(ip);
 	}
 
 	void onOptionButtonClicked()
@@ -295,18 +331,18 @@ public:
 	void onMasterVolumnChanged()
 	{
 		float temp = masterVolumnSlider->getCurrentValue();
-		AudioSystem::Instance()->SetMasterVolume(temp);
+		//AudioSystem::Instance()->SetMasterVolume(temp);
 	}
 
 	void onGameSoundVolumnChanged()
 	{
 		float temp = GameSoundsSlider->getCurrentValue();
-		AudioSystem::Instance()->SetGameSoundsVolume(temp);
+		//AudioSystem::Instance()->SetGameSoundsVolume(temp);
 	}
 
 	void onMusicVolumnChanged()
 	{
 		float temp = MusicSlider->getCurrentValue();
-		AudioSystem::Instance()->SetGameSoundsVolume(temp);
+		//AudioSystem::Instance()->SetGameSoundsVolume(temp);
 	}
 };

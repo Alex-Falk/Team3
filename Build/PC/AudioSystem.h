@@ -26,7 +26,7 @@ public:
 	void Create3DStream(int index, const char* pFile, float minDist, float maxDist);
 
 	//plays a certain sound, works for both sounds and streams
-	void PlaySound(int index, bool loop = false, Vector3 position = { 0.f, 0.f, 0.f }, Vector3 velocity = { 0.f, 0.f, 0.f });
+	void PlayASound(int index, bool loop = false, Vector3 position = { 0.f, 0.f, 0.f }, Vector3 velocity = { 0.f, 0.f, 0.f });
 
 	//memory management, will delete the sound
 	void ReleaseSound(int index);

@@ -19,12 +19,13 @@
 //          `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"      
-
+// Nikos Fragkas 05/02/2018
 #pragma once
 #include "GamePlay.h"
 #include <ncltech\GameObject.h>
 #include <ncltech\CommonUtils.h>
-
+#include <ncltech\CommonMeshes.h>
+#include <nclgl\PlayerRenderNode.h>
 
 
 class Avatar : public GameObject
@@ -103,6 +104,7 @@ public:
 
 	void RestoreLife() { life = maxLife; }
 	float GetLife() { return life; }
+	void SetLife(float l) { life = l; }
 
 	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is Picked Up			Nikos 13.20
 	void UpdatePickUp(float dt);			// Update Pick Ups based on time

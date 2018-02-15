@@ -1,14 +1,17 @@
+#include <enet\enet.h>
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
+
 #include "AudioSystem.h"
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
 #include "Arena.h"
 #include "GameInput.h"
 #include "Game.h"
+
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -23,6 +26,8 @@ uint shadowCycleKey = 4;
 //Prevent multiple clicking from happening
 int fpsCounter = 6;
 
+
+
 // Program Deconstructor
 //  - Releases all global components and memory
 //  - Optionally prints out an error message and
@@ -32,9 +37,10 @@ void Quit(bool error = false, const std::string &reason = "") {
 	SceneManager::Release();
 	PhysicsEngine::Release();
 	GraphicsPipeline::Release();
+	enet_deinitialize();
 	AudioSystem::Release();
 	Window::Destroy();
-
+	
 	//Show console reason before exit
 	if (error) {
 		std::cout << reason << std::endl;
@@ -58,19 +64,18 @@ void Initialize()
 	if (!Window::Initialise("Game Technologies", 1280, 800, false))
 		Quit(true, "Window failed to initialise!");
 
+
 	//Initialize Renderer
 	GraphicsPipeline::Instance();
 
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
 
-	//Enqueue All Scenes
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay ("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
 	AudioSystem::Instance();
-
 	InitialiseAudioFiles();
 }
 
@@ -155,13 +160,24 @@ void HandleKeyboardInputs()
 	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
 	uint sceneMax = SceneManager::Instance()->SceneCount();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Y))
+	{
+		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene((sceneIdx + 1) % sceneMax);
+	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_T))
+	{
+		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene((sceneIdx == 0 ? sceneMax : sceneIdx) - 1);
+	}
+		
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
+	{
+		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene(sceneIdx);
+	}
+		
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
 		show_perf_metrics = !show_perf_metrics;
@@ -169,20 +185,20 @@ void HandleKeyboardInputs()
 	//audio test functionality
 	//TODO remove this when finished testing
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
-		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
+		AudioSystem::Instance()->PlayASound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
+		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
 	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
+		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
 	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
+		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
 	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
+		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
 	}
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
@@ -236,32 +252,6 @@ void HandleKeyboardInputs()
 
 	}
 
-	//audio test functionality
-	//TODO remove this when finished testing
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {
-		AudioSystem::Instance()->PlaySound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-		AudioSystem::Instance()->PlaySound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
-		AudioSystem::Instance()->StopAllSounds();
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
-		AudioSystem::Instance()->UnmuteAllSounds();
-	}
 	//toggle the camera
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {
 		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
@@ -322,15 +312,17 @@ int main()
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
-	Window::GetWindow().LockMouseToWindow(true);
+	Window::GetWindow().LockMouseToWindow(false);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
 		&& SceneManager::Instance()->GetExitButtonClicked() == false) 
 	{
-		//Start Timing
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
-																		//Update Performance Timers (Show results every second)
+																			//Update Performance Timers (Show results every second)
+		
+		GraphicsPipeline::Instance()->GetCamera()->SetPosition(Vector3(0, 1, 0));
+
 		timer_total.UpdateRealElapsedTime(dt);
 		timer_physics.UpdateRealElapsedTime(dt);
 		timer_update.UpdateRealElapsedTime(dt);
@@ -349,7 +341,7 @@ int main()
 		//Handle Keyboard Inputs
 		HandleKeyboardInputs();
 
-		
+
 		timer_total.BeginTimingSection();
 
 		//Update Scene
@@ -366,22 +358,26 @@ int main()
 		//Render Scene
 		timer_render.BeginTimingSection();
 		GraphicsPipeline::Instance()->UpdateScene(dt);
-//		GraphicsPipeline::Instance()->DebugRender();
+		//		GraphicsPipeline::Instance()->DebugRender();
 		GraphicsPipeline::Instance()->RenderScene();
 		{
 			//Forces synchronisation if vsync is disabled
 			// - This is solely to allow accurate estimation of render time
 			// - We should NEVER normally lock our render or game loop!		
-		//	glClientWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL), GL_SYNC_FLUSH_COMMANDS_BIT, 1000000);
+			//	glClientWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL), GL_SYNC_FLUSH_COMMANDS_BIT, 1000000);
 		}
 		timer_render.EndTimingSection();
 
 		timer_audio.BeginTimingSection();
 		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
 		timer_audio.EndTimingSection();
+		Game::Instance()->Update(dt);
 
 		//Finish Timing
-		timer_total.EndTimingSection();		
+		timer_total.EndTimingSection();
+		//}
+
+
 	}
 
 	//Cleanup

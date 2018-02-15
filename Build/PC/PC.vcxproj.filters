@@ -34,6 +34,9 @@
     <Filter Include="Audio\Resource Files">
       <UniqueIdentifier>{89a30854-5191-471d-a9b6-e02e4ba035ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{b8902088-ba15-4644-a525-fd1e7d22ec8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GamePlay.h">
@@ -78,6 +81,18 @@
     <ClInclude Include="ControllableAvatar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\networking\Client.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\NetworkCommon.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\Server.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
+    <ClInclude Include="..\networking\User.h">
+      <Filter>Networking</Filter>
+    </ClInclude>
     <ClInclude Include="Projectile.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
@@ -115,6 +130,18 @@
     </ClCompile>
     <ClCompile Include="ControllableAvatar.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\Client.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\NetworkCommon.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\Server.cpp">
+      <Filter>Networking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\networking\User.cpp">
+      <Filter>Networking</Filter>
     </ClCompile>
     <ClCompile Include="Projectile.cpp">
       <Filter>GamePlay\Source</Filter>

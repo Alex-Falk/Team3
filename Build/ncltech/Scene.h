@@ -86,6 +86,7 @@ public:
 	//   - Called once per frame and should contain time-sensitive update logic
 	//	   Note: This is time relative to seconds not milliseconds! (e.g. msec / 1000)
 	virtual void OnUpdateScene(float dt) {}
+	virtual void onConnectToScene() {}
 
 
 	// Should be the action fired by the main game loop when updating a scene

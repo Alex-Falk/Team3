@@ -1,5 +1,6 @@
 #include "WeaponPickup.h"
 #include "SimpleGamePlay.h"
+#include "Game.h"
 
 void SimpleGamePlay::OnInitializeScene() {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
@@ -22,22 +23,42 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	player = new ControllableAvatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
+	GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));
 
-	this->AddGameObject(player->GetGameObject());
+	//player = new Player(Vector3(0.0, 1.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
+
+	//this->AddGameObject(player->GetGameObject());
 
 	pickup = new Pickup(Vector3(0, 3, 0), SPEED_BOOST);
 
 	this->AddGameObject(pickup->GetObj());
 
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
-	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
-
-	GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));
-	GraphicsPipeline::Instance()->AddPlayerRenderNode(player->GetGameObject()->Render());
-
+	//GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
 	OnInitializeGUI();
 	Scene::OnInitializeScene();
+}
+
+void SimpleGamePlay::onConnectToScene()
+{
+	for (uint i = 0; i < 4; i++) {
+		if (Game::Instance()->GetUser())
+		{
+			Avatar * p = nullptr;
+			if (i == Game::Instance()->getUserID())
+			{
+				p = new ControllableAvatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+			else
+			{
+				p = new Avatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+
+			this->AddGameObject(p->GetGameObject());
+			Game::Instance()->SetAvatar(i, p);
+
+			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render());
+		}
+	}
 }
 
 void SimpleGamePlay::OnUpdateScene(float dt)
@@ -46,7 +67,11 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	m_AccumTime += dt;
 
-	player->OnAvatarUpdate(dt);
+	//player->OnPlayerUpdate(dt);
+	for (uint i = 0; i < 4; i++) {
+		if (Game::Instance()->GetPlayer(i))
+			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
+	}
 
 	if (pickup)
 	{
@@ -55,7 +80,11 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
-	energyBar->setProgress(player->GetLife()/100.0f);
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	}
 }
 
 void SimpleGamePlay::OnCleanupScene()
@@ -90,7 +119,12 @@ void SimpleGamePlay::OnInitializeGUI()
 			"energyBar"
 		));
 
-	energyBar->setProgress(player->GetLife()/100.0f);
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	}
+		
 }
 
 void SimpleGamePlay::onButtonClicked()

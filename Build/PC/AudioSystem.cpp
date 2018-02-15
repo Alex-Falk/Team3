@@ -112,7 +112,7 @@ void AudioSystem::Create3DStream(int index, const char* pFile, float minDist, fl
 }
 
 //plays a certain sound, works for both sounds and streams
-void AudioSystem::PlaySound(int index, bool loop, Vector3 position, Vector3 velocity) {
+void AudioSystem::PlayASound(int index, bool loop, Vector3 position, Vector3 velocity) {
 	if (!loop)
 		sounds[index]->setMode(FMOD_LOOP_OFF);
 	else

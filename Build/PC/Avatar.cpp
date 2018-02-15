@@ -19,6 +19,7 @@
 //          `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"         
+// Nikos Fragkas 05/02/2018
 
 #include "Avatar.h"
 #include <ncltech\SphereCollisionShape.h>
@@ -134,8 +135,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 		colour = RED_COLOUR;
 	}
 	break;
-	case PINK
-		:
+	case PINK:
 	{
 		colour = PINK_COLOUR;
 	}
@@ -163,9 +163,9 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	pnode = new PhysicsNode();
 	pnode->SetPosition(pos);
 	pnode->SetInverseMass(1.0f);
-	pnode->SetBoundingRadius(radius);
+	pnode->SetBoundingRadius(s);
 	pnode->SetType(PLAYER);
-	CollisionShape* pColshape = new SphereCollisionShape(radius);
+	CollisionShape* pColshape = new SphereCollisionShape(s);
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1.0f));
 
