@@ -16,9 +16,6 @@ void TestMap::OnInitializeScene()
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
-
-	player = new ControllableAvatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
-	this->AddGameObject(player->GetGameObject());
 	
 	pickup_SpeedBoost = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
 	this->AddGameObject(pickup_SpeedBoost->GetObj());
@@ -33,14 +30,33 @@ void TestMap::OnInitializeScene()
 	TestMap::GameplayTesting();	   // gameplay functionality testing.
 	TestMap::PaintEnvironment();  // paints objects in level.
 
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(player->GetGameObject()->Physics());
-	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
-
 	GraphicsPipeline::Instance()->InitPath(Vector2(30, 30));
-	GraphicsPipeline::Instance()->AddPlayerRenderNode(player->GetGameObject()->Render());
 
 	OnInitializeGUI();
 	Scene::OnInitializeScene();
+}
+
+void TestMap::onConnectToScene()
+{
+	for (uint i = 0; i < 4; i++) {
+		if (Game::Instance()->GetUser())
+		{
+			Avatar * p = nullptr;
+			if (i == Game::Instance()->getUserID())
+			{
+				p = new ControllableAvatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+			else
+			{
+				p = new Avatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+			}
+
+			this->AddGameObject(p->GetGameObject());
+			Game::Instance()->SetAvatar(i, p);
+
+			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render());
+		}
+	}
 }
 
 void TestMap::OnUpdateScene(float dt)
@@ -49,7 +65,10 @@ void TestMap::OnUpdateScene(float dt)
 
 	m_AccumTime += dt;
 
-	player->OnAvatarUpdate(dt);
+	for (uint i = 0; i < 4; i++) {
+		if (Game::Instance()->GetPlayer(i))
+			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
+	}
 
 	if (pickup_JumpBoost)
 	{
@@ -68,7 +87,11 @@ void TestMap::OnUpdateScene(float dt)
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
-	energyBar->setProgress(player->GetLife() / 100.0f);
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	}
 
 	Vector3 pickup_SpeedBoost = Vector3(0.0, 2.0, 0.0);
 	Vector3 pickup_JumpBoost = Vector3(0.0, 2.0, 0.0);
@@ -104,14 +127,18 @@ void TestMap::OnInitializeGUI()
 			"energyBar"
 		));
 
-	energyBar->setProgress(player->GetLife() / 100.0f);
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	}
 }
 
 void TestMap::OnCleanUpScene()
 {
 	DeleteAllGameObjects();
-	TextureManager::Instance()->RemoteAllTexture();
-	GraphicsPipeline::Instance()->RemoteAllPlayerRenderNode();
+	TextureManager::Instance()->RemoveAllTexture();
+	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
 }
 
 void TestMap::CreateEnvironment()
@@ -227,30 +254,30 @@ void TestMap::GameplayTesting()
 
 void TestMap::PaintEnvironment()
 {
-	player->GetColour() == colour;
+	//player->GetColour() == colour;
 
-	switch (player->GetColour())
-	{
-	case RED:
-		object->Render()->GetChild()->SetBaseColor(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
-		colour = RED;
-		break;
+	//switch (player->GetColour())
+	//{
+	//case RED:
+	//	object->Render()->GetChild()->SetBaseColor(Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	//	colour = RED;
+	//	break;
 
-	case GREEN:
-		object->Render()->GetChild()->SetBaseColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
-		colour = GREEN;
-		break;
+	//case GREEN:
+	//	object->Render()->GetChild()->SetBaseColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+	//	colour = GREEN;
+	//	break;
 
-	case BLUE:
-		object->Render()->GetChild()->SetBaseColor(Vector4(0.f, 0.0f, 1.0f, 1.0f));
-		colour = BLUE;
-		break;
+	//case BLUE:
+	//	object->Render()->GetChild()->SetBaseColor(Vector4(0.f, 0.0f, 1.0f, 1.0f));
+	//	colour = BLUE;
+	//	break;
 
-	case PINK:
-		object->Render()->GetChild()->SetBaseColor(Vector4(1.2f, 0.5f, 1.0f, 1.0f));
-		colour = PINK;
-		break;
-	}
+	//case PINK:
+	//	object->Render()->GetChild()->SetBaseColor(Vector4(1.2f, 0.5f, 1.0f, 1.0f));
+	//	colour = PINK;
+	//	break;
+	//}
 }
 
 void TestMap::OnButtonClicked()

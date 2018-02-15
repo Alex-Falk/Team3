@@ -14,6 +14,7 @@
 #include "Avatar.h"
 #include "Pickup.h"
 #include "WeaponPickup.h"
+#include "Game.h"
 
 
 
@@ -22,7 +23,7 @@ class TestMap : public Scene
 private:
 
 	float m_AccumTime = 0;
-	Avatar* player;
+	//Avatar* player;
 	Pickup* pickup_SpeedBoost;
 	Pickup* pickup_JumpBoost;
 	Pickup* pickup_Weapon;
@@ -44,14 +45,16 @@ public:
 
 	~TestMap()
 	{
-		TextureManager::Instance()->RemoteAllTexture();
-		delete player;
+		TextureManager::Instance()->RemoveAllTexture();
+		//delete player;
 		delete pickup_JumpBoost;
 		delete pickup_SpeedBoost;
 		delete pickup_Weapon;
 	}
 
 	virtual void OnInitializeScene() override;
+
+	void onConnectToScene() override;
 
 	virtual void OnUpdateScene(float dt) override;
 	

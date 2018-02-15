@@ -116,7 +116,7 @@ void Server::UpdateUser(float dt)
 
 				connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 				SendConnectionID(freeIDs[freeIDs.size() - 1]);
-				enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1],10,10,10);
+				//enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1],10,10,10);
 
 				freeIDs.pop_back();
 			}
@@ -166,7 +166,7 @@ void Server::UpdateUser(float dt)
 
 			case TEXT_PACKET:
 			{
-				cout << data.substr(data.find_first_of(':') + 1) + "\n";
+				//cout << data.substr(data.find_first_of(':') + 1) + "\n";
 			}
 			}
 			break;

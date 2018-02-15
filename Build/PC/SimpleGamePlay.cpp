@@ -22,7 +22,7 @@ void SimpleGamePlay::OnInitializeScene() {
 		true,
 		false,
 		PhysNodeType::BIG_NODE,
-		Vector4(0.2f, 0.5f, 1.0f, 1.0f),
+		Vector4(0.6f, 0.6f, 0.6f, 1.0f),
 		MATERIALTYPE::Ground);
 
 	this->AddGameObject(ground);
