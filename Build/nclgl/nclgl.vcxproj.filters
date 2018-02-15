@@ -19,6 +19,9 @@
     <Filter Include="Files\Material">
       <UniqueIdentifier>{6be6cd9d-40d4-4a2b-9ceb-aa3097c1395e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\GUI">
+      <UniqueIdentifier>{9632adfb-425b-4e55-a479-2add1692d1c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Keyboard.cpp">
@@ -96,20 +99,17 @@
     <ClCompile Include="Window.cpp">
       <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="NCLDebug.cpp">
-      <Filter>Files</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerRenderNode.cpp">
       <Filter>Files\RenderNode</Filter>
     </ClCompile>
     <ClCompile Include="UserInterface.cpp">
-      <Filter>Files\RenderBase</Filter>
+      <Filter>Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="NCLDebug.cpp">
+      <Filter>Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="NCLDebug.h">
-      <Filter>Files</Filter>
-    </ClInclude>
     <ClInclude Include="common.h">
       <Filter>Files</Filter>
     </ClInclude>
@@ -215,8 +215,11 @@
     <ClInclude Include="PlayerRenderNode.h">
       <Filter>Files\RenderNode</Filter>
     </ClInclude>
+    <ClInclude Include="NCLDebug.h">
+      <Filter>Files\GUI</Filter>
+    </ClInclude>
     <ClInclude Include="UserInterface.h">
-      <Filter>Files\RenderBase</Filter>
+      <Filter>Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

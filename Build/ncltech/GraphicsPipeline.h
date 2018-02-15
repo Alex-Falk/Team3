@@ -184,6 +184,8 @@ public:
 	void HandleLeftMouseButtonHold(bool isHold);
 	void SetCurrentSceneGUI(GUI* passInValue) { GUIsystem = passInValue; }
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
+	bool GetIsMainMenu() { return isMainMenu; }
+	GUI* GetGUISystem() { return GUIsystem; }
 
 protected:
 	GraphicsPipeline();

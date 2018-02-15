@@ -31,6 +31,7 @@ void GUI::Init(const std::string& resourceDirectory)
 	//Create Root window
 	m_root = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "root");
 	m_context->setRootWindow(m_root);
+
 }
 
 void GUI::Destory()
@@ -68,40 +69,104 @@ void GUI::HideMouseCursor()
 }
 
 
-void GUI::HandleInput(int _case)
+void GUI::HandleTextInput(KeyboardKeys pressedKey)
 {
-	switch (_case)
+	CEGUI::utf32 codePoint = 61;
+	switch (pressedKey)
 	{
-		//Detect if the mouse has moved
-	case 1:
-		//m_context->injectMousePosition();
+	case KEYBOARD_A:
+		m_context->injectChar(0x61);
 		break;
-
-		//Detect keyboard key has been pressed down
-	case 2:
-		//m_context->injectKeyDown();
+	case KEYBOARD_B:
+		m_context->injectChar(0x62);
 		break;
-
-		//Detect if the keyboard key released
-	case 3:
-		//m_context->injectKeyUp();
+	case KEYBOARD_C:
+		m_context->injectChar(0x63);
 		break;
-
-		//Detect unicode input
-	case 4:
-
+	case KEYBOARD_D:
+		m_context->injectChar(0x64);
 		break;
-
-		//Detect if mouse button pressed
-	case 5:
-		//m_context->injectMouseButtonDown();
+	case KEYBOARD_E:
+		m_context->injectChar(0x65);
 		break;
-
-		//Detect if mouse button released
-	case 6:
-		//m_context->injectMouseButtonUp();
+	case KEYBOARD_F:
+		m_context->injectChar(0x66);
 		break;
-
+	case KEYBOARD_G:
+		m_context->injectChar(0x67);
+		break;
+	case KEYBOARD_H:
+		m_context->injectChar(0x68);
+		break;
+	case KEYBOARD_I:
+		m_context->injectChar(0x69);
+		break;
+	case KEYBOARD_J:
+		m_context->injectChar(0x6a);
+		break;
+	case KEYBOARD_K:
+		m_context->injectChar(0x6b);
+		break;
+	case KEYBOARD_L:
+		m_context->injectChar(0x6c);
+		break;
+	case KEYBOARD_M:
+		m_context->injectChar(0x6d);
+		break;
+	case KEYBOARD_N:
+		m_context->injectChar(0x6e);
+		break;
+	case KEYBOARD_O:
+		m_context->injectChar(0x6f);
+		break;
+	case KEYBOARD_P:
+		m_context->injectChar(0x70);
+		break;
+	case KEYBOARD_Q:
+		m_context->injectChar(0x71);
+		break;
+	case KEYBOARD_R:
+		m_context->injectChar(0x72);
+		break;
+	case KEYBOARD_S:
+		m_context->injectChar(0x73);
+		break;
+	case KEYBOARD_T:
+		m_context->injectChar(0x74);
+		break;
+	case KEYBOARD_U:
+		m_context->injectChar(0x75);
+		break;
+	case KEYBOARD_V:
+		m_context->injectChar(0x76);
+		break;
+	case KEYBOARD_W:
+		m_context->injectChar(0x77);
+		break;
+	case KEYBOARD_X:
+		m_context->injectChar(0x78);
+		break;
+	case KEYBOARD_Y:
+		m_context->injectChar(0x79);
+		break;
+	case KEYBOARD_Z:
+		m_context->injectChar(0x7a);
+		break;
+	case KEYBOARD_BACK:
+		m_context->injectKeyDown(CEGUI::Key::Backspace);
+		m_context->injectKeyUp(CEGUI::Key::Backspace);
+		break;
+	case KEYBOARD_RETURN:
+		for (int i = 0; i < inputBox.size(); ++i) {
+			if (inputBox[i].type == currentType) {
+				userTyping[i].content = inputBox[i].editbox->getText().c_str();
+				std::cout << userTyping[i].content << std::endl;
+				break;
+			}
+		}
+		break;
+	default:
+		break;
 	}
 }
 
