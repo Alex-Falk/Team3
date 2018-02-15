@@ -63,9 +63,6 @@
     <ClInclude Include="Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WeaponPickup.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
     <ClInclude Include="MainMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -94,6 +91,12 @@
       <Filter>Networking</Filter>
     </ClInclude>
     <ClInclude Include="Projectile.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponPickup.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
   </ItemGroup>
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="Projectile.cpp">
       <Filter>GamePlay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMap.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

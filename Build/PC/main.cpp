@@ -9,6 +9,7 @@
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
 #include "Arena.h"
+#include "TestMap.h"
 #include "GameInput.h"
 #include "Game.h"
 
