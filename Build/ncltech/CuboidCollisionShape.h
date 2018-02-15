@@ -70,9 +70,10 @@ public:
 		Vector3& out_normal,
 		std::vector<Plane>& out_adjacent_planes) const override;
 
-
-
+	//phil 13/02/2018
+	virtual float GetRayIntersection(Vector3 origin, Vector3 direction);
 protected:
+	Vector3 GetPlaneIntersection(Vector3 pNormal, Vector3 pCenter, Vector3 lCenter, Vector3 lNormal);
 	//Constructs the static cube hull 
 	static void ConstructCubeHull();
 

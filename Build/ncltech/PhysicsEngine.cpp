@@ -33,7 +33,12 @@ PhysicsEngine::~PhysicsEngine()
 
 void PhysicsEngine::AddPhysicsObject(PhysicsNode* obj)
 {
-	physicsNodes.push_back(obj);	
+	physicsNodes.push_back(obj);
+
+	if (worldPartitioning)
+	{
+		worldPartitioning->AddObject(obj);
+	}
 }
 
 void PhysicsEngine::ResetWorldPartition()
@@ -72,13 +77,21 @@ std::vector<PhysicsNode*>* PhysicsEngine::GetAllNodesOfType(PhysNodeType type)
 
 void PhysicsEngine::RemovePhysicsObject(PhysicsNode* obj)
 {
-	//Lookup the object in question
-	auto found_loc = std::find(physicsNodes.begin(), physicsNodes.end(), obj);
-
-	//If found, remove it from the list
-	if (found_loc != physicsNodes.end())
+	if (obj)
 	{
-		physicsNodes.erase(found_loc);
+		//Lookup the object in question
+		auto found_loc = std::find(physicsNodes.begin(), physicsNodes.end(), obj);
+
+		//If found, remove it from the list
+		if (found_loc != physicsNodes.end())
+		{
+			physicsNodes.erase(found_loc);
+		}
+
+		if (worldPartitioning)
+		{
+			worldPartitioning->RemovePhysicsObject(obj);
+		}
 	}
 }
 
@@ -193,6 +206,9 @@ void PhysicsEngine::UpdatePhysics()
 	}
 	perfSolver.EndTimingSection();
 
+
+CleanUpPhase();
+
 //6. Update Positions (with final 'real' velocities)
 	perfUpdate.BeginTimingSection();
 	for (PhysicsNode* obj : physicsNodes) obj->IntegrateForPosition(updateTimestep, integrator);
@@ -222,7 +238,6 @@ void PhysicsEngine::BroadPhaseCollisions()
 	//			physicsNodes[i]->GetParent()->SetColliding(false);
 	//	}
 	//}
-
 }
 
 
@@ -305,6 +320,23 @@ void PhysicsEngine::NarrowPhaseCollisions()
 	}
 }
 
+void PhysicsEngine::CleanUpPhase()
+{
+	std::vector<GameObject*> objectsToDestroy;
+
+	for (std::vector<PhysicsNode*>::iterator itr = physicsNodes.begin(); itr != physicsNodes.end(); ++itr)
+	{
+		if ((*itr)->GetParent()->GetDestroy())
+		{
+			objectsToDestroy.push_back((*itr)->GetParent());
+		}
+	}
+
+	for (std::vector<GameObject*>::iterator itr = objectsToDestroy.begin(); itr != objectsToDestroy.end(); ++itr)
+	{
+		delete *itr;
+	}
+}
 
 void PhysicsEngine::DebugRender()
 {
@@ -341,4 +373,39 @@ void PhysicsEngine::DebugRender()
 			}
 		}
 	}
+}
+
+//phil 13/02/2018
+LineCollision PhysicsEngine::CastRay(Vector3 origin, Vector3 direction, PhysicsNode* self) {
+	LineCollision r;
+	r.node = nullptr;
+	//for each physics node
+	for (PhysicsNode* obj : physicsNodes)
+	{
+		//objects to be ignored by the ray tracing
+		if (obj->GetType() == PROJECTILE || obj->GetType() == PLAYER || obj->GetType() == PICKUP || obj->GetType() == SPRAY || obj == self ) {
+			continue;
+		}
+		//the vector between the origin and the center of the physics node
+		Vector3 l = origin - obj->GetPosition();
+		float dist = Vector3::Dot(direction, l);
+		//broadphase check
+		if ( pow(obj->GetBoundingRadius(), 2) > pow(l.Length(), 2) - pow(dist, 2))
+		{
+			float d = obj->GetCollisionShape()->GetRayIntersection(origin, direction);
+
+			if (d >= 0) {
+				if (!r.node) {
+					r.node = obj;
+					r.dist = d;
+				}
+				else if (r.dist > d) {
+					r.node = obj;
+					r.dist = d;
+				}
+			}
+		}
+	}
+
+	return r;
 }

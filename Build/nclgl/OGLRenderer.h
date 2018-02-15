@@ -55,6 +55,8 @@ using std::vector;
 #define GL_BREAKPOINT //
 #endif
 
+typedef	GLuint NCLTexture;
+
 //#define OPENGL_DEBUGGING
 
 static const float biasValues[16] = {

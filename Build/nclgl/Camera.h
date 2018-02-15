@@ -30,14 +30,9 @@ public:
 		pitch = 0.0f;
 		free = false;
 		center = nullptr;
-		maxDistance = 10.0f;
+		maxDistance = 1000.0f;
 		minDistance = 1.0f;
 		distance = (maxDistance + minDistance) / 2;
-		armShape = new CuboidCollisionShape();
-		//very thin so the camera moves in the right way
-		armShape->SetHalfHeight(0.001f);
-		armShape->SetHalfWidth(0.001f);
-		arm.SetCollisionShape(armShape);
 	};
 
 	Camera(float pitch, float yaw, Vector3 position) {
@@ -56,6 +51,7 @@ public:
 	Vector3 GetViewDirection();
 	Vector3 GetUpDirection();
 
+
 	//Gets position in world space
 	inline const Vector3& GetPosition() const { return position; }
 	//Sets position in world space
@@ -67,7 +63,7 @@ public:
 	inline void SetYaw(float y) { yaw = y; }
 
 	//Gets pitch, in degrees
-	inline float	GetPitch() const { return pitch; }
+	inline float GetPitch() const { return pitch; }
 	//Sets pitch, in degrees
 	inline void	SetPitch(float p) { pitch = p; }
 
@@ -76,7 +72,6 @@ public:
 	//set the center
 	inline void SetCenter(PhysicsNode* c) { 
 		center = c;
-		ResizeArm();
 	}
 
 	//get max distance
@@ -84,8 +79,6 @@ public:
 	//set max distance
 	inline void SetMaxDistance(float d) { 
 		maxDistance = d;
-		//resize the arm so the spring still works
-		ResizeArm();
 	}
 
 	//toggle free
@@ -93,8 +86,6 @@ public:
 	//update arm
 	//so the camera can look at all the physics objects inside
 	void UpdateDistance();
-	//resize the arm
-	void ResizeArm();
 protected:
 	float	yaw;
 	float	pitch;
@@ -102,9 +93,6 @@ protected:
 
 	//Object which the camera will be centered on
 	PhysicsNode* center;
-	//arm to check if things are in the way
-	CuboidCollisionShape* armShape;
-	PhysicsNode arm;
 	//maximum and minimum distance from object when not free
 	float maxDistance;
 	float minDistance;

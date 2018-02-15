@@ -1,46 +1,67 @@
 #pragma once
 
-#include <nclgl\NCLDebug.h>
-#include <ncltech\Scene.h>
-#include <ncltech\SceneManager.h>
-#include <ncltech\PhysicsEngine.h>
-#include <ncltech\DistanceConstraint.h>
-#include <ncltech\CommonUtils.h>
-#include "GamePlay.h"
-#include "Pickup.h"
-#include "Player.h"
-#include <ncltech\TextureManager.h> 
+#include "Map.h"
+
+
 
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 //
 
 
 
-class SimpleGamePlay : public Scene
+class SimpleGamePlay : public Map
 {
 private:
 
 	float m_AccumTime = 0;
-	Player* player;
+
+	//--------------------------------------------------------------------------------------------//
+	// Special objects in the map
+	//--------------------------------------------------------------------------------------------//
 	Pickup* pickup;
 
-public:
-	SimpleGamePlay(const std::string& friendly_name)
-		: Scene(friendly_name) {}
+	//--------------------------------------------------------------------------------------------//
+	// Setting up map specific variables for score
+	//--------------------------------------------------------------------------------------------//
+	static const int xDimension = 40;
+	static const int yDimension = 40;
 
-	~SimpleGamePlay()
-	{
-		TextureManager::Instance()->RemoveAllTexture();
-		delete player;
+	static const int xOnGrid = 2 * (xDimension + 10)*groundScoreAccuracy; //Array cordinates for the x position of the player on the grid
+	static const int yOnGrid = 2 * (yDimension + 10)*groundScoreAccuracy; //Array cordinates for the y position of the player on the grid
+
+	Colour ground[xOnGrid][yOnGrid];
+
+public:
+	//--------------------------------------------------------------------------------------------//
+	// Initialisation and Cleanup
+	//--------------------------------------------------------------------------------------------//
+	SimpleGamePlay(const std::string& friendly_name) :
+		Map(friendly_name)
+	{}
+
+	~SimpleGamePlay() {
 		delete pickup;
 	}
 
-	void OnCleanupScene() { 
-		DeleteAllGameObjects(); 
-		TextureManager::Instance()->RemoveAllTexture();
-	};
+	void OnCleanupScene();
 
 	virtual void OnInitializeScene() override;
-	
+
+	//--------------------------------------------------------------------------------------------//
+	// Special Object udpates (e.g. Pickups)
+	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
+
+
+	//--------------------------------------------------------------------------------------------//
+	// Score Related Functions
+	//--------------------------------------------------------------------------------------------//
+	virtual void BuildGroundScore(); //Builds the array for the ground score
+	virtual void UpdateGroundScore(Avatar* player); //Updates the ground cells 
+
+
+	//--------------------------------------------------------------------------------------------//
+	// Utility. TODO: can probably (re)move this
+	//--------------------------------------------------------------------------------------------//
+	void onButtonClicked();
 };

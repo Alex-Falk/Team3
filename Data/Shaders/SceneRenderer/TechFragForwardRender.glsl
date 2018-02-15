@@ -1,7 +1,27 @@
+
+/*****************************************************************************
+:;-"""-::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+(      .)::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+)-:::::::::::::::::::::::::::::::::::::::::::::::.::..:... .. .
+-'   )-"-:::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+___________)______________          _____
+|                         \          \ U \__      _______
+|        Yesheng Su        \__________\   \/_______\___\_____________
+|        10/02/2018        /          < /_/   ..................... ^`-._
+|_________________________/            `-----------,----,--------------'
+					  )                          _/____/_
+-.                .    ):::::::::::::::::::::::::::::.::..:... ..  .
+)--.__..--"-.__,'---':::::::::::::::::::::::::::::::::.::..:... ..  .
+-':::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+:::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
+
+*****************************************************************************/
 #version 330 core
 #define SHADOWMAP_NUM  4
 
 //Per object
+uniform float		smoothness;
+uniform samplerCube	cubeTex;
 uniform sampler2D  	uDiffuseTex;
 uniform vec4		uColor;
 
@@ -103,6 +123,12 @@ void main(void)	{
 	vec3 specular = specColor * sFactor * shadow * specIntensity;
 	
 	//Combine lighting
-	OutFrag.xyz 	= diffuse + specular + color.rgb* uAmbientColor;
-	OutFrag.a 		= color.a;
+	vec4 finalLightColor;
+	finalLightColor.xyz 	= diffuse + specular + color.rgb* uAmbientColor;
+	finalLightColor.a 		= color.a;
+
+	vec3 toWPos = normalize(IN.worldPos - uCameraPos);
+	vec4 reflection = texture(cubeTex, reflect(toWPos, normalize(IN.normal)))*smoothness;
+	reflection = reflection * vec4(diffuse, 0.0f);
+	OutFrag = reflection + finalLightColor;
 }

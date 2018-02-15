@@ -1,11 +1,6 @@
-#include "Weapons.h"
 #include <ncltech\CommonMeshes.h>
 #include <ncltech\SphereCollisionShape.h>
-
-	float bulletPower = 100;
-	float rocketPower = 70;
-	float sprayPower = 3;
-	float launcherPower = 10;
+#include "Weapons.h"
 
 GameObject* Weapons::BuildPistol(const Vector4& color, float size, Vector3 pos)
 {
@@ -83,6 +78,7 @@ GameObject* Weapons::BuildRocket(const Vector4& color, float size, Vector3 pos) 
 	
 	return obj;
 }
+
 GameObject * Weapons::BuildPaintSpray(const Vector4& color, float size, Vector3 pos) {
 	float bulletSize = size * 0.15;
 	RenderNode* rnode = new RenderNode();

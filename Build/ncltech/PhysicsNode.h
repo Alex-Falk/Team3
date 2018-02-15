@@ -40,7 +40,7 @@ enum Integrator { ZERO, SYMPLETIC, RK2, RK4 };
 //Nick Bedford
 //Date: 12/02/2018
 //Added an enum to sort nodes
-enum PhysNodeType {DEFAULT, PROJECTILE, BIG_NODE, PICKUP, PLAYER};
+enum PhysNodeType {DEFAULT_PHYSICS, PROJECTILE, SPRAY, BIG_NODE, PICKUP, PLAYER};
 
 class PhysicsNode;
 
@@ -65,7 +65,7 @@ class GameObject;
 class PhysicsNode
 {
 public:
-	PhysicsNode(PhysNodeType physType = DEFAULT, Integrator i = ZERO)
+	PhysicsNode(PhysNodeType physType = DEFAULT_PHYSICS, Integrator i = ZERO)
 		: position(0.0f, 0.0f, 0.0f)
 		, linVelocity(0.0f, 0.0f, 0.0f)
 		, force(0.0f, 0.0f, 0.0f)
@@ -107,6 +107,7 @@ public:
 	inline const Vector3&		GetLinearVelocity()			const { return linVelocity; }
 	inline const Vector3&		GetForce()					const { return force; }
 	inline float				GetInverseMass()			const { return invMass; }
+	inline const Vector3&		GetAcceleration()			const { return force*invMass; }
 
 	inline const Quaternion&	GetOrientation()			const { return orientation; }
 	inline const Vector3&		GetAngularVelocity()		const { return angVelocity; }
@@ -123,6 +124,7 @@ public:
 
 	inline std::string			getName()					const { return friendly_name; }
 
+	
 
 
 	//<--------- SETTERS ------------->
@@ -135,6 +137,7 @@ public:
 	inline void SetLinearVelocity(const Vector3& v)					{ linVelocity = v; }
 	inline void SetForce(const Vector3& v)							{ force = v; }
 	inline void SetInverseMass(const float& v)						{ invMass = v; }
+	inline void SetAcceleration(const Vector3& v)					{ force = v / invMass; }
 
 	inline void SetOrientation(const Quaternion& v)					{ orientation = v; FireOnUpdateCallback(); }
 	inline void SetAngularVelocity(const Vector3& v)				{ angVelocity = v; }

@@ -36,6 +36,7 @@ Description:
 #include <functional>
 #include <algorithm>
 #include <unordered_map>
+#include <nclgl\UserInterface.h>
 
 //Callback function called whenever the scene is updated
 // - Should be used to register Update(dt) functions for AI/Game Logic
@@ -84,7 +85,22 @@ public:
 	// Update Scene Logic
 	//   - Called once per frame and should contain time-sensitive update logic
 	//	   Note: This is time relative to seconds not milliseconds! (e.g. msec / 1000)
-	virtual void OnUpdateScene(float dt) {}
+	virtual void onConnectToScene() {}
+	virtual void OnUpdateScene(float dt) {
+		vector<GameObject*> tempVec;
+		for (int i = 0; i < m_vpObjects.size(); i++) {
+			m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
+			if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE) {
+				if (m_vpObjects[i]->GetTimeInScene() > 15.0f) {
+					m_vpObjects[i]->SetToDestroy();
+					tempVec.push_back(m_vpObjects[i]);
+				}
+			}
+		}
+		for (int i = 0; i < tempVec.size(); i++) {
+			RemoveGameObject(tempVec[i]);
+		}
+	}
 
 
 	// Should be the action fired by the main game loop when updating a scene
@@ -204,6 +220,14 @@ public:
 	inline void ToggleCamera() {
 		GraphicsPipeline::Instance()->GetCamera()->ToggleFree();
 	}
+
+	GUI* getSceneGUIPointer()
+	{
+		return sceneGUI;
+	}
+
+	virtual void OnInitializeGUI(){}
+
 protected:
 	// Delete all contained Objects
 	//    - This is the default action upon firing OnCleanupScene()
@@ -222,6 +246,7 @@ protected:
 	std::string					m_SceneName;
 	std::vector<GameObject*>	m_vpObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
+	GUI*						sceneGUI;
 
 	int							score = 0;
 };

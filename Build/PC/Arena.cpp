@@ -1,3 +1,5 @@
+// Daniel Burns [08/02/2018] Arena Level
+
 #include "Arena.h"
 #include <ncltech\PhysicsEngine.h>
 #include <ncltech\TextureManager.h>
@@ -7,7 +9,7 @@ void Arena::OnInitializeScene() {
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
 
-	player = new Player(Vector3(0.0, 2.0, 0.0), DEFAULT_COLOUR, 0, 1.0f);
+	player = new ControllableAvatar(Vector3(0.0, 2.0, 0.0), START_COLOUR, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 	Arena::CreateEnvironment();
@@ -25,11 +27,8 @@ void Arena::OnUpdateScene(float dt)
 
 	m_AccumTime += dt;
 
-	player->OnPlayerUpdate(dt);
-
-
-
-
+	player->OnAvatarUpdate(dt);
+	
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }
 

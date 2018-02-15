@@ -1,4 +1,5 @@
 #pragma once
+// Daniel Burns [08/02/2018] Arena Level
 
 #include <ncltech\Scene.h>
 #include <ncltech\SceneManager.h>
@@ -7,7 +8,7 @@
 #include <ncltech\CommonUtils.h>
 #include "GamePlay.h"
 #include <ncltech\TextureManager.h>
-#include "Player.h"
+#include "ControllableAvatar.h"
 
 
 class Arena : public Scene
@@ -15,7 +16,7 @@ class Arena : public Scene
 private:
 
 	float m_AccumTime = 0;
-	Player* player;
+	ControllableAvatar* player;
 
 public:
 	Arena(const std::string& friendly_name)

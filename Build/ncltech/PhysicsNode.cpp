@@ -9,7 +9,9 @@ void PhysicsNode::IntegrateForVelocity(float dt, Integrator integrator)
 	else { i = this->integrator; }
 	/* TUTORIAL 2 CODE */
 	if (invMass > 0.0f) {
-		linVelocity += PhysicsEngine::Instance()->GetGravity() * dt;
+		if (type != PROJECTILE) {
+			linVelocity += PhysicsEngine::Instance()->GetGravity() * dt;
+		}
 	}
 
 	switch (i) {

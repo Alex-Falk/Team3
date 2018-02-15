@@ -52,6 +52,8 @@ public:
 	//Get total number of enqueued scenes
 	inline uint   SceneCount()				{ return (uint)m_vpAllScenes.size(); }
 
+	void SetExitButtonClicked(bool a) { isExitButtonClicked = a; }
+	bool GetExitButtonClicked() { return isExitButtonClicked; }
 
 protected:
 	SceneManager();
@@ -61,4 +63,5 @@ protected:
 	uint				m_SceneIdx;
 	std::vector<Scene*> m_vpAllScenes;
 	Scene*				scene; //Current Scene
+	bool				isExitButtonClicked = false;
 };

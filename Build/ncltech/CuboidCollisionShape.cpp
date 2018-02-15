@@ -242,3 +242,52 @@ void CuboidCollisionShape::ConstructCubeHull()
 	cubeHull.AddFace(Vector3(1.0f, 0.0f, 0.0f), 4, face5);
 	cubeHull.AddFace(Vector3(-1.0f, 0.0f, 0.0f), 4, face6);
 }
+
+float CuboidCollisionShape::GetRayIntersection(Vector3 origin, Vector3 direction) {
+	float d = -1.0f;
+
+	//both the position and the normal of the untranslated face
+	Vector3 vectors[6] = {
+		Vector3(halfDims.x,0,0),
+		Vector3(-halfDims.x,0,0),
+		Vector3(0,halfDims.y,0),
+		Vector3(0,-halfDims.y,0),
+		Vector3(0,0,halfDims.z),
+		Vector3(0,0,-halfDims.z)
+	};
+
+	for (int i = 0; i < 6; i++) {
+		Vector3 point = GetPlaneIntersection(
+			Parent()->GetWorldSpaceTransform() * vectors[i],
+			(Parent()->GetOrientation().ToMatrix3() * vectors[i]).Normalise(),
+			origin,
+			direction
+		);
+		Vector3 diff = point - origin;
+		//first make sure the collision happened on the right side
+		if (Vector3::Dot(diff, direction) > 0) {
+			if (d < 0 || diff.Length() < d) {
+				//check if the point is actually on the square
+				Matrix4 inverse = Matrix4::Inverse(Parent()->GetWorldSpaceTransform());
+				Vector3 newPoint = inverse * point;
+				if (abs(vectors[i].x) < 0.001 && (newPoint.x > halfDims.x || newPoint.x < -halfDims.x)) {
+					continue;
+				}
+				if (abs(vectors[i].y) < 0.001 && (newPoint.y > halfDims.y || newPoint.y < -halfDims.y)) {
+					continue;
+				}
+				if (abs(vectors[i].z) < 0.001 && (newPoint.z > halfDims.z || newPoint.z < -halfDims.z)) {
+					continue;
+				}
+				//set d to the new value
+				d = diff.Length();
+			}
+		}
+	}
+
+	return d;
+}
+
+Vector3 CuboidCollisionShape::GetPlaneIntersection(Vector3 pCenter, Vector3 pNormal, Vector3 lCenter, Vector3 lDirection) {
+	return lCenter + lDirection * (Vector3::Dot(pNormal, (pCenter - lCenter))) / Vector3::Dot(pNormal, lDirection);
+}
