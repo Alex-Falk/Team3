@@ -6,6 +6,11 @@
 //--------------------------------------------------------------------------------------------//
 void TestMap::OnInitializeScene()
 {
+	spawnPositions[0] = Vector3(20, 5, 20);
+	spawnPositions[1] = Vector3(20, 5, -20);
+	spawnPositions[2] = Vector3(-20, 5, 20);
+	spawnPositions[3] = Vector3(-20, 5, -20);
+
 	// Loading Textures -----------------------------------------------------------------------------------------------------------
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))

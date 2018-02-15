@@ -11,11 +11,11 @@ void Map::onConnectToScene()
 			Avatar * p = nullptr;
 			if (i == Game::Instance()->getUserID())
 			{
-				p = new ControllableAvatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+				p = new ControllableAvatar(spawnPositions[i], Colour(i), i, 1.0f);
 			}
 			else
 			{
-				p = new Avatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+				p = new Avatar(spawnPositions[i], Colour(i), i, 1.0f);
 			}
 
 			this->AddGameObject(p->GetGameObject());

@@ -73,7 +73,7 @@ void Initialize()
 	PhysicsEngine::Instance();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
-	SceneManager::Instance()->EnqueueScene(new TestMap("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
 	AudioSystem::Instance();
