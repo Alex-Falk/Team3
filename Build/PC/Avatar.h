@@ -111,7 +111,7 @@ public:
 	float GetLife() { return life; }
 	void SetLife(float l) { life = l; }
 
-	virtual void PickUpBuffActivated();			//Checks if any pick up is picked up			Nikos 13.20
+	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is picked up			Nikos 13.20
 	void UpdatePickUp(float dt);			// Update Pick Ups based on time
 
 	GameObject* GetGameObject() { return this; }	//Pointer to the Player's Gameobject

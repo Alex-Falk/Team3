@@ -157,23 +157,11 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 
 	if (collidingObject->GetType() != PICKUP && collidingObject->GetType() != PROJECTILE && collidingObject->GetType() != SPRAY)
 	{
-		if ((Pickup*)(collidingObject->GetParent())) 
-		{
-			activePickUp = ((Pickup*)(collidingObject->GetParent()))->GetType();
-			if (activePickUp == WEAPON)
-			{
-				weapon = ((WeaponPickup*)(collidingObject->GetParent()))->GetType();
-			}
-			PickUpBuffActivated();
-		}
-	}
-	else
-	{
 		canJump = true;
 		inAir = false;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 	}
-	
+
 	return true;
 }
 
@@ -216,17 +204,16 @@ void Avatar::OnAvatarUpdate(float dt) {
 }
 
 
-void Avatar::PickUpBuffActivated() {
+void Avatar::PickUpBuffActivated(PickupType pickType) {
 
-	switch (activePickUp)
+	switch (pickType)
 	{
-	case SPEED_BOOST: {
+	case SPEED_BOOST:
 		speed = boostedSpeed;
 		speedBoost = true;
 		speedTimer = boostactiveTime;
 		break;
-	}
-	case JUMP_BOOST: {
+	case JUMP_BOOST:
 		jumpImpulse = boostedJumpImpulse;
 		jumpBoost = true;
 		jumpBoostTimer = boostactiveTime;
