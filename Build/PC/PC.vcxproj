@@ -171,7 +171,6 @@
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />

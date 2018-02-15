@@ -31,10 +31,10 @@ void Camera::UpdateCamara(float dt) {
 	//Update the mouse by how much
 	if (Window::GetMouse()->ButtonDown(MOUSE_LEFT) || !free)
 	{
-		pitch -= (Input::GetInput()->GetLookY());
-		yaw -= (Input::GetInput()->GetLookX());
+		pitch -= (Input::Instance()->GetLookY());
+		yaw -= (Input::Instance()->GetLookX());
 		//if the mouse hasn't moved in the x add time onto time since mouse
-		if (Input::GetInput()->GetLookX() == 0) {
+		if (Input::Instance()->GetLookX() == 0) {
 			timeSinceMouse += dt;
 		}
 		else {
@@ -71,24 +71,24 @@ void Camera::UpdateCamara(float dt) {
 	}
 
 
-	if (Input::GetInput()->GetInput(FORWARD)) {
+	if (Input::Instance()->GetInput(FORWARD)) {
 		position += Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
 	}
-	if (Input::GetInput()->GetInput(BACKWARD)) {
+	if (Input::Instance()->GetInput(BACKWARD)) {
 		position -= Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
 	}
 
-	if (Input::GetInput()->GetInput(LEFT)) {
+	if (Input::Instance()->GetInput(LEFT)) {
 		position += Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
 	}
-	if (Input::GetInput()->GetInput(RIGHT)) {
+	if (Input::Instance()->GetInput(RIGHT)) {
 		position -= Matrix4::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
 	}
 
-	if (Input::GetInput()->GetInput(CAMERA_UP)) {
+	if (Input::Instance()->GetInput(CAMERA_UP)) {
 		position.y += speed;
 	}
-	if (Input::GetInput()->GetInput(CAMERA_DOWN)) {
+	if (Input::Instance()->GetInput(CAMERA_DOWN)) {
 		position.y -= speed;
 	}
 

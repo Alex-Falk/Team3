@@ -6,6 +6,8 @@
 #ifndef GAMEINPUT_H
 #define GAMEINPUT_H
 
+#include <nclgl\TSingleton.h>
+
 enum InputType{
 	FORWARD,
 	BACKWARD,
@@ -23,14 +25,9 @@ enum InputType{
 
 //TODO: THIS SHOULD BE A SINGLETON BUT IT BREAKS THE CODE SO A GLOBAL VARIABLE
 //IS BEING USED INSTEAD
-class Input {
+class Input: public TSingleton<Input> {
+	friend class TSingleton <Input>;
 public:
-	Input() {
-		for (int i = 0; i < InputType::COUNT; i++) {
-			inputs[i] = false;
-		}
-	}
-
 	inline bool GetInput(InputType i) {
 		return inputs[i]; 
 	}
@@ -49,9 +46,12 @@ public:
 
 	inline float GetLookY() { return lookY; }
 	inline void SetLookY(float y) { lookY = y; }
-
-	static Input* GetInput();
 private:
+	Input() {
+		for (int i = 0; i < InputType::COUNT; i++) {
+			inputs[i] = false;
+		}
+	}
 	bool inputs[InputType::COUNT];
 	float lookX;
 	float lookY;
