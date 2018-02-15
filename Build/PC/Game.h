@@ -51,7 +51,7 @@ public:
 	//FINISHED FUNCTIONS
 	inline Avatar * GetPlayer(uint id) { return avatars[id]; }
 	inline int GetMapIndex() { return 0; }
-	inline int GetScore(uint id) { return scores[id]; }
+	inline int GetScore(uint id) { return teamScores[id]; }
 	inline uint getUserID() { return user->GetUserID(); }
 	inline User * GetUser() { return user; }
 

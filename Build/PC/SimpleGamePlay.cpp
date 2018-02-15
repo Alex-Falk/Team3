@@ -80,6 +80,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	for (uint i = 0; i < 4; i++) {
 		if (Game::Instance()->GetPlayer(i))
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
+		UpdateGroundScore(Game::Instance()->GetPlayer(i));
 	}
 
 	if (pickup)
@@ -89,7 +90,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	
 
-	UpdateGroundScore(player);
+	
 	int score = groundTeamScore[0];
 	
 	PrintScore(score);
