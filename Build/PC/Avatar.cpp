@@ -56,12 +56,17 @@ Avatar::Avatar()
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1.0f));
 
-	playerGameObject = new GameObject("Player", rnode, pnode);
+	this->friendlyName = "Player";
+	this->renderNode = rnode;
+	this->physicsNode = pnode;
+	RegisterPhysicsToRenderTransformCallback();
+	SetPhysics(pnode);
+	pnode->SetName("Player");
 
 	canJump = true;
 	canShoot = true;
 
-	playerGameObject->Physics()->SetElasticity(0);
+	Physics()->SetElasticity(0);
 
 	playerId = 0;
 	shootCooldown = 0.0f;
@@ -143,20 +148,20 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	}
 
 	RenderNode* rnode = new RenderNode();
-	float radius = 1.0f;
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), Vector4(0.5, 0.5, 0.5, 1.0));
+	float radius = s;
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), colour);
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 
 	rnode->AddChild(dummy);
 
-	rnode->SetTransform(Matrix4::Translation(Vector3(0.0f, 1.0f, 0.0f)));
+	rnode->SetTransform(Matrix4::Translation(pos));
 	rnode->SetBoundingRadius(radius);
 
 	PhysicsNode* pnode = NULL;
 	pnode = new PhysicsNode();
-	pnode->SetPosition(Vector3(0.0f, 1.0f, 0.0f));
+	pnode->SetPosition(pos);
 	pnode->SetInverseMass(1.0f);
 	pnode->SetBoundingRadius(radius);
 	pnode->SetType(PLAYER);
@@ -164,11 +169,16 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(1.0f));
 
-	playerGameObject = new GameObject("Player", rnode, pnode);
+	this->friendlyName = "Player";
+	this->renderNode = rnode;
+	this->physicsNode = pnode;
+	RegisterPhysicsToRenderTransformCallback();
+	SetPhysics(pnode);
+	pnode->SetName("Player");
 
-	playerGameObject->Physics()->SetElasticity(0);
+	Physics()->SetElasticity(0);
 
-	playerGameObject->Physics()->SetOnCollisionCallback(
+	Physics()->SetOnCollisionCallback(
 		std::bind(&Avatar::PlayerCallbackFunction,
 			this,							//Any non-placeholder param will be passed into the function each time it is called
 			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
@@ -187,6 +197,7 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 	{
 		canJump = true;
 		inAir = false;
+		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 	}
 
 	return true;
@@ -195,12 +206,12 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 
 void Avatar::ChangeSize(float newSize)
 {
-	playerGameObject->Render()->GetChild()->SetBoundingRadius(newSize);
-	playerGameObject->Render()->SetBoundingRadius(newSize);
-	playerGameObject->Physics()->SetBoundingRadius(newSize);
-	((SphereCollisionShape*)playerGameObject->Physics()->GetCollisionShape())->SetRadius(newSize);
+	Render()->GetChild()->SetBoundingRadius(newSize);
+	Render()->SetBoundingRadius(newSize);
+	Physics()->SetBoundingRadius(newSize);
+	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
 
-	playerGameObject->Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
+	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
 }
 
 // Updates everything on player
@@ -208,6 +219,9 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
 	
+	inAir = true;
+	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+
 	ManageWeapons();
 	
 	UpdatePickUp(dt);
@@ -297,16 +311,16 @@ void Avatar::Spray()
 	
 	
 	//TODO re-implement for loop
-		randPitch = rand() % 180 + -90;
-		randYaw = rand() % 360;
-		float a = rand() % 10;
-		float b = rand() % 10;
-		float c = rand() % 10;
-		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 3;
+	randPitch = rand() % 180 + -90;
+	randYaw = rand() % 360;
+	float a = rand() % 10;
+	float b = rand() % 10;
+	float c = rand() % 10;
+	direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 3;
 
-		Projectile * spray = new Projectile(col, colour, playerGameObject->Physics()->GetPosition(), direction, 0.5f, 1.0f, "Spray");
+	Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.5f, 1.0f, "Spray");
 	
-	  SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
 	
 }
 

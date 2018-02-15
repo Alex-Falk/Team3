@@ -61,8 +61,8 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 void SimpleGamePlay::OnCleanupScene()
 {
 	DeleteAllGameObjects();
-	TextureManager::Instance()->RemoteAllTexture();
-	GraphicsPipeline::Instance()->RemoteAllPlayerRenderNode();
+	TextureManager::Instance()->RemoveAllTexture();
+	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
 };
 
 void SimpleGamePlay::OnInitializeGUI()

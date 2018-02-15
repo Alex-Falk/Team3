@@ -34,14 +34,17 @@
 
 ControllableAvatar::ControllableAvatar() : Avatar()
 {
+	lifeDrainFactor = 2500;
 }
 
 ControllableAvatar::~ControllableAvatar()
 {
+	lifeDrainFactor = 2500;
 }
 
 ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) : Avatar(pos, c, id, s)
 {
+	lifeDrainFactor = 2500;
 }
 
 
@@ -72,34 +75,35 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 		}
 		force.y = 0;
 		if (force != Vector3(0, 0, 0)) {
-			playerGameObject->Physics()->SetAngularVelocity(velocity);
+			Physics()->SetAngularVelocity(velocity);
 		}
 	}
 
 	if (Input::Instance()->GetInput(JUMP) && canJump)
 	{		//Jump
-		playerGameObject->Physics()->SetLinearVelocity(Vector3(force.x /3.0f, jumpImpulse, force.z / 3.0f));
+		Physics()->SetLinearVelocity(Vector3(force.x /3.0f, jumpImpulse, force.z / 3.0f));
 		inAir = true;
+		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 	}
 	canJump = false;
 	
 
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-	//	NCLDebug::Log("Pistol Activated");
-	//	weapon = PAINT_PISTOL;
-	//}
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-	//	NCLDebug::Log("Rocket Activated");
-	//	weapon = PAINT_ROCKET;
-	//}
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-	//	NCLDebug::Log("Spray Activated");
-	//	weapon = PAINT_SPRAY;
-	//}
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-	//	NCLDebug::Log("Auto Activated");
-	//	weapon = AUTO_PAINT_LAUNCHER;
-	//}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+		NCLDebug::Log("Pistol Activated");
+		weapon = PAINT_PISTOL;
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+		NCLDebug::Log("Rocket Activated");
+		weapon = PAINT_ROCKET;
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+		NCLDebug::Log("Spray Activated");
+		weapon = PAINT_SPRAY;
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+		NCLDebug::Log("Auto Activated");
+		weapon = AUTO_PAINT_LAUNCHER;
+	}
 
 	if (Input::Instance()->GetInput(SHOOT))
 	{
@@ -110,7 +114,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	if (force.x < -maxForce)force.x = -maxForce;
 	if (force.z > maxForce)force.z = maxForce;
 	if (force.z < -maxForce)force.z = -maxForce;
-	playerGameObject->Physics()->SetForce(force);
+	Physics()->SetForce(force);
 
 }
 
@@ -135,7 +139,7 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	if (life > minLife) 
 	{
-		life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
+		life -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
 
 		if (life < minLife)
 		{

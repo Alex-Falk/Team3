@@ -186,7 +186,7 @@ GameObject* CommonUtils::BuildCuboidObject(
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
 
 	rnode->AddChild(dummy);
-
+	
 	rnode->SetTransform(Matrix4::Translation(pos));
 	rnode->SetBoundingRadius(halfdims.Length());
 

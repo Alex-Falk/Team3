@@ -155,7 +155,7 @@ public:
 
 	inline void AddPlayerRenderNode(RenderNode* playerRenderNode){ playerRenderNodes.push_back(playerRenderNode); }
 
-	inline void RemoteAllPlayerRenderNode() { playerRenderNodes.clear(); }
+	inline void RemoveAllPlayerRenderNode() { playerRenderNodes.clear(); }
 	void InitPath(Vector2 groundSize);
 	inline GLuint& GetPathTex() { return pathTex; }
 

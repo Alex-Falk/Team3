@@ -1,4 +1,5 @@
 #include "Projectile.h"
+#include "Avatar.h"
 
 Projectile::Projectile() {
 
@@ -11,6 +12,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 
 	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), RGBA);
 	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
 
 	rnode->GetChild()->SetBaseColor(RGBA);
@@ -100,9 +102,14 @@ Projectile::~Projectile() {
 //projectiles go through players and pickups currently.
 bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
 	//TODO what happens when a projectile hits another player
-	/*if (collidingObject->GetType() == PLAYER) {
+	if (collidingObject->GetType() == PLAYER) 
+	{
+		if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour)
+		{
+			((Avatar*)(collidingObject->GetParent()))->ChangeLife(-10);
+		}
 		return false;
-	}*/
+	}
 
 	if (collidingObject->GetType() == PICKUP) {
 		return false;

@@ -8,7 +8,7 @@ public :
 	PlayerRenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1, 1, 1, 1));
 	virtual ~PlayerRenderNode();
 
-	void SetIsInAir(bool _IsInAir){}
+	void SetIsInAir(bool _IsInAir) { isInAir = _IsInAir; }
 	bool GetIsInAir()const { return isInAir; }
 protected:
 	bool isInAir;

@@ -6,7 +6,7 @@ TextureManager::TextureManager()
 
 TextureManager::~TextureManager()
 {
-	RemoteAllTexture();
+	RemoveAllTexture();
 }
 
 bool TextureManager::LoadTexture(TEXTURETYPE type, std::string address, int wrap, int filter)
@@ -34,7 +34,7 @@ bool TextureManager::LoadTexture(TEXTURETYPE type, std::string address, int wrap
 	return true; // create texture succeed
 }
 
-bool TextureManager::RemoteTexture(TEXTURETYPE type)
+bool TextureManager::RemoveTexture(TEXTURETYPE type)
 {
 	TextureMap::iterator it = textures.find(type);
 	if (it == textures.end())
@@ -43,10 +43,10 @@ bool TextureManager::RemoteTexture(TEXTURETYPE type)
 	glDeleteTextures(1,&(*it).second);
 	textures.erase(it);
 
-	return true; // remote succeed
+	return true; // remove succeed
 }
 
-bool TextureManager::RemoteAllTexture()
+bool TextureManager::RemoveAllTexture()
 {
 	for (TextureMap::iterator i = textures.begin(); i != textures.end(); ++i)
 	{
