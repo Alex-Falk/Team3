@@ -383,7 +383,7 @@ LineCollision PhysicsEngine::CastRay(Vector3 origin, Vector3 direction, PhysicsN
 	for (PhysicsNode* obj : physicsNodes)
 	{
 		//objects to be ignored by the ray tracing
-		if (obj->GetType() == PROJECTILE || obj->GetType() == PLAYER || obj->GetType() == PICKUP || obj == self ) {
+		if (obj->GetType() == PROJECTILE || obj->GetType() == PLAYER || obj->GetType() == PICKUP || obj->GetType() == SPRAY || obj == self ) {
 			continue;
 		}
 		//the vector between the origin and the center of the physics node

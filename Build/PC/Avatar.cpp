@@ -325,7 +325,7 @@ void Avatar::Spray()
 		float c = rand() % 10;
 		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 15;
 
-		Projectile * spray = new Projectile(col, colour, playerGameObject->Physics()->GetPosition(), direction, 0.2f, 5.0f, SPRAY, 2, "Spray");
+		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, SPRAY, 2, "Spray");
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
 	}
