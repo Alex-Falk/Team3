@@ -1,3 +1,4 @@
+//Michael Davis 16/02/2018
 #pragma once
 
 #include "GamePlay.h"
@@ -10,13 +11,13 @@ class Minion : public GameObject {
 protected:
 	Colour colour;
 	Vector4 RGBA;
+	
 	float life;
 	float size;
 
 	Vector3 lastPos;
 
-	bool dead;
-	//State currentState;
+	bool dead; 
 
 public:
 	Minion();
@@ -31,7 +32,7 @@ public:
 	void SetDead(bool b) { dead = b; }
 	bool GetDead() { return dead; }
 
-	void ChangeLife(float l);
+	void ChangeLife(float l) { life += l;}
 	float GetLife() { return life; }
 
 	void ChangeSize(float newSize);

@@ -1,7 +1,11 @@
+//Michael Davis 16/02/2018
 #include "Minion.h"
 
-Minion::Minion() {
-
+Minion::Minion() : GameObject() {
+	colour = START_COLOUR;
+	RGBA = DEFAULT_COLOUR;
+	life = 50;
+	size = 0.5f;
 }
 
 Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : GameObject(name) {
@@ -25,8 +29,6 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 	pnode->SetType(MINION);
 	pnode->SetInverseMass(2.0f);
 
-	colour = c;
-
 	CollisionShape* pColshape = new SphereCollisionShape(size);
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(2.0f));
@@ -48,8 +50,8 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 
 	dead = false;
 	life = 50;
+	colour = c;
 	this->RGBA = RGBA;
-	//state = PATROL;
 }
 
 Minion::~Minion() {
@@ -61,7 +63,7 @@ void Minion::Update(float dt) {
 	float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
 	life -= lifeLoss / (dt * 10);
 	lastPos = Physics()->GetPosition();
-	cout << life << endl;
+
 	size = 0.5f * (life / 50);
 
 	ChangeSize(size);
@@ -79,30 +81,25 @@ void Minion::Update(float dt) {
 		//	state = CHASE;
 		//	will try to hit player, either healing if friendly or damaging if enemy
 		//}
-
-		//TODO if player hit take health or add health to player
 	}
-}
-
-void Minion::ChangeLife(float l) {
-	life += l;
 }
 
 bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
 	if (collidingObject->GetType() == PLAYER) {
-		if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-			((Avatar*)(collidingObject->GetParent()))->ChangeLife(-(life / 5));
+		/*if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour) {
+			((Avatar*)collidingObject->GetParent())->ChangeLife(-(life / 5));
 		}
-		else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);
+		else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);*/
 		dead = true;
 		return false;
 	}
 	else if (collidingObject->GetType() == MINION) {
-		if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
+		/*if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
 			float tempLife = life;
 			ChangeLife(-((Minion*)collidingObject->GetParent())->GetLife());
 			((Minion*)(collidingObject->GetParent()))->ChangeLife(-(tempLife));
-		}
+		}*/
+		return false;
 	}
 	else if (collidingObject->GetType() == BIG_NODE) {
 		//TODO apply texture to surface like the avatar
