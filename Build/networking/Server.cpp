@@ -32,7 +32,6 @@
 #include "Server.h"
 #include <ncltech\SceneManager.h>
 #include <PC/Game.h>
-#define CLIENT_ID evnt.peer->incomingPeerID
 
 void Win32_PrintAllAdapterIPAddresses()
 {
@@ -173,10 +172,10 @@ void Server::UpdateUser(float dt)
 		}
 		case ENET_EVENT_TYPE_DISCONNECT:
 		{
-			printf(" - Client %d has disconnected.\n", CLIENT_ID + 1);
+			printf(" - Client %d has disconnected.\n", evnt.peer->incomingPeerID + 1);
 			for (uint i = 0; i < connectedIDs.size(); ++i)
 			{
-				if (connectedIDs[i] - 1 == CLIENT_ID)
+				if (connectedIDs[i] - 1 == evnt.peer->incomingPeerID)
 				{
 					freeIDs.push_back(connectedIDs[i]);
 					connectedIDs.erase(connectedIDs.begin() + i);

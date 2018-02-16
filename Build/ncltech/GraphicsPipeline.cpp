@@ -638,7 +638,7 @@ void GraphicsPipeline::RenderPath()
 
 	Matrix4 projMatrix2 = Matrix4::Orthographic(-40, 40, -groundSize.x, groundSize.x, -groundSize.y, groundSize.y);
 	Matrix4	viewMatrix2 = Matrix4::Rotation(90, Vector3(1, 0, 0)) *Matrix4::Translation(Vector3(0.0f,-20.0f,0.0f));
-	glViewport(0, 0, groundSize.x*PIXELPERSIZE, groundSize.y*PIXELPERSIZE);
+	glViewport(0, 0, (GLsizei)(groundSize.x*PIXELPERSIZE), (GLsizei)(groundSize.y*PIXELPERSIZE));
 	Matrix4 temp = projViewMatrix;
 	projViewMatrix = projMatrix2 * viewMatrix2;
 
@@ -688,7 +688,7 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, groundSize.x*PIXELPERSIZE, groundSize.y*PIXELPERSIZE, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, (GLsizei)(groundSize.x*PIXELPERSIZE), (GLsizei)(groundSize.y*PIXELPERSIZE), 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 
 	//Generate our Framebuffer
 	if (!pathFBO) glGenFramebuffers(1, &pathFBO);

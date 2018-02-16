@@ -77,8 +77,8 @@ private:
 
 	// Everything about score
 	static const int groundScoreAccuracy = 100;
-	static const int xOnGrid = (int)2 * (DIMENSION_X + 10)*groundScoreAccuracy; //Array cordinates for the x position of the player on the grid
-	static const int yOnGrid = (int)2 * (DIMENSION_Y + 10)*groundScoreAccuracy; //Array cordinates for the y position of the player on the grid
+	static const int xOnGrid = (int)(2 * (DIMENSION_X + 10)*groundScoreAccuracy); //Array cordinates for the x position of the player on the grid
+	static const int yOnGrid = (int)(2 * (DIMENSION_Y + 10)*groundScoreAccuracy); //Array cordinates for the y position of the player on the grid
 	Colour ground[xOnGrid][yOnGrid];
 	int groundTeamScore[5];
 

@@ -155,7 +155,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
 
-	if (collidingObject->GetType() != PICKUP && collidingObject->GetType() != PROJECTILE && collidingObject->GetType() != SPRAY)
+	if (collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == BIG_NODE)
 	{
 		canJump = true;
 		inAir = false;
@@ -171,8 +171,9 @@ void Avatar::ChangeSize(float newSize)
 	Render()->GetChild()->SetBoundingRadius(newSize);
 	Render()->SetBoundingRadius(newSize);
 	Physics()->SetBoundingRadius(newSize);
+	Physics()->SetInverseMass(0.5f/newSize);
 	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
-
+	
 	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
 }
 
@@ -286,10 +287,10 @@ void Avatar::Spray()
 	{
 		randPitch = rand() % 90 + 0;
 		randYaw = rand() % 360;
-		float a = rand() % 10;
-		float b = rand() % 10;
-		float c = rand() % 10;
-		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 15;
+		float a = (float)(rand() % 10);
+		float b = (float)(rand() % 10);
+		float c = (float)(rand() % 10);
+		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
 
 		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, SPRAY, 2, "Spray");
 

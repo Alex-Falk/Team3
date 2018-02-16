@@ -94,20 +94,23 @@ void Game::UpdateGroundScore(ControllableAvatar* player) {
 	int plGridSize = (int)(player->GetLife() * groundScoreAccuracy / 100);
 
 	// Runs through the square arount the center and finds the circle.
-	for (int i = playerPos.x - plGridSize; i <= playerPos.x; i++) {
-		for (int j = playerPos.y - plGridSize; j <= playerPos.y; j++) {
+	for (int i = (int)playerPos.x - plGridSize; i <= (int)playerPos.x; i++) {
+		for (int j = (int)playerPos.y - plGridSize; j <= (int)playerPos.y; j++) {
 			if ((i - playerPos.x)*(i - playerPos.x) + (j - playerPos.y)* (j - playerPos.y) <= plGridSize * plGridSize) {
-				int xSym = playerPos.x - (i - playerPos.x);
-				int ySym = playerPos.y - (i - playerPos.y);
+				int xSym = (int)(playerPos.x - (i - playerPos.x));
+				int ySym = (int)(playerPos.y - (j - playerPos.y));
 				// Thanks to symetry we take all 4 quadrants of the circle arount the center
-				ChangeGridScore(ground[i][j], player->GetColour());
-				ground[i][j] = player->GetColour();
-				ChangeGridScore(ground[i][ySym], player->GetColour());
-				ground[i][ySym] = player->GetColour();
-				ChangeGridScore(ground[xSym][j], player->GetColour());
-				ground[xSym][j] = player->GetColour();
-				ChangeGridScore(ground[xSym][ySym], player->GetColour());
-				ground[xSym][ySym] = player->GetColour();
+				if (xSym < xOnGrid - 1 && xSym > 0 && ySym < yOnGrid - 1 && ySym > 0 && i > 0 && j > 0 && i < xOnGrid - 1 && j < yOnGrid - 1)
+				{
+					ChangeGridScore(ground[i][j], player->GetColour());
+					ground[i][j] = player->GetColour();
+					ChangeGridScore(ground[i][ySym], player->GetColour());
+					ground[i][ySym] = player->GetColour();
+					ChangeGridScore(ground[xSym][j], player->GetColour());
+					ground[xSym][j] = player->GetColour();
+					ChangeGridScore(ground[xSym][ySym], player->GetColour());
+					ground[xSym][ySym] = player->GetColour();
+				}
 			}
 		}
 	}
