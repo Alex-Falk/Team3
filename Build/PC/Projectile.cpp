@@ -2,6 +2,7 @@
 
 #include "Projectile.h"
 #include "Avatar.h"
+#include "Score.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;
@@ -12,6 +13,8 @@ Projectile::Projectile() : GameObject() {
 Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, float size, float inverseMass, PhysNodeType type, int projWorth, const std::string& name) : GameObject(name) {
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
+
+	siz = size;
 
 	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), RGBA);
 	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
@@ -55,6 +58,8 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, PhysNodeType type, int projWorth, const std::string& name) : GameObject(name) {
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
+
+	siz =( size.x + size.y + size.z )/3 ;
 
 	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), RGBA);
 	dummy->SetTransform(Matrix4::Scale(size));
@@ -133,7 +138,7 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 		//TODO leave a texture behind on the wall instead of colouring the entire object
 		//collidingObject->GetParent()->Render()->GetChild()->SetBaseColor(this->Render()->GetChild()->GetBaseColor());
 		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
-		
+		Score::UpdateProjectilesVector(this->Physics()->GetPosition(), colour, siz);
 		return false;
 	}
 	

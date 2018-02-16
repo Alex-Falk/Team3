@@ -213,7 +213,7 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 			PickUpBuffActivated();
 		}
 	}
-	else
+	else if ((collidingObject->GetType() == BIG_NODE) || (collidingObject->GetType() == PAINTABLE_OBJECT) || (collidingObject->GetType() == DEFAULT_PHYSICS))
 	{
 		canJump = true;
 		inAir = false;

@@ -91,6 +91,8 @@ public:
 
 	Colour GetColour() { return col; }
 	void SetColour(Colour c) { col = c; }
+
+	bool IsPlayerInAir() { return inAir; }
 	
 	Vector4 GetColourRGBA() { return colour; }
 

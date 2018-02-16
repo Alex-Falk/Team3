@@ -162,6 +162,7 @@
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Projectile.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />

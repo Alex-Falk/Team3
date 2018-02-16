@@ -15,6 +15,7 @@
 */
 
 //Extra functionality added by Alex Falk - 12/02/2018
+//Extra functionality about score added by Nikos Fragkas 15/02/2018
 
 #pragma once
 #include "ControllableAvatar.h"
