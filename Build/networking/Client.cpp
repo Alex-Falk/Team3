@@ -82,6 +82,7 @@ void Client::UpdateUser(float dt)
 		network.Release();
 		serverConnection = NULL;
 		enet_deinitialize();
+		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene(0);
 		return;
 	}

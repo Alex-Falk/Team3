@@ -122,7 +122,7 @@ public:
 	//Example of member callback ('this' parameter is bound at bind time)
 	bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
-	~Avatar();
+	virtual ~Avatar();
 
 };
 

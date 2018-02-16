@@ -163,6 +163,7 @@ void HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
 	{
+		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene(0);
 	}
 		

@@ -78,7 +78,6 @@ public:
 	}
 
 	virtual void OnInitializeScene() {
-		Game::Instance()->ResetGame();
 		GraphicsPipeline::Instance()->SetIsMainMenu(true);
 
 		if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
