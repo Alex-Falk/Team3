@@ -31,6 +31,7 @@ public:
 	inline void SetScore(uint id, int score) { teamScores[id] = score; }
 	inline void SetAmmo(uint id, float ammo) {}
 	//FINISHED FUNCTIONS
+	inline void SetPlayerNumber(uint i) { playerNumber = i; }
 	inline void SetSize(uint id, float size) { avatars[id]->SetLife(size); }
 	inline void SetAcceleration(uint id, Vector3 a) { avatars[id]->GetGameObject()->Physics()->SetAcceleration(a); }
 	inline void SetLinearVelocity(uint id, Vector3 v) { avatars[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
@@ -49,6 +50,7 @@ public:
 	//STUBS
 	inline Vector3 GetSpawnLocation() {}
 	//FINISHED FUNCTIONS
+	inline  uint GetPlayerNumber() { return playerNumber; }
 	inline Avatar * GetPlayer(uint id) { return avatars[id]; }
 	inline Avatar * GetCurrentAvatar() { return avatars[user->GetUserID()]; }
 	inline int GetMapIndex() { return 0; }
@@ -56,7 +58,9 @@ public:
 	inline uint getUserID() { return user->GetUserID(); }
 	inline User * GetUser() { return user; }
 
-
+	inline void StartGame() { gameRunning = true; user->StartGame(); }
+	inline void StopGame() { gameRunning = false; }
+	inline bool IsRunning() { return gameRunning; }
 
 	void Update(float dt);
 	void ResetGame();
@@ -74,6 +78,7 @@ private:
 	};
 	//variables
 	int teamScores[4];
+	uint playerNumber = 0;
 
 	// Everything about score
 	static const int groundScoreAccuracy = 100;
@@ -88,5 +93,5 @@ private:
 	void PrintScore(int x); // debug
 	Avatar* avatars[4];
 	User* user = nullptr;
-	bool active = false;
+	bool gameRunning = false;
 };

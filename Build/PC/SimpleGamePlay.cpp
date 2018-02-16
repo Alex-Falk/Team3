@@ -96,7 +96,7 @@ void SimpleGamePlay::BuildGroundScore() {
 	ground[0][yOnGrid - 1] = GREEN;
 	ground[xOnGrid - 1][0] = BLUE;
 	ground[xOnGrid - 1][yOnGrid - 1] = PINK;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); i++)
 	{
 		groundTeamScore[i] = 0;
 	}
@@ -104,7 +104,7 @@ void SimpleGamePlay::BuildGroundScore() {
 
 void SimpleGamePlay::UpdateGroundScore(Avatar* player) {
 
-	Vector2 playerPos = Vector2((player->GetPosition().x * groundScoreAccuracy) + (xOnGrid) / 2, (player->GetPosition().z * groundScoreAccuracy) + (yOnGrid) / 2);
+	Vector2 playerPos = Vector2((player->GetPosition().x * groundScoreAccuracy) + (xOnGrid - (5 * groundScoreAccuracy)) / 2, (player->GetPosition().z * groundScoreAccuracy) + (yOnGrid - (5 * groundScoreAccuracy)) / 2);
 
 	if (playerPos.x > xOnGrid / 2 || playerPos.x < -xOnGrid / 2 || playerPos.y > yOnGrid / 2 || playerPos.y < -yOnGrid / 2) {
 		return;
@@ -117,9 +117,9 @@ void SimpleGamePlay::UpdateGroundScore(Avatar* player) {
 		for (int j = playerPos.y - plGridSize; j <= playerPos.y; j++) {
 			if ((i - playerPos.x)*(i - playerPos.x) + (j - playerPos.y)* (j - playerPos.y) <= plGridSize * plGridSize) {
 				int xSym = playerPos.x - (i - playerPos.x);
-				int ySym = playerPos.y - (i - playerPos.y);
+				int ySym = playerPos.y - (j - playerPos.y);
 				// Thanks to symetry we take all 4 quadrants of the circle arount the center
-				if (xSym < xOnGrid - 1 && xSym > 0 && ySym < yOnGrid - 1 && ySym > 0)
+				if (xSym < xOnGrid - 1 && xSym > 0 && ySym < yOnGrid - 1 && ySym > 0 && i > 0 && j > 0 && i < xOnGrid -1 && j < yOnGrid - 1)
 				{
 					ChangeGridScore(ground[i][j], player->GetColour());
 					ground[i][j] = player->GetColour();

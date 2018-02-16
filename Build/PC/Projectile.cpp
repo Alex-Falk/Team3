@@ -113,10 +113,10 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 	//TODO what happens when a projectile hits another player
 	if (collidingObject->GetType() == PLAYER) 
 	{
-		//if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour)
-		//{
-		//	((Avatar*)(collidingObject->GetParent()))->ChangeLife(-10);
-		//}
+		if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour)
+		{
+			((Avatar*)(collidingObject->GetParent()))->ChangeLife(-10);
+		}
 		return false;
 	}
 

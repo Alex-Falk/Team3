@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------------------------------//
 void Map::onConnectToScene()
 {
-	for (uint i = 0; i < 4; i++) {
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
 		if (Game::Instance()->GetUser())
 		{
 			Avatar * p = nullptr;
@@ -75,7 +75,7 @@ void Map::OnUpdateScene(float dt)
 	m_AccumTime += dt;
 
 	//player->OnPlayerUpdate(dt);
-	for (uint i = 0; i < 4; i++) {
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
 		if (Game::Instance()->GetPlayer(i))
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
 		UpdateGroundScore(Game::Instance()->GetPlayer(i));

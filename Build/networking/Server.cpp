@@ -34,11 +34,11 @@
 #include <PC/Game.h>
 #define CLIENT_ID evnt.peer->incomingPeerID
 
-void Win32_PrintAllAdapterIPAddresses()
+string Win32_PrintAllAdapterIPAddresses()
 {
+	string ip;
 	//Initially allocate 5KB of memory to store all adapter info
 	ULONG outBufLen = 5000;
-
 
 	IP_ADAPTER_INFO* pAdapters = NULL;
 	DWORD status = ERROR_BUFFER_OVERFLOW;
@@ -76,6 +76,7 @@ void Win32_PrintAllAdapterIPAddresses()
 			while (cIpAddress != NULL)
 			{
 				printf("\t - Listening for connections on %s:%u\n", cIpAddress->IpAddress.String, 1234);
+				ip = cIpAddress->IpAddress.String;
 				cIpAddress = cIpAddress->Next;
 			}
 			cAdapter = cAdapter->Next;
@@ -83,122 +84,140 @@ void Win32_PrintAllAdapterIPAddresses()
 
 		free(pAdapters);
 	}
-
+	return ip;
 }
 
 Server::Server() {
 
-	server = new NetworkBase();
-	printf("Server Initiated\n");
+	if (enet_initialize() == 0)
+	{
 
-	server->Initialize(1234, 32);
-	Win32_PrintAllAdapterIPAddresses();
-	userID = 0;
-	timer.GetTimedMS();
+		server = new NetworkBase();
+		printf("Server Initiated\n");
 
-	freeIDs = { 3,2,1 };
+		server->Initialize(1234, 32);
+		ip = Win32_PrintAllAdapterIPAddresses();
+		userID = 0;
+		timer.GetTimedMS();
+
+		freeIDs = { 3,2,1 };
+		Game::Instance()->SetPlayerNumber(1);
+	}
 }
 
 void Server::UpdateUser(float dt)
 {
-	server->ServiceNetwork(dt, [&](const ENetEvent& evnt) 
-	{
-		switch (evnt.type)
+	if (server->m_pNetwork) {
+		server->ServiceNetwork(dt, [&](const ENetEvent& evnt)
 		{
-		case ENET_EVENT_TYPE_CONNECT:
-		{
-			printf(" - New Client Connected\n");
-
-			// Send over information to new client
-
-			if (freeIDs.size() > 0)
+			switch (evnt.type)
 			{
-
-				connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
-				SendConnectionID(freeIDs[freeIDs.size() - 1]);
-				//enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1],10,10,10);
-
-				freeIDs.pop_back();
-			}
-			else
+			case ENET_EVENT_TYPE_CONNECT:
 			{
-				enet_peer_disconnect(&server->m_pNetwork->peers[3], 0);
-			}
+				printf(" - New Client Connected\n");
+				if (Game::Instance()->IsRunning())
+				{
+					enet_peer_disconnect(evnt.peer, 0);
+				}
+				else
+				{
+					// Send over information to new client
+					Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
+					SendNumberUsers(1 + server->m_pNetwork->connectedPeers);
+					if (freeIDs.size() > 0)
+					{
+						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
+						SendConnectionID(freeIDs[freeIDs.size() - 1]);
+						enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1], 10, 10, 10);
 
-		}
-		break;
+						freeIDs.pop_back();
+					}
+					else
+					{
+						enet_peer_disconnect(&server->m_pNetwork->peers[3], 0);
+					}
+				}
 
-		case ENET_EVENT_TYPE_RECEIVE:
-		{
-			string data = GetPacketData(evnt);
-			PacketType type = FindType(data);
 
-			switch (type) {
-			case PLAYER_POS:
-			{	
-				PlayerVector pvec = ReceivePosition(data);
-				Game::Instance()->SetPosition(pvec.ID, pvec.v);
-				break;
-			}
-			case PLAYER_LINVEL:
-			{
-				PlayerVector pvec = ReceiveLinVelocity(data);
-				Game::Instance()->SetLinearVelocity(pvec.ID, pvec.v);
-				break;
-			}
-			case PLAYER_ANGVEL:
-			{
-				PlayerVector pvec = ReceiveAngVelocity(data);
-				Game::Instance()->SetAngularVelocity(pvec.ID, pvec.v);
-				break;
-			}
-			case PLAYER_ACCELERATION:
-			{
-				PlayerVector pvec = ReceiveAcceleration(data);
-				Game::Instance()->SetAcceleration(pvec.ID, pvec.v);
-				break;
-			}
-			case PLAYER_SIZES:
-			{
-				PlayerFloat pfloat = ReceiveSizes(data);
-				Game::Instance()->SetSize(pfloat.ID, pfloat.f);
-			}
-
-			case TEXT_PACKET:
-			{
-				//cout << data.substr(data.find_first_of(':') + 1) + "\n";
-			}
 			}
 			break;
-		}
-		case ENET_EVENT_TYPE_DISCONNECT:
-		{
-			printf(" - Client %d has disconnected.\n", CLIENT_ID + 1);
-			for (uint i = 0; i < connectedIDs.size(); ++i)
+
+			case ENET_EVENT_TYPE_RECEIVE:
 			{
-				if (connectedIDs[i] - 1 == CLIENT_ID)
+				string data = GetPacketData(evnt);
+				PacketType type = FindType(data);
+
+				switch (type) {
+				case PLAYER_POS:
 				{
-					freeIDs.push_back(connectedIDs[i]);
-					connectedIDs.erase(connectedIDs.begin() + i);
+					PlayerVector pvec = ReceivePosition(data);
+					Game::Instance()->SetPosition(pvec.ID, pvec.v);
+					break;
+				}
+				case PLAYER_LINVEL:
+				{
+					PlayerVector pvec = ReceiveLinVelocity(data);
+					Game::Instance()->SetLinearVelocity(pvec.ID, pvec.v);
+					break;
+				}
+				case PLAYER_ANGVEL:
+				{
+					PlayerVector pvec = ReceiveAngVelocity(data);
+					Game::Instance()->SetAngularVelocity(pvec.ID, pvec.v);
+					break;
+				}
+				case PLAYER_ACCELERATION:
+				{
+					PlayerVector pvec = ReceiveAcceleration(data);
+					Game::Instance()->SetAcceleration(pvec.ID, pvec.v);
+					break;
+				}
+				case PLAYER_SIZES:
+				{
+					PlayerFloat pfloat = ReceiveSizes(data);
+					Game::Instance()->SetSize(pfloat.ID, pfloat.f);
+				}
+
+				case TEXT_PACKET:
+				{
+					//cout << data.substr(data.find_first_of(':') + 1) + "\n";
+				}
+				}
+				break;
+			}
+			case ENET_EVENT_TYPE_DISCONNECT:
+			{
+				printf(" - Client %d has disconnected.\n", CLIENT_ID + 1);
+				for (uint i = 0; i < connectedIDs.size(); ++i)
+				{
+					if (connectedIDs[i] - 1 == CLIENT_ID)
+					{
+						freeIDs.push_back(connectedIDs[i]);
+						connectedIDs.erase(connectedIDs.begin() + i);
+					}
+				}
+				Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
+				break;
+			}
+			}
+		});
+
+		if (Game::Instance()->IsRunning())
+		{
+			Game::Instance()->SetScore(0, Game::Instance()->GetScore(0) + 1);
+
+			for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
+			{
+				if (Game::Instance()->GetPlayer(i))
+				{
+					SendPosition(i);
+					SendLinVelocity(i);
+					SendAngVelocity(i);
+					SendAcceleration(i);
+					SendSize(i);
+					SendScores();
 				}
 			}
-			break;
-		}
-		}
-	});
-
-	Game::Instance()->SetScore(0, Game::Instance()->GetScore(0) + 1);
-
-	for (uint i = 0; i < 4; ++i)
-	{
-		if (Game::Instance()->GetPlayer(i))
-		{
-			SendPosition(i);
-			SendLinVelocity(i);
-			SendAngVelocity(i);
-			SendAcceleration(i);
-			SendSize(i);
-			SendScores();
 		}
 	}
 
@@ -229,6 +248,28 @@ void Server::SendConnectionID(uint ID)
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(&server->m_pNetwork->peers[ID-1], 0, packet);
+
+}
+
+void Server::SendNumberUsers(uint n)
+{
+	string data;
+
+	data = to_string(NUMBER_USERS) + ":" +
+		to_string(n);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::SendGameStart()
+{
+	string data;
+
+	data = to_string(GAME_START) + ":";
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
 
 }
 
@@ -293,7 +334,7 @@ void Server::SendScores()
 
 	data = to_string(PLAYER_SCORES) + ":";
 
-	for (uint i = 0; i < 4; ++i)
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 	{
 		data = data + to_string(Game::Instance()->GetScore(i)) + " ";
 	}
@@ -312,4 +353,11 @@ void Server::SendWeaponFire(uint ID)
 	data = to_string(PLAYER_WEAPON) + ":";
 }
 
-
+void Server::StartGame()
+{
+	SendGameStart();
+	SceneManager::Instance()->JumpToScene();
+	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+}
