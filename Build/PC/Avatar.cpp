@@ -276,7 +276,6 @@ void Avatar::UpdatePickUp(float dt)
 
 void Avatar::Spray()
 {
-	
 	int randPitch;
 	int randYaw;
 	Vector3 direction;
@@ -299,26 +298,34 @@ void Avatar::Spray()
 
 void Avatar::ShootRocket()
 {
-	/*
+	int yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
-	Vector3 direction = playerVelocityDirection;
+	int pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	if (canJump && pitch < 0) {
+		pitch = 0;
+	}
 
-	Rocket* projectile =  new Rocket(position, direction, size, enum Colour, Vector4 RGBA);;
+	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 30;
+	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 2, "Projectile");
+	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0));
 
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
-	*/
 }
 
 void Avatar::ShootProjectile()
 {
-	/*
+	int yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	
-	Vector3 direction = playerVelocityDirection;
+	int pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	if (canJump && pitch < 0) {
+		pitch = 0;
+	}
 
-	Projectile* projectile =  new Projectile(position, direction, size, enum Colour, Vector4 RGBA);;
+	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 50;
+	Projectile* projectile =  new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, PROJECTILE, 2, "Projectile");
+
 	
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
-	*/
 }
 
 void Avatar::ManageWeapons() 
