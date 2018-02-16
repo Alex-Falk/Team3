@@ -19,6 +19,8 @@ public:
 	Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 Velocity, Vector3 size, float inverseMass, PhysNodeType type, int projectileWorth, const std::string& name = ""); //cuboid projectile
 	virtual ~Projectile();
 
+	Colour GetColour() { return colour; }
+
 	bool ProjectileCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 	virtual void OnDetachedFromScene();
 };

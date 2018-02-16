@@ -117,6 +117,9 @@
     <ClInclude Include="PaintPool.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="CaptureArea.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -178,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="PaintPool.cpp">
       <Filter>GamePlay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="CaptureArea.cpp">
+      <Filter>Gameplay\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
