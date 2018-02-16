@@ -1,15 +1,17 @@
 // Daniel Burns [12/02/2018] Testing Map
 #include "TestMap.h"
+#include "PaintPool.h"
+#include "Game.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
 //--------------------------------------------------------------------------------------------//
 void TestMap::OnInitializeScene()
 {
-	spawnPositions[0] = Vector3(20, 5, 20);
-	spawnPositions[1] = Vector3(20, 5, -20);
-	spawnPositions[2] = Vector3(-20, 5, 20);
-	spawnPositions[3] = Vector3(-20, 5, -20);
+	spawnPositions[0] = Vector3(25, 5, 25);
+	spawnPositions[1] = Vector3(25, 5, -25);
+	spawnPositions[2] = Vector3(-25, 5, 25);
+	spawnPositions[3] = Vector3(-25, 5, -25);
 
 	// Loading Textures -----------------------------------------------------------------------------------------------------------
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
@@ -20,19 +22,25 @@ void TestMap::OnInitializeScene()
 		TEXTUREDIR"SkyBox\\skybottom.jpg", TEXTUREDIR"SkyBox\\skyback.jpg", TEXTUREDIR"SkyBox\\skyfront.jpg"))
 		NCLERROR("Texture not loaded");
 	
-	pickupSpeedBoost = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
+	// Spawning Pickups -----------------------------------------------------------------------------------------------------------
+	pickupSpeedBoost = new Pickup(Vector3(12, 3, 5.5), SPEED_BOOST);
 	this->AddGameObject(pickupSpeedBoost);
 
-	pickupJumpBoost = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
+	pickupJumpBoost = new Pickup(Vector3(-12, 3, 0), JUMP_BOOST);
 	this->AddGameObject(pickupJumpBoost);
 	
-	pickupWeapon = new Pickup(Vector3(1, 3, -5.5), WEAPON);
+	pickupWeapon = new Pickup(Vector3(12, 3, -5.5), WEAPON);
 	this->AddGameObject(pickupWeapon);
+
+	pickupPool = new PaintPool(Vector3(0, 1.1f, 0), RED);
+	this->AddGameObject(pickupPool);
 	
 	CreateEnvironment();	// creates environment & elements within.
 	GameplayTesting();		// gameplay functionality testing.
 
 	GraphicsPipeline::Instance()->InitPath(Vector2(xDimension, yDimension));
+	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(40);			
+	GraphicsPipeline::Instance()->InitPath(Vector2(40, 40));							
 
 	// Score & GUI initialisation -------------------------------------------------------------------------------------------------
 	BuildGroundScore();
@@ -63,6 +71,11 @@ void TestMap::OnUpdateScene(float dt)
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
 	}
 
+	if (pickupPool)
+	{
+		pickupPool->Update(dt);
+	}
+
 	if (pickupJumpBoost)
 	{
 		pickupJumpBoost->Update(dt);
@@ -78,24 +91,22 @@ void TestMap::OnUpdateScene(float dt)
 		pickupWeapon->Update(dt);
 	}
 
+	// Display Pickup Text ------------------------------------------------------------------------------------------------------
 	Vector3 pickupSpeedBoostText = Vector3(0.0, 2.0, 0.0);
 	Vector3 pickupJumpBoostText = Vector3(0.0, 2.0, 0.0);
 	Vector3 pickupWeaponText = Vector3(0.0, 2.0, 0.0);
 
-	NCLDebug::DrawTextWs(pickupSpeedBoostText + Vector3(5.0f, 3.2f, 4.5f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "SPEED");
-	NCLDebug::DrawTextWs(pickupJumpBoostText + Vector3(-7.0f, 3.2f, -1.f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "JUMP");
-	NCLDebug::DrawTextWs(pickupWeaponText + Vector3(1.0f, 3.2f, -5.5f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "WEAPON");
+	NCLDebug::DrawTextWs(pickupSpeedBoostText + Vector3(12.0f, 3.0f, 5.5f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "SPEED");
+	NCLDebug::DrawTextWs(pickupJumpBoostText + Vector3(-12.0f, 3.0, 0.f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "JUMP");
+	NCLDebug::DrawTextWs(pickupWeaponText + Vector3(12.0f, 3.0f, -5.5f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "WEAPON");
 }
-
-
-
 
 void TestMap::CreateEnvironment()
 {
 	GameObject* ground = CommonUtils::BuildCuboidObject(
 		"Ground",
 		Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
-		Vector3(30.0f, 1.5f, 30.0f),		// Scale
+		Vector3(40.0f, 1.5f, 40.0f),		// Scale
 		true,
 		0.0f,
 		true,
@@ -103,31 +114,27 @@ void TestMap::CreateEnvironment()
 		PhysNodeType::BIG_NODE,
 		Vector4(0.2f, 0.5f, 0.5f, 1.0f),	// Colour       Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
 		MATERIALTYPE::Ground);
-
 	this->AddGameObject(ground);
-
 
 	// Create FrontWall (..everybody loves finding some common ground)
 	GameObject* FrontWall = CommonUtils::BuildCuboidObject(
 		"FrontWall",
-		Vector3(0.0f, 2.0f, -31.0f),	// Position = Right+---Up+---Foward+
-		Vector3(30.0f, 1.0f, 1.0f),		// Scale	= Width+---Length+---Depth+
+		Vector3(0.0f, 2.5f, -41.0f),	// Position = Right+---Up+---Foward+
+		Vector3(40.0f, 1.0f, 1.0f),		// Scale	= Width+---Length+---Depth+
 		true,
 		0.0f,
 		true,
 		false,								// Dragable By User
 		PhysNodeType::BIG_NODE,
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f),	// Colour
-	MATERIALTYPE::Forward_Lighting);
-
+		MATERIALTYPE::Forward_Lighting);
 	this->AddGameObject(FrontWall);
-
 
 	// Create BackWall (..everybody loves finding some common ground)
 	GameObject* BackWall = CommonUtils::BuildCuboidObject(
 		"BackWall",
-		Vector3(0.0f, 2.0f, 31.0f),		// Position = Right+---Up+---Foward+
-		Vector3(30.0f, 1.0f, 1.0f),		// Scale	= Width+---Length+---Depth+
+		Vector3(0.0f, 2.5f, 41.0f),		// Position = Right+---Up+---Foward+
+		Vector3(40.0f, 1.0f, 1.0f),		// Scale	= Width+---Length+---Depth+
 		true,
 		0.0f,
 		true,
@@ -137,12 +144,11 @@ void TestMap::CreateEnvironment()
 		MATERIALTYPE::Forward_Lighting);
 	this->AddGameObject(BackWall);
 
-
 	// Create LeftWall (..everybody loves finding some common ground)
 	GameObject* LeftWall = CommonUtils::BuildCuboidObject(
 		"LeftWall",
-		Vector3(-31.0f, 2.0f, 0.0f),	// Position = Right+---Up+---Foward+
-		Vector3(1.0f, 1.0f, 30.0f),		// Scale	= Width+---Length+---Depth+
+		Vector3(-41.0f, 2.5f, 0.0f),	// Position = Right+---Up+---Foward+
+		Vector3(1.0f, 1.0f, 40.0f),		// Scale	= Width+---Length+---Depth+
 		true,
 		0.0f,
 		true,
@@ -155,8 +161,8 @@ void TestMap::CreateEnvironment()
 	// Create RightWall (..everybody loves finding some common ground)
 	GameObject* RightWall = CommonUtils::BuildCuboidObject(
 		"RightWall",
-		Vector3(31.0f, 2.0f, 0.0f),		// Position = Right+---Up+---Foward+
-		Vector3(1.0f, 1.0f, 30.0f),		// Scale	= Width+---Length+---Depth+
+		Vector3(41.0f, 2.5f, 0.0f),		// Position = Right+---Up+---Foward+
+		Vector3(1.0f, 1.0f, 40.0f),		// Scale	= Width+---Length+---Depth+
 		true,
 		0.0f,
 		true,
@@ -164,15 +170,14 @@ void TestMap::CreateEnvironment()
 		PhysNodeType::BIG_NODE,
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f),	// Colour
 		MATERIALTYPE::Forward_Lighting);
-
 	this->AddGameObject(RightWall);
 }
 
 void TestMap::GameplayTesting()
 {
 	object = CommonUtils::BuildCuboidObject("PaintableObject1",
-		Vector3(-16.0f, 2.5f, -16.0f),
-		Vector3(3.5f, 1.0f, 3.5f),
+		Vector3(-0.0f, 2.2f, -20.0f),
+		Vector3(3.5f, 0.7f, 5.0f),
 		true,									//Has Physics Object
 		0.0f,
 		true,									//Has Collision Shape
@@ -183,8 +188,8 @@ void TestMap::GameplayTesting()
 	this->AddGameObject(object);
 
 	object = CommonUtils::BuildCuboidObject("PaintableObject2",
-		Vector3(14.0f, 3.0f, 12.0f),
-		Vector3(1.5f, 1.5f, 1.5f),
+		Vector3(0.0f, 2.2f, 20.0f),
+		Vector3(3.5f, 0.7f, 5.0f),
 		true,									//Has Physics Object
 		0.0f,
 		true,									//Has Collision Shape

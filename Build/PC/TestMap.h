@@ -18,6 +18,7 @@ private:
 	Pickup* pickupSpeedBoost;
 	Pickup* pickupJumpBoost;
 	Pickup* pickupWeapon;
+	Pickup* pickupPool;
 
 	GameObject* object;
 
@@ -65,6 +66,6 @@ public:
 	// Utility
 	//--------------------------------------------------------------------------------------------//
 	void CreateEnvironment();
-
 	void GameplayTesting();
+
 };
