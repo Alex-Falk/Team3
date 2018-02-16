@@ -38,9 +38,13 @@ void SimpleGamePlay::OnInitializeScene() {
 
 	this->AddGameObject(ground);
 
-	pickup = new PaintPool(Vector3(0, 0.6f, 0), RED);
+	pickup[0] = new PaintPool(Vector3(0, 0.6f, 0), RED);
 
-	this->AddGameObject(pickup);
+	this->AddGameObject(pickup[0]);
+
+	pickup[1] = new WeaponPickup(Vector3(5,1,5),PAINT_SPRAY,5.0f);
+
+	this->AddGameObject(pickup[1]);
 
 	// Score & GUI initialisation -------------------------------------------------------------------------------------------------
 	BuildGroundScore();
@@ -64,10 +68,14 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 {
 	Map::OnUpdateScene(dt);
 
-	if (pickup)
+	for (uint i = 0; i < npickup; ++i)
 	{
-		pickup->Update(dt);
+		if (pickup[i])
+		{
+			pickup[i]->Update(dt);
+		}
 	}
+
 }
 
 //--------------------------------------------------------------------------------------------//
@@ -96,7 +104,12 @@ void SimpleGamePlay::BuildGroundScore() {
 
 void SimpleGamePlay::UpdateGroundScore(Avatar* player) {
 
-	Vector2 playerPos = Vector2((player->GetPosition().x * groundScoreAccuracy) + xOnGrid / 2, (player->GetPosition().z * groundScoreAccuracy) + yOnGrid / 2);
+	Vector2 playerPos = Vector2((player->GetPosition().x * groundScoreAccuracy) + (xOnGrid) / 2, (player->GetPosition().z * groundScoreAccuracy) + (yOnGrid) / 2);
+
+	if (playerPos.x > xOnGrid / 2 || playerPos.x < -xOnGrid / 2 || playerPos.y > yOnGrid / 2 || playerPos.y < -yOnGrid / 2) {
+		return;
+	}
+
 	int plGridSize = (int)(player->GetLife() * groundScoreAccuracy / 100);
 
 	// Runs through the square arount the center and finds the circle.
@@ -106,14 +119,17 @@ void SimpleGamePlay::UpdateGroundScore(Avatar* player) {
 				int xSym = playerPos.x - (i - playerPos.x);
 				int ySym = playerPos.y - (i - playerPos.y);
 				// Thanks to symetry we take all 4 quadrants of the circle arount the center
-				ChangeGridScore(ground[i][j], player->GetColour());
-				ground[i][j] = player->GetColour();
-				ChangeGridScore(ground[i][ySym], player->GetColour());
-				ground[i][ySym] = player->GetColour();
-				ChangeGridScore(ground[xSym][j], player->GetColour());
-				ground[xSym][j] = player->GetColour();
-				ChangeGridScore(ground[xSym][ySym], player->GetColour());
-				ground[xSym][ySym] = player->GetColour();
+				if (xSym < xOnGrid - 1 && xSym > 0 && ySym < yOnGrid - 1 && ySym > 0)
+				{
+					ChangeGridScore(ground[i][j], player->GetColour());
+					ground[i][j] = player->GetColour();
+					ChangeGridScore(ground[i][ySym], player->GetColour());
+					ground[i][ySym] = player->GetColour();
+					ChangeGridScore(ground[xSym][j], player->GetColour());
+					ground[xSym][j] = player->GetColour();
+					ChangeGridScore(ground[xSym][ySym], player->GetColour());
+					ground[xSym][ySym] = player->GetColour();
+				}
 			}
 		}
 	}
