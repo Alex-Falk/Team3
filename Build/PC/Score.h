@@ -75,7 +75,7 @@ private:
 	int xOnGrid;
 	int yOnGrid;
 	Colour* ground;
-	int groundTeamScore[numOfPlayers];
+	int groundTeamScore[START_COLOUR +1];
 	int captObjTeamScore[numOfPlayers];
 	int teamScores[numOfPlayers];
 	float teamScoresPercentage[numOfPlayers];
@@ -109,9 +109,10 @@ public:
 	
 	static void UpdateProjectilesVector(Vector3 pos, Colour c, float size);
 	
+	// To Return Team Score
 	inline int GetTeamScore(int id) { return teamScores[id]; }
-
-	inline int GetTeamScorePercentage(int id) { return teamScoresPercentage[id]; }
+	//To return Team Score Percentage
+	inline float GetTeamScorePercentage(int id) { return teamScoresPercentage[id]; }
 	
 	void PrintScore(int x); // debug
 	
