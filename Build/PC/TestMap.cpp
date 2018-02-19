@@ -6,47 +6,23 @@
 //--------------------------------------------------------------------------------------------//
 void TestMap::OnInitializeScene()
 {
+	xDimension = 30;
+	yDimension = 30;
+	groundScoreAccuracy = 15;
+
+	Map::OnInitializeScene();
+}
+
+void TestMap::SetSpawnLocations()
+{
 	spawnPositions[0] = Vector3(20, 5, 20);
 	spawnPositions[1] = Vector3(20, 5, -20);
 	spawnPositions[2] = Vector3(-20, 5, 20);
 	spawnPositions[3] = Vector3(-20, 5, -20);
 
-	// Loading Textures -----------------------------------------------------------------------------------------------------------
-	GraphicsPipeline::Instance()->SetIsMainMenu(false);
-	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
-		NCLERROR("Texture not loaded");
-
-	if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box, TEXTUREDIR"SkyBox\\skyright.jpg", TEXTUREDIR"SkyBox\\skyleft.jpg", TEXTUREDIR"SkyBox\\skytop.jpg",
-		TEXTUREDIR"SkyBox\\skybottom.jpg", TEXTUREDIR"SkyBox\\skyback.jpg", TEXTUREDIR"SkyBox\\skyfront.jpg"))
-		NCLERROR("Texture not loaded");
-	
-	pickupSpeedBoost = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
-	this->AddGameObject(pickupSpeedBoost);
-
-	pickupJumpBoost = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
-	this->AddGameObject(pickupJumpBoost);
-	
-	pickupWeapon = new Pickup(Vector3(1, 3, -5.5), WEAPON);
-	this->AddGameObject(pickupWeapon);
-	
-	CreateEnvironment();	// creates environment & elements within.
-	GameplayTesting();		// gameplay functionality testing.
-
-	GraphicsPipeline::Instance()->InitPath(Vector2((float)xDimension, (float)yDimension));
-
-	// Score & GUI initialisation -------------------------------------------------------------------------------------------------
-	OnInitializeGUI();
-
-	// General Initialization -----------------------------------------------------------------------------------------------------
-	Map::OnInitializeScene();
 }
 
-void TestMap::OnCleanUpScene()
-{
-	DeleteAllGameObjects();
-	TextureManager::Instance()->RemoveAllTexture();
-	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
-}
+
 
 //--------------------------------------------------------------------------------------------//
 // Special Object udpates (e.g. Pickups)
@@ -55,31 +31,36 @@ void TestMap::OnUpdateScene(float dt)
 {
 	Scene::OnUpdateScene(dt);
 
-	if (pickupJumpBoost)
+	for (uint i = 0; i < npickup; ++i)
 	{
-		pickupJumpBoost->Update(dt);
+		if (pickup[i])
+		{
+			pickup[i]->Update(dt);
+		}
 	}
 
-	if (pickupSpeedBoost)
-	{
-		pickupSpeedBoost->Update(dt);
-	}
-
-	if (pickupWeapon)
-	{
-		pickupWeapon->Update(dt);
-	}
-
-	Vector3 pickupSpeedBoostText = Vector3(0.0, 2.0, 0.0);
-	Vector3 pickupJumpBoostText = Vector3(0.0, 2.0, 0.0);
-	Vector3 pickupWeaponText = Vector3(0.0, 2.0, 0.0);
-
-	NCLDebug::DrawTextWs(pickupSpeedBoostText + Vector3(5.0f, 3.2f, 4.5f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "SPEED");
-	NCLDebug::DrawTextWs(pickupJumpBoostText + Vector3(-7.0f, 3.2f, -1.f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "JUMP");
-	NCLDebug::DrawTextWs(pickupWeaponText + Vector3(1.0f, 3.2f, -5.5f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "WEAPON");
+	NCLDebug::DrawTextWs(pickupTextOffset[0] + pickup[0]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "SPEED");
+	NCLDebug::DrawTextWs(pickupTextOffset[1] + pickup[1]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "JUMP");
+	NCLDebug::DrawTextWs(pickupTextOffset[2] + pickup[2]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "WEAPON");
 }
 
+void TestMap::AddObjects()
+{
+	pickup[0] = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
+	this->AddGameObject(pickup[0]);
+	pickupTextOffset[0] = Vector3(0, 2, 0);
 
+	pickup[1] = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
+	this->AddGameObject(pickup[1]);
+	pickupTextOffset[1] = Vector3(0, 2, 0);
+
+	pickup[2] = new Pickup(Vector3(1, 3, -5.5), WEAPON);
+	this->AddGameObject(pickup[2]);
+	pickupTextOffset[2] = Vector3(0, 2, 0);
+
+	CreateEnvironment();
+	GameplayTesting();
+}
 
 
 void TestMap::CreateEnvironment()

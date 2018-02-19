@@ -118,7 +118,6 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
-	NCLDebug::Log(to_string(Physics()->GetLinearVelocity().Length()));
 
 	ProcessAvatarInput(dt);
 	

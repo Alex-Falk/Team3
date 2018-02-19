@@ -69,10 +69,6 @@ void Game::Update(float dt)
 
 }
 
-void Game::PrintScore(int score) {
-	NCLDebug::Log(to_string(score / 1000));
-}
-
 void Game::ResetGame()
 {
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
