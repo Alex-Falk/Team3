@@ -82,6 +82,15 @@ public:
 
 	void SetDrawScoreBar(bool a) { drawScorebar = a; }
 
+	bool GetDrawScoreBar() { return drawScorebar; }
+
+	void UpdateScorebar(float a1, float a2, float a3, float a4) {
+		p1 = a1;
+		p2 = a2;
+		p3 = a3;
+		p4 = a4;
+	}
+
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -94,4 +103,5 @@ protected:
 	Mesh* scorebar;
 	Shader* scorebarShader;
 	bool drawScorebar = false;
+	float p1, p2, p3, p4;
 };

@@ -277,6 +277,15 @@ void HandleGUIMouseCursor()
 
 void HandleGUIMouseButton()
 {
+	if (GUIsystem::Instance()->GetDrawScoreBar()==true) {
+		float a1 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(0);
+		float a2 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(1);
+		float a3 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(2);
+		float a4 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(3);
+		float total = a1 + a2 + a3 + a4;
+		GUIsystem::Instance()->UpdateScorebar(a1/total, a2/total, a3/total, a4/total);
+	}
+
 	fpsCounter++;
 	if (fpsCounter > 5) {
 		if (Window::GetMouse()->ButtonDown(MOUSE_LEFT))

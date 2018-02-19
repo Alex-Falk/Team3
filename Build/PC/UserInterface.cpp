@@ -93,6 +93,10 @@ void GUIsystem::Draw()
 		glUseProgram(scorebarShader->GetProgram());
 		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.9, 0)) * Matrix4::Scale(Vector3(0.4, 0.04, 0));
 		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
 		scorebar->Draw();
 		glUseProgram(0);
 	}
