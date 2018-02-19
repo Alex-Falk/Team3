@@ -159,12 +159,12 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 	{
 		if ((Pickup*)(collidingObject->GetParent())) 
 		{
-			activePickUp = ((Pickup*)(collidingObject->GetParent()))->GetType();
+			activePickUp = ((Pickup*)(collidingObject->GetParent()))->GetPickupType();
 			if (activePickUp == WEAPON)
 			{
-				weapon = ((WeaponPickup*)(collidingObject->GetParent()))->GetType();
+				weapon = ((WeaponPickup*)(collidingObject->GetParent()))->GetWeaponType();
 			}
-			PickUpBuffActivated();
+			PickUpBuffActivated(activePickUp);
 		}
 	}
 	else if ((collidingObject->GetType() == BIG_NODE) || (collidingObject->GetType() == PAINTABLE_OBJECT) || (collidingObject->GetType() == DEFAULT_PHYSICS))

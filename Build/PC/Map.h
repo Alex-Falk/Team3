@@ -13,6 +13,7 @@
 #include "Game.h"
 #include "GamePlay.h"
 #include "WeaponPickup.h"
+#include "Score.h"
 
 //#include "GroundScore.h"
 

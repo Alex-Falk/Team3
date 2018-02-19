@@ -23,8 +23,6 @@ public:
 	
 	virtual ~Projectile();
 
-	Colour GetColour() { return colour; }
-
 	bool ProjectileCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 	virtual void OnDetachedFromScene();
 };
