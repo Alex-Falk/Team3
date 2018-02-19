@@ -51,7 +51,7 @@ void SimpleGamePlay::onConnectToScene()
 			Avatar * p = nullptr;
 			if (i == Game::Instance()->getUserID())
 			{
-				p = new ControllableAvatar(Vector3(i * 3, 1.0, 0.0), Colour(i), i, 1.0f);
+				p = new ControllableAvatar(Vector3(i * 3, 3.0, 0.0), Colour(i), i, 1.0f);
 			}
 			else
 			{
@@ -72,7 +72,6 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 
 	m_AccumTime += dt;
 
-	//player->OnPlayerUpdate(dt);
 	for (uint i = 0; i < 4; i++) {
 		if (Game::Instance()->GetPlayer(i)) {
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
