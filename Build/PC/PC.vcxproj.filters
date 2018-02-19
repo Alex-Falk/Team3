@@ -120,6 +120,12 @@
     <ClInclude Include="CaptureArea.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="Minion.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionCamp.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -180,6 +186,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PaintPool.cpp">
+      <Filter>GamePlay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Minion.cpp">
+      <Filter>GamePlay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionCamp.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
     <ClCompile Include="CaptureArea.cpp">
