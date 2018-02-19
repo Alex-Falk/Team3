@@ -120,23 +120,6 @@ public:
 	}
 
 	virtual void OnInitializeGUI() {
-		//Call initi-function for gui
-		sceneGUI = new GUI();
-		sceneGUI->Init(CEGUIDIR);
-
-		//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
-		sceneGUI->LoadScheme("WindowsLook.scheme");
-		sceneGUI->LoadScheme("TaharezLook.scheme");
-		sceneGUI->LoadScheme("AlfiskoSkin.scheme");
-		sceneGUI->LoadScheme("OgreTray.scheme");
-
-		//Set Font sytle
-		sceneGUI->SetFont("DejaVuSans-10");
-
-		//SetMouseCursor
-		sceneGUI->SetMouseCursor("AlfiskoSkin/MouseArrow");
-		sceneGUI->ShowMouseCursor();
-
 		SetUpMainMenu();
 		SetUpOptionMenu();
 		SetUpLobby();
@@ -165,7 +148,7 @@ public:
 	{
 		//Create Push Button handle
 		createButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.15f, 0.2f, 0.1f),
 				Vector4(),
 				"createButton"
@@ -174,7 +157,7 @@ public:
 		createButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onCreateGameClicked, this));
 
 		joinButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.35f, 0.2f, 0.1f),
 				Vector4(),
 				"joinButton"
@@ -183,7 +166,7 @@ public:
 		joinButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onJoinGameClicked, this));
 
 		optionButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.55f, 0.2f, 0.1f),
 				Vector4(),
 				"optionButton"
@@ -193,7 +176,7 @@ public:
 
 
 		exitButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.75f, 0.2f, 0.1f),
 				Vector4(),
 				"exitButton"
@@ -205,7 +188,7 @@ public:
 	void SetUpLobby()
 	{
 		startButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.75f, 0.2f, 0.1f),
 				Vector4(),
 				"startButton"
@@ -214,7 +197,7 @@ public:
 		startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onStartGameClicked, this));
 
 		ipText = static_cast<CEGUI::DefaultWindow*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.1f, 0.2f, 0.1f),
 				Vector4(),
 				"text"
@@ -225,7 +208,7 @@ public:
 	void SetUpconnectionMenu()
 	{
 		IpInputBox.editbox = static_cast<CEGUI::Editbox*>(
-			sceneGUI->createWidget("OgreTray/Editbox",
+			GUIsystem::Instance()->createWidget("OgreTray/Editbox",
 				Vector4(0.40f, 0.65f, 0.2f, 0.1f),
 				Vector4(),
 				"textBox"
@@ -234,11 +217,11 @@ public:
 		IpInputBox.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnTextBoxClicked, this));
 		IpInputBox.type = "test";
 		connectIP.type = IpInputBox.type;
-		sceneGUI->inputBox.push_back(IpInputBox);
-		sceneGUI->userTyping.push_back(connectIP);
+		GUIsystem::Instance()->inputBox.push_back(IpInputBox);
+		GUIsystem::Instance()->userTyping.push_back(connectIP);
 
 		connectToHostButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.75f, 0.2f, 0.1f),
 				Vector4(),
 				"connectToHostButton"
@@ -251,7 +234,7 @@ public:
 	void SetUpOptionMenu()
 	{
 		OptionMenuBack = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.85f, 0.2f, 0.1f),
 				Vector4(),
 				"OptionMenuBack"
@@ -262,7 +245,7 @@ public:
 
 		//Sound volume Control
 		mastervolumeSlider = static_cast<CEGUI::Slider*>(
-			sceneGUI->createWidget("OgreTray/Slider",
+			GUIsystem::Instance()->createWidget("OgreTray/Slider",
 				Vector4(0.40f, 0.15f, 0.30f, 0.03f),
 				Vector4(),
 				"mastervolumeSlider"
@@ -275,7 +258,7 @@ public:
 		mastervolumeSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMastervolumeChanged, this));
 
 		GameSoundsSlider = static_cast<CEGUI::Slider*>(
-			sceneGUI->createWidget("OgreTray/Slider",
+			GUIsystem::Instance()->createWidget("OgreTray/Slider",
 				Vector4(0.40f, 0.25f, 0.30f, 0.03f),
 				Vector4(),
 				"GameSoundsSlider"
@@ -288,7 +271,7 @@ public:
 		GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		GameSoundsSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onGameSoundvolumeChanged, this));
 		MusicSlider = static_cast<CEGUI::Slider*>(
-			sceneGUI->createWidget("OgreTray/Slider",
+			GUIsystem::Instance()->createWidget("OgreTray/Slider",
 				Vector4(0.40f, 0.35f, 0.30f, 0.03f),
 				Vector4(),
 				"MusicSlider"
@@ -301,7 +284,7 @@ public:
 		MusicSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMusicvolumeChanged, this));
 
 		mastervolumeText = static_cast<CEGUI::Titlebar*>(
-			sceneGUI->createWidget("OgreTray/Title",
+			GUIsystem::Instance()->createWidget("OgreTray/Title",
 				Vector4(0.28f, 0.145f, 0.12f, 0.04f),
 				Vector4(),
 				"mastervolumeText"
@@ -309,7 +292,7 @@ public:
 		mastervolumeText->setText("Master volume");
 
 		GameSoundvolumeText = static_cast<CEGUI::Titlebar*>(
-			sceneGUI->createWidget("OgreTray/Title",
+			GUIsystem::Instance()->createWidget("OgreTray/Title",
 				Vector4(0.28f, 0.245f, 0.12f, 0.04f),
 				Vector4(),
 				"GameSoundvolumeText"
@@ -317,7 +300,7 @@ public:
 		GameSoundvolumeText->setText("Game Sound volume");
 
 		MusicvolumeText = static_cast<CEGUI::Titlebar*>(
-			sceneGUI->createWidget("OgreTray/Title",
+			GUIsystem::Instance()->createWidget("OgreTray/Title",
 				Vector4(0.28f, 0.345f, 0.12f, 0.04f),
 				Vector4(),
 				"MusicvolumeText"
@@ -327,7 +310,7 @@ public:
 		//Camera Sensitivity Control
 		//TODO: link with the actual camera sensitivity
 		CameraSensitivity = static_cast<CEGUI::Slider*>(
-			sceneGUI->createWidget("OgreTray/Slider",
+			GUIsystem::Instance()->createWidget("OgreTray/Slider",
 				Vector4(0.40f, 0.45f, 0.30f, 0.03f),
 				Vector4(),
 				"CameraSensitivity"
@@ -336,7 +319,7 @@ public:
 		CameraSensitivity->setCurrentValue(100.0f);
 
 		CameraSensitivityText = static_cast<CEGUI::Titlebar*>(
-			sceneGUI->createWidget("OgreTray/Title",
+			GUIsystem::Instance()->createWidget("OgreTray/Title",
 				Vector4(0.28f, 0.445f, 0.12f, 0.04f),
 				Vector4(),
 				"CameraSensitivityText"
@@ -346,15 +329,17 @@ public:
 		CameraSensitivityText->setVisible(false);
 
 		background = static_cast<CEGUI::Titlebar*>(
-			sceneGUI->createWidget("OgreTray/Title",
+			GUIsystem::Instance()->createWidget("OgreTray/Title",
 				Vector4(0.40f, 0.535f, 0.24f, 0.07f),
 				Vector4(),
 				"VsyncBackground"
 			));
 		background->setText("Enable                   Disable");
+		background->disable();
+		background->setVisible(false);
 
 		VsyncText = static_cast<CEGUI::Titlebar*>(
-			sceneGUI->createWidget("OgreTray/Title",
+			GUIsystem::Instance()->createWidget("OgreTray/Title",
 				Vector4(0.28f, 0.545f, 0.12f, 0.04f),
 				Vector4(),
 				"VsyncText"
@@ -363,7 +348,7 @@ public:
 		VsyncText->disable();
 
 		enableVsync = static_cast<CEGUI::RadioButton*>(
-			sceneGUI->createWidget("OgreTray/RadioButton",
+			GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
 				Vector4(0.45f, 0.545f, 0.08f, 0.05f),
 				Vector4(),
 				"EnableVsync"
@@ -372,7 +357,7 @@ public:
 		enableVsync->setSelected(true);
 
 		disableVsync = static_cast<CEGUI::RadioButton*>(
-			sceneGUI->createWidget("OgreTray/RadioButton",
+			GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
 				Vector4(0.55f, 0.545f, 0.08f, 0.05f),
 				Vector4(),
 				"DisableVsync"
@@ -380,7 +365,7 @@ public:
 		disableVsync->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDisableVsyncClicked, this));
 
 		DebugButton = static_cast<CEGUI::PushButton*>(
-			sceneGUI->createWidget("OgreTray/Button",
+			GUIsystem::Instance()->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.65f, 0.2f, 0.1f),
 				Vector4(),
 				"debugButton"
@@ -459,7 +444,7 @@ public:
 		inputBox temp;
 		userInput temp1;
 		temp.editbox = static_cast<CEGUI::Editbox*>(
-			sceneGUI->createWidget("OgreTray/Editbox",
+			GUIsystem::Instance()->createWidget("OgreTray/Editbox",
 				Vector4(0.40f, 0.65f, 0.2f, 0.1f),
 				Vector4(),
 				"textBox"
@@ -468,13 +453,13 @@ public:
 		temp.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnTextBoxClicked, this));
 		temp.type = "test";
 		temp1.type = temp.type;
-		sceneGUI->inputBox.push_back(temp);
-		sceneGUI->userTyping.push_back(temp1);
+		GUIsystem::Instance()->inputBox.push_back(temp);
+		GUIsystem::Instance()->userTyping.push_back(temp1);
 	}
 
 	void OnTextBoxClicked() {
-		sceneGUI->SetIsTyping(true);
-		sceneGUI->currentType = "test";
+		GUIsystem::Instance()->SetIsTyping(true);
+		GUIsystem::Instance()->currentType = "test";
 	}
 
 	//GUI Menu switch helper function
@@ -586,8 +571,38 @@ public:
 
 	void ShowOptionMenu1()
 	{
-		float temp = GameSoundsSlider->getCurrentValue();
-		AudioSystem::Instance()->SetGameSoundsVolume(temp);
+		//Enable Option Menu
+		OptionMenuBack->setVisible(true);
+		OptionMenuBack->enable();
+		mastervolumeSlider->setVisible(true);
+		mastervolumeSlider->enable();
+		GameSoundsSlider->setVisible(true);
+		GameSoundsSlider->enable();
+		MusicSlider->setVisible(true);
+		MusicSlider->enable();
+
+		mastervolumeSlider->activate();
+		mastervolumeText->setVisible(true);
+		GameSoundvolumeText->activate();
+		GameSoundvolumeText->setVisible(true);
+		MusicvolumeText->activate();
+		MusicvolumeText->setVisible(true);
+
+		CameraSensitivity->activate();
+		CameraSensitivity->setVisible(true);
+		CameraSensitivityText->activate();
+		CameraSensitivityText->setVisible(true);
+
+		VsyncText->activate();
+		VsyncText->setVisible(true);
+		enableVsync->activate();
+		enableVsync->setVisible(true);
+		disableVsync->activate();
+		disableVsync->setVisible(true);
+		background->setVisible(true);
+
+		DebugButton->enable();
+		DebugButton->setVisible(true);
 	}
 
 	//Quit the whole program cleanly

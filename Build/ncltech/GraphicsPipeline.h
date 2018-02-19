@@ -23,7 +23,7 @@
 #include <nclgl\RenderNode.h>
 #include <nclgl\Frustum.h>
 #include <nclgl\Mouse.h>
-#include <nclgl\UserInterface.h>
+#include <PC\UserInterface.h>
 
 //material
 #include <nclgl\Material.h>
@@ -179,13 +179,8 @@ public:
 	inline GLuint& GetPathTex() { return pathTex; }
 
 	//GUI
-	void HandleGUIMousePosition(float x, float y);
-	void HandleMouseButton(MouseButtons button);
-	void HandleLeftMouseButtonHold(bool isHold);
-	void SetCurrentSceneGUI(GUI* passInValue) { GUIsystem = passInValue; }
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 	bool GetIsMainMenu() { return isMainMenu; }
-	GUI* GetGUISystem() { return GUIsystem; }
 
 protected:
 	GraphicsPipeline();
@@ -262,7 +257,6 @@ protected:
 	GLuint		pathTex;
 
 	//GUI
-	GUI* GUIsystem;
 	bool isMainMenu = false;
 };
 

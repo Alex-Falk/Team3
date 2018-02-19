@@ -1,8 +1,18 @@
-#include <nclgl/UserInterface.h>
+#include <PC\UserInterface.h>
 
-CEGUI::OpenGL3Renderer* GUI::m_renderer = NULL;
+CEGUI::OpenGL3Renderer* GUIsystem::m_renderer = NULL;
 
-void GUI::Init(const std::string& resourceDirectory)
+GUIsystem::GUIsystem()
+{
+	Init(CEGUIDIR);
+}
+
+GUIsystem::~GUIsystem()
+{
+	Destory();
+}
+
+void GUIsystem::Init(const std::string& resourceDirectory)
 {
 	if (m_renderer == NULL) {
 		//Initialize CEGUI library
@@ -32,14 +42,32 @@ void GUI::Init(const std::string& resourceDirectory)
 	m_root = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "root");
 	m_context->setRootWindow(m_root);
 
+	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
+	LoadScheme("WindowsLook.scheme");
+	LoadScheme("TaharezLook.scheme");
+	LoadScheme("AlfiskoSkin.scheme");
+	LoadScheme("OgreTray.scheme");
+
+	//Set Font sytle
+	SetFont("DejaVuSans-10");
+
+	//SetMouseCursor
+	SetMouseCursor("AlfiskoSkin/MouseArrow");
+	ShowMouseCursor();
 }
 
-void GUI::Destory()
+void GUIsystem::Destory()
 {
 	CEGUI::System::getSingleton().destroyGUIContext(*m_context);
 }
 
-void GUI::Draw()
+void GUIsystem::Reset()
+{
+	Destory();
+	Init(CEGUIDIR);
+}
+
+void GUIsystem::Draw()
 {
 	glUseProgram(0);
 	glActiveTexture(GL_TEXTURE0);
@@ -53,23 +81,23 @@ void GUI::Draw()
 	glEnable(GL_DEPTH_TEST);
 }
 
-void GUI::SetMouseCursor(const std::string & imageFile)
+void GUIsystem::SetMouseCursor(const std::string & imageFile)
 {
 	m_context->getMouseCursor().setDefaultImage(imageFile);
 }
 
-void GUI::ShowMouseCursor()
+void GUIsystem::ShowMouseCursor()
 {
 	m_context->getMouseCursor().show();
 }
 
-void GUI::HideMouseCursor()
+void GUIsystem::HideMouseCursor()
 {
 	m_context->getMouseCursor().hide();
 }
 
 
-void GUI::HandleTextInput(KeyboardKeys pressedKey)
+void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 {
 	CEGUI::utf32 codePoint = 46;
 	switch (pressedKey)
@@ -221,12 +249,12 @@ CEGUI::MouseButton TransferMouseButton(MouseButtons button)
 	return CEGUI::MouseButton();
 }
 
-void GUI::HandleMousePosition(float x, float y)
+void GUIsystem::HandleMousePosition(float x, float y)
 {
 	m_context->injectMousePosition(x, y);
 }
 
-void GUI::onMouseButtonPressed(MouseButtons button)
+void GUIsystem::onMouseButtonPressed(MouseButtons button)
 {
 	CEGUI::MouseButton transferedButton;
 	switch (button)
@@ -244,7 +272,7 @@ void GUI::onMouseButtonPressed(MouseButtons button)
 	}
 }
 
-void GUI::onMouseButtonHold(bool isHold)
+void GUIsystem::onMouseButtonHold(bool isHold)
 {
 	if (isHold == true) {
 		m_context->injectMouseButtonDown(CEGUI::MouseButton::LeftButton);
@@ -254,18 +282,18 @@ void GUI::onMouseButtonHold(bool isHold)
 	}
 }
 
-void GUI::LoadScheme(const std::string & schemeFile)
+void GUIsystem::LoadScheme(const std::string & schemeFile)
 {
 	CEGUI::SchemeManager::getSingleton().createFromFile(schemeFile);
 }
 
-void GUI::SetFont(const std::string & fontFile)
+void GUIsystem::SetFont(const std::string & fontFile)
 {
 	CEGUI::FontManager::getSingleton().createFromFile(fontFile + ".font");
 	m_context->setDefaultFont(fontFile);
 }
 
-CEGUI::Window * GUI::createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name)
+CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name)
 {
 	CEGUI::Window* newWindow = CEGUI::WindowManager::getSingleton().createWindow(type, name);
 	m_root->addChild(newWindow);

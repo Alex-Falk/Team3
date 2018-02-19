@@ -37,6 +37,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	//Release Singletons
 	SceneManager::Release();
 	PhysicsEngine::Release();
+	GUIsystem::Release();
 	GraphicsPipeline::Release();
 	enet_deinitialize();
 	AudioSystem::Release();
@@ -68,6 +69,8 @@ void Initialize()
 
 	//Initialize Renderer
 	GraphicsPipeline::Instance();
+
+	GUIsystem::Instance();
 
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
@@ -269,7 +272,7 @@ void HandleGUIMouseCursor()
 {
 	Vector2 absPos;
 	Window::GetWindow().GetMouseScreenPos(&absPos);
-	GraphicsPipeline::Instance()->HandleGUIMousePosition(absPos.x, absPos.y);
+	GUIsystem::Instance()->HandleMousePosition(absPos.x, absPos.y);
 }
 
 void HandleGUIMouseButton()
@@ -278,34 +281,33 @@ void HandleGUIMouseButton()
 	if (fpsCounter > 5) {
 		if (Window::GetMouse()->ButtonDown(MOUSE_LEFT))
 		{
-			GraphicsPipeline::Instance()->HandleMouseButton(MOUSE_LEFT);
+			GUIsystem::Instance()->onMouseButtonPressed(MOUSE_LEFT);
 		}
 		else if (Window::GetMouse()->ButtonDown(MOUSE_RIGHT))
 		{
-			GraphicsPipeline::Instance()->HandleMouseButton(MOUSE_RIGHT);
+			GUIsystem::Instance()->onMouseButtonPressed(MOUSE_RIGHT);
 		}
 		fpsCounter = 0;
 	}
-
-	GraphicsPipeline::Instance()->HandleLeftMouseButtonHold(Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
+	GUIsystem::Instance()->onMouseButtonHold(Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
 }
 
 //Handle GUI text input
 void HandleGUITextInput()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN)) {
-		GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(KEYBOARD_RETURN);
-		GraphicsPipeline::Instance()->GetGUISystem()->SetIsTyping(false);
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RETURN);
+		GUIsystem::Instance()->SetIsTyping(false);
 		return;
 	}
 	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_BACK)) {
-		GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(KEYBOARD_BACK);
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_BACK);
 		return;
 	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
 		//TODO: Is there a better way to achieve this?
 		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
-			GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(static_cast<KeyboardKeys>(i));
+			GUIsystem::Instance()->HandleTextInput(static_cast<KeyboardKeys>(i));
 			break; //Or maybe just return
 		}
 	}
@@ -349,7 +351,7 @@ int main()
 		PrintStatusEntries();
 
 		//Handle Keyboard Inputs
-		if (GraphicsPipeline::Instance()->GetGUISystem()->GetIsTyping() == false) {
+		if (GUIsystem::Instance()->GetIsTyping() == false) {
 			HandleKeyboardInputs();
 		}
 		else {

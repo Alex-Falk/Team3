@@ -15,6 +15,8 @@ Give the basic communication access to mouse and keyboard for further interactio
 #include <nclgl\Mouse.h>
 #include <nclgl\Keyboard.h>
 #include <nclgl\Vector2.h>
+#include <nclgl\TSingleton.h>
+#include <nclgl\common.h>
 
 struct inputBox
 {
@@ -28,9 +30,14 @@ struct userInput
 	std::string content;
 };
 
-class GUI
+class GUIsystem: public TSingleton<GUIsystem>
 {
 public:
+	friend class TSingleton<GUIsystem>;
+
+	GUIsystem();
+	~GUIsystem();
+
 	std::vector<inputBox> inputBox;
 	std::vector<userInput> userTyping;
 
@@ -39,7 +46,7 @@ public:
 
 	void Init(const std::string& resourceDirectory);
 	void Destory();
-
+	void Reset();
 	void Draw();
 
 	void SetMouseCursor(const std::string& imageFile);
