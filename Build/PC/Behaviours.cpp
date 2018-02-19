@@ -48,13 +48,13 @@ Vector3 Behaviours::Pursue(Vector3 targetPos, Vector3 targetVelocity, Vector3 cu
 {
 	// Calculates the distance from the target and the time taken to reach it at max speed
 	double distance = (targetPos - currentPos).Length();
-	double time = distance / targetVelocity;
+	double time = distance / targetVelocity.Length();
 
 	// Creates a vector to the target interception point
 	Vector3 target = targetPos + targetVelocity * (float)time;
 
 	// Seeks to the target interception point
-	return Seek(target, currentPos, currentVelocity, weight);
+	return Seek(target, currentPos, currentVelocity, grounded, weight, maxMagnitude);
 }
 
 
