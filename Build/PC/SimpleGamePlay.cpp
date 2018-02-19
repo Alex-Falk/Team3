@@ -7,7 +7,7 @@
 // Initialisation and Cleanup
 //--------------------------------------------------------------------------------------------//
 void SimpleGamePlay::OnInitializeScene() {
-
+	GUIsystem::Instance()->SetDrawScoreBar(true);
 	spawnPositions[0] = Vector3(35, 5, 35);
 	spawnPositions[1] = Vector3(35, 5, -35);
 	spawnPositions[2] = Vector3(-35, 5, 35);

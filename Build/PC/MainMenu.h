@@ -79,6 +79,7 @@ public:
 
 	virtual void OnInitializeScene() {
 		GraphicsPipeline::Instance()->SetIsMainMenu(true);
+		GUIsystem::Instance()->SetDrawScoreBar(false);
 
 		if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 			NCLERROR("Texture not loaded");

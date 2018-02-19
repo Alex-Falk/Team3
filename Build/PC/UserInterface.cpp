@@ -6,8 +6,12 @@ GUIsystem::GUIsystem()
 {
 	Init(CEGUIDIR);
 
+	scorebar = Mesh::GenerateQuad();
 	scorebarShader = new Shader(SHADERDIR"UI/ScorebarVertex.glsl",
-		SHADERDIR"UI/TechFragSuperSample.glsl");
+		SHADERDIR"UI/ScorebarFragment.glsl");
+	if (!scorebarShader->LinkProgram()) {
+		NCLERROR("Load scoreBar shader failed");
+	}
 }
 
 GUIsystem::~GUIsystem()
@@ -72,6 +76,7 @@ void GUIsystem::Reset()
 
 void GUIsystem::Draw()
 {
+	//Render normal UI
 	glUseProgram(0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -82,6 +87,15 @@ void GUIsystem::Draw()
 	m_renderer->endRendering();
 	glDisable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
+
+	//Render score bar
+	if (drawScorebar == true) {
+		glUseProgram(scorebarShader->GetProgram());
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.9, 0)) * Matrix4::Scale(Vector3(0.4, 0.04, 0));
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
+		scorebar->Draw();
+		glUseProgram(0);
+	}
 }
 
 void GUIsystem::SetMouseCursor(const std::string & imageFile)

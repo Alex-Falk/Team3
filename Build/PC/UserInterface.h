@@ -19,6 +19,7 @@ Give the basic communication access to mouse and keyboard for further interactio
 #include <nclgl\common.h>
 #include <nclgl\Shader.h>
 #include <nclgl\Mesh.h>
+#include <nclgl\NCLDebug.h>
 
 struct inputBox
 {
@@ -79,6 +80,8 @@ public:
 	bool GetIsTyping() { return isTyping; }
 	void SetIsTyping(bool a) { isTyping = a; }
 
+	void SetDrawScoreBar(bool a) { drawScorebar = a; }
+
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -90,4 +93,5 @@ protected:
 
 	Mesh* scorebar;
 	Shader* scorebarShader;
+	bool drawScorebar = false;
 };

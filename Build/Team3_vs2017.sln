@@ -82,7 +82,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{8F46EB91-D896-4889-8C43-9CF76240A4E3}"
 	ProjectSection(SolutionItems) = preProject
 		..\Data\Shaders\UI\ColorFragment.glsl = ..\Data\Shaders\UI\ColorFragment.glsl
-		..\Data\Shaders\UI\EmptyFragment.glsl = ..\Data\Shaders\UI\EmptyFragment.glsl
+		..\Data\Shaders\UI\ScoreBarFragment.glsl = ..\Data\Shaders\UI\ScoreBarFragment.glsl
 		..\Data\Shaders\UI\ScorebarVertex.glsl = ..\Data\Shaders\UI\ScorebarVertex.glsl
 	EndProjectSection
 EndProject
