@@ -94,13 +94,13 @@ public:
 			if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE || m_vpObjects[i]->Physics()->GetType() == SPRAY) {
 				if (m_vpObjects[i]->GetTimeInScene() > 10.0f) {
 					m_vpObjects[i]->SetToDestroy();
-					tempVec.push_back(m_vpObjects[i]);
+					//tempVec.push_back(m_vpObjects[i]);
 				}
 			}
 		}
-		for (int i = 0; i < tempVec.size(); i++) {
-			RemoveGameObject(tempVec[i]);
-		}
+		//for (int i = 0; i < tempVec.size(); i++) {
+		//	RemoveGameObject(tempVec[i]);
+		//}
 	}
 
 
@@ -169,6 +169,7 @@ public:
 			m_vpObjects.erase(std::remove(m_vpObjects.begin(), m_vpObjects.end(), game_object), m_vpObjects.end());
 			game_object->OnDetachedFromScene();
 			game_object->scene = NULL;
+			delete game_object;
 		}
 	}
 

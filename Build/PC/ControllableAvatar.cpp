@@ -45,6 +45,9 @@ ControllableAvatar::~ControllableAvatar()
 ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) : Avatar(pos, c, id, s)
 {
 	lifeDrainFactor = 2500;
+	weapon = PAINT_SPRAY;
+	weaponTimer = 10000000.0f;
+	weaponActive = true;
 }
 
 

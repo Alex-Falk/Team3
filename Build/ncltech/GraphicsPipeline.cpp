@@ -661,15 +661,18 @@ void GraphicsPipeline::RenderPath()
 	projViewMatrix = temp;
 
 	//removes destroyed projectiles from the playerRenderNodes
-	for (std::vector<RenderNode*>::iterator itr = playerRenderNodes.begin(); itr != playerRenderNodes.end();)
-	{
-		PlayerRenderNode * tempPRN = (PlayerRenderNode*)(*itr)->GetChild();
-		if (tempPRN->GetDestroy()) {
-			delete * itr;
-			itr = playerRenderNodes.erase(itr);	
-		}
-		else itr++;
-	}
+	//for (std::vector<RenderNode*>::iterator itr = playerRenderNodes.begin(); itr != playerRenderNodes.end(); itr++)
+	//{
+
+	//	PlayerRenderNode * tempPRN = (PlayerRenderNode*)(*itr)->GetChild();
+	//	if (tempPRN)
+	//	{
+	//		if (tempPRN->GetDestroy()) {
+	//			delete * itr;
+	//			itr = playerRenderNodes.erase(itr);
+	//		}	
+	//	}
+	//}
 }
 
 void GraphicsPipeline::RenderPostprocessAndPresent()

@@ -53,7 +53,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	projectileWorth = projWorth;
 
 
-	GraphicsPipeline::Instance()->AddPlayerRenderNode(renderNode);
+	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 }
 
@@ -149,9 +149,10 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 			
 			((Avatar*)(collidingObject->GetParent()))->ChangeLife(-projectileWorth);		
 			Explode();
-			SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
-			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-			((PlayerRenderNode*)Render()->GetChild())->SetDestroy(true);
+			//SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
+			//((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+			//((PlayerRenderNode*)Render()->GetChild())->SetDestroy(true);
+			destroy = true;
 		}
 		return false;
 	}
@@ -164,9 +165,10 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 		Explode();
 	//	SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
 		//TODO fix memory leak
-		destroy = true;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-		((PlayerRenderNode*)Render()->GetChild())->SetDestroy(true);
+		destroy = true;
+		
+		
 		return false;
 	}
 	

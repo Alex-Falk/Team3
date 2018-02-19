@@ -383,6 +383,8 @@ int main()
 		}
 		timer_render.EndTimingSection();
 
+		PhysicsEngine::Instance()->CleanUpPhase();
+
 		timer_audio.BeginTimingSection();
 		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
 		timer_audio.EndTimingSection();

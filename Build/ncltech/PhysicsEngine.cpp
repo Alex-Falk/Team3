@@ -5,6 +5,7 @@
 #include <nclgl\Window.h>
 #include <omp.h>
 #include <algorithm>
+#include "SceneManager.h"
 
 void PhysicsEngine::SetDefaults()
 {
@@ -206,9 +207,6 @@ void PhysicsEngine::UpdatePhysics()
 	}
 	perfSolver.EndTimingSection();
 
-
-CleanUpPhase();
-
 //6. Update Positions (with final 'real' velocities)
 	perfUpdate.BeginTimingSection();
 	for (PhysicsNode* obj : physicsNodes) obj->IntegrateForPosition(updateTimestep, integrator);
@@ -334,7 +332,10 @@ void PhysicsEngine::CleanUpPhase()
 
 	for (std::vector<GameObject*>::iterator itr = objectsToDestroy.begin(); itr != objectsToDestroy.end(); ++itr)
 	{
-		delete *itr;
+		//
+		GraphicsPipeline::Instance()->RemovePlayerRenderNode((*itr)->Render()->GetChild());
+		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(*itr);
+		(*itr) = nullptr;
 	}
 }
 
