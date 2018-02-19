@@ -157,6 +157,7 @@
     <ClInclude Include="Arena.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Avatar.h" />
+    <ClInclude Include="CaptureArea.h" />
     <ClInclude Include="ControllableAvatar.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Avatar.cpp" />
+    <ClCompile Include="CaptureArea.cpp" />
     <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />

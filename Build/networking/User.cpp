@@ -80,9 +80,9 @@ PlayerVector User::ReceiveAcceleration(string data)
 
 // PACKET_TYPE:WEAPON_TYPE;XPOS YPOS ZPOS,XDIR YDIR ZDIR
 void User::ReceiveWeapon(string data) {
-	uint colonPos = data.find_first_of(':');
-	uint semicolonPos = data.find_first_of(';');
-	uint commaPos = data.find_first_of(',');
+	uint colonPos = (uint)(data.find_first_of(':'));
+	uint semicolonPos = (uint)(data.find_first_of(';'));
+	uint commaPos = (uint)(data.find_first_of(','));
 
 	WeaponType type = static_cast<WeaponType>(stoi(data.substr(colonPos + 1, semicolonPos)));
 

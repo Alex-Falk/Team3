@@ -114,7 +114,7 @@ public:
 
 	virtual void OnUpdateScene(float dt) {
 		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-		yaw += 0.1;
+		yaw += 0.1f;
 		GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 		Scene::OnUpdateScene(dt);
 	}

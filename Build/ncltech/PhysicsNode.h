@@ -107,7 +107,7 @@ public:
 	inline const Vector3&		GetLinearVelocity()			const { return linVelocity; }
 	inline const Vector3&		GetForce()					const { return force; }
 	inline float				GetInverseMass()			const { return invMass; }
-	inline const Vector3&		GetAcceleration()			const { return force*invMass; }
+	inline const Vector3		GetAcceleration()			const { return (force*invMass); }
 
 	inline const Quaternion&	GetOrientation()			const { return orientation; }
 	inline const Vector3&		GetAngularVelocity()		const { return angVelocity; }

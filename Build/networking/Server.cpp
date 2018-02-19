@@ -32,7 +32,6 @@
 #include "Server.h"
 #include <ncltech\SceneManager.h>
 #include <PC/Game.h>
-#define CLIENT_ID evnt.peer->incomingPeerID
 
 string Win32_PrintAllAdapterIPAddresses()
 {
