@@ -17,8 +17,6 @@ Give the basic communication access to mouse and keyboard for further interactio
 #include <nclgl\Vector2.h>
 #include <nclgl\TSingleton.h>
 #include <nclgl\common.h>
-#include <nclgl\Shader.h>
-#include <nclgl\Mesh.h>
 
 struct inputBox
 {
@@ -87,7 +85,4 @@ protected:
 	Vector2 realMousePos;
 	float mouseSensitivity;
 	bool isTyping;
-
-	Mesh* scorebar;
-	Shader* scorebarShader;
 };

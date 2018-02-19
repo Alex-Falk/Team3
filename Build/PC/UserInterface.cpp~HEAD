@@ -5,9 +5,6 @@ CEGUI::OpenGL3Renderer* GUIsystem::m_renderer = NULL;
 GUIsystem::GUIsystem()
 {
 	Init(CEGUIDIR);
-
-	scorebarShader = new Shader(SHADERDIR"UI/ScorebarVertex.glsl",
-		SHADERDIR"UI/TechFragSuperSample.glsl");
 }
 
 GUIsystem::~GUIsystem()

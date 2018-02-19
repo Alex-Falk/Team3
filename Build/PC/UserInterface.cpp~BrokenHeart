@@ -1,4 +1,4 @@
-#include <PC\UserInterface.h>
+#include "UserInterface.h"
 
 CEGUI::OpenGL3Renderer* GUIsystem::m_renderer = NULL;
 
@@ -6,8 +6,16 @@ GUIsystem::GUIsystem()
 {
 	Init(CEGUIDIR);
 
-	scorebarShader = new Shader(SHADERDIR"UI/ScorebarVertex.glsl",
-		SHADERDIR"UI/TechFragSuperSample.glsl");
+	//Shader for Score Bar
+	//The reason why it's outside the init function is 
+	//because it shouldn't be loaded everytime when
+	//switching scenes
+	scorebar = Mesh::GenerateQuad();
+	scorebarShader = new Shader(SHADERDIR"UI/LifeBarVertex.glsl",
+		SHADERDIR"UI/LifeBarFragment.glsl");
+	if (scorebarShader->LinkProgram()) {
+		NCLERROR("Could not link shader: Score bar renderer");
+	}
 }
 
 GUIsystem::~GUIsystem()
@@ -38,6 +46,12 @@ void GUIsystem::Init(const std::string& resourceDirectory)
 		CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
 	}
 
+	//Load schemes
+	LoadScheme("WindowsLook.scheme");
+	LoadScheme("TaharezLook.scheme");
+	LoadScheme("AlfiskoSkin.scheme");
+	LoadScheme("OgreTray.scheme");
+
 	//Generate CEGUI context
 	m_context = &CEGUI::System::getSingleton().createGUIContext(m_renderer->getDefaultRenderTarget());
 
@@ -45,16 +59,10 @@ void GUIsystem::Init(const std::string& resourceDirectory)
 	m_root = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "root");
 	m_context->setRootWindow(m_root);
 
-	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
-	LoadScheme("WindowsLook.scheme");
-	LoadScheme("TaharezLook.scheme");
-	LoadScheme("AlfiskoSkin.scheme");
-	LoadScheme("OgreTray.scheme");
-
-	//Set Font sytle
+	//font
 	SetFont("DejaVuSans-10");
 
-	//SetMouseCursor
+	//Mouse
 	SetMouseCursor("AlfiskoSkin/MouseArrow");
 	ShowMouseCursor();
 }
@@ -64,7 +72,7 @@ void GUIsystem::Destory()
 	CEGUI::System::getSingleton().destroyGUIContext(*m_context);
 }
 
-void GUIsystem::Reset()
+void GUIsystem::ResetGUIsystem()
 {
 	Destory();
 	Init(CEGUIDIR);
@@ -72,6 +80,7 @@ void GUIsystem::Reset()
 
 void GUIsystem::Draw()
 {
+	//Draw normal GUI stuff
 	glUseProgram(0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -82,6 +91,16 @@ void GUIsystem::Draw()
 	m_renderer->endRendering();
 	glDisable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
+
+	//draw scorebar
+	if (drawScorebar == true) {
+		glUseProgram(scorebarShader->GetProgram());
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.9, 0)) * Matrix4::Scale(Vector3(0.4, 0.04, 0));
+		
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
+		scorebar->Draw();
+		glUseProgram(0);
+	}
 }
 
 void GUIsystem::SetMouseCursor(const std::string & imageFile)
