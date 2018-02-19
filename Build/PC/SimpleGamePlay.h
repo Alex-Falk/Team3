@@ -14,6 +14,9 @@ class SimpleGamePlay : public Map
 private:
 
 	float m_AccumTime = 0;
+	Score* score;
+	Pickup* pickup;
+	CEGUI::ProgressBar* energyBar;
 
 	//--------------------------------------------------------------------------------------------//
 	// Special objects in the map

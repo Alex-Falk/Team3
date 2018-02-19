@@ -157,6 +157,18 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 
 	if (collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == BIG_NODE)
 	{
+		if ((Pickup*)(collidingObject->GetParent())) 
+		{
+			activePickUp = ((Pickup*)(collidingObject->GetParent()))->GetType();
+			if (activePickUp == WEAPON)
+			{
+				weapon = ((WeaponPickup*)(collidingObject->GetParent()))->GetType();
+			}
+			PickUpBuffActivated();
+		}
+	}
+	else if ((collidingObject->GetType() == BIG_NODE) || (collidingObject->GetType() == PAINTABLE_OBJECT) || (collidingObject->GetType() == DEFAULT_PHYSICS))
+	{
 		canJump = true;
 		inAir = false;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);

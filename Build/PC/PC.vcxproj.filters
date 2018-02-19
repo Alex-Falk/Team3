@@ -123,7 +123,7 @@
     <ClInclude Include="Minion.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="MinionCamp.h">
+    <ClInclude Include="Score.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
   </ItemGroup>
@@ -184,6 +184,8 @@
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
       <Filter>Source Files</Filter>
+    <ClCompile Include="Score.cpp">
+      <Filter>GamePlay\Source</Filter>
     </ClCompile>
     <ClCompile Include="PaintPool.cpp">
       <Filter>GamePlay\Source</Filter>

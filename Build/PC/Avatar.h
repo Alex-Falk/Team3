@@ -95,6 +95,8 @@ public:
 
 	WeaponType GetWeapon() { return weapon; }
 	void SetWeapon(WeaponType newWeapon) { weapon = newWeapon; }
+
+	bool IsPlayerInAir() { return inAir; }
 	
 	Vector4 GetColourRGBA() { return colour; }
 
