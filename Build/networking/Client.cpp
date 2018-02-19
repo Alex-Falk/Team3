@@ -162,28 +162,28 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		case PLAYER_POS:
 		{
-			PlayerVector pvec = ReceivePosition(data);
+			PlayerVector pvec = ReceiveVector(data);
 			if (pvec.ID != userID)
 				temps.positions[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_LINVEL:
 		{
-			PlayerVector pvec = ReceiveLinVelocity(data);
+			PlayerVector pvec = ReceiveVector(data);
 			if (pvec.ID != userID)
 				temps.linVelocities[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_ANGVEL:
 		{
-			PlayerVector pvec = ReceiveAngVelocity(data);
+			PlayerVector pvec = ReceiveVector(data);
 			if (pvec.ID != userID)
 				temps.angVelocities[pvec.ID] = pvec.v;
 			break;
 		}
 		case PLAYER_ACCELERATION:
 		{
-			PlayerVector pvec = ReceiveAcceleration(data);
+			PlayerVector pvec = ReceiveVector(data);
 			if (pvec.ID != userID)
 				temps.accelerations[pvec.ID] = pvec.v;
 			break;

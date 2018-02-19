@@ -24,10 +24,8 @@ public:
 	virtual void SendAcceleration(uint ID) = 0;
 	virtual void SendWeaponFire(uint ID) = 0;
 
-	PlayerVector ReceivePosition(string data);
-	PlayerVector ReceiveLinVelocity(string data);
-	PlayerVector ReceiveAngVelocity(string data);
-	PlayerVector ReceiveAcceleration(string data);
+	PlayerVector ReceiveVector(string data);
+
 	PlayerFloat ReceiveSizes(string data);
 	void ReceiveWeapon(string data);
 
