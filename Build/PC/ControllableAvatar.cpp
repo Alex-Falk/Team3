@@ -34,17 +34,16 @@
 
 ControllableAvatar::ControllableAvatar() : Avatar()
 {
-	lifeDrainFactor = 2500;
+	lifeDrainFactor = 1000;
 }
 
 ControllableAvatar::~ControllableAvatar()
 {
-	lifeDrainFactor = 2500;
 }
 
 ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) : Avatar(pos, c, id, s)
 {
-	lifeDrainFactor = 2500;
+	lifeDrainFactor = 1000;
 }
 
 
@@ -58,16 +57,16 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
 		if (Input::Instance()->GetInput(FORWARD)) { 		//Front
-			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -10) * speed;
+			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
 		}
 		if (Input::Instance()->GetInput(BACKWARD)) {		//Back
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 10) * speed;
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
 		}
 		if (Input::Instance()->GetInput(LEFT)) {		//Left
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-10, 0, 0) * speed;
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
 		}
 		if (Input::Instance()->GetInput(RIGHT)) {		//Right
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(10, 0, 0) * speed;
+			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
 		}
 		force.y = 0;
 	}
@@ -119,6 +118,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
+	NCLDebug::Log(to_string(Physics()->GetLinearVelocity().Length()));
 
 	ProcessAvatarInput(dt);
 	
@@ -135,7 +135,8 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	if (life > minLife) 
 	{
-		//life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
+		//if (!inAir)
+			//life -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 10.0f);
 
 		if (life < minLife)
 		{

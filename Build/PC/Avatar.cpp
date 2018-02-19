@@ -49,7 +49,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	col = c;
 	size = s;
 
-	standardSpeed = 5.0f;
+	standardSpeed = 50.0f;
 	speed = standardSpeed;
 	boostedSpeed = standardSpeed * 20;
 
@@ -182,6 +182,8 @@ void Avatar::ChangeSize(float newSize)
 	Render()->SetBoundingRadius(newSize);
 	Physics()->SetBoundingRadius(newSize);
 	Physics()->SetInverseMass(0.5f/newSize);
+	standardSpeed = 25.0f*newSize;
+	boostedSpeed = 50.0f*newSize;
 	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
 	
 	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
