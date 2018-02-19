@@ -285,12 +285,10 @@ void Avatar::Spray()
 	{
 		randPitch = rand() % 90 + 0;
 		randYaw = rand() % 360;
-		float a = rand() % 10;
-		float b = rand() % 10;
-		float c = rand() % 10;
-		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 15;
 
-		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, SPRAY, 2, "Spray");
+		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 10;
+
+		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
 	}
@@ -306,7 +304,7 @@ void Avatar::ShootRocket()
 	}
 
 	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 30;
-	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 2, "Projectile");
+	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Projectile");
 	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0));
 
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
