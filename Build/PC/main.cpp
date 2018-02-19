@@ -302,7 +302,7 @@ void HandleGUITextInput()
 		GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(KEYBOARD_BACK);
 		return;
 	}
-	for (int i = KeyboardKeys::KEYBOARD_A; i <= KeyboardKeys::KEYBOARD_Z; i++) {
+	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
 		//TODO: Is there a better way to achieve this?
 		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
 			GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(static_cast<KeyboardKeys>(i));

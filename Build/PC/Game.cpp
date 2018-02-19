@@ -64,7 +64,7 @@ void Game::Update(float dt)
 { 
 	if (user) 
 	{
-		user->UpdateUser(dt); 
+		user->UpdateUser(dt);
 	} 
 
 }
@@ -82,7 +82,7 @@ void Game::BuildGroundScore() {
 	ground[0][yOnGrid - 1] = GREEN;
 	ground[xOnGrid - 1][0] = BLUE;
 	ground[xOnGrid - 1][yOnGrid - 1] = PINK;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); i++)
 	{
 		groundTeamScore[i] = 0;
 	}
@@ -124,7 +124,7 @@ void Game::PrintScore(int score) {
 }
 void Game::ResetGame()
 {
-	for (uint i = 0; i < 4; ++i)
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 	{
 		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(avatars[i]);
 		delete avatars[i];
@@ -133,4 +133,5 @@ void Game::ResetGame()
 	delete user;
 	user = nullptr;
 	enet_deinitialize();
+	gameRunning = false;
 }

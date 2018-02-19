@@ -120,3 +120,11 @@ PlayerFloat User::ReceiveSizes(string data)
 	return pfloat;
 
 }
+
+void User::StartGame()
+{
+	SceneManager::Instance()->JumpToScene();
+	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+}

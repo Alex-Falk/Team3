@@ -56,13 +56,6 @@ void TestMap::OnUpdateScene(float dt)
 {
 	Scene::OnUpdateScene(dt);
 
-	m_AccumTime += dt;
-
-	for (uint i = 0; i < 4; i++) {
-		if (Game::Instance()->GetPlayer(i))
-			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
-	}
-
 	if (pickupJumpBoost)
 	{
 		pickupJumpBoost->Update(dt);
@@ -213,7 +206,7 @@ void TestMap::BuildGroundScore() {
 	ground[0][yOnGrid - 1] = GREEN;
 	ground[xOnGrid - 1][0] = BLUE;
 	ground[xOnGrid - 1][yOnGrid - 1] = PINK;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); i++)
 	{
 		groundTeamScore[i] = 0;
 	}
