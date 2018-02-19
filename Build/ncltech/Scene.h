@@ -69,12 +69,7 @@ public:
 	//	 - Initialize objects/physics here
 	virtual void OnInitializeScene()	{ 
 		PhysicsEngine::Instance()->ResetWorldPartition();
-		score = 0;
 	}
-
-	virtual int GetScore()				{ return score; }
-	virtual void Setscore(int s)		{ score = s; }
-	virtual void AddToScore(int s)		{ score += s; }
 
 	// Called when scene is being swapped and will no longer be rendered/updated 
 	//	 - Override to remove custom objects/physics here as needed
@@ -247,6 +242,4 @@ protected:
 	std::vector<GameObject*>	m_vpObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
 	GUI*						sceneGUI;
-
-	int							score = 0;
 };

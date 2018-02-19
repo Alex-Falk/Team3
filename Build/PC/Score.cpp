@@ -75,16 +75,16 @@ Score::Score()
 }
 
 Score::Score(static const int dimensionX, static const int dimensionY) {
-	groundScoreAccuracy = 100;
-	xOnGrid = dimensionX;
-	yOnGrid = dimensionY;
+	groundScoreAccuracy = 10;
+	xOnGrid = (int)2 * (dimensionX + 10)*groundScoreAccuracy;
+	yOnGrid = (int)2 * (dimensionY + 10)*groundScoreAccuracy;
 	BuildScore();
 }
 
 Score::Score(static const int dimensionX, static const int dimensionY, static const int groundAccuracy) {
 	groundScoreAccuracy = groundAccuracy;
-	xOnGrid = dimensionX;
-	yOnGrid = dimensionY;
+	xOnGrid = (int)2 * (dimensionX + 10)*groundScoreAccuracy;
+	yOnGrid = (int)2 * (dimensionY + 10)*groundScoreAccuracy;
 	BuildScore();
 }
 
@@ -190,8 +190,8 @@ void Score::UpdateGroundScore(Avatar* player) {
 
 // Decreases the score from previous team and increases the score to the new team.
 void Score::ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease) {
-	groundTeamScore[teamToDecrease] -= 1;
-	groundTeamScore[teamToIncrease] += 1;
+	groundTeamScore[teamToDecrease] -= 0.001;
+	groundTeamScore[teamToIncrease] += 0.001;
 }
 
 // TODO: If needed update only the Capturable objects that got changed last frame

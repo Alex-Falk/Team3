@@ -114,8 +114,15 @@ void PrintStatusEntries()
 	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
 
 	//Physics Debug Drawing options
-	NCLDebug::AddStatusEntry(status_colour_header, "Score");
-	NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(SceneManager::Instance()->GetCurrentScene()->GetScore()));
+	if (Game::Instance()->IsRunning())
+	{
+		NCLDebug::AddStatusEntry(status_colour_header, "Score");
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(0)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(1)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(2)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(3)));
+
+	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [G] ---");
@@ -136,13 +143,6 @@ void PrintStatusEntries()
 
 
 static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObject) {
-	if (collidingObject->IsGood()) {
-		SceneManager::Instance()->GetCurrentScene()->AddToScore(100);
-	}
-	else {
-		SceneManager::Instance()->GetCurrentScene()->AddToScore(-50);
-	}
-
 	return true;
 }
 

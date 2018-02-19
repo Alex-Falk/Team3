@@ -14,7 +14,6 @@ class SimpleGamePlay : public Map
 private:
 
 	float m_AccumTime = 0;
-	Score* score;
 	CEGUI::ProgressBar* energyBar;
 
 	//--------------------------------------------------------------------------------------------//
@@ -29,11 +28,7 @@ private:
 	static const int xDimension = 40;
 	static const int yDimension = 40;
 
-	static const int xOnGrid = 2 * (xDimension + 10)*groundScoreAccuracy; //Array cordinates for the x position of the player on the grid
-	static const int yOnGrid = 2 * (yDimension + 10)*groundScoreAccuracy; //Array cordinates for the y position of the player on the grid
-
-	Colour ground[xOnGrid][yOnGrid];
-
+	static const int groundScoreAccuracy = 15;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
@@ -54,14 +49,6 @@ public:
 	// Special Object udpates (e.g. Pickups)
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
-
-
-	//--------------------------------------------------------------------------------------------//
-	// Score Related Functions
-	//--------------------------------------------------------------------------------------------//
-	virtual void BuildGroundScore(); //Builds the array for the ground score
-	virtual void UpdateGroundScore(Avatar* player); //Updates the ground cells 
-
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility. TODO: can probably (re)move this

@@ -155,7 +155,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
 
-	if (collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == BIG_NODE)
+	if (collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == BIG_NODE || (collidingObject->GetType() == PAINTABLE_OBJECT))
 	{
 		if ((Pickup*)(collidingObject->GetParent())) 
 		{
@@ -166,9 +166,7 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 			}
 			PickUpBuffActivated(activePickUp);
 		}
-	}
-	else if ((collidingObject->GetType() == BIG_NODE) || (collidingObject->GetType() == PAINTABLE_OBJECT) || (collidingObject->GetType() == DEFAULT_PHYSICS))
-	{
+
 		canJump = true;
 		inAir = false;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);

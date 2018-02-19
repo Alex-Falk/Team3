@@ -75,7 +75,7 @@ private:
 	int xOnGrid;
 	int yOnGrid;
 	Colour* ground;
-	int groundTeamScore[START_COLOUR+1];
+	float groundTeamScore[START_COLOUR+1];
 	int captObjTeamScore[numOfPlayers];
 	int teamScores[numOfPlayers];
 	float teamScoresPercentage[numOfPlayers];

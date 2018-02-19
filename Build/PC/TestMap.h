@@ -27,11 +27,6 @@ private:
 	static const int xDimension = 30;
 	static const int yDimension = 30;
 
-	static const int xOnGrid = 2 * (xDimension + 10)*groundScoreAccuracy; //Array cordinates for the x position of the player on the grid
-	static const int yOnGrid = 2 * (yDimension + 10)*groundScoreAccuracy; //Array cordinates for the y position of the player on the grid
-
-	Colour ground[xOnGrid][yOnGrid];
-
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
@@ -55,12 +50,6 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 	
-	//--------------------------------------------------------------------------------------------//
-	// Score Related Functions
-	//--------------------------------------------------------------------------------------------//
-	virtual void BuildGroundScore(); //Builds the array for the ground score
-	virtual void UpdateGroundScore(Avatar* player); //Updates the ground cells 
-
 	//--------------------------------------------------------------------------------------------//
 	// Utility
 	//--------------------------------------------------------------------------------------------//

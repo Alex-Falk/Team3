@@ -21,7 +21,7 @@ class Map : public Scene
 {
 protected:
 	float m_AccumTime = 0;
-
+	Score* score;
 	Vector3 spawnPositions[4];
 
 	//--------------------------------------------------------------------------------------------//
@@ -35,7 +35,6 @@ protected:
 	int groundTeamScore[5];
 	int teamScores[5];
 
-	static const int groundScoreAccuracy = 100;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
@@ -55,12 +54,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 
-	//--------------------------------------------------------------------------------------------//
-	// Score Related Functions
-	//--------------------------------------------------------------------------------------------//
-	virtual void BuildGroundScore() = 0; //Builds the array for the ground score
-	virtual void UpdateGroundScore(Avatar* player) = 0; //Updates the ground cells 
-	void ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease); // updates the score
-	void PrintScore(int x); // debug
+	inline Score * GetScore() { return score; }
+
 };
 

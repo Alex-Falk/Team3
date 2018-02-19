@@ -78,7 +78,6 @@ void Map::OnUpdateScene(float dt)
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
 		if (Game::Instance()->GetPlayer(i))
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
-		UpdateGroundScore(Game::Instance()->GetPlayer(i));
 	}
 
 	int score = groundTeamScore[0];
@@ -90,18 +89,4 @@ void Map::OnUpdateScene(float dt)
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
-}
-
-
-//--------------------------------------------------------------------------------------------//
-// Score Related Functions
-//--------------------------------------------------------------------------------------------//
-// Decreases the score from previous team and increases the score to the new team.
-void Map::ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease) {
-	groundTeamScore[teamToDecrease] -= 1;
-	groundTeamScore[teamToIncrease] += 1;
-}
-
-void Map::PrintScore(int score) {
-	NCLDebug::Log(to_string(score / 1000));
 }
