@@ -108,7 +108,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	destroy = false;
 	projectileWorth = projWorth;
 
-	GraphicsPipeline::Instance()->AddPlayerRenderNode(renderNode);
+	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 }
 

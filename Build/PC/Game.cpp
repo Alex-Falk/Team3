@@ -74,7 +74,6 @@ void Game::ResetGame()
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 	{
 		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(avatars[i]);
-		delete avatars[i];
 		avatars[i] = nullptr;
 	}
 	delete user;

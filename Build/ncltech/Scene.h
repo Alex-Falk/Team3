@@ -164,7 +164,7 @@ public:
 			m_vpObjects.erase(std::remove(m_vpObjects.begin(), m_vpObjects.end(), game_object), m_vpObjects.end());
 			game_object->OnDetachedFromScene();
 			game_object->scene = NULL;
-			delete game_object;
+			SAFE_DELETE(game_object);
 		}
 	}
 
