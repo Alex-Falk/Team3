@@ -57,6 +57,9 @@ void MainMenu::OnUpdateScene(float dt)
 	yaw += 0.1f;
 	GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 	Scene::OnUpdateScene(dt);
+
+	//Update Player Info
+	
 }
 
 //Setting UP GUI
@@ -117,7 +120,7 @@ void MainMenu::SetUpLobby()
 {
 	startButton = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
-			Vector4(0.40f, 0.75f, 0.2f, 0.1f),
+			Vector4(0.40f, 0.70f, 0.2f, 0.1f),
 			Vector4(),
 			"startButton"
 		));
@@ -210,6 +213,30 @@ void MainMenu::SetUpLobby()
 			"Map4Rbutton"
 		));
 	Map4Rbutton->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onMap4selected, this));
+
+	AllPlayerInfo = static_cast<CEGUI::Titlebar*>(
+			GUIsystem::Instance()->createWidget("OgreTray/Title",
+				Vector4(0.10f, 0.10f, 0.20f, 0.30f),
+				Vector4(),
+				"AllPlayerInfo"
+			));
+	AllPlayerInfo->setAlpha(0.8);
+	AllPlayerInfo->disable();
+	AllPlayerInfo->setVisible(false);
+	playerText = playerText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
+	AllPlayerInfo->setText(playerText);
+
+	addedPlayerInfo = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Title",
+			Vector4(0.10f, 0.50f, 0.20f, 0.30f),
+			Vector4(),
+			"AddedPlayerInfo"
+		));
+	addedPlayerInfo->setAlpha(0.8);
+	addedPlayerInfo->disable();
+	addedPlayerInfo->setVisible(false);
+	addedPlayerText = addedPlayerText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
+	addedPlayerInfo->setText(addedPlayerText);
 }
 
 void MainMenu::onMap1selected()
@@ -266,6 +293,12 @@ void MainMenu::ShowLobbyMenuServer()
 
 	Map4Rbutton->setVisible(true);
 	Map4Rbutton->enable();
+
+	AllPlayerInfo->enable();
+	AllPlayerInfo->setVisible(true);
+
+	addedPlayerInfo->enable();
+	addedPlayerInfo->setVisible(true);
 }
 
 void MainMenu::HideLobby()
@@ -302,6 +335,12 @@ void MainMenu::HideLobby()
 
 	Map4Rbutton->setVisible(false);
 	Map4Rbutton->disable();
+
+	AllPlayerInfo->disable();
+	AllPlayerInfo->setVisible(false);
+
+	addedPlayerInfo->disable();
+	addedPlayerInfo->setVisible(false);
 }
 
 void MainMenu::SetUpconnectionMenu()
@@ -332,7 +371,6 @@ void MainMenu::SetUpconnectionMenu()
 
 void MainMenu::onIPinputClicked()
 {
-	IpInputBox.editbox->setText("");
 	GUIsystem::Instance()->SetIsTyping(true);
 	GUIsystem::Instance()->currentType = "IpInput";
 }
