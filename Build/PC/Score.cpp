@@ -160,8 +160,9 @@ void Score::UpdateGroundScore(Avatar* player) {
 	Vector2 playerPos = Vector2((player->GetPosition().x *groundScoreAccuracy) + (halfxGrid + (10 * groundScoreAccuracy)), (player->GetPosition().z *groundScoreAccuracy + halfyGrid + (10 * groundScoreAccuracy)));
 
 	float plGridSize = player->GetSize() * groundScoreAccuracy * 15;
+	int gridArea = xOnGrid * yOnGrid;
 	float radius = plGridSize * plGridSize;
-
+	
 	// Runs through the square arount the center and finds the circle.
 	for (int i = playerPos.x - plGridSize; i <= playerPos.x; i++) {
 		for (int j = playerPos.y - plGridSize; j <= playerPos.y; j++) {

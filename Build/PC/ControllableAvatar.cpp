@@ -135,7 +135,7 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	if (life > minLife) 
 	{
-		//life -= dt * (float)min((playerGameObject->Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
+		life -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
 
 		if (life < minLife)
 		{
@@ -146,6 +146,8 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 	curSize = size * (life / 100);
 
 	ChangeSize(curSize);
-	
+
+	inAir = true;
+	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 }
 

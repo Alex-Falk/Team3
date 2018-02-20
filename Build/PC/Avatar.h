@@ -55,6 +55,9 @@ protected:
 	float standardSpeed;
 	float maxForce;			// Sets Maximum applied Force 
 	float shootCooldown;
+	float collisionTimer;
+	
+
 
 	// Boosts
 	PickupType activePickUp;
