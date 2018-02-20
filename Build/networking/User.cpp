@@ -10,7 +10,7 @@ User::~User()
 {
 }
 
-PlayerVector User::ReceivePosition(string data)
+PlayerVector User::ReceiveVector(string data)
 {
 	size_t colonIdx = data.find_first_of(':');
 	size_t semicolonIdx = data.find_first_of(';');
@@ -23,57 +23,6 @@ PlayerVector User::ReceivePosition(string data)
 	PlayerVector pvec;
 	pvec.ID = playerID;
 	pvec.v = pos;
-
-	return pvec;
-}
-
-PlayerVector User::ReceiveLinVelocity(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
-	string p = data.substr(semicolonIdx + 1);
-	Vector3 vel = InterpretStringVector(p);
-
-	PlayerVector pvec;
-	pvec.ID = playerID;
-	pvec.v = vel;
-
-	return pvec;
-}
-
-PlayerVector User::ReceiveAngVelocity(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
-	string p = data.substr(semicolonIdx + 1);
-	Vector3 vel = InterpretStringVector(p);
-
-	PlayerVector pvec;
-	pvec.ID = playerID;
-	pvec.v = vel;
-
-	return pvec;
-}
-
-PlayerVector User::ReceiveAcceleration(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
-	string a = data.substr(semicolonIdx + 1);
-	Vector3 acceleration = InterpretStringVector(a);
-
-	PlayerVector pvec;
-	pvec.ID = playerID;
-	pvec.v = acceleration;
 
 	return pvec;
 }

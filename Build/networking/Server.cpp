@@ -149,25 +149,25 @@ void Server::UpdateUser(float dt)
 				switch (type) {
 				case PLAYER_POS:
 				{
-					PlayerVector pvec = ReceivePosition(data);
+					PlayerVector pvec = ReceiveVector(data);
 					Game::Instance()->SetPosition(pvec.ID, pvec.v);
 					break;
 				}
 				case PLAYER_LINVEL:
 				{
-					PlayerVector pvec = ReceiveLinVelocity(data);
+					PlayerVector pvec = ReceiveVector(data);
 					Game::Instance()->SetLinearVelocity(pvec.ID, pvec.v);
 					break;
 				}
 				case PLAYER_ANGVEL:
 				{
-					PlayerVector pvec = ReceiveAngVelocity(data);
+					PlayerVector pvec = ReceiveVector(data);
 					Game::Instance()->SetAngularVelocity(pvec.ID, pvec.v);
 					break;
 				}
 				case PLAYER_ACCELERATION:
 				{
-					PlayerVector pvec = ReceiveAcceleration(data);
+					PlayerVector pvec = ReceiveVector(data);
 					Game::Instance()->SetAcceleration(pvec.ID, pvec.v);
 					break;
 				}

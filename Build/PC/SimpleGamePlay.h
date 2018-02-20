@@ -2,19 +2,11 @@
 
 #include "Map.h"
 
-
-
-// Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
-//
-
-
-
 class SimpleGamePlay : public Map
 {
 private:
 
 	float m_AccumTime = 0;
-	CEGUI::ProgressBar* energyBar;
 
 	//--------------------------------------------------------------------------------------------//
 	// Special objects in the map
@@ -22,13 +14,6 @@ private:
 	static const uint npickup = 2;
 	Pickup* pickup[npickup];
 
-	//--------------------------------------------------------------------------------------------//
-	// Setting up map specific variables for score
-	//--------------------------------------------------------------------------------------------//
-	static const int xDimension = 40;
-	static const int yDimension = 40;
-
-	static const int groundScoreAccuracy = 15;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
@@ -41,9 +26,9 @@ public:
 		delete pickup;
 	}
 
-	void OnCleanupScene();
-
 	virtual void OnInitializeScene() override;
+	virtual void SetSpawnLocations() override;
+	virtual void AddObjects() override;
 
 	//--------------------------------------------------------------------------------------------//
 	// Special Object udpates (e.g. Pickups)

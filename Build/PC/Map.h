@@ -32,8 +32,10 @@ protected:
 	//--------------------------------------------------------------------------------------------//
 	// Score Related Variables
 	//--------------------------------------------------------------------------------------------//
-	int groundTeamScore[5];
-	int teamScores[5];
+	int xDimension = 40;
+	int yDimension = 40;
+
+	int groundScoreAccuracy = 15;
 
 public:
 	//--------------------------------------------------------------------------------------------//
@@ -44,10 +46,16 @@ public:
 		TextureManager::Instance()->RemoveAllTexture();
 	};
 
+	virtual void OnCleanupScene();
 
 	void onConnectToScene() override;
 	virtual void OnInitializeScene() override;
 	virtual void OnInitializeGUI() override;
+
+	virtual void LoadTextures();
+	virtual void AddObjects() {};
+	virtual void SetSpawnLocations();
+	virtual void InitializeScores();
 
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars and Scores

@@ -15,17 +15,15 @@ private:
 	//--------------------------------------------------------------------------------------------//
 	// Special objects in the map
 	//--------------------------------------------------------------------------------------------//
+	static const uint npickup = 3;
+	Pickup* pickup[npickup];
+	Vector3 pickupTextOffset[npickup];
+
 	Pickup* pickupSpeedBoost;
 	Pickup* pickupJumpBoost;
 	Pickup* pickupWeapon;
 
 	GameObject* object;
-
-	//--------------------------------------------------------------------------------------------//
-	// Setting up map specific variables for score
-	//--------------------------------------------------------------------------------------------//
-	static const int xDimension = 30;
-	static const int yDimension = 30;
 
 public:
 	//--------------------------------------------------------------------------------------------//
@@ -41,9 +39,9 @@ public:
 		delete pickupWeapon;
 	}
 
-	void OnCleanUpScene();
-
 	virtual void OnInitializeScene() override;
+	virtual void SetSpawnLocations() override;
+	virtual void AddObjects() override;
 
 	//--------------------------------------------------------------------------------------------//
 	// Special Object udpates (e.g. Pickups)
