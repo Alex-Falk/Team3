@@ -15,6 +15,8 @@
 #include "Avatar.h"
 #include "Game.h"
 #include "AudioSystem.h"
+#include <cstring>
+
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
 class MainMenu : public Scene
@@ -69,9 +71,18 @@ private:
 	CEGUI::RadioButton* Map2Rbutton;
 	CEGUI::RadioButton* Map3Rbutton;
 	CEGUI::RadioButton* Map4Rbutton;
+	
+	//Lobby Player List
+	CEGUI::Titlebar* AllPlayerInfo;
+	CEGUI::Titlebar* addedPlayerInfo;
+	//Lobby Player Name
+	string* playerNames;
 
 	//User chosen map
 	int nextMapID = 1;
+
+	string playerText = "Player List: \n\n";
+	string addedPlayerText = "Added Player List: \n\n";
 public:
 	MainMenu(const std::string& friendly_name)
 		: Scene(friendly_name) {}
