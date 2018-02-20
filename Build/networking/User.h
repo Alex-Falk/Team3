@@ -18,17 +18,24 @@ public:
 	User();
 	~User();
 
-	virtual void SendPosition(uint ID) = 0;
-	virtual void SendLinVelocity(uint ID) = 0;
-	virtual void SendAngVelocity(uint ID) = 0;
-	virtual void SendAcceleration(uint ID) = 0;
+	//--------------------------------------------------------------------------------------------//
+	// Sending
+	//--------------------------------------------------------------------------------------------//
+	virtual void SendVector3(uint ID, PacketType type, Vector3 vec) = 0;
 	virtual void SendWeaponFire(uint ID) = 0;
 
-	PlayerVector ReceiveVector(string data);
+	//--------------------------------------------------------------------------------------------//
+	// Receiving
+	//--------------------------------------------------------------------------------------------//
 
+	PlayerVector ReceiveVector(string data);
 	PlayerFloat ReceiveSizes(string data);
 	void ReceiveWeapon(string data);
 
+
+	//--------------------------------------------------------------------------------------------//
+	// Utility
+	//--------------------------------------------------------------------------------------------//
 	string GetPacketData(const ENetEvent & evnt);
 	
 	inline uint GetUserID() { return userID; }
@@ -42,7 +49,7 @@ public:
 	virtual void StartGame();
 
 	ENetPacket* CreatePacket(string data) {
-	return enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
-}
+		return enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	}
 };
 

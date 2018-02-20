@@ -79,12 +79,10 @@ public:
 	void SendConnectionID(uint ID);
 	void SendGameStart();
 
-	void SendPosition(uint ID);
-	void SendLinVelocity(uint ID);
-	void SendAngVelocity(uint ID);
-	void SendAcceleration(uint ID);
-	void SendWeaponFire(uint ID);
+	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
 	void SendSize(uint ID);
+	void SendWeaponFire(uint ID);
+
 	void SendScores();
 	//void SendMap();
 	//void SendUpdatemap();

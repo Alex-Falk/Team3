@@ -209,10 +209,10 @@ void Server::UpdateUser(float dt)
 			{
 				if (Game::Instance()->GetPlayer(i))
 				{
-					SendPosition(i);
-					SendLinVelocity(i);
-					SendAngVelocity(i);
-					SendAcceleration(i);
+					SendVector3(i, PLAYER_POS,			Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition());
+					SendVector3(i, PLAYER_LINVEL,		Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity());
+					SendVector3(i, PLAYER_ANGVEL,		Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity());
+					SendVector3(i, PLAYER_ACCELERATION, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration());
 					SendSize(i);
 					SendScores();
 				}
@@ -222,21 +222,37 @@ void Server::UpdateUser(float dt)
 
 }
 
-
 void Server::Disconnect()
 {
 	server->Release();
 }
 
 //--------------------------------------------------------------------------------------------//
-// Recieving
+// Utility
 //--------------------------------------------------------------------------------------------//
-
-
+void Server::StartGame()
+{
+	SendGameStart();
+	SceneManager::Instance()->JumpToScene();
+	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+}
 
 //--------------------------------------------------------------------------------------------//
 // Sending
 //--------------------------------------------------------------------------------------------//
+
+void Server::SendNumberUsers(uint n)
+{
+	string data;
+
+	data = to_string(NUMBER_USERS) + ":" +
+		to_string(n);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
 
 void Server::SendConnectionID(uint ID)
 {
@@ -250,17 +266,6 @@ void Server::SendConnectionID(uint ID)
 
 }
 
-void Server::SendNumberUsers(uint n)
-{
-	string data;
-
-	data = to_string(NUMBER_USERS) + ":" +
-		to_string(n);
-
-	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
 void Server::SendGameStart()
 {
 	string data;
@@ -272,45 +277,12 @@ void Server::SendGameStart()
 
 }
 
-void Server::SendPosition(uint ID) 
+void Server::SendVector3(uint ID, PacketType type, Vector3 vec)
 {
 	string data;
 
-	data = to_string(PLAYER_POS) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetPosition());
-
-	ENetPacket* packet = CreatePacket(data);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
-void Server::SendLinVelocity(uint ID)
-{
-	string data;
-
-	data = to_string(PLAYER_LINVEL) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetLinearVelocity());
-
-	ENetPacket* packet = CreatePacket(data);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
-void Server::SendAngVelocity(uint ID)
-{
-	string data;
-
-	data = to_string(PLAYER_ANGVEL) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetAngularVelocity());
-
-	ENetPacket* packet = CreatePacket(data);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
-void Server::SendAcceleration(uint ID)
-{
-	string data;
-
-	data = to_string(PLAYER_ACCELERATION) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetAcceleration());
+	data = to_string(type) + ":" +
+		to_string(ID) + ";" + Vector3ToString(vec);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -352,11 +324,4 @@ void Server::SendWeaponFire(uint ID)
 	data = to_string(PLAYER_WEAPON) + ":";
 }
 
-void Server::StartGame()
-{
-	SendGameStart();
-	SceneManager::Instance()->JumpToScene();
-	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
-	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
-}
+

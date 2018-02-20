@@ -67,23 +67,18 @@ public:
 	// Sending
 	//--------------------------------------------------------------------------------------------//
 
-	void SendPosition(uint ID);
-	void SendLinVelocity(uint ID);
-	void SendAngVelocity(uint ID);
-	void SendAcceleration(uint ID);
-	void SendWeaponFire(uint ID);
+	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
+	virtual void SendWeaponFire(uint ID);
 	void SendSize(uint ID);
 
 	//--------------------------------------------------------------------------------------------//
 	// Recieving
 	//--------------------------------------------------------------------------------------------//
 
-	void ReceiveGameStart(string data);
-
 	void ReceiveNumberUsers(string data);
 	void ReceiveScores(string data);
 	void ReceiveMapIndex(string data);
-	//void ReceiveMapChange(string data);
+
 
 protected:
 	NetworkBase network;
