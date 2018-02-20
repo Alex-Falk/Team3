@@ -230,7 +230,7 @@ public:
 				Vector4(),
 				"textBox"
 			));
-		IpInputBox.editbox->setText("127.0.0.1:1234");
+		IpInputBox.editbox->setText("10.70.32.176:1234");
 		IpInputBox.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnTextBoxClicked, this));
 		IpInputBox.type = "test";
 		connectIP.type = IpInputBox.type;

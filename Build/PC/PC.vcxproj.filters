@@ -52,6 +52,15 @@
     <Filter Include="Gameplay\Source">
       <UniqueIdentifier>{27103adf-a3a6-409f-948d-fbfb0f179103}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI">
+      <UniqueIdentifier>{6a2fe7f2-6adc-4252-8957-7c8305204426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Header">
+      <UniqueIdentifier>{2942309c-5be6-4a04-a55a-b127d89dc8cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Source">
+      <UniqueIdentifier>{d8845519-0c62-47f7-9310-43ded6a125d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PaintableGameObject.h">
@@ -129,6 +138,9 @@
     <ClInclude Include="Score.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="Behaviours.h">
+      <Filter>AI\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -199,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="CaptureArea.cpp">
       <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Behaviours.cpp">
+      <Filter>AI\Source</Filter>
     </ClCompile>
     <ClCompile Include="Score.cpp">
       <Filter>Gameplay\Source</Filter>
