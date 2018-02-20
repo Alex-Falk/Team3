@@ -82,7 +82,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	{		//Jump
 		Vector3 vel = Physics()->GetLinearVelocity();
 		Physics()->SetLinearVelocity(Vector3(vel.x*.8f,jumpImpulse,vel.z*.8f));
-		//force +=(Vector3(-(force.x /2.0f), 10, -(force.z / 2.0f)));
+
 		inAir = true;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 		canJump = false;
@@ -146,7 +146,15 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	ChangeSize(curSize);
 
-	//inAir = true;
-	//((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+	if (collisionTimerActive)
+	{
+		collisionTimer -= dt;
+		if (collisionTimer <= 0)
+		{
+			collisionTimerActive = false;
+			inAir = true;
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+		}
+	}
 }
 
