@@ -188,9 +188,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PaintPool.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
@@ -207,6 +204,9 @@
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="UserInterface.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>

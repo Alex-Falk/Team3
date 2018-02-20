@@ -21,12 +21,14 @@ Give the basic communication access to mouse and keyboard for further interactio
 #include <nclgl\Mesh.h>
 #include <nclgl\NCLDebug.h>
 
+//Box struct for user text input
 struct inputBox
 {
 	std::string type;
 	CEGUI::Editbox* editbox;
 };
 
+//Struct for handling user input content
 struct userInput
 {
 	std::string type;
@@ -41,9 +43,8 @@ public:
 	GUIsystem();
 	~GUIsystem();
 
-	std::vector<inputBox> inputBox;
+	std::vector<inputBox> editboxes;
 	std::vector<userInput> userTyping;
-
 	//Tell which textBox is typing now?
 	std::string currentType;
 

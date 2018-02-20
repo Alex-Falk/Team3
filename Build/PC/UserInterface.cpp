@@ -239,9 +239,10 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		m_context->injectKeyUp(CEGUI::Key::Backspace);
 		break;
 	case KEYBOARD_RETURN:
-		for (int i = 0; i < inputBox.size(); ++i) {
-			if (inputBox[i].type == currentType) {
-				userTyping[i].content = inputBox[i].editbox->getText().c_str();
+		for (int i = 0; i < editboxes.size(); ++i) {
+			if (editboxes[i].type == currentType) {
+				userTyping[i].type = editboxes[i].type;
+				userTyping[i].content = editboxes[i].editbox->getText().c_str();
 				std::cout << userTyping[i].content << std::endl;
 				break;
 			}
