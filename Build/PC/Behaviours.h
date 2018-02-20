@@ -24,14 +24,20 @@
 
 namespace Behaviours
 {
-
+	//Goes to a target location
 	Vector3 Seek(Vector3 targetPos, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxMagnitude);
 	
+	//Goes away from target location
 	Vector3 Flee(Vector3 targetPos, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxMagnitude);
 
+	//Returns a vector to the predicted target interception point at max velocity 
+	Vector3 TargetPrediction(Vector3 targetPos, Vector3 targetVelocity, Vector3 currentPos, float maxXZMagnitude);
+
+	//Returns a vector to the predicted target interception point
 	Vector3 Pursue(Vector3 targetPos, Vector3 targetVelocity, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxMagnitude);
 
+	//Returns a vector away from the predicted target interception point at max velocity
 	Vector3 Evade(Vector3 targetPos, Vector3 targetVelocity, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxMagnitude);
 
-	Vector3 WallAvoid(Vector3 currentPos, Vector3 currentVelocity, float weight);
+	//Vector3 WallAvoid(Vector3 currentPos, Vector3 currentVelocity, float weight);
 };
