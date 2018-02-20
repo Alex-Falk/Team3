@@ -286,7 +286,18 @@ void HandleGUIMouseButton()
 		float a3 = (Game::Instance()->GetScore(2));
 		float a4 = (Game::Instance()->GetScore(3));
 		float total = a1 + a2 + a3 + a4;
-		GUIsystem::Instance()->UpdateScorebar(a1/total, a2/total, a3/total, a4/total);
+		a1 = a1 / total;
+		a2 = a2 / total;
+		a3 = a3 / total;
+		a4 = a4 / total;
+		a2 = a1 + a2;
+		a3 = a3 + a2;
+		a4 = a4 + a3;
+		a1 = a1 * 2 - 1;
+		a2 = a2 * 2 - 1;
+		a3 = a3 * 2 - 1;
+		a4 = a4 * 2 - 1;
+		GUIsystem::Instance()->UpdateScorebar(a1, a2, a3, a4);
 	}
 
 	fpsCounter++;
