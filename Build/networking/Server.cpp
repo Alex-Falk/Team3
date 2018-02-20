@@ -121,8 +121,8 @@ void Server::UpdateUser(float dt)
 				else
 				{
 					// Send over information to new client
-					Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
-					SendNumberUsers(1 + server->m_pNetwork->connectedPeers);
+					Game::Instance()->SetPlayerNumber((uint)(1 + server->m_pNetwork->connectedPeers));
+					SendNumberUsers((uint)(1 + server->m_pNetwork->connectedPeers));
 					if (freeIDs.size() > 0)
 					{
 						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
@@ -195,7 +195,7 @@ void Server::UpdateUser(float dt)
 						connectedIDs.erase(connectedIDs.begin() + i);
 					}
 				}
-				Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
+				Game::Instance()->SetPlayerNumber((uint)(1 + server->m_pNetwork->connectedPeers));
 				break;
 			}
 			}

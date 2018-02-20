@@ -23,7 +23,7 @@ public:
 	{}
 
 	~SimpleGamePlay() {
-		delete pickup;
+		delete[] pickup;
 	}
 
 	virtual void OnInitializeScene() override;
