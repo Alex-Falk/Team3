@@ -21,7 +21,7 @@ void Map::onConnectToScene()
 			this->AddGameObject(p->GetGameObject());
 			Game::Instance()->SetAvatar(i, p);
 
-			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render());
+			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render()->GetChild());
 		}
 	}
 }
@@ -47,18 +47,18 @@ void Map::OnInitializeScene() {
 void Map::OnInitializeGUI()
 {
 	//Create Push Button handle
-	energyBar = static_cast<CEGUI::ProgressBar*>(
-		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
-			Vector4(0.40f, 0.9f, 0.2f, 0.03f),
-			Vector4(),
-			"energyBar"
-		));
+	//energyBar = static_cast<CEGUI::ProgressBar*>(
+	//	GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
+	//		Vector4(0.40f, 0.9f, 0.2f, 0.03f),
+	//		Vector4(),
+	//		"energyBar"
+	//	));
 
-	if (Game::Instance()->GetUser())
-	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
-	}
+	//if (Game::Instance()->GetUser())
+	//{
+	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	//}
 
 }
 
@@ -94,7 +94,7 @@ void Map::SetSpawnLocations()
 void Map::OnCleanupScene()
 {
 	SAFE_DELETE(score);
-	SAFE_DELETE(energyBar);
+	//SAFE_DELETE(energyBar);
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();
 	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
@@ -120,9 +120,9 @@ void Map::OnUpdateScene(float dt)
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
-	if (Game::Instance()->GetUser())
-	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
-	}
+	//if (Game::Instance()->GetUser())
+	//{
+	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+	//		energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+	//}
 }

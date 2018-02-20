@@ -17,16 +17,20 @@ void main(void)	{
 	vec4 player3Color = vec4(0, 0, 1, 1);
 	vec4 player4Color = vec4(0.5, 0.5, 0.5, 1);
 
+	float player2s = player1 + player2;
+	float player3s = player2s + player3;
+	float player4s = player3s + player4;
+
 	if (IN.temp_position.x < player1) {
 		gl_FragColor = player1Color;
 	}
-	else if (IN.temp_position.x >= player1 && IN.temp_position.x < player2) {
+	else if (IN.temp_position.x >= player1 && IN.temp_position.x < player2s) {
 		gl_FragColor = player2Color;
 	}
-	else if (IN.temp_position.x >= player2 && IN.temp_position.x < player3) {
+	else if (IN.temp_position.x >= player2s && IN.temp_position.x < player3s) {
 		gl_FragColor = player3Color;
 	}
-	else if (IN.temp_position.x >= player3 && IN.temp_position.x <= player4) {
+	else if (IN.temp_position.x >= player3s && IN.temp_position.x <= player4s) {
 		gl_FragColor = player4Color;
 	}
 	else {
