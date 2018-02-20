@@ -55,7 +55,10 @@ protected:
 	float standardSpeed;
 	float maxForce;			// Sets Maximum applied Force 
 	float shootCooldown;
+
+	bool collisionTimerActive;
 	float collisionTimer;
+	float timeUntilInAir;
 	
 
 

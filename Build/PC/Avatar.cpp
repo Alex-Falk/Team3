@@ -72,6 +72,10 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	canShoot = true;
 	shooting = false;
 
+	collisionTimerActive = false;
+	collisionTimer = 0.0f;
+	timeUntilInAir = 0.1f;
+
 	weapon = NUM_OF_WEAPONS;
 
 	switch (c)
@@ -168,6 +172,8 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 		}
 
 		canJump = true;
+		collisionTimerActive = true;
+		collisionTimer = timeUntilInAir;
 		inAir = false;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 	}
@@ -194,9 +200,6 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
 	
-	inAir = true;
-	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
-
 	ManageWeapons();
 	
 	UpdatePickUp(dt);
@@ -214,6 +217,16 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 	ChangeSize(curSize);
 
+	if (collisionTimerActive)
+	{
+		collisionTimer -= dt;
+		if (collisionTimer <= 0)
+		{
+			collisionTimerActive = false;
+			inAir = true;
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+		}
+	}
 }
 
 
