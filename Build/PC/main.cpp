@@ -80,7 +80,6 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
 
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
@@ -280,6 +279,7 @@ void HandleGUIMouseCursor()
 
 void HandleGUIMouseButton()
 {
+	//Score bar function, temporaily here
 	if (GUIsystem::Instance()->GetDrawScoreBar()==true) {
 		float a1 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(0);
 		float a2 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(1);
@@ -312,15 +312,18 @@ void HandleGUITextInput()
 		GUIsystem::Instance()->SetIsTyping(false);
 		return;
 	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_SPACE);
+		return;
+	}
 	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_BACK)) {
 		GUIsystem::Instance()->HandleTextInput(KEYBOARD_BACK);
 		return;
 	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
-		//TODO: Is there a better way to achieve this?
 		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
 			GUIsystem::Instance()->HandleTextInput(static_cast<KeyboardKeys>(i));
-			break; //Or maybe just return
+			break; 
 		}
 	}
 }

@@ -310,13 +310,15 @@ void MainMenu::SetUpconnectionMenu()
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
 			Vector4(0.40f, 0.65f, 0.2f, 0.1f),
 			Vector4(),
-			"textBox"
+			"IpInputBox"
 		));
 	IpInputBox.editbox->setText("127.0.0.1:1234");
-	IpInputBox.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnUserNameClicked, this));
-	IpInputBox.type = "test";
-	connectIP.type = IpInputBox.type;
+	IpInputBox.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onIPinputClicked, this));
+	IpInputBox.type = "IpInput";
 	GUIsystem::Instance()->editboxes.push_back(IpInputBox);
+	userInput temp;
+	temp.type = IpInputBox.type;
+	GUIsystem::Instance()->textInfo.push_back(temp);
 
 	connectToHostButton = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
@@ -326,6 +328,13 @@ void MainMenu::SetUpconnectionMenu()
 		));
 	connectToHostButton->setText("CONNECT TO GAME");
 	connectToHostButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onConnectButtonClicked, this));
+}
+
+void MainMenu::onIPinputClicked()
+{
+	IpInputBox.editbox->setText("");
+	GUIsystem::Instance()->SetIsTyping(true);
+	GUIsystem::Instance()->currentType = "IpInput";
 }
 
 void MainMenu::SetUpOptionMenu()

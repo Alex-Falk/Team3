@@ -238,6 +238,12 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		m_context->injectKeyDown(CEGUI::Key::Backspace);
 		m_context->injectKeyUp(CEGUI::Key::Backspace);
 		break;
+	case KEYBOARD_F8:
+		m_context->injectChar(0x3a);
+		break;
+	case 23:
+		m_context->injectChar(0x20);
+		break;
 	case KEYBOARD_RETURN:
 		for (int i = 0; i < editboxes.size(); ++i) {
 			if (editboxes[i].type == currentType) {

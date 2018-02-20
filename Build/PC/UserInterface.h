@@ -5,9 +5,6 @@ Basic Class for setup CEGUI
 Give the basic communication access to mouse and keyboard for further interaction
 ***********************************************************************************/
 
-//TODO:
-//Create Keyboard Text inputting function
-
 #pragma once
 #include <nclgl\Vector4.h>
 #include <CEGUI\CEGUI.h>

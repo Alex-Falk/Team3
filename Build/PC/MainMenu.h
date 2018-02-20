@@ -15,7 +15,6 @@
 #include "Avatar.h"
 #include "Game.h"
 #include "AudioSystem.h"
-
 // Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
 class MainMenu : public Scene
@@ -55,7 +54,6 @@ private:
 
 	//Testing text box for creating game
 	inputBox IpInputBox;
-	userInput connectIP;
 	inputBox userName;
 
 	//Exit Button
@@ -115,15 +113,16 @@ public:
 	void onMap2selected();
 	void onMap3selected();
 	void onMap4selected();
-
-	//4. join game menu buttons
-	void onConnectButtonClicked();
-
 	void OnUserNameClicked() {
 		userName.editbox->setText("");
 		GUIsystem::Instance()->SetIsTyping(true);
 		GUIsystem::Instance()->currentType = "UserName";
 	}
+
+	//4. join game menu buttons
+	void onConnectButtonClicked();
+	void onIPinputClicked();
+
 
 	//Hide/show Menu helper function
 	void ShowLobbyMenuServer();
