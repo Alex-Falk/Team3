@@ -131,7 +131,7 @@ void Projectile::Explode() {
 			randPitch = rand() % 90 + 0;
 			randYaw = rand() % 360;
 
-			direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 10;
+			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
 
 			Projectile * spray = new Projectile(this->colour, this->Render()->GetchildBaseColor(), Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
@@ -148,7 +148,7 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 		if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour)
 		{
 			
-			((Avatar*)(collidingObject->GetParent()))->ChangeLife(-projectileWorth);		
+			((Avatar*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));		
 			Explode();
 			//SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
 			//((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);

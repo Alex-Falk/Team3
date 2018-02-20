@@ -316,7 +316,7 @@ void Avatar::Spray()
 		float c = (float)(rand() % 10);
 		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
 
-		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 10;
+		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
 
 		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 
@@ -326,30 +326,30 @@ void Avatar::Spray()
 
 void Avatar::ShootRocket()
 {
-	int yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
-	int pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	if (canJump && pitch < 0) {
 		pitch = 0;
 	}
 
-	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 30;
+	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
 	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0));
+	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion((float)pitch, (float)yaw, 0.0f));
 
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
 }
 
 void Avatar::ShootProjectile()
 {
-	int yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	
-	int pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	if (canJump && pitch < 0) {
 		pitch = 0;
 	}
 
-	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 50;
+	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
 	Projectile* projectile =  new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, PROJECTILE, 2, "Projectile");
 
 	

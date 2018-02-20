@@ -103,8 +103,8 @@ private:
 
 public:
 	Score();
-	Score(static const int dimensionX, static const int dimensionY);
-	Score(static const int dimensionX, static const int dimensionY, static const int groundScoreAccuracy);
+	Score(int dimensionX, int dimensionY);
+	Score(int dimensionX, int dimensionY, int groundScoreAccuracy);
 	void UpdateScores(); // Call To Update every available score
 	
 	static void UpdateProjectilesVector(Vector3 pos, Colour c, float size);

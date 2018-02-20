@@ -31,7 +31,7 @@ class Game: public TSingleton<Game>
 	friend class TSingleton <Game>;
 public:
 	//STUBS
-	inline void SetScore(uint id, int score) { teamScores[id] = score; }
+	inline void SetScore(uint id, int score) { teamScores[id] = (float)score; }
 	inline void SetAmmo(uint id, float ammo) {}
 	//FINISHED FUNCTIONS
 	inline void SetPlayerNumber(uint i) { playerNumber = i; }
@@ -57,7 +57,7 @@ public:
 	inline Avatar * GetPlayer(uint id) { return avatars[id]; }
 	inline Avatar * GetCurrentAvatar() { return avatars[user->GetUserID()]; }
 	inline int GetMapIndex() { return 0; }
-	inline int GetScore(uint id) { return teamScores[id]; }
+	inline int GetScore(uint id) { return (int)teamScores[id]; }
 	inline uint getUserID() { return user->GetUserID(); }
 	inline User * GetUser() { return user; }
 
