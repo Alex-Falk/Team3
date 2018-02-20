@@ -5,9 +5,6 @@ Basic Class for setup CEGUI
 Give the basic communication access to mouse and keyboard for further interaction
 ***********************************************************************************/
 
-//TODO:
-//Create Keyboard Text inputting function
-
 #pragma once
 #include <nclgl\Vector4.h>
 #include <CEGUI\CEGUI.h>
@@ -15,31 +12,42 @@ Give the basic communication access to mouse and keyboard for further interactio
 #include <nclgl\Mouse.h>
 #include <nclgl\Keyboard.h>
 #include <nclgl\Vector2.h>
+#include <nclgl\TSingleton.h>
+#include <nclgl\common.h>
+#include <nclgl\Shader.h>
+#include <nclgl\Mesh.h>
+#include <nclgl\NCLDebug.h>
 
+//Box struct for user text input
 struct inputBox
 {
 	std::string type;
 	CEGUI::Editbox* editbox;
 };
 
+//Struct for handling user input content
 struct userInput
 {
 	std::string type;
 	std::string content;
 };
 
-class GUI
+class GUIsystem: public TSingleton<GUIsystem>
 {
 public:
-	std::vector<inputBox> inputBox;
-	std::vector<userInput> userTyping;
+	friend class TSingleton<GUIsystem>;
 
+	GUIsystem();
+	~GUIsystem();
+
+	std::vector<inputBox> editboxes;
+	std::vector<userInput> textInfo;
 	//Tell which textBox is typing now?
 	std::string currentType;
 
 	void Init(const std::string& resourceDirectory);
 	void Destory();
-
+	void Reset();
 	void Draw();
 
 	void SetMouseCursor(const std::string& imageFile);
@@ -70,6 +78,17 @@ public:
 	bool GetIsTyping() { return isTyping; }
 	void SetIsTyping(bool a) { isTyping = a; }
 
+	void SetDrawScoreBar(bool a) { drawScorebar = a; }
+
+	bool GetDrawScoreBar() { return drawScorebar; }
+
+	void UpdateScorebar(float a1, float a2, float a3, float a4) {
+		p1 = a1;
+		p2 = a2;
+		p3 = a3;
+		p4 = a4;
+	}
+
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -78,4 +97,9 @@ protected:
 	Vector2 realMousePos;
 	float mouseSensitivity;
 	bool isTyping;
+
+	Mesh* scorebar;
+	Shader* scorebarShader;
+	bool drawScorebar = false;
+	float p1, p2, p3, p4;
 };

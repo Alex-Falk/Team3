@@ -173,6 +173,7 @@
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="PaintableGameObject.h" />
     <ClInclude Include="TestMap.h" />
+    <ClInclude Include="UserInterface.h" />
     <ClInclude Include="WeaponPickup.h" />
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +199,7 @@
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="TestMap.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

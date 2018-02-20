@@ -46,24 +46,9 @@ void Map::OnInitializeScene() {
 
 void Map::OnInitializeGUI()
 {
-	//Call initi-function for gui
-	sceneGUI = new GUI();
-	sceneGUI->Init(CEGUIDIR);
-
-	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
-	sceneGUI->LoadScheme("TaharezLook.scheme");
-	sceneGUI->LoadScheme("AlfiskoSkin.scheme");
-
-	//Set Font sytle
-	sceneGUI->SetFont("DejaVuSans-10");
-
-	//SetMouseCursor
-	sceneGUI->SetMouseCursor("TaharezLook/MouseArrow");
-	sceneGUI->ShowMouseCursor();
-
 	//Create Push Button handle
 	energyBar = static_cast<CEGUI::ProgressBar*>(
-		sceneGUI->createWidget("TaharezLook/ProgressBar",
+		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
 			Vector4(0.40f, 0.9f, 0.2f, 0.03f),
 			Vector4(),
 			"energyBar"

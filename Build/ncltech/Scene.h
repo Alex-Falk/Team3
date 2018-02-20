@@ -36,7 +36,7 @@ Description:
 #include <functional>
 #include <algorithm>
 #include <unordered_map>
-#include <nclgl\UserInterface.h>
+#include <PC\UserInterface.h>
 
 //Callback function called whenever the scene is updated
 // - Should be used to register Update(dt) functions for AI/Game Logic
@@ -218,11 +218,6 @@ public:
 		GraphicsPipeline::Instance()->GetCamera()->ToggleFree();
 	}
 
-	GUI* getSceneGUIPointer()
-	{
-		return sceneGUI;
-	}
-
 	virtual void OnInitializeGUI(){}
 
 protected:
@@ -243,5 +238,4 @@ protected:
 	std::string					m_SceneName;
 	std::vector<GameObject*>	m_vpObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
-	GUI*						sceneGUI;
 };
