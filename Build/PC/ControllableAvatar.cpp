@@ -146,7 +146,7 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 
 	ChangeSize(curSize);
 
-	inAir = true;
-	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+	//inAir = true;
+	//((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 }
 
