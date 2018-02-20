@@ -121,7 +121,8 @@ void Map::OnCleanupScene()
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {
-	score->UpdateScores();
+	if(Game::Instance()->getUserID() == 0)
+		score->UpdateScores();
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;

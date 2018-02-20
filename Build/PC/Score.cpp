@@ -124,28 +124,30 @@ void Score::BuildCaptObjectScore() {
 
 // Call To Update every available score
 void Score::UpdateScores() {
-	for (int i = 0; i < 4; i++) {
-		if (Game::Instance()->GetPlayer(i)) {
-			UpdateGroundScore(Game::Instance()->GetPlayer(i));
-		}
-	}
+
 	if (numOfCaptObjects > 0) {
 		UpdateCapturableObjectScore();
 	}
-	if (!projPOS.empty() && (!projSize.empty()) && (!projColour.empty()) ) {
+	if (!projPOS.empty() && (!projSize.empty()) && (!projColour.empty())) {
 		UpdateScoreForProjectiles();
 	}
-	for (int i = 0;i < numOfPlayers; i++)
-	{
-		teamScores[i] = (int)(groundTeamScore[i]) + captObjTeamScore[i];
-	}
+
 	int maxScore = 0;
-	for (int i = 0;i < numOfPlayers; i++) {
-		maxScore += teamScores[i];
+	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
+		if (Game::Instance()->GetPlayer(i)) {
+			UpdateGroundScore(Game::Instance()->GetPlayer(i));
+
+			teamScores[i] = groundTeamScore[i] + captObjTeamScore[i];
+			maxScore += teamScores[i];
+			Game::Instance()->SetScore(i, teamScores[i]);
+		}
 	}
-	for (int i = 0;i < numOfPlayers; i++) {
+	
+	for (int i = 0;i < Game::Instance()->GetPlayerNumber(); i++) {
 		teamScoresPercentage[i] = teamScoresPercentage[i] / maxScore;
 	}
+
+
 }
 
 void Score::UpdateGroundScore(Avatar* player) {
@@ -159,7 +161,7 @@ void Score::UpdateGroundScore(Avatar* player) {
 
 	Vector2 playerPos = Vector2((player->GetPosition().x *groundScoreAccuracy) + (halfxGrid + (10 * groundScoreAccuracy)), (player->GetPosition().z *groundScoreAccuracy + halfyGrid + (10 * groundScoreAccuracy)));
 
-	float plGridSize = player->GetSize() * groundScoreAccuracy * 15;
+	float plGridSize = player->GetSize() * groundScoreAccuracy;
 	int gridArea = xOnGrid * yOnGrid;
 	float radius = plGridSize * plGridSize;
 	
@@ -191,13 +193,13 @@ void Score::UpdateGroundScore(Avatar* player) {
 
 // Decreases the score from previous team and increases the score to the new team.
 void Score::ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease) {
-	groundTeamScore[teamToDecrease] -= 0.001;
-	groundTeamScore[teamToIncrease] += 0.001;
+	groundTeamScore[teamToDecrease] -= 1;
+	groundTeamScore[teamToIncrease] += 1;
 }
 
 // TODO: If needed update only the Capturable objects that got changed last frame
 void Score::UpdateCapturableObjectScore() {
-	for (int i = 0;i < numOfPlayers; i++)
+	for (int i = 0;i < Game::Instance()->GetPlayerNumber(); i++)
 	{
 		captObjTeamScore[i] = 0;
 	}
@@ -239,7 +241,7 @@ void Score::UpdateScoreForProjectiles() {
 	
 	Vector2 pPos = Vector2((pos.x * groundScoreAccuracy) + halfxGrid, (pos.z * groundScoreAccuracy) + halfyGrid);
 
-	int plGridSize = size * groundScoreAccuracy * 10;
+	int plGridSize = size * groundScoreAccuracy;
 	int radius = plGridSize * plGridSize;
 
 	// Runs through the square arount the center and finds the circle.

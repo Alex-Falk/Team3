@@ -117,10 +117,10 @@ void PrintStatusEntries()
 	if (Game::Instance()->IsRunning())
 	{
 		NCLDebug::AddStatusEntry(status_colour_header, "Score");
-		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(0)));
-		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(1)));
-		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(2)));
-		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(3)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(Game::Instance()->GetScore(0)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(Game::Instance()->GetScore(1)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(Game::Instance()->GetScore(2)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(Game::Instance()->GetScore(3)));
 
 	}
 

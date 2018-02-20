@@ -104,6 +104,20 @@ Server::Server() {
 	}
 }
 
+
+
+//--------------------------------------------------------------------------------------------//
+// Utility
+//--------------------------------------------------------------------------------------------//
+void Server::StartGame()
+{
+	SendGameStart();
+	SceneManager::Instance()->JumpToScene();
+	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+}
+
 void Server::UpdateUser(float dt)
 {
 	if (server->m_pNetwork) {
@@ -195,7 +209,13 @@ void Server::UpdateUser(float dt)
 						connectedIDs.erase(connectedIDs.begin() + i);
 					}
 				}
-				Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
+
+				SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
+				Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
+
+				//Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
+				//SendNumberUsers(1 + server->m_pNetwork->connectedPeers);
+
 				break;
 			}
 			}
@@ -203,15 +223,13 @@ void Server::UpdateUser(float dt)
 
 		if (Game::Instance()->IsRunning())
 		{
-			Game::Instance()->SetScore(0, Game::Instance()->GetScore(0) + 1);
-
 			for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 			{
 				if (Game::Instance()->GetPlayer(i))
 				{
-					SendVector3(i, PLAYER_POS,			Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition());
-					SendVector3(i, PLAYER_LINVEL,		Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity());
-					SendVector3(i, PLAYER_ANGVEL,		Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity());
+					SendVector3(i, PLAYER_POS, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition());
+					SendVector3(i, PLAYER_LINVEL, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity());
+					SendVector3(i, PLAYER_ANGVEL, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity());
 					SendVector3(i, PLAYER_ACCELERATION, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration());
 					SendSize(i);
 					SendScores();
@@ -225,18 +243,6 @@ void Server::UpdateUser(float dt)
 void Server::Disconnect()
 {
 	server->Release();
-}
-
-//--------------------------------------------------------------------------------------------//
-// Utility
-//--------------------------------------------------------------------------------------------//
-void Server::StartGame()
-{
-	SendGameStart();
-	SceneManager::Instance()->JumpToScene();
-	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
-	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 }
 
 //--------------------------------------------------------------------------------------------//

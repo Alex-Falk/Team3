@@ -31,7 +31,7 @@ class Game: public TSingleton<Game>
 	friend class TSingleton <Game>;
 public:
 	//STUBS
-	inline void SetScore(uint id, int score) { teamScores[id] = score; }
+	inline void SetScore(uint id, float score) { teamScores[id] = score; }
 	inline void SetAmmo(uint id, float ammo) {}
 	//FINISHED FUNCTIONS
 	inline void SetPlayerNumber(uint i) { playerNumber = i; }
@@ -44,8 +44,6 @@ public:
 	inline void setClient(IP ip) { user = new Client(ip); }
 	inline void SetAvatar(uint id, Avatar * p)
 	{
-		if (avatars[id])
-			delete avatars[id];
 		avatars[id] = p; 
 	}
 
@@ -79,13 +77,10 @@ private:
 			delete avatars[i];
 		}
 	};
+
 	//variables
 	uint playerNumber = 0;
-
-	// Everything about score
 	float teamScores[4];
-
-	void PrintScore(int x); // debug
 	Avatar* avatars[4];
 	User* user = nullptr;
 	bool gameRunning = false;
