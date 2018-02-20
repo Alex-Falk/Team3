@@ -121,9 +121,9 @@ PlayerFloat User::ReceiveSizes(string data)
 
 }
 
-void User::StartGame()
+void User::StartGame(int mapID)
 {
-	SceneManager::Instance()->JumpToScene();
+	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);

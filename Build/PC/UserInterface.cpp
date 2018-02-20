@@ -241,10 +241,11 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 	case KEYBOARD_RETURN:
 		for (int i = 0; i < editboxes.size(); ++i) {
 			if (editboxes[i].type == currentType) {
-				userTyping[i].type = editboxes[i].type;
-				userTyping[i].content = editboxes[i].editbox->getText().c_str();
-				std::cout << userTyping[i].content << std::endl;
+				textInfo[i].content = editboxes[i].editbox->getText().c_str();
+				std::cout << textInfo[i].content << std::endl;
 				break;
+			}
+			else {
 			}
 		}
 		break;

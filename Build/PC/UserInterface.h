@@ -44,7 +44,7 @@ public:
 	~GUIsystem();
 
 	std::vector<inputBox> editboxes;
-	std::vector<userInput> userTyping;
+	std::vector<userInput> textInfo;
 	//Tell which textBox is typing now?
 	std::string currentType;
 

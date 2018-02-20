@@ -56,7 +56,7 @@ private:
 	//Testing text box for creating game
 	inputBox IpInputBox;
 	userInput connectIP;
-	inputBox nameInputBox;
+	inputBox userName;
 
 	//Exit Button
 	CEGUI::PushButton* exitButton;
@@ -72,6 +72,8 @@ private:
 	CEGUI::RadioButton* Map3Rbutton;
 	CEGUI::RadioButton* Map4Rbutton;
 
+	//User chosen map
+	int nextMapID = 0;
 public:
 	MainMenu(const std::string& friendly_name)
 		: Scene(friendly_name) {}
@@ -108,12 +110,17 @@ public:
 	void onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
 
 	//3. create game menu buttons
-	void onStartGameClicked() { Game::Instance()->StartGame(); }
+	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); }
+	void onMap1selected();
+	void onMap2selected();
+	void onMap3selected();
+	void onMap4selected();
 
 	//4. join game menu buttons
 	void onConnectButtonClicked();
 
 	void OnUserNameClicked() {
+		userName.editbox->setText("");
 		GUIsystem::Instance()->SetIsTyping(true);
 		GUIsystem::Instance()->currentType = "UserName";
 	}

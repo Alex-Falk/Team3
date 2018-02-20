@@ -41,7 +41,7 @@ public:
 	virtual void UpdateUser(float dt) = 0;
 	virtual void Disconnect() = 0;
 
-	virtual void StartGame();
+	virtual void StartGame(int mapID = 0);
 
 	ENetPacket* CreatePacket(string data) {
 	return enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);

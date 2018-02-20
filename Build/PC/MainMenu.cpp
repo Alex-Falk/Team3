@@ -59,6 +59,7 @@ void MainMenu::OnUpdateScene(float dt)
 	Scene::OnUpdateScene(dt);
 }
 
+//Setting UP GUI
 void MainMenu::OnInitializeGUI()
 {
 	SetUpMainMenu();
@@ -163,17 +164,72 @@ void MainMenu::SetUpLobby()
 		));
 	Map4Text->setText("MAP4: xxxxxxxx");
 	
-	inputBox temp;
-	temp.editbox = static_cast<CEGUI::Editbox*>(
+	userName.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
 			Vector4(0.40f, 0.60f, 0.2f, 0.05f),
 			Vector4(),
 			"userName"
 		));
-	temp.type = "UserName";
-	temp.editbox->setText("Please type your name here");
-	temp.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnUserNameClicked, this));
-	GUIsystem::Instance()->editboxes.push_back(temp);
+	userName.type = "UserName";
+	userName.editbox->setText("Please type your name here");
+	userName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnUserNameClicked, this));
+	GUIsystem::Instance()->editboxes.push_back(userName);
+	userInput temp;
+	temp.type = userName.type;
+	GUIsystem::Instance()->textInfo.push_back(temp);
+
+	Map1Rbutton = static_cast<CEGUI::RadioButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
+			Vector4(0.85f, 0.12f, 0.08f, 0.05f),
+			Vector4(),
+			"Map1Rbutton"
+		));
+	Map1Rbutton->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onMap1selected, this));
+	Map1Rbutton->setSelected(true);
+
+	Map2Rbutton = static_cast<CEGUI::RadioButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
+			Vector4(0.85f, 0.32f, 0.08f, 0.05f),
+			Vector4(),
+			"Map2Rbutton"
+		));
+	Map2Rbutton->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onMap2selected, this));
+
+	Map3Rbutton = static_cast<CEGUI::RadioButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
+			Vector4(0.85f, 0.52f, 0.08f, 0.05f),
+			Vector4(),
+			"Map3Rbutton"
+		));
+	Map3Rbutton->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onMap3selected, this));
+
+	Map4Rbutton = static_cast<CEGUI::RadioButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
+			Vector4(0.85f, 0.72f, 0.08f, 0.05f),
+			Vector4(),
+			"Map4Rbutton"
+		));
+	Map4Rbutton->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onMap4selected, this));
+}
+
+void MainMenu::onMap1selected()
+{
+	nextMapID = 1;
+}
+
+void MainMenu::onMap2selected()
+{
+	nextMapID = 2;
+}
+
+void MainMenu::onMap3selected()
+{
+	nextMapID = 3;
+}
+
+void MainMenu::onMap4selected()
+{
+	nextMapID = 4;
 }
 
 void MainMenu::ShowLobbyMenuServer()
@@ -196,7 +252,20 @@ void MainMenu::ShowLobbyMenuServer()
 	Map4Text->setVisible(true);
 	Map4Text->enable();
 
-	
+	userName.editbox->setVisible(true);
+	userName.editbox->enable();
+
+	Map1Rbutton->setVisible(true);
+	Map1Rbutton->enable();
+
+	Map2Rbutton->setVisible(true);
+	Map2Rbutton->enable();
+
+	Map3Rbutton->setVisible(true);
+	Map3Rbutton->enable();
+
+	Map4Rbutton->setVisible(true);
+	Map4Rbutton->enable();
 }
 
 void MainMenu::HideLobby()
@@ -219,6 +288,20 @@ void MainMenu::HideLobby()
 	Map4Text->setVisible(false);
 	Map4Text->disable();
 
+	userName.editbox->setVisible(false);
+	userName.editbox->disable();
+
+	Map1Rbutton->setVisible(false);
+	Map1Rbutton->disable();
+
+	Map2Rbutton->setVisible(false);
+	Map2Rbutton->disable();
+
+	Map3Rbutton->setVisible(false);
+	Map3Rbutton->disable();
+
+	Map4Rbutton->setVisible(false);
+	Map4Rbutton->disable();
 }
 
 void MainMenu::SetUpconnectionMenu()
@@ -234,7 +317,6 @@ void MainMenu::SetUpconnectionMenu()
 	IpInputBox.type = "test";
 	connectIP.type = IpInputBox.type;
 	GUIsystem::Instance()->editboxes.push_back(IpInputBox);
-	GUIsystem::Instance()->userTyping.push_back(connectIP);
 
 	connectToHostButton = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",

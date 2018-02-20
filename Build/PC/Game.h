@@ -59,7 +59,7 @@ public:
 	inline uint getUserID() { return user->GetUserID(); }
 	inline User * GetUser() { return user; }
 
-	inline void StartGame() { gameRunning = true; user->StartGame(); }
+	inline void StartGame(int mapID = 0) { gameRunning = true; user->StartGame(mapID); }
 	inline void StopGame() { gameRunning = false; }
 	inline bool IsRunning() { return gameRunning; }
 
