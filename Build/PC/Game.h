@@ -54,12 +54,12 @@ public:
 	inline  uint GetPlayerNumber() { return playerNumber; }
 	inline Avatar * GetPlayer(uint id) { return avatars[id]; }
 	inline Avatar * GetCurrentAvatar() { return avatars[user->GetUserID()]; }
-	inline int GetMapIndex() { return 0; }
-	inline int GetScore(uint id) { return teamScores[id]; }
+	inline uint GetMapIndex() { return mapIdx; }
+	inline float GetScore(uint id) { return teamScores[id]; }
 	inline uint getUserID() { return user->GetUserID(); }
 	inline User * GetUser() { return user; }
 
-	inline void StartGame(int mapID = 0) { gameRunning = true; user->StartGame(mapID); }
+	inline void StartGame(uint mapID = 0) { gameRunning = true; mapIdx = mapID; user->StartGame(mapID); }
 	inline void StopGame() { gameRunning = false; }
 	inline bool IsRunning() { return gameRunning; }
 
@@ -80,6 +80,7 @@ private:
 
 	//variables
 	uint playerNumber = 0;
+	uint mapIdx;
 	float teamScores[4];
 	Avatar* avatars[4];
 	User* user = nullptr;

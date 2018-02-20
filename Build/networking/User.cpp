@@ -70,7 +70,7 @@ PlayerFloat User::ReceiveSizes(string data)
 
 }
 
-void User::StartGame(int mapID)
+void User::StartGame(uint mapID)
 {
 	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();

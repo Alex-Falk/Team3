@@ -71,7 +71,7 @@ private:
 	CEGUI::RadioButton* Map4Rbutton;
 
 	//User chosen map
-	int nextMapID = 0;
+	int nextMapID = 1;
 public:
 	MainMenu(const std::string& friendly_name)
 		: Scene(friendly_name) {}

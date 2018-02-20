@@ -77,7 +77,7 @@ public:
 	// changes to map
 	void SendNumberUsers(uint n);
 	void SendConnectionID(uint ID);
-	void SendGameStart();
+	void SendGameStart(uint mapID);
 
 	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
 	void SendSize(uint ID);
@@ -87,7 +87,7 @@ public:
 	//void SendMap();
 	//void SendUpdatemap();
 
-	void StartGame();
+	virtual void StartGame(uint mapID = 0);
 	void Disconnect();
 
 	std::string GetPacketData(const ENetEvent & evnt)

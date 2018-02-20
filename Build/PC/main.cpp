@@ -281,10 +281,10 @@ void HandleGUIMouseButton()
 {
 	//Score bar function, temporaily here
 	if (GUIsystem::Instance()->GetDrawScoreBar()==true) {
-		float a1 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(0);
-		float a2 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(1);
-		float a3 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(2);
-		float a4 = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetScore()->GetTeamScore(3);
+		float a1 = (Game::Instance()->GetScore(0));
+		float a2 = (Game::Instance()->GetScore(1));
+		float a3 = (Game::Instance()->GetScore(2));
+		float a4 = (Game::Instance()->GetScore(3));
 		float total = a1 + a2 + a3 + a4;
 		GUIsystem::Instance()->UpdateScorebar(a1/total, a2/total, a3/total, a4/total);
 	}

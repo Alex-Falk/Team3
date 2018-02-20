@@ -145,7 +145,8 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		switch (type) {
 		case GAME_START:
 		{
-			Game::Instance()->StartGame();
+			uint mapID = stoi(data.substr(data.find_first_of(':') + 1));
+			Game::Instance()->StartGame(mapID);
 			break;
 		}
 		case NUMBER_USERS:

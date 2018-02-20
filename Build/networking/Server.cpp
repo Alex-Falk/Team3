@@ -109,10 +109,10 @@ Server::Server() {
 //--------------------------------------------------------------------------------------------//
 // Utility
 //--------------------------------------------------------------------------------------------//
-void Server::StartGame()
+void Server::StartGame(uint mapID)
 {
-	SendGameStart();
-	SceneManager::Instance()->JumpToScene();
+	SendGameStart(mapID);
+	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
@@ -272,11 +272,12 @@ void Server::SendConnectionID(uint ID)
 
 }
 
-void Server::SendGameStart()
+
+void Server::SendGameStart(uint mapID)
 {
 	string data;
 
-	data = to_string(GAME_START) + ":";
+	data = to_string(GAME_START) + ":" + to_string(mapID);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);

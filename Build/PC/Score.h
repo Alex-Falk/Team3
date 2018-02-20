@@ -109,7 +109,7 @@ public:
 	static void UpdateProjectilesVector(Vector3 pos, Colour c, float size);
 	
 	// To Return Team Score
-	inline int GetTeamScore(int id) { return teamScores[id]; }
+	inline float GetTeamScore(int id) { return teamScores[id]; }
 	//To return Team Score Percentage
 	inline float GetTeamScorePercentage(int id) { return teamScoresPercentage[id]; }
 	
