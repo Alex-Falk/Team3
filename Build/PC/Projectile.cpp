@@ -14,9 +14,8 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
-	siz = size;
 
-	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), RGBA);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), RGBA);
 	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
@@ -53,15 +52,17 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	physicsNode->SetName(name);
 	destroy = false;
 	projectileWorth = projWorth;
+
+
+	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
+	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 }
 
 Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, PhysNodeType type, int projWorth, const std::string& name) : GameObject(name) {
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
-	siz =( size.x + size.y + size.z )/3 ;
-
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), RGBA);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Cube(), RGBA);
 	dummy->SetTransform(Matrix4::Scale(size));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
@@ -106,39 +107,69 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	physicsNode->SetName(name);
 	destroy = false;
 	projectileWorth = projWorth;
+
+	GraphicsPipeline::Instance()->AddPlayerRenderNode(renderNode);
+	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 }
 
 Projectile::~Projectile() {
-	
+	if (renderNode)  GraphicsPipeline::Instance()->RemoveRenderNode(renderNode);
+	if (physicsNode) PhysicsEngine::Instance()->RemovePhysicsObject(physicsNode);
+
+	SAFE_DELETE(renderNode);
+	SAFE_DELETE(physicsNode);
+}
+
+void Projectile::Explode() {
+	if (projectileWorth >= 5) {
+		int randPitch;
+		int randYaw;
+		Vector3 direction;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			randPitch = rand() % 90 + 0;
+			randYaw = rand() % 360;
+
+			direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 10;
+
+			Projectile * spray = new Projectile(this->colour, this->Render()->GetchildBaseColor(), Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
+			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+			
+		}
+	}
 }
 
 
 //projectiles go through players and pickups currently.
 bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
-	//TODO what happens when a projectile hits another player
 	if (collidingObject->GetType() == PLAYER) 
 	{
 		if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour)
 		{
-			((Avatar*)(collidingObject->GetParent()))->ChangeLife(-10);
+			
+			((Avatar*)(collidingObject->GetParent()))->ChangeLife(-projectileWorth);		
+			Explode();
+			//SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
+			//((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+			//((PlayerRenderNode*)Render()->GetChild())->SetDestroy(true);
+			destroy = true;
 		}
 		return false;
 	}
 
-	if (collidingObject->GetType() == PICKUP) {
+	if (collidingObject->GetType() == PICKUP || collidingObject->GetType() == PROJECTILE || collidingObject->GetType() == SPRAY) {
 		return false;
 	}
-	if (collidingObject->GetType() == PROJECTILE) {
-		return false;
-	}
-	if (collidingObject->GetType() == SPRAY) {
-		return false;
-	}
+
 	if (collidingObject->GetType() == BIG_NODE) {
-		//TODO leave a texture behind on the wall instead of colouring the entire object
-		//collidingObject->GetParent()->Render()->GetChild()->SetBaseColor(this->Render()->GetChild()->GetBaseColor());
-		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
-		Score::UpdateProjectilesVector(this->Physics()->GetPosition(), colour, siz);
+		Explode();
+	//	SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
+		//TODO fix memory leak
+		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		destroy = true;
+		
+		
 		return false;
 	}
 	

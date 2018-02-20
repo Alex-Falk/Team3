@@ -28,6 +28,10 @@ public :
 
 	void SetIsInAir(bool _IsInAir) { isInAir = _IsInAir; }
 	bool GetIsInAir()const { return isInAir; }
+
+	void SetDestroy(bool b) { destroy = true; }
+	bool GetDestroy() { return destroy; }
 protected:
 	bool isInAir;
+	bool destroy;
 };

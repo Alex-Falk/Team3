@@ -23,6 +23,8 @@ public:
 	
 	virtual ~Projectile();
 
+	void Explode(); //paint spray comes out of it
+
 	bool ProjectileCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 	virtual void OnDetachedFromScene();
 };

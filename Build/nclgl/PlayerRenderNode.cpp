@@ -21,10 +21,10 @@
 PlayerRenderNode::PlayerRenderNode(Mesh * m, Vector4 colour)
 	:RenderNode(m, colour)
 {
-
+	destroy = false;
 }
 
 PlayerRenderNode::~PlayerRenderNode()
 {
-
+	
 }

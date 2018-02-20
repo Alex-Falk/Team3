@@ -134,10 +134,18 @@ void GraphicsPipeline::AddRenderNode(RenderNode* node)
 		allNodes.push_back(node);
 }
 
+
 void GraphicsPipeline::RemoveRenderNode(RenderNode* node)
 {
 	allNodes.erase(std::remove(allNodes.begin(), allNodes.end(), node), allNodes.end());
 }
+
+void GraphicsPipeline::RemovePlayerRenderNode(RenderNode* node)
+{
+	playerRenderNodes.erase(std::remove(playerRenderNodes.begin(), playerRenderNodes.end(), node), playerRenderNodes.end());
+}
+
+
 
 void GraphicsPipeline::LoadShaders()
 {
@@ -651,6 +659,20 @@ void GraphicsPipeline::RenderPath()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	projViewMatrix = temp;
+
+	//removes destroyed projectiles from the playerRenderNodes
+	//for (std::vector<RenderNode*>::iterator itr = playerRenderNodes.begin(); itr != playerRenderNodes.end(); itr++)
+	//{
+
+	//	PlayerRenderNode * tempPRN = (PlayerRenderNode*)(*itr)->GetChild();
+	//	if (tempPRN)
+	//	{
+	//		if (tempPRN->GetDestroy()) {
+	//			delete * itr;
+	//			itr = playerRenderNodes.erase(itr);
+	//		}	
+	//	}
+	//}
 }
 
 void GraphicsPipeline::RenderPostprocessAndPresent()
