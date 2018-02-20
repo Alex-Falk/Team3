@@ -2,13 +2,6 @@
 
 #include "Map.h"
 
-
-
-// Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
-//
-
-
-
 class SimpleGamePlay : public Map
 {
 private:
