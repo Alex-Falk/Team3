@@ -23,7 +23,9 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 
 	pnode->SetBoundingRadius(size);
 	rnode->SetBoundingRadius(size);
-	pnode->SetLinearVelocity({ 7.0f,0.0f,0.0f});
+	
+	pnode->SetLinearVelocity({ 7.0f,0,0 }); //TODO remove when behaviours are in
+
 	pnode->SetPosition(position);
 	lastPos = position;
 	pnode->SetType(MINION);
@@ -86,23 +88,20 @@ void Minion::Update(float dt) {
 
 bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
 	if (collidingObject->GetType() == PLAYER) {
-		/*if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour) {
+		if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour) {
 			((Avatar*)collidingObject->GetParent())->ChangeLife(-(life / 5));
 		}
-		else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);*/
+		else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);
 		dead = true;
 		return false;
 	}
 	else if (collidingObject->GetType() == MINION) {
-		/*if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
+		if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
 			float tempLife = life;
 			ChangeLife(-((Minion*)collidingObject->GetParent())->GetLife());
 			((Minion*)(collidingObject->GetParent()))->ChangeLife(-(tempLife));
-		}*/
-		return false;
-	}
-	else if (collidingObject->GetType() == BIG_NODE) {
-		//TODO apply texture to surface like the avatar
+			return false;
+		}
 		return true;
 	}
 

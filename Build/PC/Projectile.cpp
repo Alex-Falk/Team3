@@ -56,6 +56,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+	exploded = false;
 }
 
 Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, PhysNodeType type, int projWorth, const std::string& name) : GameObject(name) {
@@ -110,6 +111,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+	exploded = false;
 }
 
 Projectile::~Projectile() {
@@ -121,23 +123,28 @@ Projectile::~Projectile() {
 }
 
 void Projectile::Explode() {
-	if (projectileWorth >= 5) {
-		int randPitch;
-		int randYaw;
-		Vector3 direction;
+	exploded = true;
+	//turn into sphere for spherical paint splat
+	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(2.0f, 2.0f, 2.0f))));
+	Render()->GetChild()->SetMesh(CommonMeshes::Sphere());
 
-		for (int i = 0; i < 10; ++i)
-		{
-			randPitch = rand() % 90 + 0;
-			randYaw = rand() % 360;
+	int randPitch;
+	int randYaw;
+	Vector3 direction;
 
-			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
+	for (int i = 0; i < 10; ++i)
+	{	
+		randPitch = rand() % 20 + 70;
+		randYaw = rand() % 360;
 
-			Projectile * spray = new Projectile(this->colour, this->Render()->GetchildBaseColor(), Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
-			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
-			
-		}
+		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 5;
+
+		Projectile * spray = new Projectile(this->colour, this->Render()->GetchildBaseColor(), Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);		
 	}
+
+	//move above the arena so we don't see the sphere for the frame it exists
+	Physics()->SetPosition(Physics()->GetPosition() + Vector3{ 0,200,0 }); 
 }
 
 
@@ -146,33 +153,34 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 	if (collidingObject->GetType() == PLAYER) 
 	{
 		if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour)
-		{
-			
+		{	
 			((Avatar*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));		
-			Explode();
-			//SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
-			//((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-			//((PlayerRenderNode*)Render()->GetChild())->SetDestroy(true);
+			if (projectileWorth >= 5 && !exploded) Explode();
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 			destroy = true;
 		}
+		return false;
+	}
+
+	if (collidingObject->GetType() == MINION) {
+		if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
+			((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));
+		}
+		if (projectileWorth >= 5 && !exploded) Explode();
+		destroy = true;
+		return false;
+	}
+
+	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
+		if (projectileWorth >= 5 && !exploded) Explode();
+		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		destroy = true;	
 		return false;
 	}
 
 	if (collidingObject->GetType() == PICKUP || collidingObject->GetType() == PROJECTILE || collidingObject->GetType() == SPRAY) {
 		return false;
 	}
-
-	if (collidingObject->GetType() == BIG_NODE) {
-		Explode();
-	//	SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
-		//TODO fix memory leak
-		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-		destroy = true;
-		
-		
-		return false;
-	}
-	
 	return true;
 }
 

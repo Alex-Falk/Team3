@@ -1,28 +1,22 @@
 //Michael Davis 16/02/2018
 #include "MinionCamp.h"
 
-MinionCamp::MinionCamp() {
+MinionCamp::MinionCamp() : CaptureArea() {
 	spawnTimer = 5.0f;
 	currentSpawnTimer = 0.0f;
-	colour = RED;
-	RGBA = RED_COLOUR;
 	maxMinions = 5;
-	position = { 0,0,0 };
+	colour = START_COLOUR;
 }
 
-MinionCamp::MinionCamp(Colour col, Vector4 rgba, Vector3 pos) {
+MinionCamp::MinionCamp(Colour col, Vector3 pos, Vector3 halfdims, int scoreValue) : CaptureArea(pos,halfdims,scoreValue, col) {
 	spawnTimer = 5.0f;
 	currentSpawnTimer = 0.0f;
-	colour = col;
-	RGBA = rgba;
-	position = pos;
 	maxMinions = 5;
+	colour = col;
 }
 
 MinionCamp::~MinionCamp() {
 	for (vector<Minion*>::iterator itr = minions.begin(); itr != minions.end();) {
-			SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(*itr);
-			delete * itr;
 			itr = minions.erase(itr);			
 	}
 }
@@ -32,7 +26,7 @@ void MinionCamp::Update(float dt) {
 
 	//if the spawntimer is over 5 seconds and there is less than 5 active minions from this spawner, spawn minion
 	if (currentSpawnTimer > spawnTimer && minions.size() < maxMinions) {
-		Minion * m = new Minion(colour, RGBA, position, "Minion");
+		Minion * m = new Minion(colour, Render()->GetchildBaseColor(), Physics()->GetPosition() + Vector3{ 0,Render()->GetBoundingRadius() * 1.2f,0 }, "Minion");
 		minions.push_back(m);
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(m);
 		currentSpawnTimer = 0.0f;
@@ -42,7 +36,6 @@ void MinionCamp::Update(float dt) {
 	for (vector<Minion*>::iterator itr = minions.begin(); itr != minions.end(); ) {
 		if ((*itr)->GetDead()) {
 			SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(*itr);
-			delete * itr;
 			itr = minions.erase(itr);
 		}
 		else {
