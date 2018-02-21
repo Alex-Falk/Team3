@@ -22,7 +22,9 @@
 #include <nclgl\NCLDebug.h>
 #include <algorithm>
 #include <ncltech\TextureManager.h>
+//used by minimap
 #include <PC\Game.h>
+#include <PC\Map.h>
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
 	, camera(new Camera())
@@ -301,9 +303,12 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 	{
 		NCLERROR("Unable to create Shadow Framebuffer! StatusCode: %x", status);
 	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//m_ShadowUBO._ShadowMapTex = glGetTextureHandleARB(m_ShadowTex);
 	//glMakeTextureHandleResidentARB(m_ShadowUBO._ShadowMapTex);
+
+
 }
 
 
@@ -766,8 +771,8 @@ void GraphicsPipeline::DrawMiniMap() {
 	if (pathTex == NULL) {
 		glDeleteTextures(1, &pathTex);
 	}
-		glGenTextures(1, &pathTex);
 	if (!pathTex) {
+		glGenTextures(1, &pathTex);
 	}
 	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -775,21 +780,45 @@ void GraphicsPipeline::DrawMiniMap() {
 	glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
 	glBindTexture(GL_TEXTURE_2D, pathTex);
 	//these numbers are hardcoded at the moment but will be variables in the end
+	float aspect = (float)width / height;
+	float sx = 0.2;
+	float sy = sx * aspect;
+	//get the x and y dementions of map
+	float xDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetXDimension();
+	float yDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetYDimension();
 	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "modelMatrix"), 1, GL_FALSE,
-		(float*)&(Matrix4::Translation(Vector3(-0.8f, -0.8f, 0.0f)) * Matrix4::Scale(Vector3(0.2,0.2f,1.0f))));
+		(float*)&(Matrix4::Translation(Vector3(-1.0f + sx, -1.0f + sy, 0.0f)) * Matrix4::Scale(Vector3(sx, sy, 1.0f))));
 	uint playerCount = Game::Instance()->GetPlayerNumber();
 	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "playerCount"), playerCount);
+	//four vector2s
 	float players[8];
-	int count = 0;
+	//four vector3s
+	float colours[12];
+	uint count = 0;
+	for (int i = 0; i < 4; i++) {
 		Avatar* a = Game::Instance()->GetPlayer(i);
-	for(int i = 0; i < 4; i++){
 		if (a) {
-			players[count] = (40 - a->GetPosition().x)/80.0;
-			players[++count] = (40 + a->GetPosition().z)/80.0;
-	}
+			if (i == Game::Instance()->getUserID()) {
+				glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "self"), count);
+			}
+			//adding the player's colours
+			//TODO make this relative to the arena rather than hard coded
+			players[count * 2] = (xDimension - a->GetPosition().x) / (xDimension * 2);
+			players[(count * 2) + 1] = (yDimension + a->GetPosition().z) / (yDimension * 2);
+			//colours
+			colours[count * 3] = a->GetColourRGBA().x;
+			colours[(count * 3) + 1] = a->GetColourRGBA().y;
+			colours[(count * 3) + 2] = a->GetColourRGBA().z;
 		}
-			count++;
+		count++;
+	}
 	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "players"), 4, players);
+	glUniform3fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "colours"), 4, colours);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
+	//opacity of minimap, this will be a variable eventually
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 0.7);
+
 	fullscreenQuad->Draw();
+	glUseProgram(0);
 }
 //philip 20/02/2018

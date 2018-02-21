@@ -108,6 +108,8 @@
 #define CAPTURE_SIZE 40	 
 #define PIXELPERSIZE 100
 
+#define ATOMIC_COUNTER_NUMBER 4
+
 #define DEBUGDRAW_FLAGS_BOUNDING				0x20
 
 typedef std::pair<RenderNode*, float> RenderNodePair;
@@ -261,5 +263,6 @@ protected:
 
 	//GUI
 	bool isMainMenu = false;
+
 };
 

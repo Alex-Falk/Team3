@@ -63,5 +63,8 @@ public:
 
 	inline Score * GetScore() { return score; }
 
+	//phil 21/02/2018 for minimap
+	inline int GetXDimension() { return xDimension; }
+	inline int GetYDimension() { return yDimension; }
 };
 
