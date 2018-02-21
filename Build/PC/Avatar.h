@@ -106,6 +106,10 @@ public:
 	void Spray();
 	void ShootRocket();
 	void ShootProjectile();
+
+	void Spray(Vector3 pos, Vector3 dir);
+	void ShootRocket(Vector3 pos, Vector3 dir);
+	void ShootProjectile(Vector3 pos, Vector3 dir);
 	
 	float GetSize() { return size; }
 	void SetSize(float s) { size = s; }

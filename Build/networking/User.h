@@ -22,7 +22,7 @@ public:
 	// Sending
 	//--------------------------------------------------------------------------------------------//
 	virtual void SendVector3(uint ID, PacketType type, Vector3 vec) = 0;
-	virtual void SendWeaponFire(uint ID) = 0;
+	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir) = 0;
 
 	//--------------------------------------------------------------------------------------------//
 	// Receiving
@@ -30,6 +30,7 @@ public:
 
 	PlayerVector ReceiveVector(string data);
 	PlayerFloat ReceiveSizes(string data);
+
 	void ReceiveWeapon(string data);
 
 

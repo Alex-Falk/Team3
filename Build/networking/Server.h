@@ -81,7 +81,7 @@ public:
 
 	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
 	void SendSize(uint ID);
-	void SendWeaponFire(uint ID);
+	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
 
 	void SendScores();
 	//void SendMap();

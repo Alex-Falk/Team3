@@ -34,7 +34,6 @@ protected:
 	//--------------------------------------------------------------------------------------------//
 	int xDimension = 40;
 	int yDimension = 40;
-
 	int groundScoreAccuracy = 15;
 
 public:

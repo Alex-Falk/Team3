@@ -210,6 +210,11 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			//ReceiveMapChange(data);
 			break;
 		}
+		case PLAYER_WEAPON:
+		{
+			ReceiveWeapon(data);
+			break;
+		}
 		case GAME_END:
 		{
 			//Game::Instance()->EndMatch();
@@ -275,9 +280,18 @@ void Client::SendVector3(uint ID,PacketType type, Vector3 vec)
 	enet_peer_send(serverConnection, 0, packet);
 }
 
-void Client::SendWeaponFire(uint ID)
+void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 {
+	string data;
 
+	data = to_string(PLAYER_WEAPON) + ":"
+		+ to_string(ID) + ";"
+		+ to_string(type) + ";"
+		+ Vector3ToString(pos) + ","
+		+ Vector3ToString(dir);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	enet_peer_send(serverConnection, 0, packet);
 }
 
 void Client::SendSize(uint ID)

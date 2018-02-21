@@ -189,11 +189,16 @@ void Server::UpdateUser(float dt)
 				{
 					PlayerFloat pfloat = ReceiveSizes(data);
 					Game::Instance()->SetSize(pfloat.ID, pfloat.f);
+					break;
 				}
 
-				case TEXT_PACKET:
+				case PLAYER_WEAPON:
 				{
-					//cout << data.substr(data.find_first_of(':') + 1) + "\n";
+					ReceiveWeapon(data);
+
+					ENetPacket* packet = CreatePacket(data);
+					enet_host_broadcast(server->m_pNetwork, 0, packet);
+					break;
 				}
 				}
 				break;
@@ -273,7 +278,6 @@ void Server::SendConnectionID(uint ID)
 
 }
 
-
 void Server::SendGameStart(uint mapID)
 {
 	string data;
@@ -322,14 +326,17 @@ void Server::SendScores()
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
-//TODO WEAPONS stuff
-
-//PACKET_TYPE:WEAPON_TYPE;XPOS YPOS ZPOS, XDIR YDIR ZDIR
-void Server::SendWeaponFire(uint ID) 
+void Server::SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir) 
 {
 	string data;
 
-	data = to_string(PLAYER_WEAPON) + ":";
-}
+	data = to_string(PLAYER_WEAPON) + ":"
+		+ to_string(ID) + ";"
+		+ to_string(type) + ";" 
+		+ Vector3ToString(pos) + ","
+		+ Vector3ToString(dir);
 
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
 

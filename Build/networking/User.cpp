@@ -30,15 +30,38 @@ PlayerVector User::ReceiveVector(string data)
 // PACKET_TYPE:WEAPON_TYPE;XPOS YPOS ZPOS,XDIR YDIR ZDIR
 void User::ReceiveWeapon(string data) {
 	uint colonPos = (uint)(data.find_first_of(':'));
-	uint semicolonPos = (uint)(data.find_first_of(';'));
+	uint firstSemicolonPos = (uint)(data.find_first_of(';'));
+	uint secondSemicolonPos = firstSemicolonPos + 1 + (uint)(data.substr(firstSemicolonPos + 1).find_first_of(';'));
 	uint commaPos = (uint)(data.find_first_of(','));
 
-	WeaponType type = static_cast<WeaponType>(stoi(data.substr(colonPos + 1, semicolonPos)));
+	uint ID = stoi(data.substr(colonPos + 1, firstSemicolonPos));
 
-	Vector3 pos = InterpretStringVector(data.substr(semicolonPos + 1, commaPos));
-	Vector3 dir = InterpretStringVector(data.substr(commaPos + 1));
+	if (ID != Game::Instance()->getUserID())
+	{
+		WeaponType type = static_cast<WeaponType>(stoi(data.substr(firstSemicolonPos + 1, secondSemicolonPos)));
 
-	//TODO Call a spawn weapon function for the player
+		Vector3 pos = InterpretStringVector(data.substr(secondSemicolonPos + 1, commaPos));
+		Vector3 dir = InterpretStringVector(data.substr(commaPos + 1));
+
+		//TODO Call a spawn weapon function for the player
+		Avatar * p = Game::Instance()->GetPlayer(ID);
+
+		switch (type)
+		{
+		case PAINT_ROCKET:
+			p->ShootRocket(pos, dir);
+			break;
+		case PAINT_PISTOL:
+		case AUTO_PAINT_LAUNCHER:
+			p->ShootProjectile(pos, dir);
+			break;
+		case PAINT_SPRAY:
+			p->Spray(pos, dir);
+			break;
+		}
+	}
+
+
 }
 
 

@@ -161,7 +161,7 @@ void Score::UpdateGroundScore(Avatar* player) {
 
 	Vector2 playerPos = Vector2((player->GetPosition().x *groundScoreAccuracy) + (halfxGrid + (10 * groundScoreAccuracy)), (player->GetPosition().z *groundScoreAccuracy + halfyGrid + (10 * groundScoreAccuracy)));
 
-	float plGridSize = player->GetSize() * groundScoreAccuracy;
+	float plGridSize = player->GetSize() * groundScoreAccuracy * 10;
 	int gridArea = xOnGrid * yOnGrid;
 	float radius = plGridSize * plGridSize;
 	
@@ -193,8 +193,12 @@ void Score::UpdateGroundScore(Avatar* player) {
 
 // Decreases the score from previous team and increases the score to the new team.
 void Score::ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease) {
-	groundTeamScore[teamToDecrease] -= 1;
-	groundTeamScore[teamToIncrease] += 1;
+	if (teamToDecrease != teamToIncrease)
+	{
+		groundTeamScore[teamToDecrease] -= 1;
+		groundTeamScore[teamToIncrease] += 1;
+	}
+
 }
 
 // TODO: If needed update only the Capturable objects that got changed last frame
