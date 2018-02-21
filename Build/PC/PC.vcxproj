@@ -160,9 +160,11 @@
     <ClInclude Include="Behaviours.h" />
     <ClInclude Include="CaptureArea.h" />
     <ClInclude Include="ControllableAvatar.h" />
+    <ClInclude Include="ChaseEnemyPlayer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="MinionBlackboard.h" />
     <ClInclude Include="PaintPool.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Minion.h" />
@@ -173,6 +175,7 @@
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="PaintableGameObject.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="TestMap.h" />
     <ClInclude Include="WeaponPickup.h" />
   </ItemGroup>
@@ -186,6 +189,7 @@
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="Behaviours.cpp" />
     <ClCompile Include="CaptureArea.cpp" />
+    <ClCompile Include="ChaseEnemyPlayer.cpp" />
     <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />

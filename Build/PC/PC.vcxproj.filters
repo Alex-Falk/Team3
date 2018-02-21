@@ -61,6 +61,12 @@
     <Filter Include="AI\Source">
       <UniqueIdentifier>{d8845519-0c62-47f7-9310-43ded6a125d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI\Header\States">
+      <UniqueIdentifier>{24195f69-5e44-4788-ab7d-ad3b1878c034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Source\States">
+      <UniqueIdentifier>{59f1b6cf-6b8f-4644-ae00-71cd65f9aafd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PaintableGameObject.h">
@@ -141,6 +147,15 @@
     <ClInclude Include="Behaviours.h">
       <Filter>AI\Header</Filter>
     </ClInclude>
+    <ClInclude Include="MinionBlackboard.h">
+      <Filter>AI\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>AI\Header\States</Filter>
+    </ClInclude>
+    <ClInclude Include="ChaseEnemyPlayer.h">
+      <Filter>AI\Header\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -217,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="Score.cpp">
       <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ChaseEnemyPlayer.cpp">
+      <Filter>AI\Source\States</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

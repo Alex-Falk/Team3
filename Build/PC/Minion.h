@@ -6,6 +6,7 @@
 #include "../ncltech/SphereCollisionShape.h"
 #include "Avatar.h"
 #include "../ncltech/SceneManager.h"
+#include "MinionBlackboard.h"
 
 class Minion : public GameObject {
 protected:
@@ -14,6 +15,8 @@ protected:
 	
 	float life;
 	float size;
+
+	MinionBlackboard minionBlackboard;
 
 	Vector3 lastPos;
 
