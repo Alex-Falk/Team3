@@ -22,6 +22,7 @@
 #include <nclgl\NCLDebug.h>
 #include <algorithm>
 #include <ncltech\TextureManager.h>
+#include <PC\Game.h>
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
 	, camera(new Camera())
@@ -207,6 +208,15 @@ void GraphicsPipeline::LoadShaders()
 	{
 		NCLERROR("Could not link shader: SkyBox");
 	}
+
+	//phil's minimap
+	shaders[SHADERTYPE::MiniMap] = new Shader(
+		SHADERDIR"Game/MiniMapVertex.glsl",
+		SHADERDIR"Game/MiniMapFragment.glsl"
+	);
+	if (!shaders[SHADERTYPE::MiniMap]->LinkProgram()) {
+		NCLERROR("Could not link shader: MiniMap");
+	}
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -219,6 +229,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::Draw_Path] = new DrawPathMaterial();
 	materials[MATERIALTYPE::Ground] = new GroundMaterial();
 	materials[MATERIALTYPE::SkyBox] = nullptr;
+	materials[MATERIALTYPE::MiniMap] = nullptr;
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -378,6 +389,11 @@ void GraphicsPipeline::RenderScene()
 	//post process and present
 	RenderPostprocessAndPresent();
 
+	//draw the minimap on screen
+	if (isMainMenu == false) {
+		DrawMiniMap();
+	}
+
 	//NCLDEBUG - Text Elements (aliased)
 	if (isMainMenu == false) {
 		NCLDebug::_RenderDebugClipSpace();
@@ -387,6 +403,7 @@ void GraphicsPipeline::RenderScene()
 
 	//RenderUI
 	RenderUI();
+
 
 	OGLRenderer::SwapBuffers();
 }
@@ -744,3 +761,35 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 	for (auto itr = node->GetChildIteratorStart(); itr != node->GetChildIteratorEnd(); itr++)
 		RecursiveAddToPathRenderLists(*itr);
 }
+
+void GraphicsPipeline::DrawMiniMap() {
+	if (pathTex == NULL) {
+		glDeleteTextures(1, &pathTex);
+	}
+		glGenTextures(1, &pathTex);
+	if (!pathTex) {
+	}
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//set to the most basic shader
+	glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
+	glBindTexture(GL_TEXTURE_2D, pathTex);
+	//these numbers are hardcoded at the moment but will be variables in the end
+	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "modelMatrix"), 1, GL_FALSE,
+		(float*)&(Matrix4::Translation(Vector3(-0.8f, -0.8f, 0.0f)) * Matrix4::Scale(Vector3(0.2,0.2f,1.0f))));
+	uint playerCount = Game::Instance()->GetPlayerNumber();
+	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "playerCount"), playerCount);
+	float players[8];
+	int count = 0;
+		Avatar* a = Game::Instance()->GetPlayer(i);
+	for(int i = 0; i < 4; i++){
+		if (a) {
+			players[count] = (40 - a->GetPosition().x)/80.0;
+			players[++count] = (40 + a->GetPosition().z)/80.0;
+	}
+		}
+			count++;
+	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "players"), 4, players);
+	fullscreenQuad->Draw();
+}
+//philip 20/02/2018

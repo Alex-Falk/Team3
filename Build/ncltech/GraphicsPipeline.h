@@ -121,6 +121,7 @@ enum SHADERTYPE
 	Draw_Path			= 4,
 	Ground				= 5,
 	SkyBox				= 6,
+	MiniMap				= 7,
 	Shader_Number,
 };
 
@@ -202,7 +203,8 @@ protected:
 	void RenderUI();
 	void RenderPath();
 	void RenderPostprocessAndPresent();
-	
+	//Phil 20/02/2018
+	void DrawMiniMap();
 	
 	void RecursiveAddToPathRenderLists(RenderNode* node);
 
