@@ -141,7 +141,7 @@ void Server::UpdateUser(float dt)
 					{
 						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 						SendConnectionID(freeIDs[freeIDs.size() - 1]);
-						enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1], 10, 10, 10);
+						enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1], 80, 800, 800);
 
 						freeIDs.pop_back();
 					}

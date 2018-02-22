@@ -55,7 +55,7 @@ Client::Client(IP ip) {
 			//Attempt to connect to the server on localhost:1234
 			serverConnection = network.ConnectPeer(ip.a, ip.b, ip.c, ip.d, ip.port);
 			NCLDebug::Log("Network: Attempting to connect to server.");
-			enet_peer_timeout(serverConnection,10,10,10);
+			enet_peer_timeout(serverConnection,800,800,800);
 		}
 	}
 }
