@@ -80,8 +80,6 @@ void Map::OnUpdateScene(float dt)
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
 	}
 
-	int score = groundTeamScore[0];
-
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
 	if (Game::Instance()->GetUser())
@@ -89,4 +87,13 @@ void Map::OnUpdateScene(float dt)
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
+}
+
+//--------------------------------------------------------------------------------------------//
+// Sets the MAP
+//--------------------------------------------------------------------------------------------//
+int Map::mapIndex;
+void Map::SetMapIndex(int mapIndx)
+{
+	mapIndex = mapIndx;
 }

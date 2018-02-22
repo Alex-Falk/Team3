@@ -15,8 +15,7 @@
 #include "Avatar.h"
 #include "Game.h"
 #include "AudioSystem.h"
-
-// Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
+#include "Map.h"
 
 class MainMenu : public Scene
 {
@@ -100,7 +99,7 @@ public:
 
 		this->AddGameObject(ground);
 
-		player = new Avatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
+		player = new Avatar(Vector3(0.0, 2.0, 0.0), START_COLOUR, 0, 1.0f);
 
 		this->AddGameObject(player->GetGameObject());
 

@@ -28,7 +28,7 @@ private:
 	static const int xDimension = 40;
 	static const int yDimension = 40;
 
-	static const int groundScoreAccuracy = 15;
+	static const int groundScoreAccuracy = 1;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup

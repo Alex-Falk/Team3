@@ -120,10 +120,24 @@ PlayerFloat User::ReceiveSizes(string data)
 	return pfloat;
 
 }
+PlayerName  User::ReceiveUserName(string data) {
+
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
+
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+	PlayerName pname;
+	pname.ID = playerID;
+	pname.n = data.substr(semicolonIdx + 1);
+
+	return pname;
+}
+
 
 void User::StartGame()
 {
-	SceneManager::Instance()->JumpToScene();
+	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);

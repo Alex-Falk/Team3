@@ -47,6 +47,7 @@ private:
 	NetworkBase * server;
 	GameTimer timer;
 	uint serverPort = 1234;
+	vector<string> clientIPAddress;
 
 	vector<uint> connectedIDs;
 	vector<uint> freeIDs;
@@ -86,7 +87,7 @@ public:
 	void SendWeaponFire(uint ID);
 	void SendSize(uint ID);
 	void SendScores();
-	//void SendMap();
+	void SendMap();
 	//void SendUpdatemap();
 
 	void StartGame();
