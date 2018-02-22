@@ -5,6 +5,7 @@ PaintableGameObject::PaintableGameObject(GameObject * g, float objWorth, bool p,
 	objectWorth = objWorth;
 	isPaintable = p;
 	colour = col;
+	PhysNodeType::PAINTABLE_OBJECT;
 }
 
 void PaintableGameObject::CollisionOccured(ControllableAvatar * p)

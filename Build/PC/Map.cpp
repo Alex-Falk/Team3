@@ -5,7 +5,7 @@
 //--------------------------------------------------------------------------------------------//
 void Map::onConnectToScene()
 {
-	for (uint i = 0; i < 4; i++) {
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
 		if (Game::Instance()->GetUser())
 		{
 			Avatar * p = nullptr;
@@ -27,7 +27,20 @@ void Map::onConnectToScene()
 }
 
 void Map::OnInitializeScene() {
+
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
+	GraphicsPipeline::Instance()->InitPath(Vector2((float)xDimension, (float)yDimension));
+
+	OnInitializeGUI();
+
+	InitializeScores();
+
+	SetSpawnLocations();
+
+	LoadTextures();
+
+	AddObjects();
+
 	Scene::OnInitializeScene();
 }
 
@@ -64,24 +77,60 @@ void Map::OnInitializeGUI()
 
 }
 
+void Map::InitializeScores() 
+{
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->getUserID() == 0)
+		{
+			score = new Score(xDimension, yDimension, groundScoreAccuracy);
+		}
+	}
+}
+
+void Map::LoadTextures()
+{
+	//if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+	//	NCLERROR("Texture not loaded");
+
+	//if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box, TEXTUREDIR"SkyBox\\skyright.jpg", TEXTUREDIR"SkyBox\\skyleft.jpg", TEXTUREDIR"SkyBox\\skytop.jpg",
+	//	TEXTUREDIR"SkyBox\\skybottom.jpg", TEXTUREDIR"SkyBox\\skyback.jpg", TEXTUREDIR"SkyBox\\skyfront.jpg"))
+	//	NCLERROR("Texture not loaded");
+}
+
+void Map::SetSpawnLocations()
+{
+	spawnPositions[0] = Vector3(0, 5, 0);
+	spawnPositions[1] = Vector3(35, 5, -35);
+	spawnPositions[2] = Vector3(-35, 5, 35);
+	spawnPositions[3] = Vector3(-35, 5, -35);
+}
+
+void Map::OnCleanupScene()
+{
+	SAFE_DELETE(score);
+	SAFE_DELETE(energyBar);
+	DeleteAllGameObjects();
+	TextureManager::Instance()->RemoveAllTexture();
+	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
+};
+
 
 //--------------------------------------------------------------------------------------------//
 // Updating Avatars and Scores
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {
+	score->UpdateScores();
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;
 
 	//player->OnPlayerUpdate(dt);
-	for (uint i = 0; i < 4; i++) {
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
 		if (Game::Instance()->GetPlayer(i))
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
-		UpdateGroundScore(Game::Instance()->GetPlayer(i));
 	}
-
-	int score = groundTeamScore[0];
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
@@ -90,18 +139,4 @@ void Map::OnUpdateScene(float dt)
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
-}
-
-
-//--------------------------------------------------------------------------------------------//
-// Score Related Functions
-//--------------------------------------------------------------------------------------------//
-// Decreases the score from previous team and increases the score to the new team.
-void Map::ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease) {
-	groundTeamScore[teamToDecrease] -= 1;
-	groundTeamScore[teamToIncrease] += 1;
-}
-
-void Map::PrintScore(int score) {
-	NCLDebug::Log(to_string(score / 1000));
 }

@@ -71,7 +71,7 @@ void GUI::HideMouseCursor()
 
 void GUI::HandleTextInput(KeyboardKeys pressedKey)
 {
-	CEGUI::utf32 codePoint = 61;
+	CEGUI::utf32 codePoint = 46;
 	switch (pressedKey)
 	{
 	case KEYBOARD_A:
@@ -151,6 +151,39 @@ void GUI::HandleTextInput(KeyboardKeys pressedKey)
 		break;
 	case KEYBOARD_Z:
 		m_context->injectChar(0x7a);
+		break;
+	case KEYBOARD_PERIOD:
+		m_context->injectChar(0x2e);
+		break;
+	case KEYBOARD_0:
+		m_context->injectChar(0x30);
+		break;
+	case KEYBOARD_1:
+		m_context->injectChar(0x31);
+		break;
+	case KEYBOARD_2:
+		m_context->injectChar(0x32);
+		break;
+	case KEYBOARD_3:
+		m_context->injectChar(0x33);
+		break;
+	case KEYBOARD_4:
+		m_context->injectChar(0x34);
+		break;
+	case KEYBOARD_5:
+		m_context->injectChar(0x35);
+		break;
+	case KEYBOARD_6:
+		m_context->injectChar(0x36);
+		break;
+	case KEYBOARD_7:
+		m_context->injectChar(0x37);
+		break;
+	case KEYBOARD_8:
+		m_context->injectChar(0x38);
+		break;
+	case KEYBOARD_9:
+		m_context->injectChar(0x39);
 		break;
 	case KEYBOARD_BACK:
 		m_context->injectKeyDown(CEGUI::Key::Backspace);

@@ -75,8 +75,10 @@ public:
 	// Player Scores
 	// full map info - on connect -> use map index
 	// changes to map
-	
+	void SendNumberUsers(uint n);
 	void SendConnectionID(uint ID);
+	void SendGameStart();
+
 	void SendPosition(uint ID);
 	void SendLinVelocity(uint ID);
 	void SendAngVelocity(uint ID);
@@ -87,6 +89,7 @@ public:
 	//void SendMap();
 	//void SendUpdatemap();
 
+	void StartGame();
 	void Disconnect();
 
 	std::string GetPacketData(const ENetEvent & evnt)

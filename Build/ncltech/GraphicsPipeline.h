@@ -173,6 +173,7 @@ public:
 	inline Material** GetAllMaterials() { return materials; }
 
 	inline void AddPlayerRenderNode(RenderNode* playerRenderNode){ playerRenderNodes.push_back(playerRenderNode); }
+	void RemovePlayerRenderNode(RenderNode* node);
 
 	inline void RemoveAllPlayerRenderNode() { playerRenderNodes.clear(); }
 	void InitPath(Vector2 groundSize);

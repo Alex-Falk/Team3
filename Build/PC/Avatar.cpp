@@ -49,7 +49,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	col = c;
 	size = s;
 
-	standardSpeed = 5.0f;
+	standardSpeed = 50.0f;
 	speed = standardSpeed;
 	boostedSpeed = standardSpeed * 20;
 
@@ -71,6 +71,10 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	inAir = true;
 	canShoot = true;
 	shooting = false;
+
+	collisionTimerActive = false;
+	collisionTimer = 0.0f;
+	timeUntilInAir = 0.1f;
 
 	weapon = NUM_OF_WEAPONS;
 
@@ -155,9 +159,21 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
 
-	if (collidingObject->GetType() != PICKUP && collidingObject->GetType() != PROJECTILE && collidingObject->GetType() != SPRAY)
+	if (collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == BIG_NODE || (collidingObject->GetType() == PAINTABLE_OBJECT))
 	{
+		if ((Pickup*)(collidingObject->GetParent())) 
+		{
+			activePickUp = ((Pickup*)(collidingObject->GetParent()))->GetPickupType();
+			if (activePickUp == WEAPON)
+			{
+				weapon = ((WeaponPickup*)(collidingObject->GetParent()))->GetWeaponType();
+			}
+			PickUpBuffActivated(activePickUp);
+		}
+
 		canJump = true;
+		collisionTimerActive = true;
+		collisionTimer = timeUntilInAir;
 		inAir = false;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 	}
@@ -171,8 +187,11 @@ void Avatar::ChangeSize(float newSize)
 	Render()->GetChild()->SetBoundingRadius(newSize);
 	Render()->SetBoundingRadius(newSize);
 	Physics()->SetBoundingRadius(newSize);
+	Physics()->SetInverseMass(0.5f/newSize);
+	standardSpeed = 25.0f*newSize;
+	boostedSpeed = 50.0f*newSize;
 	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
-
+	
 	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
 }
 
@@ -181,9 +200,6 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 	shooting = false;
 	
-	inAir = true;
-	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
-
 	ManageWeapons();
 	
 	UpdatePickUp(dt);
@@ -201,6 +217,16 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 	ChangeSize(curSize);
 
+	if (collisionTimerActive)
+	{
+		collisionTimer -= dt;
+		if (collisionTimer <= 0)
+		{
+			collisionTimerActive = false;
+			inAir = true;
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+		}
+	}
 }
 
 
@@ -276,7 +302,6 @@ void Avatar::UpdatePickUp(float dt)
 
 void Avatar::Spray()
 {
-	
 	int randPitch;
 	int randYaw;
 	Vector3 direction;
@@ -286,12 +311,14 @@ void Avatar::Spray()
 	{
 		randPitch = rand() % 90 + 0;
 		randYaw = rand() % 360;
-		float a = rand() % 10;
-		float b = rand() % 10;
-		float c = rand() % 10;
-		direction = Matrix3::Rotation(randPitch, Vector3(1, 0, 0)) * Matrix3::Rotation(randYaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 15;
+		float a = (float)(rand() % 10);
+		float b = (float)(rand() % 10);
+		float c = (float)(rand() % 10);
+		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
 
-		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, SPRAY, 2, "Spray");
+		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
+
+		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
 	}
@@ -299,26 +326,34 @@ void Avatar::Spray()
 
 void Avatar::ShootRocket()
 {
-	/*
+	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
-	Vector3 direction = playerVelocityDirection;
+	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	if (canJump && pitch < 0) {
+		pitch = 0;
+	}
 
-	Rocket* projectile =  new Rocket(position, direction, size, enum Colour, Vector4 RGBA);;
+	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
+	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
+	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion((float)pitch, (float)yaw, 0.0f));
 
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
-	*/
 }
 
 void Avatar::ShootProjectile()
 {
-	/*
+	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	
-	Vector3 direction = playerVelocityDirection;
+	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	if (canJump && pitch < 0) {
+		pitch = 0;
+	}
 
-	Projectile* projectile =  new Projectile(position, direction, size, enum Colour, Vector4 RGBA);;
+	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
+	Projectile* projectile =  new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, PROJECTILE, 2, "Projectile");
+
 	
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
-	*/
 }
 
 void Avatar::ManageWeapons() 

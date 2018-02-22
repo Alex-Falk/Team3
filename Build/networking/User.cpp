@@ -10,7 +10,7 @@ User::~User()
 {
 }
 
-PlayerVector User::ReceivePosition(string data)
+PlayerVector User::ReceiveVector(string data)
 {
 	size_t colonIdx = data.find_first_of(':');
 	size_t semicolonIdx = data.find_first_of(';');
@@ -27,62 +27,11 @@ PlayerVector User::ReceivePosition(string data)
 	return pvec;
 }
 
-PlayerVector User::ReceiveLinVelocity(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
-	string p = data.substr(semicolonIdx + 1);
-	Vector3 vel = InterpretStringVector(p);
-
-	PlayerVector pvec;
-	pvec.ID = playerID;
-	pvec.v = vel;
-
-	return pvec;
-}
-
-PlayerVector User::ReceiveAngVelocity(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
-	string p = data.substr(semicolonIdx + 1);
-	Vector3 vel = InterpretStringVector(p);
-
-	PlayerVector pvec;
-	pvec.ID = playerID;
-	pvec.v = vel;
-
-	return pvec;
-}
-
-PlayerVector User::ReceiveAcceleration(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
-	string a = data.substr(semicolonIdx + 1);
-	Vector3 acceleration = InterpretStringVector(a);
-
-	PlayerVector pvec;
-	pvec.ID = playerID;
-	pvec.v = acceleration;
-
-	return pvec;
-}
-
 // PACKET_TYPE:WEAPON_TYPE;XPOS YPOS ZPOS,XDIR YDIR ZDIR
 void User::ReceiveWeapon(string data) {
-	uint colonPos = data.find_first_of(':');
-	uint semicolonPos = data.find_first_of(';');
-	uint commaPos = data.find_first_of(',');
+	uint colonPos = (uint)(data.find_first_of(':'));
+	uint semicolonPos = (uint)(data.find_first_of(';'));
+	uint commaPos = (uint)(data.find_first_of(','));
 
 	WeaponType type = static_cast<WeaponType>(stoi(data.substr(colonPos + 1, semicolonPos)));
 
@@ -119,4 +68,12 @@ PlayerFloat User::ReceiveSizes(string data)
 
 	return pfloat;
 
+}
+
+void User::StartGame()
+{
+	SceneManager::Instance()->JumpToScene();
+	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 }

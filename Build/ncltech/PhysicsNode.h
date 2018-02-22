@@ -40,7 +40,7 @@ enum Integrator { ZERO, SYMPLETIC, RK2, RK4 };
 //Nick Bedford
 //Date: 12/02/2018
 //Added an enum to sort nodes
-enum PhysNodeType {DEFAULT_PHYSICS, PROJECTILE, SPRAY, BIG_NODE, PICKUP, PLAYER};
+enum PhysNodeType {DEFAULT_PHYSICS, PROJECTILE, SPRAY, BIG_NODE, PICKUP, PLAYER, MINION, PAINTABLE_OBJECT};
 
 class PhysicsNode;
 
@@ -107,7 +107,7 @@ public:
 	inline const Vector3&		GetLinearVelocity()			const { return linVelocity; }
 	inline const Vector3&		GetForce()					const { return force; }
 	inline float				GetInverseMass()			const { return invMass; }
-	inline const Vector3&		GetAcceleration()			const { return force*invMass; }
+	inline const Vector3		GetAcceleration()			const { return (force*invMass); }
 
 	inline const Quaternion&	GetOrientation()			const { return orientation; }
 	inline const Vector3&		GetAngularVelocity()		const { return angVelocity; }

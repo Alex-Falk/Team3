@@ -114,8 +114,15 @@ void PrintStatusEntries()
 	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
 
 	//Physics Debug Drawing options
-	NCLDebug::AddStatusEntry(status_colour_header, "Score");
-	NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(SceneManager::Instance()->GetCurrentScene()->GetScore()));
+	if (Game::Instance()->IsRunning())
+	{
+		NCLDebug::AddStatusEntry(status_colour_header, "Score");
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(0)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(1)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(2)));
+		NCLDebug::AddStatusEntry(status_colour, "     Score = " + to_string(((Map*)SceneManager::Instance()->GetCurrentScene())->GetScore()->GetTeamScore(3)));
+
+	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [G] ---");
@@ -136,13 +143,6 @@ void PrintStatusEntries()
 
 
 static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObject) {
-	if (collidingObject->IsGood()) {
-		SceneManager::Instance()->GetCurrentScene()->AddToScore(100);
-	}
-	else {
-		SceneManager::Instance()->GetCurrentScene()->AddToScore(-50);
-	}
-
 	return true;
 }
 
@@ -302,7 +302,7 @@ void HandleGUITextInput()
 		GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(KEYBOARD_BACK);
 		return;
 	}
-	for (int i = KeyboardKeys::KEYBOARD_A; i <= KeyboardKeys::KEYBOARD_Z; i++) {
+	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
 		//TODO: Is there a better way to achieve this?
 		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
 			GraphicsPipeline::Instance()->GetGUISystem()->HandleTextInput(static_cast<KeyboardKeys>(i));
@@ -382,6 +382,8 @@ int main()
 			//	glClientWaitSync(glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL), GL_SYNC_FLUSH_COMMANDS_BIT, 1000000);
 		}
 		timer_render.EndTimingSection();
+
+		PhysicsEngine::Instance()->CleanUpPhase();
 
 		timer_audio.BeginTimingSection();
 		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);

@@ -69,12 +69,7 @@ public:
 	//	 - Initialize objects/physics here
 	virtual void OnInitializeScene()	{ 
 		PhysicsEngine::Instance()->ResetWorldPartition();
-		score = 0;
 	}
-
-	virtual int GetScore()				{ return score; }
-	virtual void Setscore(int s)		{ score = s; }
-	virtual void AddToScore(int s)		{ score += s; }
 
 	// Called when scene is being swapped and will no longer be rendered/updated 
 	//	 - Override to remove custom objects/physics here as needed
@@ -85,21 +80,22 @@ public:
 	// Update Scene Logic
 	//   - Called once per frame and should contain time-sensitive update logic
 	//	   Note: This is time relative to seconds not milliseconds! (e.g. msec / 1000)
+	//	   michael davis: projectiles delete after 10 seconds
 	virtual void onConnectToScene() {}
 	virtual void OnUpdateScene(float dt) {
 		vector<GameObject*> tempVec;
 		for (int i = 0; i < m_vpObjects.size(); i++) {
 			m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
-			if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE) {
-				if (m_vpObjects[i]->GetTimeInScene() > 15.0f) {
+			if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE || m_vpObjects[i]->Physics()->GetType() == SPRAY) {
+				if (m_vpObjects[i]->GetTimeInScene() > 10.0f) {
 					m_vpObjects[i]->SetToDestroy();
-					tempVec.push_back(m_vpObjects[i]);
+					//tempVec.push_back(m_vpObjects[i]);
 				}
 			}
 		}
-		for (int i = 0; i < tempVec.size(); i++) {
-			RemoveGameObject(tempVec[i]);
-		}
+		//for (int i = 0; i < tempVec.size(); i++) {
+		//	RemoveGameObject(tempVec[i]);
+		//}
 	}
 
 
@@ -168,6 +164,7 @@ public:
 			m_vpObjects.erase(std::remove(m_vpObjects.begin(), m_vpObjects.end(), game_object), m_vpObjects.end());
 			game_object->OnDetachedFromScene();
 			game_object->scene = NULL;
+			SAFE_DELETE(game_object);
 		}
 	}
 
@@ -247,6 +244,4 @@ protected:
 	std::vector<GameObject*>	m_vpObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
 	GUI*						sceneGUI;
-
-	int							score = 0;
 };

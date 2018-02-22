@@ -1,3 +1,6 @@
+// Created by J. Zhou
+// Adapted by A. Falk
+
 #pragma once
 
 #include <nclgl\NCLDebug.h>
@@ -21,18 +24,21 @@ private:
 	Avatar* player;
 	bool ShowOptionMenu;
 
+	CEGUI::PushButton* createButton;
 	CEGUI::PushButton* startButton;
 	CEGUI::PushButton* joinButton;
 	CEGUI::PushButton* optionButton;
 	CEGUI::PushButton* OptionMenuBack;
+	CEGUI::PushButton* connectToHostButton;
 
+	CEGUI::DefaultWindow* ipText;
 	//Sound Control
-	CEGUI::Slider* masterVolumnSlider;
+	CEGUI::Slider* mastervolumeSlider;
 	CEGUI::Slider* GameSoundsSlider;
 	CEGUI::Slider* MusicSlider;
-	CEGUI::Titlebar* masterVolumnText;
-	CEGUI::Titlebar* GameSoundVolumnText;
-	CEGUI::Titlebar* MusicVolumnText;
+	CEGUI::Titlebar* mastervolumeText;
+	CEGUI::Titlebar* GameSoundvolumeText;
+	CEGUI::Titlebar* MusicvolumeText;
 
 	//Camera Control
 	CEGUI::Slider* CameraSensitivity;
@@ -48,7 +54,8 @@ private:
 	CEGUI::PushButton* DebugButton;
 
 	//Testing text box for creating game
-	CEGUI::Editbox* textBox;
+	inputBox IpInputBox;
+	userInput connectIP;
 public:
 
 	//Exit Button
@@ -59,6 +66,7 @@ public:
 
 	~MainMenu()
 	{
+		enet_deinitialize();
 		TextureManager::Instance()->RemoveAllTexture();
 		delete player;
 	}
@@ -106,7 +114,7 @@ public:
 
 	virtual void OnUpdateScene(float dt) {
 		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-		yaw += 0.1;
+		yaw += 0.1f;
 		GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 		Scene::OnUpdateScene(dt);
 	}
@@ -131,21 +139,20 @@ public:
 
 		SetUpMainMenu();
 		SetUpOptionMenu();
-		SetUpCreateGameMenu();
+		SetUpLobby();
+		SetUpconnectionMenu();
+		HideLobby();
+		HideConnectionMenu();
 		HideOptionMenu();
-	}
-
-	void onOptionButtonClicked(){HideMainMenu();ShowOptionMenu1();}
-	void onCreateGameButtonClicked()
-	{
-		HideMainMenu();
 		
 	}
 
+	void onOptionButtonClicked(){HideMainMenu();ShowOptionMenu1();}
+
 	void OnOptionMenuBackClicked(){ShowMainMenu();HideOptionMenu();}
-	void onMasterVolumnChanged(){float temp = masterVolumnSlider->getCurrentValue();AudioSystem::Instance()->SetMasterVolume(temp);}
-	void onGameSoundVolumnChanged(){float temp = GameSoundsSlider->getCurrentValue();AudioSystem::Instance()->SetGameSoundsVolume(temp);}
-	void onMusicVolumnChanged(){float temp = MusicSlider->getCurrentValue();AudioSystem::Instance()->SetGameSoundsVolume(temp);}
+	void onMastervolumeChanged(){float temp = mastervolumeSlider->getCurrentValue();AudioSystem::Instance()->SetMasterVolume(temp);}
+	void onGameSoundvolumeChanged(){float temp = GameSoundsSlider->getCurrentValue();AudioSystem::Instance()->SetGameSoundsVolume(temp);}
+	void onMusicvolumeChanged(){float temp = MusicSlider->getCurrentValue();AudioSystem::Instance()->SetGameSoundsVolume(temp);}
 	//GUI interation event
 	void onButtonClicked() { SceneManager::Instance()->JumpToScene(); }
 	void OnEnableVsyncClicked() {GraphicsPipeline::Instance()->SetVsyncEnabled(true);}
@@ -157,14 +164,14 @@ public:
 	void SetUpMainMenu()
 	{
 		//Create Push Button handle
-		startButton = static_cast<CEGUI::PushButton*>(
+		createButton = static_cast<CEGUI::PushButton*>(
 			sceneGUI->createWidget("OgreTray/Button",
 				Vector4(0.40f, 0.15f, 0.2f, 0.1f),
 				Vector4(),
-				"startButton"
+				"createButton"
 			));
-		startButton->setText("CREATE GAME");
-		startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onStartGameClicked, this));
+		createButton->setText("CREATE GAME");
+		createButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onCreateGameClicked, this));
 
 		joinButton = static_cast<CEGUI::PushButton*>(
 			sceneGUI->createWidget("OgreTray/Button",
@@ -195,6 +202,50 @@ public:
 		exitButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::Quit, this));
 	}
 
+	void SetUpLobby()
+	{
+		startButton = static_cast<CEGUI::PushButton*>(
+			sceneGUI->createWidget("OgreTray/Button",
+				Vector4(0.40f, 0.75f, 0.2f, 0.1f),
+				Vector4(),
+				"startButton"
+			));
+		startButton->setText("START GAME");
+		startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onStartGameClicked, this));
+
+		ipText = static_cast<CEGUI::DefaultWindow*>(
+			sceneGUI->createWidget("OgreTray/Button",
+				Vector4(0.40f, 0.1f, 0.2f, 0.1f),
+				Vector4(),
+				"text"
+			));
+
+	}
+
+	void SetUpconnectionMenu()
+	{
+		IpInputBox.editbox = static_cast<CEGUI::Editbox*>(
+			sceneGUI->createWidget("OgreTray/Editbox",
+				Vector4(0.40f, 0.65f, 0.2f, 0.1f),
+				Vector4(),
+				"textBox"
+			));
+		IpInputBox.editbox->setText("10.70.32.176:1234");
+		IpInputBox.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnTextBoxClicked, this));
+		IpInputBox.type = "test";
+		connectIP.type = IpInputBox.type;
+		sceneGUI->inputBox.push_back(IpInputBox);
+		sceneGUI->userTyping.push_back(connectIP);
+
+		connectToHostButton = static_cast<CEGUI::PushButton*>(
+			sceneGUI->createWidget("OgreTray/Button",
+				Vector4(0.40f, 0.75f, 0.2f, 0.1f),
+				Vector4(),
+				"connectToHostButton"
+			));
+		connectToHostButton->setText("CONNECT TO GAME");
+		connectToHostButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onConnectButtonClicked, this));
+	}
 
 	// 2. Setting up option Menu
 	void SetUpOptionMenu()
@@ -209,19 +260,19 @@ public:
 		OptionMenuBack->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnOptionMenuBackClicked, this));
 
 
-		//Sound Volumn Control
-		masterVolumnSlider = static_cast<CEGUI::Slider*>(
+		//Sound volume Control
+		mastervolumeSlider = static_cast<CEGUI::Slider*>(
 			sceneGUI->createWidget("OgreTray/Slider",
 				Vector4(0.40f, 0.15f, 0.30f, 0.03f),
 				Vector4(),
-				"masterVolumnSlider"
+				"mastervolumeSlider"
 			));
-		masterVolumnSlider->setMaxValue(1.0f);
-		//masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
-		masterVolumnSlider->setVisible(false);
-		masterVolumnSlider->disable();
-		masterVolumnSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
-		masterVolumnSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMasterVolumnChanged, this));
+		mastervolumeSlider->setMaxValue(1.0f);
+		mastervolumeSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		mastervolumeSlider->setVisible(false);
+		mastervolumeSlider->disable();
+		mastervolumeSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		mastervolumeSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMastervolumeChanged, this));
 
 		GameSoundsSlider = static_cast<CEGUI::Slider*>(
 			sceneGUI->createWidget("OgreTray/Slider",
@@ -231,11 +282,11 @@ public:
 			));
 
 		GameSoundsSlider->setMaxValue(1.0f);
-		//GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		GameSoundsSlider->setVisible(false);
 		GameSoundsSlider->disable();
 		GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
-		GameSoundsSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onGameSoundVolumnChanged, this));
+		GameSoundsSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onGameSoundvolumeChanged, this));
 		MusicSlider = static_cast<CEGUI::Slider*>(
 			sceneGUI->createWidget("OgreTray/Slider",
 				Vector4(0.40f, 0.35f, 0.30f, 0.03f),
@@ -243,35 +294,35 @@ public:
 				"MusicSlider"
 			));
 		MusicSlider->setMaxValue(1.0f);
-		//MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+		MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
 		MusicSlider->setVisible(false);
 		MusicSlider->disable();
 		MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
-		MusicSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMusicVolumnChanged, this));
+		MusicSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMusicvolumeChanged, this));
 
-		masterVolumnText = static_cast<CEGUI::Titlebar*>(
+		mastervolumeText = static_cast<CEGUI::Titlebar*>(
 			sceneGUI->createWidget("OgreTray/Title",
 				Vector4(0.28f, 0.145f, 0.12f, 0.04f),
 				Vector4(),
-				"masterVolumnText"
+				"mastervolumeText"
 			));
-		masterVolumnText->setText("Master Volumn");
+		mastervolumeText->setText("Master volume");
 
-		GameSoundVolumnText = static_cast<CEGUI::Titlebar*>(
+		GameSoundvolumeText = static_cast<CEGUI::Titlebar*>(
 			sceneGUI->createWidget("OgreTray/Title",
 				Vector4(0.28f, 0.245f, 0.12f, 0.04f),
 				Vector4(),
-				"GameSoundVolumnText"
+				"GameSoundvolumeText"
 			));
-		GameSoundVolumnText->setText("Game Sound Volumn");
+		GameSoundvolumeText->setText("Game Sound volume");
 
-		MusicVolumnText = static_cast<CEGUI::Titlebar*>(
+		MusicvolumeText = static_cast<CEGUI::Titlebar*>(
 			sceneGUI->createWidget("OgreTray/Title",
 				Vector4(0.28f, 0.345f, 0.12f, 0.04f),
 				Vector4(),
-				"MusicVolumnText"
+				"MusicvolumeText"
 			));
-		MusicVolumnText->setText("Music Volumn");
+		MusicvolumeText->setText("Music volume");
 
 		//Camera Sensitivity Control
 		//TODO: link with the actual camera sensitivity
@@ -338,39 +389,68 @@ public:
 		DebugButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDebugRenderClicked, this));
 	}
 
-	void onStartGameClicked() {
-		if (enet_initialize() != 0)
+	void onCreateGameClicked()
+	{
+		if (!Game::Instance()->GetUser())
 		{
-			//Quit(true, "ENET failed to initialize!");
+			Game::Instance()->SetServer();
+			ipText->setText("Your IP: \n" + Game::Instance()->GetUser()->GetIP());
+			HideMainMenu();
+			ShowLobbyMenuServer();
+			createButton->disable();
 		}
 
-		Game::Instance()->SetServer();
-		SceneManager::Instance()->JumpToScene();
-		SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
-		GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
-		GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+
+	}
+
+	void onStartGameClicked() {	
+
+		Game::Instance()->StartGame();
 	}
 
 	void onJoinGameClicked() {
-		if (enet_initialize() != 0)
-		{
-			//Quit(true, "ENET failed to initialize!");
-		}
+		HideMainMenu();
+		ShowConnectionMenu();
+	}
 
+	void onConnectButtonClicked()
+	{
 		IP ip;
+		string IPstring(IpInputBox.editbox->getText().c_str());
+		
+		if (IPstring.find_first_of('.') != string::npos)
+		{
+			ip.a = stoi(IPstring.substr(0, IPstring.find_first_of('.')));
+			IPstring = IPstring.substr(IPstring.find_first_of('.') + 1);
+		}
+		if (IPstring.find_first_of('.') != string::npos)
+		{
+			ip.b = stoi(IPstring.substr(0, IPstring.find_first_of('.')));
+			IPstring = IPstring.substr(IPstring.find_first_of('.') + 1);
+		}
+		if (IPstring.find_first_of('.') != string::npos)
+		{
+			ip.c = stoi(IPstring.substr(0, IPstring.find_first_of('.')));
+			IPstring = IPstring.substr(IPstring.find_first_of('.') + 1);
+		}
+		if (IPstring.find_first_of(':') != string::npos)
+		{
+			ip.d = stoi(IPstring.substr(0, IPstring.find_first_of(':')));
+			IPstring = IPstring.substr(IPstring.find_first_of(':') + 1);
+		}
+		if (IPstring.size() > 0)
+		{
+			ip.port = stoi(IPstring.substr(0));
 
-		cout << "Enter the IP:\n";
-		cin >> ip.a;
-		cout << ".";
-		cin >> ip.b;
-		cout << ".";
-		cin >> ip.c;
-		cout << ".";
-		cin >> ip.d;
-		cout << ":1234";
-		ip.port = 1234;
+			if (!Game::Instance()->GetUser())
+			{
+				Game::Instance()->setClient(ip);
+				HideConnectionMenu();
+				ShowLobbyMenuClient();
+			}
 
-		Game::Instance()->setClient(ip);
+
+		}
 	}
 
 	// 3. Setting up Create Game Function
@@ -398,16 +478,25 @@ public:
 	}
 
 	//GUI Menu switch helper function
-	void ShowCreateMainMenu()
+	void ShowLobbyMenuServer()
 	{
-		
+		ipText->enable();
+		ipText->setVisible(true);
+
+		startButton->enable();
+		startButton->setVisible(true);
+	}
+
+	void ShowLobbyMenuClient()
+	{
+
 	}
 
 	void ShowMainMenu()
 	{
 		//Enable Main Menu
-		startButton->enable();
-		startButton->setVisible(true);
+		createButton->enable();
+		createButton->setVisible(true);
 		exitButton->enable();
 		exitButton->setVisible(true);
 		optionButton->enable();
@@ -416,24 +505,34 @@ public:
 		joinButton->enable();
 	}
 
+	void ShowConnectionMenu()
+	{
+		connectToHostButton->enable();
+		connectToHostButton->setVisible(true);
+
+		IpInputBox.editbox->enable();
+		IpInputBox.editbox->setVisible(true);
+		
+	}
+
 	void HideOptionMenu()
 	{
 		//Disable option menu
 		OptionMenuBack->disable();
 		OptionMenuBack->setVisible(false);
-		masterVolumnSlider->disable();
-		masterVolumnSlider->setVisible(false);
+		mastervolumeSlider->disable();
+		mastervolumeSlider->setVisible(false);
 		GameSoundsSlider->disable();
 		GameSoundsSlider->setVisible(false);
 		MusicSlider->disable();
 		MusicSlider->setVisible(false);
 
-		masterVolumnText->setVisible(false);
-		masterVolumnText->deactivate();
-		GameSoundVolumnText->setVisible(false);
-		GameSoundVolumnText->deactivate();
-		MusicVolumnText->setVisible(false);
-		MusicVolumnText->deactivate();
+		mastervolumeText->setVisible(false);
+		mastervolumeText->deactivate();
+		GameSoundvolumeText->setVisible(false);
+		GameSoundvolumeText->deactivate();
+		MusicvolumeText->setVisible(false);
+		MusicvolumeText->deactivate();
 
 		CameraSensitivity->deactivate();
 		CameraSensitivity->setVisible(false);
@@ -454,11 +553,11 @@ public:
 
 	void HideMainMenu()
 	{
-		float temp = masterVolumnSlider->getCurrentValue();
-		//AudioSystem::Instance()->SetMasterVolume(temp);
+		float temp = mastervolumeSlider->getCurrentValue();
+		AudioSystem::Instance()->SetMasterVolume(temp);
 		//Disable MainMenu
-		startButton->setVisible(false);
-		startButton->disable();
+		createButton->setVisible(false);
+		createButton->disable();
 		exitButton->setVisible(false);
 		exitButton->disable();
 		optionButton->setVisible(false);
@@ -467,10 +566,28 @@ public:
 		joinButton->disable();
 	}
 
+	void HideLobby()
+	{
+		ipText->setVisible(false);
+		ipText->disable();
+
+		startButton->setVisible(false);
+		startButton->disable();
+	}
+
+	void HideConnectionMenu()
+	{
+		connectToHostButton->setVisible(false);
+		connectToHostButton->disable();
+
+		IpInputBox.editbox->setVisible(false);
+		IpInputBox.editbox->disable();
+	}
+
 	void ShowOptionMenu1()
 	{
 		float temp = GameSoundsSlider->getCurrentValue();
-		//AudioSystem::Instance()->SetGameSoundsVolume(temp);
+		AudioSystem::Instance()->SetGameSoundsVolume(temp);
 	}
 
 	//Quit the whole program cleanly

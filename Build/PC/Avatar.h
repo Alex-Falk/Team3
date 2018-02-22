@@ -56,6 +56,12 @@ protected:
 	float maxForce;			// Sets Maximum applied Force 
 	float shootCooldown;
 
+	bool collisionTimerActive;
+	float collisionTimer;
+	float timeUntilInAir;
+	
+
+
 	// Boosts
 	PickupType activePickUp;
 	float boostactiveTime;
@@ -95,6 +101,8 @@ public:
 
 	WeaponType GetWeapon() { return weapon; }
 	void SetWeapon(WeaponType newWeapon) { weapon = newWeapon; }
+
+	bool IsPlayerInAir() { return inAir; }
 	
 	Vector4 GetColourRGBA() { return colour; }
 
@@ -122,7 +130,7 @@ public:
 	//Example of member callback ('this' parameter is bound at bind time)
 	bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
-	~Avatar();
+	virtual ~Avatar();
 
 };
 
