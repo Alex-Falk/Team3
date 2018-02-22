@@ -45,6 +45,7 @@ enum PacketType {
 	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
 	PLAYER_WEAPON,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
 	PLAYER_SCORES,			// Server->Client: Broadcast Scores
+	PLAYER_NAME,			// Client->Server: Send Username
 	MAP_INDEX,				// Server->Client: Boradcast Map to load
 	MAP_UPDATE,				//
 	TEXT_PACKET,
@@ -67,6 +68,11 @@ struct PlayerVector {
 struct PlayerFloat {
 	uint ID;
 	float f;
+};
+
+struct PlayerName {
+	uint ID;
+	std::string n;
 };
 
 //--------------------------------------------------------------------------------------------//

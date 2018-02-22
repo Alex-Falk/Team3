@@ -34,6 +34,7 @@ public:
 	inline void SetScore(uint id, float score) { teamScores[id] = score; }
 	inline void SetAmmo(uint id, float ammo) {}
 	//FINISHED FUNCTIONS
+	inline void LoadLevel(int index) { SceneManager::Instance()->JumpToScene(index); }
 	inline void SetPlayerNumber(uint i) { playerNumber = i; }
 	inline void SetSize(uint id, float size) { avatars[id]->SetLife(size); }
 	inline void SetAcceleration(uint id, Vector3 a) { avatars[id]->GetGameObject()->Physics()->SetAcceleration(a); }

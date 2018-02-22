@@ -248,13 +248,7 @@ void Client::ReceiveScores(string data)
 {
 
 	string s = data.substr(data.find_first_of(':') + 1);
-	vector<string> splitData = split_string(s, ' ');
-
-	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
-	{
-		Game::Instance()->SetScore(i, stoi(splitData[i]));
-	}
-	
+	vector<string> splitData = split_string(s, ' ');	
 }
 
 void Client::ReceiveMapIndex(string data)
@@ -262,7 +256,15 @@ void Client::ReceiveMapIndex(string data)
 	string s = data.substr(data.find_first_of(':') + 1);
 	uint mapIndex = stoi(s);
 
-	//Game::Instance()->LoadLevel(mapIndex);
+	Game::Instance()->LoadLevel(mapIndex);
+}
+
+void Client::ReceiveMapChange(string data)
+{
+	string s = data.substr(data.find_first_of(':') + 1);
+	uint mapIndex = stoi(s);
+
+	Game::Instance()->LoadLevel(mapIndex);
 }
 
 
@@ -300,6 +302,20 @@ void Client::SendSize(uint ID)
 
 	data = to_string(PLAYER_SIZES) + ":" +
 		to_string(ID) + ";" + to_string(Game::Instance()->GetPlayer(ID)->GetLife());
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_peer_send(serverConnection, 0, packet);
+}
+
+
+//Nikos Fragkas
+//Date 19/02
+void Client::SendUsername(uint ID)
+{
+	string data;
+
+	data = to_string(PLAYER_NAME) + ":" +
+		to_string(ID) + ";" ;
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);

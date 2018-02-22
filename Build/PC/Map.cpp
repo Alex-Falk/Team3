@@ -126,3 +126,12 @@ void Map::OnUpdateScene(float dt)
 	//		energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	//}
 }
+
+//--------------------------------------------------------------------------------------------//
+// Sets the MAP
+//--------------------------------------------------------------------------------------------//
+int Map::mapIndex;
+void Map::SetMapIndex(int mapIndx)
+{
+	mapIndex = mapIndx;
+}

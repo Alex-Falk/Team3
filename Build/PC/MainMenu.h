@@ -129,7 +129,7 @@
                         .MMMMMMMMMMMMMMMMMMMMMMMMMM               MMMMMMMMMMMMMMMMMM
                         MMMMMMMMMMMMMMMMMMMMMMMMM                MMMMMMMMMMMMMMMMMMM
                         :MMMMMMMMMMMMMMMMMMH                     MMMMMMMMMMMMMMMMMMM
-                           By EBEN Jérôme                        MMMMMMMMMMMMMMMMMM
+                           By EBEN Jï¿½rï¿½me                        MMMMMMMMMMMMMMMMMM
                                                                  MMMMMMMMMMMMMMM
                                                                   HMMMMMM
          
@@ -150,8 +150,6 @@
 #include "Game.h"
 #include "AudioSystem.h"
 #include <cstring>
-
-// Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
 
 class MainMenu : public Scene
 {
