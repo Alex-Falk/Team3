@@ -104,6 +104,20 @@ Server::Server() {
 	}
 }
 
+
+
+//--------------------------------------------------------------------------------------------//
+// Utility
+//--------------------------------------------------------------------------------------------//
+void Server::StartGame(uint mapID)
+{
+	SendGameStart(mapID);
+	SceneManager::Instance()->JumpToScene(mapID);
+	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+}
+
 void Server::UpdateUser(float dt)
 {
 	if (server->m_pNetwork) {
@@ -127,7 +141,7 @@ void Server::UpdateUser(float dt)
 					{
 						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 						SendConnectionID(freeIDs[freeIDs.size() - 1]);
-						enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1], 10, 10, 10);
+						enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1], 80, 800, 800);
 
 						freeIDs.pop_back();
 					}
@@ -175,11 +189,16 @@ void Server::UpdateUser(float dt)
 				{
 					PlayerFloat pfloat = ReceiveSizes(data);
 					Game::Instance()->SetSize(pfloat.ID, pfloat.f);
+					break;
 				}
 
-				case TEXT_PACKET:
+				case PLAYER_WEAPON:
 				{
-					//cout << data.substr(data.find_first_of(':') + 1) + "\n";
+					ReceiveWeapon(data);
+
+					ENetPacket* packet = CreatePacket(data);
+					enet_host_broadcast(server->m_pNetwork, 0, packet);
+					break;
 				}
 				}
 				break;
@@ -195,7 +214,14 @@ void Server::UpdateUser(float dt)
 						connectedIDs.erase(connectedIDs.begin() + i);
 					}
 				}
-				Game::Instance()->SetPlayerNumber((uint)(1 + server->m_pNetwork->connectedPeers));
+
+				GraphicsPipeline::Instance()->RemovePlayerRenderNode((Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1))->Render()->GetChild());
+				SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
+				Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
+
+				//Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
+				//SendNumberUsers(1 + server->m_pNetwork->connectedPeers);
+
 				break;
 			}
 			}
@@ -203,16 +229,14 @@ void Server::UpdateUser(float dt)
 
 		if (Game::Instance()->IsRunning())
 		{
-			Game::Instance()->SetScore(0, Game::Instance()->GetScore(0) + 1);
-
 			for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 			{
 				if (Game::Instance()->GetPlayer(i))
 				{
-					SendPosition(i);
-					SendLinVelocity(i);
-					SendAngVelocity(i);
-					SendAcceleration(i);
+					SendVector3(i, PLAYER_POS, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition());
+					SendVector3(i, PLAYER_LINVEL, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity());
+					SendVector3(i, PLAYER_ANGVEL, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity());
+					SendVector3(i, PLAYER_ACCELERATION, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration());
 					SendSize(i);
 					SendScores();
 				}
@@ -222,21 +246,25 @@ void Server::UpdateUser(float dt)
 
 }
 
-
 void Server::Disconnect()
 {
 	server->Release();
 }
 
 //--------------------------------------------------------------------------------------------//
-// Recieving
-//--------------------------------------------------------------------------------------------//
-
-
-
-//--------------------------------------------------------------------------------------------//
 // Sending
 //--------------------------------------------------------------------------------------------//
+
+void Server::SendNumberUsers(uint n)
+{
+	string data;
+
+	data = to_string(NUMBER_USERS) + ":" +
+		to_string(n);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
 
 void Server::SendConnectionID(uint ID)
 {
@@ -250,67 +278,23 @@ void Server::SendConnectionID(uint ID)
 
 }
 
-void Server::SendNumberUsers(uint n)
+void Server::SendGameStart(uint mapID)
 {
 	string data;
 
-	data = to_string(NUMBER_USERS) + ":" +
-		to_string(n);
-
-	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
-void Server::SendGameStart()
-{
-	string data;
-
-	data = to_string(GAME_START) + ":";
+	data = to_string(GAME_START) + ":" + to_string(mapID);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 
 }
 
-void Server::SendPosition(uint ID) 
+void Server::SendVector3(uint ID, PacketType type, Vector3 vec)
 {
 	string data;
 
-	data = to_string(PLAYER_POS) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetPosition());
-
-	ENetPacket* packet = CreatePacket(data);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
-void Server::SendLinVelocity(uint ID)
-{
-	string data;
-
-	data = to_string(PLAYER_LINVEL) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetLinearVelocity());
-
-	ENetPacket* packet = CreatePacket(data);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
-void Server::SendAngVelocity(uint ID)
-{
-	string data;
-
-	data = to_string(PLAYER_ANGVEL) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetAngularVelocity());
-
-	ENetPacket* packet = CreatePacket(data);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
-void Server::SendAcceleration(uint ID)
-{
-	string data;
-
-	data = to_string(PLAYER_ACCELERATION) + ":" +
-		to_string(ID) + ";" + Vector3ToString(Game::Instance()->GetPlayer(ID)->GetGameObject()->Physics()->GetAcceleration());
+	data = to_string(type) + ":" +
+		to_string(ID) + ";" + Vector3ToString(vec);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -342,21 +326,17 @@ void Server::SendScores()
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
-//TODO WEAPONS stuff
-
-//PACKET_TYPE:WEAPON_TYPE;XPOS YPOS ZPOS, XDIR YDIR ZDIR
-void Server::SendWeaponFire(uint ID) 
+void Server::SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir) 
 {
 	string data;
 
-	data = to_string(PLAYER_WEAPON) + ":";
+	data = to_string(PLAYER_WEAPON) + ":"
+		+ to_string(ID) + ";"
+		+ to_string(type) + ";" 
+		+ Vector3ToString(pos) + ","
+		+ Vector3ToString(dir);
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
-void Server::StartGame()
-{
-	SendGameStart();
-	SceneManager::Instance()->JumpToScene();
-	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
-	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
-}

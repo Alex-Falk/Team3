@@ -321,6 +321,9 @@ void Avatar::Spray()
 		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+
+		// Send over network
+		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
 	}
 }
 
@@ -333,11 +336,15 @@ void Avatar::ShootRocket()
 		pitch = 0;
 	}
 
-	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
-	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion((float)pitch, (float)yaw, 0.0f));
+	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 30;
+	ShootRocket(Physics()->GetPosition(), direction);
+	//Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
+	//projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0));
 
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	//SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+
+	// Send over network
+	Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 }
 
 void Avatar::ShootProjectile()
@@ -348,11 +355,29 @@ void Avatar::ShootProjectile()
 	if (canJump && pitch < 0) {
 		pitch = 0;
 	}
+	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 50;
+	ShootProjectile(Physics()->GetPosition(), direction);
 
-	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
-	Projectile* projectile =  new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, PROJECTILE, 2, "Projectile");
+	// Send over network
+	Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_PISTOL, Physics()->GetPosition(), direction);
+}
 
-	
+void Avatar::Spray(Vector3 pos, Vector3 dir)
+{
+	Projectile * spray = new Projectile(col, colour, pos, dir, 0.15f, 5.0f, SPRAY, 1, "Spray");
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+}
+
+void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
+{
+	Projectile* projectile = new Projectile(col, colour, pos, dir, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
+	projectile->Physics()->SetOrientation(Quaternion(dir, 0));
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+}
+
+void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
+{
+	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.2f, 5.0f, PROJECTILE, 2, "Projectile");
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
 }
 

@@ -21,7 +21,7 @@ void Map::onConnectToScene()
 			this->AddGameObject(p->GetGameObject());
 			Game::Instance()->SetAvatar(i, p);
 
-			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render());
+			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render()->GetChild());
 		}
 	}
 }
@@ -46,34 +46,19 @@ void Map::OnInitializeScene() {
 
 void Map::OnInitializeGUI()
 {
-	//Call initi-function for gui
-	sceneGUI = new GUI();
-	sceneGUI->Init(CEGUIDIR);
-
-	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
-	sceneGUI->LoadScheme("TaharezLook.scheme");
-	sceneGUI->LoadScheme("AlfiskoSkin.scheme");
-
-	//Set Font sytle
-	sceneGUI->SetFont("DejaVuSans-10");
-
-	//SetMouseCursor
-	sceneGUI->SetMouseCursor("TaharezLook/MouseArrow");
-	sceneGUI->ShowMouseCursor();
-
 	//Create Push Button handle
-	energyBar = static_cast<CEGUI::ProgressBar*>(
-		sceneGUI->createWidget("TaharezLook/ProgressBar",
-			Vector4(0.40f, 0.9f, 0.2f, 0.03f),
-			Vector4(),
-			"energyBar"
-		));
+	//energyBar = static_cast<CEGUI::ProgressBar*>(
+	//	GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
+	//		Vector4(0.40f, 0.9f, 0.2f, 0.03f),
+	//		Vector4(),
+	//		"energyBar"
+	//	));
 
-	if (Game::Instance()->GetUser())
-	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
-	}
+	//if (Game::Instance()->GetUser())
+	//{
+	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	//}
 
 }
 
@@ -109,7 +94,7 @@ void Map::SetSpawnLocations()
 void Map::OnCleanupScene()
 {
 	SAFE_DELETE(score);
-	SAFE_DELETE(energyBar);
+	//SAFE_DELETE(energyBar);
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();
 	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
@@ -121,7 +106,8 @@ void Map::OnCleanupScene()
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {
-	score->UpdateScores();
+	if(Game::Instance()->getUserID() == 0)
+		score->UpdateScores();
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;
@@ -134,9 +120,9 @@ void Map::OnUpdateScene(float dt)
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
-	if (Game::Instance()->GetUser())
-	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
-	}
+	//if (Game::Instance()->GetUser())
+	//{
+	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+	//		energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+	//}
 }

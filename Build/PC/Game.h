@@ -42,12 +42,7 @@ public:
 	inline void SetPosition(uint id, Vector3 p) { avatars[id]->GetGameObject()->Physics()->SetPosition(p); }
 	inline void SetServer() { user = new Server(); }
 	inline void setClient(IP ip) { user = new Client(ip); }
-	inline void SetAvatar(uint id, Avatar * p)
-	{
-		if (avatars[id])
-			delete avatars[id];
-		avatars[id] = p; 
-	}
+	inline void SetAvatar(uint id, Avatar * p){ avatars[id] = p; }
 
 	// Getters
 	//STUBS
@@ -56,12 +51,12 @@ public:
 	inline  uint GetPlayerNumber() { return playerNumber; }
 	inline Avatar * GetPlayer(uint id) { return avatars[id]; }
 	inline Avatar * GetCurrentAvatar() { return avatars[user->GetUserID()]; }
-	inline int GetMapIndex() { return 0; }
-	inline int GetScore(uint id) { return (int)teamScores[id]; }
+	inline uint GetMapIndex() { return mapIdx; }
+	inline float GetScore(uint id) { return teamScores[id]; }
 	inline uint getUserID() { return user->GetUserID(); }
 	inline User * GetUser() { return user; }
 
-	inline void StartGame() { gameRunning = true; user->StartGame(); }
+	inline void StartGame(uint mapID = 0) { gameRunning = true; mapIdx = mapID; user->StartGame(mapID); }
 	inline void StopGame() { gameRunning = false; }
 	inline bool IsRunning() { return gameRunning; }
 
@@ -79,13 +74,11 @@ private:
 			delete avatars[i];
 		}
 	};
+
 	//variables
 	uint playerNumber = 0;
-
-	// Everything about score
+	uint mapIdx;
 	float teamScores[4];
-
-	void PrintScore(int x); // debug
 	Avatar* avatars[4];
 	User* user = nullptr;
 	bool gameRunning = false;

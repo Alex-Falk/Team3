@@ -70,15 +70,14 @@ class Score
 {
 private:
 	//Variables
-	static const int numOfPlayers = 4;
 	int groundScoreAccuracy;
 	int xOnGrid;
 	int yOnGrid;
 	Colour* ground;
 	float groundTeamScore[START_COLOUR+1];
-	int captObjTeamScore[numOfPlayers];
-	int teamScores[numOfPlayers];
-	float teamScoresPercentage[numOfPlayers];
+	float captObjTeamScore[4];
+	float teamScores[4];
+	float teamScoresPercentage[4];
 	PaintableGameObject* captObjects;			//Here we will store all the capturable game objects 
 	int numOfCaptObjects = 0;
 	static vector<Vector3> projPOS;
@@ -110,7 +109,7 @@ public:
 	static void UpdateProjectilesVector(Vector3 pos, Colour c, float size);
 	
 	// To Return Team Score
-	inline int GetTeamScore(int id) { return teamScores[id]; }
+	inline float GetTeamScore(int id) { return teamScores[id]; }
 	//To return Team Score Percentage
 	inline float GetTeamScorePercentage(int id) { return teamScoresPercentage[id]; }
 	
