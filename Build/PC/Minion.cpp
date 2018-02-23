@@ -93,6 +93,17 @@ void Minion::Update(float dt) {
 	}
 }
 
+void Minion::ChangeLife(float l) {
+	life += l;
+	if (life < minLife) {
+		dead = true;
+		destroy = true;
+	}
+	if (life > maxLife) {
+		life = maxLife;
+	}
+}
+
 bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
 	if (collidingObject->GetType() == PLAYER) {
 		if (!dead) {

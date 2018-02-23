@@ -35,16 +35,7 @@ public:
 	void SetDead(bool b) { dead = b; }
 	bool GetDead() { return dead; }
 
-	void ChangeLife(float l) { 
-		life += l;
-		if (life < minLife) {
-			dead = true;
-			destroy = true;
-		}
-		if (life > maxLife) {
-			life = maxLife;
-		}
-	}
+	void ChangeLife(float l);
 	float GetLife() { return life; }
 
 	void ChangeSize(float newSize);
