@@ -59,7 +59,11 @@ void MainMenu::OnUpdateScene(float dt)
 	Scene::OnUpdateScene(dt);
 
 	//Update Player Info
-	
+	AllPlayerInfo->setText(playerText 
+		+  GUIsystem::Instance()->player1name + "\n\n"
+		+  GUIsystem::Instance()->player2name + "\n\n"
+		+  GUIsystem::Instance()->player3name + "\n\n"
+		+  GUIsystem::Instance()->player4name + "\n\n");
 }
 
 //Setting UP GUI
@@ -72,6 +76,7 @@ void MainMenu::OnInitializeGUI()
 	HideLobby();
 	HideConnectionMenu();
 	HideOptionMenu();
+	HideWaitingInfo();
 }
 
 void MainMenu::SetUpMainMenu()
@@ -223,9 +228,13 @@ void MainMenu::SetUpLobby()
 	AllPlayerInfo->setAlpha(0.8);
 	AllPlayerInfo->disable();
 	AllPlayerInfo->setVisible(false);
-	playerText = playerText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
-	AllPlayerInfo->setText(playerText);
+	AllPlayerInfo->setText(playerText
+		+  GUIsystem::Instance()->player1name + "\n\n"
+		+  GUIsystem::Instance()->player2name + "\n\n"
+		+  GUIsystem::Instance()->player3name + "\n\n"
+		+  GUIsystem::Instance()->player4name + "\n\n");
 
+	/*	
 	addedPlayerInfo = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
 			Vector4(0.10f, 0.50f, 0.20f, 0.30f),
@@ -236,7 +245,9 @@ void MainMenu::SetUpLobby()
 	addedPlayerInfo->disable();
 	addedPlayerInfo->setVisible(false);
 	addedPlayerText = addedPlayerText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
-	addedPlayerInfo->setText(addedPlayerText);
+	addedPlayerInfo->setText(addedPlayerText); 
+	*/
+
 }
 
 void MainMenu::onMap1selected()
@@ -296,9 +307,6 @@ void MainMenu::ShowLobbyMenuServer()
 
 	AllPlayerInfo->enable();
 	AllPlayerInfo->setVisible(true);
-
-	addedPlayerInfo->enable();
-	addedPlayerInfo->setVisible(true);
 }
 
 void MainMenu::HideLobby()
@@ -338,9 +346,6 @@ void MainMenu::HideLobby()
 
 	AllPlayerInfo->disable();
 	AllPlayerInfo->setVisible(false);
-
-	addedPlayerInfo->disable();
-	addedPlayerInfo->setVisible(false);
 }
 
 void MainMenu::SetUpconnectionMenu()
@@ -367,6 +372,27 @@ void MainMenu::SetUpconnectionMenu()
 		));
 	connectToHostButton->setText("CONNECT TO GAME");
 	connectToHostButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onConnectButtonClicked, this));
+
+	disconnectToHost = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.40f, 0.75f, 0.2f, 0.1f),
+			Vector4(),
+			"disconnectToHost"
+		));
+	disconnectToHost->setText("DISCONNECT");
+	disconnectToHost->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onConnectButtonClicked, this));
+
+	otherPlayersInfo = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Title",
+			Vector4(0.40f, 0.2f, 0.20f, 0.30f),
+			Vector4(),
+			"otherPlayersInfo"
+		));
+	otherPlayersInfo->setAlpha(0.8);
+	otherPlayersInfo->disable();
+	otherPlayersInfo->setVisible(false);
+	otherPlayersText = otherPlayersText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
+	otherPlayersInfo->setText(otherPlayersText);
 }
 
 void MainMenu::onIPinputClicked()
@@ -518,11 +544,6 @@ void MainMenu::SetUpOptionMenu()
 	DebugButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDebugRenderClicked, this));
 }
 
-void MainMenu::SetUpCreateGameMenu()
-{
-
-}
-
 void MainMenu::onCreateGameClicked()
 {
 	if (!Game::Instance()->GetUser())
@@ -569,9 +590,36 @@ void MainMenu::onConnectButtonClicked()
 			Game::Instance()->setClient(ip);
 			HideConnectionMenu();
 			ShowLobbyMenuClient();
+			ShowWaitingInfo();
 		}
 	}
 }
+
+void MainMenu::ShowWaitingInfo()
+{
+	disconnectToHost->enable();
+	disconnectToHost->setVisible(true);
+
+	otherPlayersInfo->enable();
+	otherPlayersInfo->setVisible(true);
+}
+
+void MainMenu::HideWaitingInfo()
+{
+	disconnectToHost->disable();
+	disconnectToHost->setVisible(false);
+
+	otherPlayersInfo->disable();
+	otherPlayersInfo->setVisible(false);
+}
+
+//TODO: complete the function
+void MainMenu::OndisconnectButtonClicked()
+{
+
+}
+
+
 
 void MainMenu::ShowMainMenu()
 {

@@ -36,6 +36,7 @@
 #include <nclgl\Shader.h>
 #include <nclgl\Mesh.h>
 #include <nclgl\NCLDebug.h>
+#include <cstring>
 
 //Box struct for user text input
 struct inputBox
@@ -108,6 +109,10 @@ public:
 		p4 = a4;
 	}
 
+	string player1name;
+	string player2name;
+	string player3name;
+	string player4name;
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;

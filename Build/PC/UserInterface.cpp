@@ -12,6 +12,11 @@ GUIsystem::GUIsystem()
 	if (!scorebarShader->LinkProgram()) {
 		NCLERROR("Load scoreBar shader failed");
 	}
+
+	player1name == "\n\n";
+	player2name == "\n\n";
+	player3name == "\n\n";
+	player4name == "\n\n";
 }
 
 GUIsystem::~GUIsystem()
@@ -248,7 +253,10 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		for (int i = 0; i < editboxes.size(); ++i) {
 			if (editboxes[i].type == currentType) {
 				textInfo[i].content = editboxes[i].editbox->getText().c_str();
-				std::cout << textInfo[i].content << std::endl;
+				if (currentType == "UserName") {
+					player1name = textInfo[i].content;
+				}
+				//std::cout << textInfo[i].content << std::endl;
 				break;
 			}
 			else {

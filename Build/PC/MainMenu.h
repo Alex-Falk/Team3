@@ -205,18 +205,19 @@ private:
 	CEGUI::RadioButton* Map2Rbutton;
 	CEGUI::RadioButton* Map3Rbutton;
 	CEGUI::RadioButton* Map4Rbutton;
-	
 	//Lobby Player List
 	CEGUI::Titlebar* AllPlayerInfo;
 	CEGUI::Titlebar* addedPlayerInfo;
-	//Lobby Player Name
-	string* playerNames;
-
+	string playerText = "Player List: \n\n";
+	string addedPlayerText = "Added Player List: \n\n";
 	//User chosen map
 	int nextMapID = 1;
 
-	string playerText = "Player List: \n\n";
-	string addedPlayerText = "Added Player List: \n\n";
+	//Connect to host menu
+	CEGUI::PushButton* disconnectToHost;
+	CEGUI::Titlebar* otherPlayersInfo;
+	string otherPlayersText = "Other players in lobby: \n\n";
+
 public:
 	MainMenu(const std::string& friendly_name)
 		: Scene(friendly_name) {}
@@ -233,7 +234,6 @@ public:
 	void SetUpLobby();  //Create Game menu
 	void SetUpconnectionMenu();
 	void SetUpOptionMenu();
-	void SetUpCreateGameMenu();
 
 	//Clicked function
 	//1. MainMenu buttons
@@ -266,8 +266,10 @@ public:
 
 	//4. join game menu buttons
 	void onConnectButtonClicked();
+	void ShowWaitingInfo();
 	void onIPinputClicked();
-
+	void HideWaitingInfo();
+	void OndisconnectButtonClicked();
 
 	//Hide/show Menu helper function
 	void ShowLobbyMenuServer();
@@ -284,4 +286,5 @@ public:
 	void Quit() {
 		SceneManager::Instance()->SetExitButtonClicked(true);
 	}
+
 };
