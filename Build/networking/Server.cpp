@@ -199,7 +199,6 @@ void Server::UpdateUser(float dt)
 					SetPlayerName(pName.ID, pName.n);
 					break;
 				}
-
 				case PLAYER_WEAPON:
 				{
 					ReceiveWeapon(data);
@@ -348,6 +347,12 @@ void Server::SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir)
 		+ to_string(type) + ";" 
 		+ Vector3ToString(pos) + ","
 		+ Vector3ToString(dir);
+
+void Server::SendMap()
+{
+
+	string data;
+	data = to_string(MAP_INDEX) + ":" + to_string(mapID);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);

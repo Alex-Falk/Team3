@@ -79,6 +79,7 @@ public:
 	void ReceiveNumberUsers(string data);
 	void ReceiveScores(string data);
 	void ReceiveMapIndex(string data);
+	void ReceiveMapChange(string data);
 
 protected:
 	NetworkBase network;

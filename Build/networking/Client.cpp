@@ -320,3 +320,17 @@ void Client::SendUsername(uint ID)
 	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);
 }
+
+
+//Nikos Fragkas
+//Date 19/02
+void Client::SendUsername(uint ID)
+{
+	string data;
+
+	data = to_string(PLAYER_NAME) + ":" +
+		to_string(ID) + ";" ;
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_peer_send(serverConnection, 0, packet);
+}

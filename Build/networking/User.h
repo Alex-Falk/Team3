@@ -32,6 +32,7 @@ public:
 	PlayerVector ReceiveVector(string data);
 	PlayerFloat ReceiveSizes(string data);
 
+	PlayerName ReceiveUserName(string data);
 	void ReceiveWeapon(string data);
 
 

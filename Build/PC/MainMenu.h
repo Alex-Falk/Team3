@@ -150,6 +150,7 @@
 #include "Game.h"
 #include "AudioSystem.h"
 #include <cstring>
+#include "Map.h"
 
 class MainMenu : public Scene
 {
