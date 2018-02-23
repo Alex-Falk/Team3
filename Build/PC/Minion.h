@@ -7,12 +7,15 @@
 #include "Avatar.h"
 #include "../ncltech/SceneManager.h"
 
+
 class Minion : public GameObject {
 protected:
 	Colour colour;
 	Vector4 RGBA;
 	
 	float life;
+	float minLife;
+	float maxLife;
 	float size;
 
 	Vector3 lastPos;
@@ -32,7 +35,16 @@ public:
 	void SetDead(bool b) { dead = b; }
 	bool GetDead() { return dead; }
 
-	void ChangeLife(float l) { life += l;}
+	void ChangeLife(float l) { 
+		life += l;
+		if (life < minLife) {
+			dead = true;
+			destroy = true;
+		}
+		if (life > maxLife) {
+			life = maxLife;
+		}
+	}
 	float GetLife() { return life; }
 
 	void ChangeSize(float newSize);

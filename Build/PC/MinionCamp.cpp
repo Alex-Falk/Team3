@@ -34,8 +34,7 @@ void MinionCamp::Update(float dt) {
 
 	//iterate through vector deleting dead minions and updating alive ones
 	for (vector<Minion*>::iterator itr = minions.begin(); itr != minions.end(); ) {
-		if ((*itr)->GetDead()) {
-			SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(*itr);
+		if ((*itr)->GetDead()) {		
 			itr = minions.erase(itr);
 		}
 		else {
