@@ -27,6 +27,14 @@
 #include <ncltech\CommonMeshes.h>
 #include <nclgl\PlayerRenderNode.h>
 
+enum Movement {
+	NO_MOVE,
+	MOVE_FORWARD,
+	MOVE_BACKWARD,
+	MOVE_LEFT,
+	MOVE_RIGHT
+};
+
 
 class Avatar : public GameObject
 {
@@ -58,7 +66,6 @@ protected:
 	float collisionTimer;
 	
 
-
 	// Boosts
 	PickupType activePickUp;
 	float boostactiveTime;
@@ -75,12 +82,19 @@ protected:
 	float weaponTimer;				// Weapon timer
 	bool shooting;
 
-	Vector3 velocity;
-	Vector3 lastPos; //used to determine distance travelled each frame for life
+	Vector3 dirRotation;	//The rotation based on camera
+	float moveTimer;
+	int rollSpeed;
+	Movement curMove = NO_MOVE;
+	Movement previousMove = NO_MOVE;
+
+	Vector3 lastPos;		//used to determine distance travelled each frame for life
 
 	uint playerId;
 
 	void ChangeSize(float newSize);
+	virtual void MovementState(Movement moveDir,float yaw, float dt); // handles the movement of the player.
+
 
 public:
 	Avatar();

@@ -36,7 +36,6 @@ Avatar::Avatar()
 	Colour c = START_COLOUR;
 	uint id = 0;
 	float s = 1.0f;
-
 	Avatar(pos, c, id, s);
 }
 
@@ -58,6 +57,10 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	minLife = 10;
 	maxLife = 100;
 	life = maxLife/2;
+	moveTimer = 0.0f;
+	rollSpeed = 1;
+	curMove = NO_MOVE;
+	previousMove = NO_MOVE;
 
 	jumpImpulse = 8.0f;
 	boostactiveTime = 15.0f;
@@ -406,4 +409,63 @@ void Avatar::ManageWeapons()
 				break;
 		}
 	}
+}
+
+void Avatar::MovementState(Movement moveDir, float yaw, float dt)
+{
+	
+	Vector3 force;
+	moveTimer += dt;
+
+	switch (moveDir)
+	{
+	case NO_MOVE: {
+		rollSpeed = 1;
+		force = Vector3(0, 0, 0);
+		break;
+	}
+	case MOVE_FORWARD: {
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3( 0, -1, 0) * speed /100;
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+		moveTimer = 0.0f;
+		break;
+	}
+	case MOVE_BACKWARD: {
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 100;
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+		moveTimer = 0.0f;
+		break;
+	}
+	case MOVE_LEFT: {
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 100;
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+		moveTimer = 0.0f;
+		break;
+	}
+	case MOVE_RIGHT: {
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 100;
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+		moveTimer = 0.0f;
+		break;
+	}
+	default: {
+		break;
+	}
+	}
+	// Setting MoveMent
+	force.y = 0;
+	Physics()->SetForce(force);
+
+
+	// Setting Angular Velocity
+	Vector3 vel = Physics()->GetLinearVelocity();
+	rollSpeed = 1;
+	if (curMove != previousMove && curMove != NO_MOVE && moveTimer < .8f) {
+		rollSpeed = 3;
+	}
+	
+	Vector3 axis = Vector3::Cross(vel, dirRotation);
+
+	Physics()->SetAngularVelocity((Vector3(axis) / 2 * size * PI) * rollSpeed);
+	previousMove = moveDir;
 }

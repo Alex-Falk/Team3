@@ -50,39 +50,32 @@ ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) 
 //Takes Player Input and move the player using force
 void ControllableAvatar::ProcessAvatarInput(float dt) 
 {
-	Vector3 force(0,0,0);
-
+	curMove = NO_MOVE;
+	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	if (!inAir) 
 	{
-		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-
 		if (Input::Instance()->GetInput(FORWARD)) { 		//Front
-			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+			curMove = MOVE_FORWARD;
 		}
 		if (Input::Instance()->GetInput(BACKWARD)) {		//Back
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+			curMove = MOVE_BACKWARD;
 		}
 		if (Input::Instance()->GetInput(LEFT)) {		//Left
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+			curMove = MOVE_LEFT;
 		}
 		if (Input::Instance()->GetInput(RIGHT)) {		//Right
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+			curMove = MOVE_RIGHT;
 		}
-		force.y = 0;
 	}
 
-	if (force.x > maxForce)force.x = maxForce;
-	if (force.x < -maxForce)force.x = -maxForce;
-	if (force.z > maxForce)force.z = maxForce;
-	if (force.z < -maxForce)force.z = -maxForce;
+	MovementState(curMove, yaw, dt);
 
-	Physics()->SetForce(force);
+	Vector3 vel = Physics()->GetLinearVelocity();
 
 	if (Input::Instance()->GetInput(JUMP) && canJump)
 	{		//Jump
-		Vector3 vel = Physics()->GetLinearVelocity();
+		
 		Physics()->SetLinearVelocity(Vector3(vel.x*.8f,jumpImpulse,vel.z*.8f));
-		//force +=(Vector3(-(force.x /2.0f), 10, -(force.z / 2.0f)));
 		inAir = true;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 		canJump = false;
