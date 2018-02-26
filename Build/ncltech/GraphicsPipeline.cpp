@@ -371,9 +371,7 @@ void GraphicsPipeline::RenderScene()
 	RenderObject();
 
 	//render the path to texture
-	if (isMainMenu == false) {
-		RenderPath();
-	}
+	RenderPath();
 
 	//post process and present
 	RenderPostprocessAndPresent();

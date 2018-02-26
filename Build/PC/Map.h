@@ -24,6 +24,7 @@ protected:
 	Score* score;
 	Vector3 spawnPositions[4];
 	CEGUI::ProgressBar* lifeBar;
+	CEGUI::Titlebar* currentPickUp;
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
 	//--------------------------------------------------------------------------------------------//
