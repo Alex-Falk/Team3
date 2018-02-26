@@ -343,6 +343,19 @@ void HandleGUITextInput()
 	}
 }
 
+void TestPostProcess()
+{
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F1)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::NORMAL);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F2)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::INVERSION);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F3)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::GRAYSCALE);
+	}
+}
+
 // Program Entry Point
 int main()
 {
@@ -379,6 +392,9 @@ int main()
 
 		//Print Status Entries
 		PrintStatusEntries();
+
+		//Test Post Process
+		TestPostProcess();
 
 		//Handle Keyboard Inputs
 		if (GUIsystem::Instance()->GetIsTyping() == false) {
