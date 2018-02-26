@@ -43,6 +43,8 @@ enum TEXTURETYPE
 {
 	Checker_Board = 0,
 	Sky_Box		  = 1,
+	//minimap stuff (phil 26/02/2018)
+	Paint_Pool	  = 2,
 	Texture_Number,
 };
 

@@ -261,6 +261,8 @@ protected:
 	GLuint		pathFBO;
 	GLuint		pathTex;
 
+	//
+
 	//GUI
 	bool isMainMenu = false;
 };

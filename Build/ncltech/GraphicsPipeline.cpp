@@ -779,6 +779,13 @@ void GraphicsPipeline::DrawMiniMap() {
 	//set to the most basic shader
 	glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
 	glBindTexture(GL_TEXTURE_2D, pathTex);
+	//TEMPORARY!
+	glActiveTexture(GL_TEXTURE1);
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "poolTex"), 1);
+	int a = TextureManager::Instance()->GetTexture(TEXTURETYPE::Paint_Pool);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Paint_Pool));
+
+
 	//these numbers are hardcoded at the moment but will be variables in the end
 	float aspect = (float)width / height;
 	float sx = 0.2;
@@ -790,6 +797,7 @@ void GraphicsPipeline::DrawMiniMap() {
 		(float*)&(Matrix4::Translation(Vector3(-1.0f + sx, -1.0f + sy, 0.0f)) * Matrix4::Scale(Vector3(sx, sy, 1.0f))));
 	uint playerCount = Game::Instance()->GetPlayerNumber();
 	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "playerCount"), playerCount);
+	
 	//four Vector2s
 	float players[8];
 	//four Vector3s
@@ -809,11 +817,29 @@ void GraphicsPipeline::DrawMiniMap() {
 			colours[count * 3] = a->GetColourRGBA().x;
 			colours[(count * 3) + 1] = a->GetColourRGBA().y;
 			colours[(count * 3) + 2] = a->GetColourRGBA().z;
+			//increment count inside here incase a player has left the game
+			count++;
 		}
-		count++;
 	}
 	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "players"), 4, players);
 	glUniform3fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "colours"), 4, colours);
+
+	//get the current map
+	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
+	//uniforms for map things
+	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), map->GetNPickup());
+	//int array for pickup type
+	uint pickupTypes[20];
+	float pickupPositions[40];
+	for (int i = 0; i < map->GetNPickup(); i++) {
+		Pickup* p = map->GetPickups()[i];
+		pickupTypes[i] = p->GetPickupType();
+		pickupPositions[i * 2] = (xDimension - p->Physics()->GetPosition().x) / (xDimension * 2);
+		pickupPositions[(i * 2) + 1] = (yDimension + p->Physics()->GetPosition().z) / (yDimension * 2);
+	}
+	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
+	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
+
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
 	//opacity of minimap, this will be a variable eventually
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 0.7);
