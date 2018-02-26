@@ -36,7 +36,6 @@ Avatar::Avatar()
 	Colour c = START_COLOUR;
 	uint id = 0;
 	float s = 1.0f;
-
 	Avatar(pos, c, id, s);
 }
 
@@ -58,6 +57,10 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	minLife = 10;
 	maxLife = 100;
 	life = maxLife/2;
+	moveTimer = 0.0f;
+	rollSpeed = 1;
+	curMove = NO_MOVE;
+	previousMove = NO_MOVE;
 
 	jumpImpulse = 8.0f;
 	boostactiveTime = 15.0f;
@@ -419,4 +422,82 @@ void Avatar::ManageWeapons()
 				break;
 		}
 	}
+}
+
+void Avatar::MovementState(Movement moveDir, float yaw, float dt)
+{
+	
+
+	Vector3 force;
+	moveTimer += dt;
+
+	switch (moveDir)
+	{
+	case NO_MOVE: {
+		force = Vector3(0, 0, 0);
+		curMove = NO_MOVE;
+		break;
+	}
+	case MOVE_FORWARD: {
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+		curMove = MOVE_FORWARD;
+		break;
+	}
+	case MOVE_BACKWARD: {
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+		curMove = MOVE_BACKWARD;
+		break;
+	}
+	case MOVE_LEFT: {
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+		curMove = MOVE_LEFT;
+		break;
+	}
+	case MOVE_RIGHT: {
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+		curMove = MOVE_LEFT;
+		break;
+	}
+	default: {
+		break;
+	}
+	}
+	force.y = 0;
+
+	// Setting Angular Velocity
+	//if (previousMove == curMove)
+	dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 10;
+	vel.x = Physics()->GetLinearVelocity().x;
+	vel.y = 0.f;
+	vel.z = Physics()->GetLinearVelocity().z;
+
+
+	rollSpeed -= (dt);
+	if (vel != Vector3(0, 0, 0)) {
+		if (rollSpeed < 0.2) { 
+			rollSpeed = 0.2;
+		}
+	}
+	else {
+		rollSpeed = 0.f;
+	}
+
+	if (curMove != previousMove) {
+		rollSpeed = 3;
+	}
+
+	Vector3 axis = Vector3::Cross(vel.Normalise(), dirRotation);
+	Physics()->SetAngularVelocity((Vector3(axis) / 2 * size * PI) * rollSpeed);
+	previousMove = moveDir;
+
+
+	// Setting MoveMent
+	if (inAir) return;
+
+	Physics()->SetForce(force);
+
+
+//	if (force != Vector3(0, 0, 0)) {}
+
+	
 }

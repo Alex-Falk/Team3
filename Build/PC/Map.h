@@ -15,14 +15,13 @@
 #include "WeaponPickup.h"
 #include "Score.h"
 
-//#include "GroundScore.h"
-
 class Map : public Scene
 {
 protected:
 	float m_AccumTime = 0;
 	Score* score;
 	Vector3 spawnPositions[4];
+	static int mapIndex; // Controls which map will be loaded
 
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
@@ -56,6 +55,8 @@ public:
 	virtual void SetSpawnLocations();
 	virtual void InitializeScores();
 
+	static int GetMapIndex() { return mapIndex; }
+	void SetMapIndex(int mapIndx); 
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars and Scores
 	//--------------------------------------------------------------------------------------------//

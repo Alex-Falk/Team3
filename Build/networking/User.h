@@ -12,8 +12,9 @@ class User
 {
 protected: 
 	uint userID = 0;
-
+	string Username[4] = { "Player1","Player2","Player3","Player4" }; //The client's name.
 	string ip;
+	int mapID = 3;
 	bool destroy = false;
 
 	TempData temps;
@@ -36,6 +37,7 @@ public:
 	PlayerVector ReceiveVector(string data);
 	PlayerFloat ReceiveSizes(string data);
 
+	PlayerName ReceiveUserName(string data);
 	void ReceiveWeapon(string data);
 
 
@@ -46,6 +48,9 @@ public:
 	
 	inline uint GetUserID() { return userID; }
 	inline string GetIP() { return ip; }
+
+	inline string GetPlayerName(uint ID) { return Username[ID]; }
+	inline void SetPlayerName(uint ID,string name) { Username[ID] = name; }
 
 	inline void SetIP(string _ip) { ip = _ip; }
 

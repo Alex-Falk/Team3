@@ -134,6 +134,7 @@ void Server::UpdateUser(float dt)
 				if (Game::Instance()->IsRunning())
 				{
 					enet_peer_disconnect(evnt.peer, 0);
+					cout << clientIPAddress[0];
 				}
 				else
 				{
@@ -142,6 +143,7 @@ void Server::UpdateUser(float dt)
 					SendNumberUsers((uint)(1 + server->m_pNetwork->connectedPeers));
 					if (freeIDs.size() > 0)
 					{
+						
 						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 						SendConnectionID(freeIDs[freeIDs.size() - 1]);
 						enet_peer_timeout(evnt.peer, 80, 800, 800);
@@ -199,6 +201,12 @@ void Server::UpdateUser(float dt)
 				//	break;
 				//}
 
+				case PLAYER_NAME:
+				{
+					PlayerName pName = ReceiveUserName(data);
+					SetPlayerName(pName.ID, pName.n);
+					break;
+				}
 				case PLAYER_WEAPON:
 				{
 					ReceiveWeapon(data);
@@ -327,10 +335,15 @@ void Server::SendScores()
 
 	data = to_string(PLAYER_SCORES) + ":";
 
-	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
-	{
-		data = data + to_string(Game::Instance()->GetScore(i)) + " ";
-	}
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::SendMap()
+{
+	string data;
+
+	data = to_string(MAP_INDEX) + ":" + to_string(mapID);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
@@ -345,6 +358,12 @@ void Server::SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir)
 		+ to_string(type) + ";" 
 		+ Vector3ToString(pos) + ","
 		+ Vector3ToString(dir);
+
+void Server::SendMap()
+{
+
+	string data;
+	data = to_string(MAP_INDEX) + ":" + to_string(mapID);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);

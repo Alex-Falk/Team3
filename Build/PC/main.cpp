@@ -243,7 +243,6 @@ void HandleKeyboardInputs()
 
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
-
 	}
 
 	//toggle the camera
