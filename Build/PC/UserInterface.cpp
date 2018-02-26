@@ -252,9 +252,8 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 	case KEYBOARD_RETURN:
 		for (int i = 0; i < editboxes.size(); ++i) {
 			if (editboxes[i].type == currentType) {
-				textInfo[i].content = editboxes[i].editbox->getText().c_str();
 				if (currentType == "UserName") {
-					player1name = textInfo[i].content;
+					player1name = editboxes[i].editbox->getText().c_str();
 				}
 				//std::cout << textInfo[i].content << std::endl;
 				break;

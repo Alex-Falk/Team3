@@ -182,9 +182,6 @@ void MainMenu::SetUpLobby()
 	userName.editbox->setText("Please type your name here");
 	userName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnUserNameClicked, this));
 	GUIsystem::Instance()->editboxes.push_back(userName);
-	userInput temp;
-	temp.type = userName.type;
-	GUIsystem::Instance()->textInfo.push_back(temp);
 
 	Map1Rbutton = static_cast<CEGUI::RadioButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
@@ -350,6 +347,7 @@ void MainMenu::HideLobby()
 
 void MainMenu::SetUpconnectionMenu()
 {
+	//Inputting IP
 	IpInputBox.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
 			Vector4(0.40f, 0.65f, 0.2f, 0.1f),
@@ -360,9 +358,6 @@ void MainMenu::SetUpconnectionMenu()
 	IpInputBox.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onIPinputClicked, this));
 	IpInputBox.type = "IpInput";
 	GUIsystem::Instance()->editboxes.push_back(IpInputBox);
-	userInput temp;
-	temp.type = IpInputBox.type;
-	GUIsystem::Instance()->textInfo.push_back(temp);
 
 	connectToHostButton = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
@@ -393,12 +388,30 @@ void MainMenu::SetUpconnectionMenu()
 	otherPlayersInfo->setVisible(false);
 	otherPlayersText = otherPlayersText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
 	otherPlayersInfo->setText(otherPlayersText);
+
+	//Inputting userName
+	clientName.editbox = static_cast<CEGUI::Editbox*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
+			Vector4(0.40f, 0.15f, 0.2f, 0.1f),
+			Vector4(),
+			"Client Name"
+		));
+	clientName.editbox->setText("Your name");
+	clientName.type = "ClientName";
+	clientName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnClientNameClicked, this));
 }
 
 void MainMenu::onIPinputClicked()
 {
 	GUIsystem::Instance()->SetIsTyping(true);
 	GUIsystem::Instance()->currentType = "IpInput";
+}
+
+void MainMenu::OnClientNameClicked()
+{
+	clientName.editbox->setText("");
+	GUIsystem::Instance()->SetIsTyping(true);
+	GUIsystem::Instance()->currentType = "ClientName";
 }
 
 void MainMenu::SetUpOptionMenu()
@@ -641,6 +654,9 @@ void MainMenu::ShowConnectionMenu()
 
 	IpInputBox.editbox->enable();
 	IpInputBox.editbox->setVisible(true);
+
+	clientName.editbox->enable();
+	clientName.editbox->setVisible(true);
 }
 
 void MainMenu::HideOptionMenu()
@@ -701,6 +717,9 @@ void MainMenu::HideConnectionMenu()
 
 	IpInputBox.editbox->setVisible(false);
 	IpInputBox.editbox->disable();
+
+	clientName.editbox->disable();
+	clientName.editbox->setVisible(false);
 }
 
 void MainMenu::ShowOptionMenu1()
