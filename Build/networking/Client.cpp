@@ -92,23 +92,10 @@ void Client::UpdateUser(float dt)
 	{
 
 		if (userID != 0) {
-			SendVector3(userID, PLAYER_POS,			 Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetPosition());
-			SendVector3(userID, PLAYER_LINVEL,		 Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetLinearVelocity());
-			SendVector3(userID, PLAYER_ANGVEL,		 Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetAngularVelocity());
-			SendVector3(userID, PLAYER_ACCELERATION, Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetAcceleration());
-			SendSize(userID);
 
 			for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 			{
-				if (i != userID)
-				{
-					Game::Instance()->SetPosition(i, temps.positions[i]);
-					Game::Instance()->SetLinearVelocity(i, temps.linVelocities[i]);
-					Game::Instance()->SetAngularVelocity(i, temps.angVelocities[i]);
-					Game::Instance()->SetAcceleration(i, temps.accelerations[i]);
-					Game::Instance()->SetSize(i, temps.sizes[i]);
-				}
-
+				DeadReckon(i,dt);
 			}
 		}
 	}
@@ -160,39 +147,20 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			NCLDebug::Log("Connection ID recieved");
 			break;
 		}
-		case PLAYER_POS:
+		case AVATAR_UPDATE:
 		{
-			PlayerVector pvec = ReceiveVector(data);
-			if (pvec.ID != userID)
-				temps.positions[pvec.ID] = pvec.v;
-			break;
-		}
-		case PLAYER_LINVEL:
-		{
-			PlayerVector pvec = ReceiveVector(data);
-			if (pvec.ID != userID)
-				temps.linVelocities[pvec.ID] = pvec.v;
-			break;
-		}
-		case PLAYER_ANGVEL:
-		{
-			PlayerVector pvec = ReceiveVector(data);
-			if (pvec.ID != userID)
-				temps.angVelocities[pvec.ID] = pvec.v;
-			break;
-		}
-		case PLAYER_ACCELERATION:
-		{
-			PlayerVector pvec = ReceiveVector(data);
-			if (pvec.ID != userID)
-				temps.accelerations[pvec.ID] = pvec.v;
+			size_t colonIdx = data.find_first_of(':');
+			size_t semicolonIdx = data.find_first_of(';');
+
+			uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+			ReceiveAvatarUpdate(data);
 			break;
 		}
 		case PLAYER_SIZES:
 		{
 			PlayerFloat pfloat = ReceiveSizes(data);
-			if (pfloat.ID != userID)
-				temps.sizes[pfloat.ID] = pfloat.f;
+			temps.sizes[pfloat.ID] = pfloat.f;
 			break;
 		}
 		case PLAYER_SCORES:
@@ -256,7 +224,7 @@ void Client::ReceiveMapIndex(string data)
 	string s = data.substr(data.find_first_of(':') + 1);
 	uint mapIndex = stoi(s);
 
-	Game::Instance()->LoadLevel(mapIndex);
+	//Game::Instance()->LoadLevel(mapIndex);
 }
 
 void Client::ReceiveMapChange(string data)
@@ -264,23 +232,13 @@ void Client::ReceiveMapChange(string data)
 	string s = data.substr(data.find_first_of(':') + 1);
 	uint mapIndex = stoi(s);
 
-	Game::Instance()->LoadLevel(mapIndex);
+	//Game::Instance()->LoadLevel(mapIndex);
 }
 
 
 //--------------------------------------------------------------------------------------------//
 // Sending
 //--------------------------------------------------------------------------------------------//
-
-void Client::SendVector3(uint ID,PacketType type, Vector3 vec)
-{
-	string data = to_string(type) + ":"
-		+ to_string(ID) + ";"
-		+ Vector3ToString(vec);
-
-	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
-	enet_peer_send(serverConnection, 0, packet);
-}
 
 void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 {
@@ -296,14 +254,26 @@ void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 	enet_peer_send(serverConnection, 0, packet);
 }
 
-void Client::SendSize(uint ID)
+void Client::SendInput(uint ID, Movement mov, float yaw, float dt)
 {
 	string data;
 
-	data = to_string(PLAYER_SIZES) + ":" +
-		to_string(ID) + ";" + to_string(Game::Instance()->GetPlayer(ID)->GetLife());
+	if (mov == MOVE_RIGHT)
+	{
+		cout << "right";
+	}
+	if (mov == MOVE_LEFT)
+	{
+		cout << "left";
+	}
 
-	ENetPacket* packet = CreatePacket(data);
+	data = to_string(PLAYER_INPUT) + ":"
+		+ to_string(ID) + ";"
+		+ to_string(mov) + ","
+		+ to_string(yaw) + ","
+		+ to_string(dt);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_peer_send(serverConnection, 0, packet);
 }
 
@@ -322,15 +292,37 @@ void Client::SendUsername(uint ID)
 }
 
 
-//Nikos Fragkas
-//Date 19/02
-void Client::SendUsername(uint ID)
+//--------------------------------------------------------------------------------------------//
+// Utility
+//--------------------------------------------------------------------------------------------//
+
+void Client::DeadReckon(uint ID, float dt)
 {
-	string data;
 
-	data = to_string(PLAYER_NAME) + ":" +
-		to_string(ID) + ";" ;
+	Avatar * p = Game::Instance()->GetPlayer(ID);
 
-	ENetPacket* packet = CreatePacket(data);
-	enet_peer_send(serverConnection, 0, packet);
+	dt = serverConnection->roundTripTime / 2000.0f;
+
+	Vector3 estimatePos = 
+		temps.positions[ID] +
+		temps.linVelocities[ID] * dt +
+		temps.accelerations[ID] * 0.5f * dt * dt;
+
+	Vector3 estimateLinVel =
+		temps.linVelocities[ID] +
+		temps.accelerations[ID] * dt;
+
+	Vector3 estimateAngVel =
+		temps.angVelocities[ID] +
+		temps.accelerations[ID] * dt;
+
+	Vector3 newPos		= LerpVector3(estimatePos,				p->Physics()->GetPosition(),			lerpFactor);
+	Vector3 newLinVel	= LerpVector3(estimateLinVel,			p->Physics()->GetLinearVelocity(),		lerpFactor);
+	Vector3 newAngVel	= LerpVector3(estimateAngVel,			p->Physics()->GetAngularVelocity(),		lerpFactor);
+	Vector3 newAcc		= LerpVector3(temps.accelerations[ID],	p->Physics()->GetAcceleration(),		lerpFactor);
+
+	p->Physics()->SetPosition(newPos);
+	p->Physics()->SetLinearVelocity(newLinVel);
+	p->Physics()->SetAngularVelocity(newAngVel);
+	p->Physics()->SetAcceleration(newAcc);
 }

@@ -80,17 +80,25 @@ public:
 	void SendConnectionID(uint ID);
 	void SendGameStart(uint mapID);
 
-	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
+	void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir);
 	void SendSize(uint ID);
 	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
 
 	void SendScores();
 	void SendMap();
 	//void SendUpdatemap();
+	virtual void SendInput(uint ID, Movement mov, float yaw, float dt) {};
+
+	//--------------------------------------------------------------------------------------------//
+	// Receiving
+	//--------------------------------------------------------------------------------------------//
+
+	void ReceiveInput(string data);
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility
 	//--------------------------------------------------------------------------------------------//
+
 
 	virtual void StartGame(uint mapID = 0);
 	void Disconnect();

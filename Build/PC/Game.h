@@ -48,7 +48,7 @@ public:
 		user = new Server();
 	}
 	inline void setClient(IP ip) { 
-		if (user) { SAFE_DELETE(user) }; 
+		//if (user) { SAFE_DELETE(user) }; 
 		user = new Client(ip); 
 	}
 

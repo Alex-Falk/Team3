@@ -58,7 +58,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	maxLife = 100;
 	life = maxLife/2;
 	moveTimer = 0.0f;
-	rollSpeed = 1;
+	rollSpeed = 0.2f;
 	curMove = NO_MOVE;
 	previousMove = NO_MOVE;
 
@@ -483,7 +483,7 @@ void Avatar::MovementState(Movement moveDir, float yaw, float dt)
 	}
 
 	if (curMove != previousMove) {
-		rollSpeed = 3;
+		rollSpeed = 0.5f;
 	}
 
 	Vector3 axis = Vector3::Cross(vel.Normalise(), dirRotation);
@@ -492,7 +492,9 @@ void Avatar::MovementState(Movement moveDir, float yaw, float dt)
 
 
 	// Setting MoveMent
-	if (inAir) return;
+	if (inAir) {
+		return;
+	}
 
 	Physics()->SetForce(force);
 

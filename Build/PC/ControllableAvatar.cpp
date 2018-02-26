@@ -24,6 +24,7 @@
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
+#include "Game.h"
 #include <ncltech\CommonMeshes.h> 
 #include <nclgl\PlayerRenderNode.h> 
 #include <nclgl\common.h> 
@@ -52,7 +53,9 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 {
 	curMove = NO_MOVE;
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-	if (!inAir) 
+
+
+	if (!inAir)
 	{
 		if (Input::Instance()->GetInput(FORWARD)) { 		//Front
 			curMove = MOVE_FORWARD;
@@ -68,18 +71,24 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 		}
 	}
 
+	Game::Instance()->GetUser()->SendInput(Game::Instance()->getUserID(), curMove, yaw, dt);
 	MovementState(curMove, yaw, dt);
+	
 
 	Vector3 vel = Physics()->GetLinearVelocity();
 
 	if (Input::Instance()->GetInput(JUMP) && canJump)
 	{		//Jump
-		
-		Physics()->SetLinearVelocity(Vector3(vel.x*.8f,jumpImpulse,vel.z*.8f));
+
+		Physics()->SetLinearVelocity(Vector3(vel.x*.8f, jumpImpulse, vel.z*.8f));
 		inAir = true;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 		canJump = false;
 	}
+
+
+
+
 	
 	
 

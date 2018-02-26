@@ -2,15 +2,14 @@
 #include <ncltech\SceneManager.h>
 void Game::Update(float dt)
 { 
+	if (user)
+	{
+		user->UpdateUser(dt);
+	}
+
 	if (gameRunning)
 	{
 		gameTime += dt;
-
-		if (user)
-		{
-			user->UpdateUser(dt);
-		}
-
 	}
 
 

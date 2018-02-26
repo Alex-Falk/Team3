@@ -97,8 +97,6 @@ protected:
 	uint playerId;
 
 	void ChangeSize(float newSize);
-	virtual void MovementState(Movement moveDir,float yaw, float dt); // handles the movement of the player.
-
 
 public:
 	Avatar();
@@ -118,8 +116,12 @@ public:
 	void SetWeapon(WeaponType newWeapon) { weapon = newWeapon; }
 
 	bool IsPlayerInAir() { return inAir; }
+	void SetInAir(bool b) { inAir = b; ((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(b);
+	}
 	
 	Vector4 GetColourRGBA() { return colour; }
+
+	void MovementState(Movement moveDir, float yaw, float dt); // handles the movement of the player.
 
 	void Spray();
 	void ShootRocket();

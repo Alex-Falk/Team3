@@ -37,14 +37,6 @@
 
 using namespace std;
 
-struct TempData {
-	Vector3 positions[4];
-	Vector3 linVelocities[4];
-	Vector3 angVelocities[4];
-	Vector3 accelerations[4];
-	float sizes[4];
-};
-
 class Client : public User
 {
 public:
@@ -67,9 +59,8 @@ public:
 	// Sending
 	//--------------------------------------------------------------------------------------------//
 
-	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
-	void SendSize(uint ID);
+	virtual void SendInput(uint ID, Movement mov, float yaw, float dt);
 	void SendUsername(uint ID);
 
 	//--------------------------------------------------------------------------------------------//
@@ -85,7 +76,8 @@ protected:
 	NetworkBase network;
 	ENetPeer* serverConnection;
 
-	void DeadReckon(uint ID);
+	void DeadReckon(uint ID,float dt);
+	float lerpFactor = 0.5f;
 
 };
 

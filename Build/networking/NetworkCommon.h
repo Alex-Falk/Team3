@@ -38,10 +38,8 @@ enum PacketType {
 	GAME_START,				// Informs clients the game has started
 	CONNECTION_ID,
 	NUMBER_USERS,
-	PLAYER_POS,				// Server->Client: Broadcast positions.		Client->Server: Inform on Update
-	PLAYER_LINVEL,
-	PLAYER_ANGVEL,
-	PLAYER_ACCELERATION,	// Server->Client: Broadcast.				Client->Server:			"
+	AVATAR_UPDATE,
+	PLAYER_INPUT,
 	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
 	PLAYER_WEAPON,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
 	PLAYER_SCORES,			// Server->Client: Broadcast Scores

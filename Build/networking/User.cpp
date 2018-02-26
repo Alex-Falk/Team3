@@ -10,6 +10,42 @@ User::~User()
 {
 }
 
+// packetType:ID;posx posy posz, linvx linvy linvz, angvx angvy angvz, accx accy accz
+void User::ReceiveAvatarUpdate(string data)
+{
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
+
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+	data = data.substr(semicolonIdx + 1);
+
+	Vector3 vecs[4];
+	string temp;
+
+	for (uint i = 0; i < 4; ++i)
+	{
+		size_t commaIdx = data.find_first_of(',');
+		if (commaIdx != string::npos)
+			temp = data.substr(0, commaIdx);
+		else
+			temp = data;
+
+		vecs[i] = InterpretStringVector(temp);
+
+		data = data.substr(commaIdx + 1);
+	}
+
+	int inAir = stoi(data);
+
+	temps.positions[playerID] = vecs[0];
+	temps.linVelocities[playerID] = vecs[1];
+	temps.angVelocities[playerID] = vecs[2];
+	temps.accelerations[playerID] = vecs[3];
+	Game::Instance()->GetPlayer(playerID)->SetInAir(inAir);
+
+}
+
 PlayerVector User::ReceiveVector(string data)
 {
 	size_t colonIdx = data.find_first_of(':');
@@ -92,6 +128,7 @@ PlayerFloat User::ReceiveSizes(string data)
 	return pfloat;
 
 }
+
 PlayerName  User::ReceiveUserName(string data) {
 
 	size_t colonIdx = data.find_first_of(':');
@@ -105,7 +142,6 @@ PlayerName  User::ReceiveUserName(string data) {
 
 	return pname;
 }
-
 
 void User::StartGame(uint mapID)
 {
