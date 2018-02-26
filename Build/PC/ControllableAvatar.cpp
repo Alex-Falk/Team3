@@ -49,48 +49,32 @@ ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) 
 
 
 //Takes Player Input and move the player using force
-void ControllableAvatar::ProcessAvatarInput(float dt) 
+void ControllableAvatar::ProcessAvatarInput(float dt)
 {
-	curMove = NO_MOVE;
+	Movement move = NO_MOVE;
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
-
-	if (!inAir)
-	{
-		if (Input::Instance()->GetInput(FORWARD)) { 		//Front
-			curMove = MOVE_FORWARD;
-		}
-		if (Input::Instance()->GetInput(BACKWARD)) {		//Back
-			curMove = MOVE_BACKWARD;
-		}
-		if (Input::Instance()->GetInput(LEFT)) {		//Left
-			curMove = MOVE_LEFT;
-		}
-		if (Input::Instance()->GetInput(RIGHT)) {		//Right
-			curMove = MOVE_RIGHT;
-		}
+	// Movement 
+	if (Input::Instance()->GetInput(FORWARD)) { 		//Front
+		move = MOVE_FORWARD;
+	}
+	if (Input::Instance()->GetInput(BACKWARD)) {		//Back
+		move = MOVE_BACKWARD;
+	}
+	if (Input::Instance()->GetInput(LEFT)) {		//Left
+		move = MOVE_LEFT;
+	}
+	if (Input::Instance()->GetInput(RIGHT)) {		//Right
+		move = MOVE_RIGHT;
+	}
+	if (Input::Instance()->GetInput(JUMP)) {		//Jump
+		move = MOVE_JUMP;
 	}
 
 	Game::Instance()->GetUser()->SendInput(Game::Instance()->getUserID(), curMove, yaw, dt);
-	MovementState(curMove, yaw, dt);
-	
-
-	Vector3 vel = Physics()->GetLinearVelocity();
-
-	if (Input::Instance()->GetInput(JUMP) && canJump)
-	{		//Jump
-
-		Physics()->SetLinearVelocity(Vector3(vel.x*.8f, jumpImpulse, vel.z*.8f));
-		inAir = true;
-		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
-		canJump = false;
-	}
+	MovementState(move, yaw, dt);
 
 
-
-
-	
-	
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
 		NCLDebug::Log("Pistol Activated");

@@ -32,7 +32,8 @@ enum Movement {
 	MOVE_FORWARD,
 	MOVE_BACKWARD,
 	MOVE_LEFT,
-	MOVE_RIGHT
+	MOVE_RIGHT,
+	MOVE_JUMP
 };
 
 
@@ -86,11 +87,10 @@ protected:
 	bool shooting;
 
 	Vector3 dirRotation;	//The rotation based on camera
-	float moveTimer;
-	float rollSpeed;
-	Movement curMove;
-	Movement previousMove;
-	Vector3 vel;
+	float moveTimer;		//Timer used for spining balance
+	float rollSpeed;		//A variable that increases over time. adds to spin
+	Movement curMove;		//The current movement direction
+	Movement previousMove;	//The previous movement direction
 
 	Vector3 lastPos;		//used to determine distance travelled each frame for life
 
