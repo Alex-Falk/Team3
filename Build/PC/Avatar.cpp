@@ -414,58 +414,77 @@ void Avatar::ManageWeapons()
 void Avatar::MovementState(Movement moveDir, float yaw, float dt)
 {
 	
+
 	Vector3 force;
 	moveTimer += dt;
 
 	switch (moveDir)
 	{
 	case NO_MOVE: {
-		rollSpeed = 1;
 		force = Vector3(0, 0, 0);
+		curMove = NO_MOVE;
 		break;
 	}
 	case MOVE_FORWARD: {
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3( 0, -1, 0) * speed /100;
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
-		moveTimer = 0.0f;
+		curMove = MOVE_FORWARD;
 		break;
 	}
 	case MOVE_BACKWARD: {
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 100;
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
-		moveTimer = 0.0f;
+		curMove = MOVE_BACKWARD;
 		break;
 	}
 	case MOVE_LEFT: {
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 100;
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
-		moveTimer = 0.0f;
+		curMove = MOVE_LEFT;
 		break;
 	}
 	case MOVE_RIGHT: {
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 100;
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
-		moveTimer = 0.0f;
+		curMove = MOVE_LEFT;
 		break;
 	}
 	default: {
 		break;
 	}
 	}
-	// Setting MoveMent
 	force.y = 0;
+
+	// Setting Angular Velocity
+	//if (previousMove == curMove)
+	dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 10;
+	vel.x = Physics()->GetLinearVelocity().x;
+	vel.y = 0.f;
+	vel.z = Physics()->GetLinearVelocity().z;
+
+
+	rollSpeed -= (dt);
+	if (vel != Vector3(0, 0, 0)) {
+		if (rollSpeed < 0.2) { 
+			rollSpeed = 0.2;
+		}
+	}
+	else {
+		rollSpeed = 0.f;
+	}
+
+	if (curMove != previousMove) {
+		rollSpeed = 3;
+	}
+
+	Vector3 axis = Vector3::Cross(vel.Normalise(), dirRotation);
+	Physics()->SetAngularVelocity((Vector3(axis) / 2 * size * PI) * rollSpeed);
+	previousMove = moveDir;
+
+
+	// Setting MoveMent
+	if (inAir) return;
+
 	Physics()->SetForce(force);
 
 
-	// Setting Angular Velocity
-	Vector3 vel = Physics()->GetLinearVelocity();
-	rollSpeed = 1;
-	if (curMove != previousMove && curMove != NO_MOVE && moveTimer < .8f) {
-		rollSpeed = 3;
-	}
-	
-	Vector3 axis = Vector3::Cross(vel, dirRotation);
+//	if (force != Vector3(0, 0, 0)) {}
 
-	Physics()->SetAngularVelocity((Vector3(axis) / 2 * size * PI) * rollSpeed);
-	previousMove = moveDir;
+	
 }

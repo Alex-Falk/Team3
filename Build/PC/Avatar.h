@@ -84,9 +84,10 @@ protected:
 
 	Vector3 dirRotation;	//The rotation based on camera
 	float moveTimer;
-	int rollSpeed;
-	Movement curMove = NO_MOVE;
-	Movement previousMove = NO_MOVE;
+	float rollSpeed;
+	Movement curMove;
+	Movement previousMove;
+	Vector3 vel;
 
 	Vector3 lastPos;		//used to determine distance travelled each frame for life
 
