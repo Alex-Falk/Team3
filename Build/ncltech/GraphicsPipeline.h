@@ -263,6 +263,5 @@ protected:
 
 	//GUI
 	bool isMainMenu = false;
-
 };
 

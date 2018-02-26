@@ -36,6 +36,11 @@ protected:
 	int yDimension = 40;
 	int groundScoreAccuracy = 15;
 
+	//pickup stuff
+	uint npickup;
+	Pickup** pickup;
+
+
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
@@ -43,6 +48,8 @@ public:
 	Map(const std::string& friendly_name) : Scene(friendly_name) {}
 	~Map() {
 		TextureManager::Instance()->RemoveAllTexture();
+		//delete the array of pickups
+		delete[] pickup;
 	};
 
 	virtual void OnCleanupScene();
@@ -66,5 +73,8 @@ public:
 	//phil 21/02/2018 for minimap
 	inline int GetXDimension() { return xDimension; }
 	inline int GetYDimension() { return yDimension; }
+
+	inline uint GetNPickup() { return npickup; }
+	inline Pickup** GetPickups() { return pickup; }
 };
 

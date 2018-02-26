@@ -790,19 +790,19 @@ void GraphicsPipeline::DrawMiniMap() {
 		(float*)&(Matrix4::Translation(Vector3(-1.0f + sx, -1.0f + sy, 0.0f)) * Matrix4::Scale(Vector3(sx, sy, 1.0f))));
 	uint playerCount = Game::Instance()->GetPlayerNumber();
 	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "playerCount"), playerCount);
-	//four vector2s
+	//four Vector2s
 	float players[8];
-	//four vector3s
+	//four Vector3s
 	float colours[12];
 	uint count = 0;
 	for (int i = 0; i < 4; i++) {
 		Avatar* a = Game::Instance()->GetPlayer(i);
 		if (a) {
+			//let the shader know which is the current player
 			if (i == Game::Instance()->getUserID()) {
 				glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "self"), count);
 			}
 			//adding the player's colours
-			//TODO make this relative to the arena rather than hard coded
 			players[count * 2] = (xDimension - a->GetPosition().x) / (xDimension * 2);
 			players[(count * 2) + 1] = (yDimension + a->GetPosition().z) / (yDimension * 2);
 			//colours

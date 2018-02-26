@@ -5,25 +5,19 @@
 class SimpleGamePlay : public Map
 {
 private:
-
 	float m_AccumTime = 0;
-
-	//--------------------------------------------------------------------------------------------//
-	// Special objects in the map
-	//--------------------------------------------------------------------------------------------//
-	static const uint npickup = 2;
-	Pickup* pickup[npickup];
-
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
 	SimpleGamePlay(const std::string& friendly_name) :
 		Map(friendly_name)
-	{}
+	{
+		npickup = 2;
+		pickup = new Pickup*[npickup];
+	}
 
 	~SimpleGamePlay() {
-		delete[] pickup;
 	}
 
 	virtual void OnInitializeScene() override;
