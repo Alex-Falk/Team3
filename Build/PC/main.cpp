@@ -4,7 +4,6 @@
 #include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
-
 #include "UserInterface.h"
 #include "AudioSystem.h"
 #include "SimpleGamePlay.h"
@@ -353,6 +352,15 @@ void TestPostProcess()
 	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F3)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::GRAYSCALE);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F4)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::SHARPEN);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F5)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::BLUR);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F6)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::EDGE_DETECTION);
 	}
 }
 

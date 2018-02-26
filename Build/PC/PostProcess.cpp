@@ -3,6 +3,9 @@
 PostProcess::PostProcess()
 {
 	postProcessShaders = new Shader*[NUMBER_OF_SHADER];
+	for (int i = 0; i < NUMBER_OF_SHADER; ++i) {
+		postProcessShaders[i] = NULL;
+	}
 
 	postProcessShaders[PostProcessType::NORMAL] = new Shader(
 		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
@@ -12,6 +15,22 @@ PostProcess::PostProcess()
 		NCLERROR("Could not link shader: Post Process Shader/Normal");
 	}
 	
+	postProcessShaders[PostProcessType::BLUR] = new Shader(
+		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
+		SHADERDIR"Post Process/BLUR.glsl");
+	if (!postProcessShaders[PostProcessType::BLUR]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Post Process Shader/BLUR");
+	}
+
+	postProcessShaders[PostProcessType::SHARPEN] = new Shader(
+		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
+		SHADERDIR"Post Process/SHARPEN.glsl");
+	if (!postProcessShaders[PostProcessType::SHARPEN]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Post Process Shader/SHARPEN");
+	}
+
 	postProcessShaders[PostProcessType::INVERSION] = new Shader(
 		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
 		SHADERDIR"Post Process/INVERSION.glsl");
@@ -27,14 +46,21 @@ PostProcess::PostProcess()
 	{
 		NCLERROR("Could not link shader: Post Process Shader/GRAYSCALE");
 	}
+
+	postProcessShaders[PostProcessType::EDGE_DETECTION] = new Shader(
+		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
+		SHADERDIR"Post Process/EDGE_DETECTION.glsl");
+	if (!postProcessShaders[PostProcessType::EDGE_DETECTION]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Post Process Shader/EDGE_DETECTION");
+	}
 }
 
 PostProcess::~PostProcess()
 {
-
-}
-
-void PostProcess::RenderPostprocessAndPresent()
-{
-	
+	for (int i = 0; i < NUMBER_OF_SHADER; ++i) {
+		if (postProcessShaders[i] != NULL) {
+			SAFE_DELETE(postProcessShaders[i]);
+		}
+	}
 }

@@ -138,8 +138,8 @@ void MainMenu::SetUpLobby()
 	startButton->setText("START GAME");
 	startButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onStartGameClicked, this));
 
-	ipText = static_cast<CEGUI::DefaultWindow*>(
-		GUIsystem::Instance()->createWidget("OgreTray/Button",
+	ipText = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Title",
 			Vector4(0.40f, 0.1f, 0.2f, 0.1f),
 			Vector4(),
 			"text"
@@ -236,21 +236,6 @@ void MainMenu::SetUpLobby()
 		+  GUIsystem::Instance()->player2name + "\n\n"
 		+  GUIsystem::Instance()->player3name + "\n\n"
 		+  GUIsystem::Instance()->player4name + "\n\n");
-
-	/*	
-	addedPlayerInfo = static_cast<CEGUI::Titlebar*>(
-		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.10f, 0.50f, 0.20f, 0.30f),
-			Vector4(),
-			"AddedPlayerInfo"
-		));
-	addedPlayerInfo->setAlpha(0.8);
-	addedPlayerInfo->disable();
-	addedPlayerInfo->setVisible(false);
-	addedPlayerText = addedPlayerText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
-	addedPlayerInfo->setText(addedPlayerText); 
-	*/
-
 }
 
 void MainMenu::onMap1selected()

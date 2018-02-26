@@ -24,8 +24,6 @@ public:
 	PostProcess();
 	~PostProcess();
 
-	void RenderPostprocessAndPresent();
-
 	Shader* GetCurrentPostProcessShader() { return postProcessShaders[currentPostProcessType]; }
 	PostProcessType GetCurrentPostProcessType() { return currentPostProcessType; }
 	void SetPostProcessType(PostProcessType type) { this->currentPostProcessType = type; }

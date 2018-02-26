@@ -186,7 +186,7 @@ private:
 	CEGUI::PushButton* DebugButton;
 
 	//3. Create Game Menu
-	CEGUI::DefaultWindow* ipText;
+	CEGUI::Titlebar* ipText;
 	inputBox IpInputBox;
 	inputBox userName;
 	//3.1 Map text
