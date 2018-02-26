@@ -38,9 +38,9 @@ private:
 	MinionStateWander();
 	~MinionStateWander();
 	static MinionStateWander *instance;
-	string stateName;
+	std::string stateName;
 public:
-	string GetState();
+	std::string GetState();
 	static MinionStateWander* GetInstance();
 	void Enter(Minion* pMinion);
 	void Exit(Minion* pMinion);

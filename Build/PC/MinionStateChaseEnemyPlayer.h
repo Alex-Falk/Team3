@@ -38,9 +38,9 @@ private:
 	MinionStateChaseEnemyPlayer();
 	~MinionStateChaseEnemyPlayer();
 	static MinionStateChaseEnemyPlayer *instance;
-	string stateName;
+	std::string stateName;
 public:
-	string GetState();
+	std::string GetState();
 	static MinionStateChaseEnemyPlayer* GetInstance();
 	void Enter(Minion* pMinion);
 	void Exit(Minion* pMinion);

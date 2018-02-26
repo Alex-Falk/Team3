@@ -43,7 +43,7 @@ void MinionStateChaseEnemyPlayer::Enter(Minion* pMinion)
 	pMinion->GetMinionBlackBoard()->SetGoToNearestEnemy(true);
 }
 
-string MinionStateChaseEnemyPlayer::GetState()
+std::string MinionStateChaseEnemyPlayer::GetState()
 {
 	return stateName;
 }

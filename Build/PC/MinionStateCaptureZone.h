@@ -38,9 +38,9 @@ private:
 	MinionStateCaptureZone();
 	~MinionStateCaptureZone();
 	static MinionStateCaptureZone *instance;
-	string stateName;
+	std::string stateName;
 public:
-	string GetState();
+	std::string GetState();
 	static MinionStateCaptureZone* GetInstance();
 	void Enter(Minion* pMinion);
 	void Exit(Minion* pMinion);

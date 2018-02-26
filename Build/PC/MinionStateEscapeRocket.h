@@ -38,9 +38,9 @@ private:
 	MinionStateEscapeRocket();
 	~MinionStateEscapeRocket();
 	static MinionStateEscapeRocket *instance;
-	string stateName;
+	std::string stateName;
 public:
-	string GetState();
+	std::string GetState();
 	static MinionStateEscapeRocket* GetInstance();
 	void Enter(Minion* pMinion);
 	void Exit(Minion* pMinion);

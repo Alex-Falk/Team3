@@ -38,9 +38,9 @@ private:
 	MinionStateHealFriendlyPlayer();
 	~MinionStateHealFriendlyPlayer();
 	static MinionStateHealFriendlyPlayer *instance;
-	string stateName;
+	std::string stateName;
 public:
-	string GetState();
+	std::string GetState();
 	static MinionStateHealFriendlyPlayer* GetInstance();
 	void Enter(Minion* pMinion);
 	void Exit(Minion* pMinion);

@@ -43,7 +43,7 @@ void MinionStateWander::Enter(Minion* pMinion)
 	pMinion->GetMinionBlackBoard()->SetGoToNearestCaptureZone(true);
 }
 
-string MinionStateWander::GetState()
+std::string MinionStateWander::GetState()
 {
 	return stateName;
 }

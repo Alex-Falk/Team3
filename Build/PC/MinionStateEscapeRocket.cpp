@@ -43,7 +43,7 @@ void MinionStateEscapeRocket::Enter(Minion* pMinion)
 	pMinion->GetMinionBlackBoard()->SetFleeTarget(true);
 }
 
-string MinionStateEscapeRocket::GetState()
+std::string MinionStateEscapeRocket::GetState()
 {
 	return stateName;
 }

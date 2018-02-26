@@ -43,7 +43,7 @@ void MinionStateHealFriendlyPlayer::Enter(Minion* pMinion)
 	pMinion->GetMinionBlackBoard()->SetGoToNearestCaptureZone(true);
 }
 
-string MinionStateHealFriendlyPlayer::GetState()
+std::string MinionStateHealFriendlyPlayer::GetState()
 {
 	return stateName;
 }
