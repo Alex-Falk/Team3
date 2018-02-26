@@ -6,6 +6,7 @@
 #include <ncltech\NetworkBase.h>
 #include "NetworkCommon.h"
 #include <ncltech\SceneManager.h>
+#include <ctime>
 
 class User
 {
@@ -14,6 +15,7 @@ protected:
 
 	string ip;
 	bool destroy = false;
+
 public:
 	User();
 	~User();
@@ -21,6 +23,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Sending
 	//--------------------------------------------------------------------------------------------//
+
 	virtual void SendVector3(uint ID, PacketType type, Vector3 vec) = 0;
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir) = 0;
 

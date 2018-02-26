@@ -101,6 +101,9 @@ Server::Server() {
 
 		freeIDs = { 3,2,1 };
 		Game::Instance()->SetPlayerNumber(1);
+
+		
+
 	}
 }
 
@@ -141,8 +144,8 @@ void Server::UpdateUser(float dt)
 					{
 						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 						SendConnectionID(freeIDs[freeIDs.size() - 1]);
-						enet_peer_timeout(&server->m_pNetwork->peers[freeIDs[freeIDs.size() - 1] - 1], 80, 800, 800);
-
+						enet_peer_timeout(evnt.peer, 80, 800, 800);
+						evnt.peer->pingInterval = 100;
 						freeIDs.pop_back();
 					}
 					else

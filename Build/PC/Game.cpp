@@ -62,10 +62,17 @@
 #include <ncltech\SceneManager.h>
 void Game::Update(float dt)
 { 
-	if (user) 
+	if (gameRunning)
 	{
-		user->UpdateUser(dt);
-	} 
+		gameTime += dt;
+
+		if (user)
+		{
+			user->UpdateUser(dt);
+		}
+
+	}
+
 
 }
 
@@ -80,4 +87,5 @@ void Game::ResetGame()
 	user = nullptr;
 	enet_deinitialize();
 	gameRunning = false;
+	gameTime = 0;
 }
