@@ -21,9 +21,11 @@
 uniform samplerCube cubeTex;
 uniform float brightness;
 
+
+
 in Vertex {
 	vec3 normal;
-} IN;
+} IN; 
 
 out vec4 FragColor;
 

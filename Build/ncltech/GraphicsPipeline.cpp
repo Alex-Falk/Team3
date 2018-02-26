@@ -16,6 +16,8 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
 															
 *****************************************************************************/
+//adpated by Jianfei
+
 #include "GraphicsPipeline.h"
 #include "ScreenPicker.h"
 #include "BoundingBox.h"
@@ -29,7 +31,6 @@ GraphicsPipeline::GraphicsPipeline()
 	, screenTexWidth(0)
 	, screenTexHeight(0)
 	, screenFBO(NULL)
-	, screenTexColor(NULL)
 	, screenTexDepth(NULL)
 	, fullscreenQuad(NULL)
 	, shadowFBO(NULL)
@@ -37,8 +38,9 @@ GraphicsPipeline::GraphicsPipeline()
 	, pathFBO(NULL)
 	,pathTex(NULL)
 {
-
-
+	for (int i = 0; i < 2; ++i) {
+		screenTexColor[i] = NULL;
+	}
 	LoadShaders();
 	LoadMaterial();
 	NCLDebug::_LoadShaders();
@@ -84,7 +86,8 @@ GraphicsPipeline::~GraphicsPipeline()
 
 	if (screenFBO)
 	{
-		glDeleteTextures(1, &screenTexColor);
+		glDeleteTextures(1, &screenTexColor[0]);
+		glDeleteTextures(1, &screenTexColor[1]);
 		glDeleteTextures(1, &screenTexDepth);
 		glDeleteFramebuffers(1, &screenFBO);
 		screenFBO = NULL;
@@ -144,8 +147,6 @@ void GraphicsPipeline::RemovePlayerRenderNode(RenderNode* node)
 {
 	playerRenderNodes.erase(std::remove(playerRenderNodes.begin(), playerRenderNodes.end(), node), playerRenderNodes.end());
 }
-
-
 
 void GraphicsPipeline::LoadShaders()
 {
@@ -241,8 +242,14 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 		};
 
 		//Color Texture
-		if (!screenTexColor) glGenTextures(1, &screenTexColor);
-		glBindTexture(GL_TEXTURE_2D, screenTexColor);
+		if (!screenTexColor[0]) glGenTextures(1, &screenTexColor[0]);
+		glBindTexture(GL_TEXTURE_2D, screenTexColor[0]);
+		SetTextureDefaults();
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenTexWidth, screenTexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+
+		//Multi-Rendering texture
+		if (!screenTexColor[1]) glGenTextures(1, &screenTexColor[1]);
+		glBindTexture(GL_TEXTURE_2D, screenTexColor[1]);
 		SetTextureDefaults();
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenTexWidth, screenTexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 
@@ -252,14 +259,14 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 		SetTextureDefaults();
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, screenTexWidth, screenTexHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
-
 		//Generate our Framebuffer
 		if (!screenFBO) glGenFramebuffers(1, &screenFBO);
 		glBindFramebuffer(GL_FRAMEBUFFER, screenFBO);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexColor, 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexColor[0], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, screenTexColor[1], 0);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, screenTexDepth, 0);
-		GLenum buf = GL_COLOR_ATTACHMENT0;
-		glDrawBuffers(1, &buf);
+		GLenum buf[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+		glDrawBuffers(2, buf);
 		//Validate our framebuffer
 		if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE)
 		{
@@ -294,7 +301,6 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 	//m_ShadowUBO._ShadowMapTex = glGetTextureHandleARB(m_ShadowTex);
 	//glMakeTextureHandleResidentARB(m_ShadowUBO._ShadowMapTex);
 }
-
 
 void GraphicsPipeline::DebugRender()
 {
@@ -388,8 +394,6 @@ void GraphicsPipeline::RenderScene()
 
 	OGLRenderer::SwapBuffers();
 }
-
-
 
 void GraphicsPipeline::Resize(int x, int y)
 {
@@ -673,24 +677,9 @@ void GraphicsPipeline::RenderPath()
 
 void GraphicsPipeline::RenderPostprocessAndPresent()
 {
-	//Downsample and present to screen
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, width, height);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-	float superSamples = (float)(numSuperSamples);
-
-	glUseProgram(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram());
-	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
-	glUniform1i(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
-	glBindTexture(GL_TEXTURE_2D, screenTexColor);
-
-	glUniform1f(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uGammaCorrection"), gammaCorrection);
-	glUniform1f(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uNumSuperSamples"), superSamples);
-	glUniform2f(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
-
+	PostProcess::Instance()->RenderPostProcess();
 	fullscreenQuad->Draw();
+	glUseProgram(0);
 }
 
 void GraphicsPipeline::InitPath(Vector2 _groundSize)

@@ -16,6 +16,7 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
 															
 *****************************************************************************/
+//Add MRT - Jeff
 #version 330 core
 #define SHADOWMAP_NUM  4
 
@@ -46,7 +47,8 @@ in Vertex	{
 	smooth vec3 	 normal;
 } IN;
 
-out vec4 OutFrag;
+layout(location = 0) out vec4 OutFrag;
+layout(location = 1) out vec4 BrightColor;
 
 const float NORMAL_BIAS = 0.003f;
 const float RAW_BIAS 	= 0.00025f;
@@ -137,10 +139,14 @@ void main(void)	{
 	vec2 coord = vec2(-IN.texCoord.x, -IN.texCoord.y);
 	vec4 pathColor = texture(uPathTex, coord);
 	vec3 up = vec3(0, 1, 0);
+	vec4 FinalColor;
 	if(length((normal - up)) < 0.1)
-		OutFrag = pathColor + finalLightColor;
+		FinalColor = pathColor + finalLightColor;
 	else
-		OutFrag = finalLightColor;
-
-
+		FinalColor = finalLightColor;
+	OutFrag = FinalColor;
+	float brightness = dot(FinalColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if (brightness > 0.5) {
+		BrightColor = vec4(FinalColor.rgb, 1.0);
+	}
 }

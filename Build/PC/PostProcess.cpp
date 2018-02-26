@@ -72,3 +72,24 @@ PostProcess::~PostProcess()
 		}
 	}
 }
+
+void PostProcess::RenderPostProcess()
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, GraphicsPipeline::Instance()->GetWidth(),
+		GraphicsPipeline::Instance()->GetHeight());
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
+	glUseProgram(GetCurrentPostProcessShader()->GetProgram());
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
+	glUniform1i(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
+
+	glBindTexture(GL_TEXTURE_2D, GraphicsPipeline::Instance()->GetScreenTexColor2());
+	glUniform1f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uGammaCorrection"), 
+		GraphicsPipeline::Instance()->GetGammaCorrection());
+	glUniform1f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uNumSuperSamples"), superSamples);
+	glUniform2f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uSinglepixel"), 
+		1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 
+		1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
+}

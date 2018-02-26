@@ -2,6 +2,7 @@
 
 uniform sampler2D uColorTex;
 
+
 uniform vec2 	uSinglepixel;
 uniform float	uGammaCorrection;
 uniform float	uNumSuperSamples;

@@ -5,6 +5,7 @@
 #include <nclgl/TSingleton.h>
 #include <nclgl/Shader.h>
 #include <nclgl/NCLDebug.h>
+#include <ncltech/GraphicsPipeline.h>
 
 enum PostProcessType{
 	NORMAL				= 0,
@@ -28,6 +29,7 @@ public:
 	Shader* GetCurrentPostProcessShader() { return postProcessShaders[currentPostProcessType]; }
 	PostProcessType GetCurrentPostProcessType() { return currentPostProcessType; }
 	void SetPostProcessType(PostProcessType type) { this->currentPostProcessType = type; }
+	void RenderPostProcess();
 
 private:
 	Shader** postProcessShaders;

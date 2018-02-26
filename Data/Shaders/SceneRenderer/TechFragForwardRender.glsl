@@ -16,6 +16,7 @@ ___________)______________          _____
 :::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
 
 *****************************************************************************/
+//adapted by Jianfei - add multi render targets
 #version 330 core
 #define SHADOWMAP_NUM  4
 
@@ -44,7 +45,9 @@ in Vertex	{
 	smooth vec3 	 normal;
 } IN;
 
-out vec4 OutFrag;
+layout(location = 0) out vec4 OutFrag;
+layout(location = 1) out vec4 BrightColor;
+//out vec4 OutFrag;
 
 const float NORMAL_BIAS = 0.003f;
 const float RAW_BIAS 	= 0.00025f;
@@ -130,5 +133,10 @@ void main(void)	{
 	vec3 toWPos = normalize(IN.worldPos - uCameraPos);
 	vec4 reflection = texture(cubeTex, reflect(toWPos, normalize(IN.normal)))*smoothness;
 	reflection = reflection * vec4(diffuse, 0.0f);
-	OutFrag = reflection + finalLightColor;
+	vec4 FinalColor = reflection + finalLightColor;
+	OutFrag = FinalColor;
+	float brightness = dot(FinalColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if (brightness > 0.5) {
+		BrightColor = vec4(FinalColor.rgb, 1.0);
+	}
 }
