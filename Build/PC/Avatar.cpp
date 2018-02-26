@@ -445,7 +445,17 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
 		curMove = MOVE_LEFT;
 		break;
-	
+	case MOVE_JUMP: {
+		curMove = MOVE_JUMP;
+		Vector3 vel = Physics()->GetLinearVelocity();
+		if (canJump) {
+			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
+			inAir = true;
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+			canJump = false;
+		}
+		break;
+	}
 	default: {
 		break;
 	}
