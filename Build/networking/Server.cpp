@@ -173,7 +173,13 @@ void Server::UpdateUser(float dt)
 				switch (type) {
 				case AVATAR_UPDATE:
 				{
+					size_t colonIdx = data.find_first_of(':');
+					size_t semicolonIdx = data.find_first_of(';');
+
+					uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
 					ReceiveAvatarUpdate(data);
+					DeadReckon(playerID, dt);//server->m_pNetwork->peers[playerID].roundTripTime / 2000.0f);
 					break;
 				}
 
@@ -193,7 +199,7 @@ void Server::UpdateUser(float dt)
 				}
 				case PLAYER_INPUT:
 				{
-					ReceiveInput(data);
+					//ReceiveInput(data);
 					break;
 				}
 				}
@@ -306,7 +312,6 @@ void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVe
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 
-
 }
 
 void Server::SendSize(uint ID)
@@ -355,19 +360,24 @@ void Server::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 // Receiving
 //--------------------------------------------------------------------------------------------//
 
-void Server::ReceiveInput(string data)
-{
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-	size_t commaIdx = data.find_first_of(',');
-	size_t secondCommaIdx = commaIdx + 1 + (uint)(data.substr(commaIdx + 1).find_first_of(','));
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
-	Movement mov = Movement(stoi(data.substr(semicolonIdx + 1, commaIdx)));
-
-	float yaw = stof(data.substr(commaIdx + 1));
-	float dt = stof(data.substr(secondCommaIdx + 1));
-
-	Game::Instance()->GetPlayer(playerID)->MovementState(mov, yaw, dt);
-}
+//void Server::ReceiveInput(string data)
+//{
+//	size_t colonIdx = data.find_first_of(':');
+//	size_t semicolonIdx = data.find_first_of(';');
+//	size_t commaIdx = data.find_first_of(',');
+//	size_t secondCommaIdx = commaIdx + 1 + (uint)(data.substr(commaIdx + 1).find_first_of(','));
+//
+//	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+//
+//	Movement mov = Movement(stoi(data.substr(semicolonIdx + 1, commaIdx)));
+//
+//	float yaw = stof(data.substr(commaIdx + 1));
+//	float dt = stof(data.substr(secondCommaIdx + 1));
+//
+//	Avatar * p = Game::Instance()->GetPlayer(playerID);
+//	p->mov = mov;
+//	p->controllYaw = yaw;
+//	p->t = dt;
+//
+//	p->MovementState(mov, yaw, dt);
+//}

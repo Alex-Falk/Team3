@@ -90,13 +90,19 @@ void Client::UpdateUser(float dt)
 
 	if (Game::Instance()->IsRunning())
 	{
+		Avatar * p = Game::Instance()->GetCurrentAvatar();
+		SendAvatarUpdate(userID,
+			p->Physics()->GetPosition(),
+			p->Physics()->GetLinearVelocity(),
+			p->Physics()->GetAngularVelocity(),
+			p->Physics()->GetAcceleration(),
+			p->IsPlayerInAir()
+		);
 
-		if (userID != 0) {
-
-			for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
-			{
-				DeadReckon(i,dt);
-			}
+		for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
+		{
+			if(i != userID)
+				DeadReckon(i, dt);//serverConnection->roundTripTime / 2000.0f);
 		}
 	}
 }
@@ -154,7 +160,8 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 
 			uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 
-			ReceiveAvatarUpdate(data);
+			if (playerID != userID)
+				ReceiveAvatarUpdate(data);
 			break;
 		}
 		case PLAYER_SIZES:
@@ -240,6 +247,23 @@ void Client::ReceiveMapChange(string data)
 // Sending
 //--------------------------------------------------------------------------------------------//
 
+void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir)
+{
+	string data;
+
+	data = to_string(AVATAR_UPDATE) + ":" +
+		to_string(ID) + ";" +
+		Vector3ToString(pos) + "," +
+		Vector3ToString(linVel) + "," +
+		Vector3ToString(angVel) + "," +
+		Vector3ToString(acc) + "," +
+		to_string(inAir);
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_peer_send(serverConnection, 0, packet);
+
+}
+
 void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 {
 	string data;
@@ -287,33 +311,4 @@ void Client::SendUsername(uint ID)
 // Utility
 //--------------------------------------------------------------------------------------------//
 
-void Client::DeadReckon(uint ID, float dt)
-{
 
-	Avatar * p = Game::Instance()->GetPlayer(ID);
-
-	dt = serverConnection->roundTripTime / 2000.0f;
-
-	Vector3 estimatePos = 
-		temps.positions[ID] +
-		temps.linVelocities[ID] * dt +
-		temps.accelerations[ID] * 0.5f * dt * dt;
-
-	Vector3 estimateLinVel =
-		temps.linVelocities[ID] +
-		temps.accelerations[ID] * dt;
-
-	Vector3 estimateAngVel =
-		temps.angVelocities[ID] +
-		temps.accelerations[ID] * dt;
-
-	Vector3 newPos		= LerpVector3(estimatePos,				p->Physics()->GetPosition(),			lerpFactor);
-	Vector3 newLinVel	= LerpVector3(estimateLinVel,			p->Physics()->GetLinearVelocity(),		lerpFactor);
-	Vector3 newAngVel	= LerpVector3(estimateAngVel,			p->Physics()->GetAngularVelocity(),		lerpFactor);
-	Vector3 newAcc		= LerpVector3(temps.accelerations[ID],	p->Physics()->GetAcceleration(),		lerpFactor);
-
-	p->Physics()->SetPosition(newPos);
-	p->Physics()->SetLinearVelocity(newLinVel);
-	p->Physics()->SetAngularVelocity(newAngVel);
-	p->Physics()->SetAcceleration(newAcc);
-}

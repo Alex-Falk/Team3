@@ -150,3 +150,32 @@ void User::StartGame(uint mapID)
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 }
+
+void User::DeadReckon(uint ID, float dt)
+{
+
+	Avatar * p = Game::Instance()->GetPlayer(ID);
+
+	Vector3 estimatePos =
+		temps.positions[ID] +
+		temps.linVelocities[ID] * dt +
+		temps.accelerations[ID] * 0.5f * dt * dt;
+
+	Vector3 estimateLinVel =
+		temps.linVelocities[ID] +
+		temps.accelerations[ID] * dt;
+
+	Vector3 estimateAngVel =
+		temps.angVelocities[ID] +
+		temps.accelerations[ID] * dt;
+
+	Vector3 newPos = LerpVector3(estimatePos, p->Physics()->GetPosition(), lerpFactor);
+	Vector3 newLinVel = LerpVector3(estimateLinVel, p->Physics()->GetLinearVelocity(), lerpFactor);
+	Vector3 newAngVel = LerpVector3(estimateAngVel, p->Physics()->GetAngularVelocity(), lerpFactor);
+	Vector3 newAcc = LerpVector3(temps.accelerations[ID], p->Physics()->GetAcceleration(), lerpFactor);
+
+	p->Physics()->SetPosition(newPos);
+	p->Physics()->SetLinearVelocity(newLinVel);
+	p->Physics()->SetAngularVelocity(newAngVel);
+	p->Physics()->SetAcceleration(newAcc);
+}

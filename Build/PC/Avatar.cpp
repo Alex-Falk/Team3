@@ -231,8 +231,9 @@ void Avatar::OnAvatarUpdate(float dt) {
 		}
 	}
 
-	curMove = NO_MOVE;
-	Physics()->SetForce(Vector3(0,0,0));
+	//Movement mov = NO_MOVE;
+	//MovementState(mov, controllYaw, t);
+
 }
 
 
@@ -432,10 +433,10 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	Vector3 force;
 	moveTimer += dt;
 	curMove = NO_MOVE;
-	force = Vector3(0, 0, 0);
 	switch (inputDir)
 	{
 	case NO_MOVE: {
+		force = Vector3(0, 0, 0);
 		break;
 	}
 	case MOVE_FORWARD: 
@@ -508,6 +509,7 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	}
 
 	Physics()->SetForce(force);
+	curMove = NO_MOVE;
 
 
 //	if (force != Vector3(0, 0, 0)) {}

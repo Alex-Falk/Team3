@@ -59,6 +59,7 @@ public:
 	// Sending
 	//--------------------------------------------------------------------------------------------//
 
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir);
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
 	virtual void SendInput(uint ID, Movement mov, float yaw, float dt);
 	void SendUsername(uint ID);
@@ -76,8 +77,6 @@ protected:
 	NetworkBase network;
 	ENetPeer* serverConnection;
 
-	void DeadReckon(uint ID,float dt);
-	float lerpFactor = 0.5f;
 
 };
 

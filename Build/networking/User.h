@@ -36,7 +36,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 
 	virtual void SendInput(uint ID, Movement mov, float yaw, float dt) = 0;
-	//virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc) = 0;
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir) = 0;
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir) = 0;
 
 	//--------------------------------------------------------------------------------------------//
@@ -73,5 +73,8 @@ public:
 	ENetPacket* CreatePacket(string data) {
 		return enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	}
+
+	void DeadReckon(uint ID, float dt);
+	float lerpFactor = 0.5f;
 };
 

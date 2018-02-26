@@ -80,7 +80,7 @@ public:
 	void SendConnectionID(uint ID);
 	void SendGameStart(uint mapID);
 
-	void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir);
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir);
 	void SendSize(uint ID);
 	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
 
@@ -93,7 +93,7 @@ public:
 	// Receiving
 	//--------------------------------------------------------------------------------------------//
 
-	void ReceiveInput(string data);
+	/*void ReceiveInput(string data);*/
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility

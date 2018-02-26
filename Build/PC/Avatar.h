@@ -68,7 +68,7 @@ protected:
 	bool collisionTimerActive;
 	float collisionTimer;
 	float timeUntilInAir;
-	
+
 
 	// Boosts
 	PickupType activePickUp;
@@ -101,6 +101,10 @@ protected:
 public:
 	Avatar();
 	Avatar(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
+
+	//Movement mov;
+	//float controllYaw = 0;
+	//float t = 0;
 
 	virtual void OnAvatarUpdate(float dt);
 
