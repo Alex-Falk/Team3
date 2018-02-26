@@ -3,10 +3,12 @@
 #include "Projectile.h"
 #include "Avatar.h"
 #include "Score.h"
+#include "Explosion.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;
 	projectileWorth = 0;
+	predictedCollisionPosition = {0,0,0};
 }
 
 
@@ -57,6 +59,14 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 	exploded = false;
+
+	LineCollision l = PhysicsEngine::Instance()->CastRay(pos, vel.Normalise(), physicsNode);
+	if (l.node == NULL) {
+		predictedCollisionPosition = { 1000,1000,1000 };
+	}
+	else {
+		predictedCollisionPosition = pos + vel.Normalise() * l.dist;
+	}
 }
 
 Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, PhysNodeType type, int projWorth, const std::string& name) : GameObject(name) {
@@ -112,14 +122,19 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 	exploded = false;
+
+
+	LineCollision l = PhysicsEngine::Instance()->CastRay(pos, vel.Normalise(), physicsNode);
+	if (l.node == NULL) {
+		predictedCollisionPosition = { 1000,1000,1000 };
+	}
+	else {
+		predictedCollisionPosition = pos + vel.Normalise() * l.dist;
+	}
 }
 
 Projectile::~Projectile() {
-	if (renderNode)  GraphicsPipeline::Instance()->RemoveRenderNode(renderNode);
-	if (physicsNode) PhysicsEngine::Instance()->RemovePhysicsObject(physicsNode);
 
-	SAFE_DELETE(renderNode);
-	SAFE_DELETE(physicsNode);
 }
 
 void Projectile::Explode() {
@@ -129,11 +144,11 @@ void Projectile::Explode() {
 	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(2.0f, 2.0f, 2.0f))));
 	Render()->GetChild()->SetMesh(CommonMeshes::Sphere());
 
-	Projectile * explosion = new Projectile(this->colour, Vector4{ 1.0f,1.0f,1.0f,0.0f }, Physics()->GetPosition(), { 0,0,0 }, 2.0f, 5.0f, SPRAY, 4, "Spray");
+	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 2.0f, 5.0f, SPRAY, 4, "Spray");
 	explosion->UnregisterPhysicsToRenderTransformCallback();
 	explosion->Render()->SetTransform(Matrix4::Translation(Vector3{ 1000.f,1000.f,1000.f }));
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(explosion);
-
+	
 	//move above the arena so we don't see the sphere for the frame it exists
 	Physics()->SetPosition(Physics()->GetPosition() + Vector3{ 0,200,0 }); 
 }
@@ -145,8 +160,10 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 	{
 		if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour)
 		{	
-			((Avatar*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));		
 			if (projectileWorth >= 5 && !exploded) Explode();
+			else {
+				((Avatar*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));
+			}
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 			destroy = true;
 		}
@@ -154,10 +171,13 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 	}
 
 	if (collidingObject->GetType() == MINION) {
-		if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-			((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));
+		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		if (projectileWorth >= 5 && !exploded) Explode(); 
+		else {
+			if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
+				((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));
+			}
 		}
-		if (projectileWorth >= 5 && !exploded) Explode();
 		destroy = true;
 		return false;
 	}

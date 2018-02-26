@@ -55,7 +55,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 	maxForce = 30;
 
-	minLife = 10;
+	minLife = 20;
 	maxLife = 100;
 	life = maxLife/2;
 
@@ -334,7 +334,7 @@ void Avatar::ShootRocket()
 	}
 
 	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
-	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
+	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.18f,0.18f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
 	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion((float)pitch, (float)yaw, 0.0f));
 
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
@@ -350,7 +350,7 @@ void Avatar::ShootProjectile()
 	}
 
 	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
-	Projectile* projectile =  new Projectile(col, colour, Physics()->GetPosition(), direction, 0.2f, 5.0f, PROJECTILE, 2, "Projectile");
+	Projectile* projectile =  new Projectile(col, colour, Physics()->GetPosition(), direction, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
 
 	
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
