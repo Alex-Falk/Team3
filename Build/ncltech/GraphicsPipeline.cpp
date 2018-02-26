@@ -681,16 +681,16 @@ void GraphicsPipeline::RenderPostprocessAndPresent()
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	float superSamples = (float)(numSuperSamples);
-	glUseProgram(shaders[SHADERTYPE::Present_To_Window]->GetProgram());
 
+	glUseProgram(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram());
 	glActiveTexture(GL_TEXTURE0);
-	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uColorTex"), 0);
+	glUniform1i(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
+	glUniform1i(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
 	glBindTexture(GL_TEXTURE_2D, screenTexColor);
 
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uGammaCorrection"), gammaCorrection);
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uNumSuperSamples"), superSamples);
-	glUniform2f(glGetUniformLocation(shaders[SHADERTYPE::Present_To_Window]->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
-
+	glUniform1f(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uGammaCorrection"), gammaCorrection);
+	glUniform1f(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uNumSuperSamples"), superSamples);
+	glUniform2f(glGetUniformLocation(PostProcess::Instance()->GetCurrentPostProcessShader()->GetProgram(), "uSinglepixel"), 1.f / screenTexWidth, 1.f / screenTexHeight);
 
 	fullscreenQuad->Draw();
 }

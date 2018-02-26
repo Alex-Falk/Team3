@@ -5,6 +5,7 @@
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
 
+#include "UserInterface.h"
 #include "AudioSystem.h"
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
@@ -12,6 +13,7 @@
 #include "TestMap.h"
 #include "GameInput.h"
 #include "Game.h"
+#include "PostProcess.h"
 
 
 bool draw_debug = true;
@@ -37,6 +39,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	//Release Singletons
 	SceneManager::Release();
 	PhysicsEngine::Release();
+	PostProcess::Release();
 	GUIsystem::Release();
 	GraphicsPipeline::Release();
 	enet_deinitialize();
@@ -72,6 +75,7 @@ void Initialize()
 
 	GUIsystem::Instance();
 
+	PostProcess::Instance();
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
 

@@ -24,6 +24,7 @@
 #include <nclgl\Frustum.h>
 #include <nclgl\Mouse.h>
 #include <PC\UserInterface.h>
+#include <PC\PostProcess.h>
 
 //material
 #include <nclgl\Material.h>

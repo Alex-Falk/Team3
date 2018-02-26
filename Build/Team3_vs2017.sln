@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C4DEACDB-D3BF-44F9-8968-69A2F0597D10}"
 	ProjectSection(SolutionItems) = preProject
@@ -86,6 +86,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{8F46EB91-D896-
 		..\Data\Shaders\UI\ScorebarVertex.glsl = ..\Data\Shaders\UI\ScorebarVertex.glsl
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Post Process", "Post Process", "{A46604DF-82C8-429E-B925-33739FEF5CB0}"
+	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\Post Process\INVERSION.glsl = ..\Data\Shaders\Post Process\INVERSION.glsl
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -141,6 +146,7 @@ Global
 		{BFAC61F3-3D0B-4977-B961-A8142D397CAD} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
 		{ED95B4D6-EA18-4092-8250-928DEC7E9B2A} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
 		{8F46EB91-D896-4889-8C43-9CF76240A4E3} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
+		{A46604DF-82C8-429E-B925-33739FEF5CB0} = {BC67E7B4-7967-46D7-8471-A8200098B81D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {906F3866-8380-435F-B2DE-2EDAF98B9FBA}
