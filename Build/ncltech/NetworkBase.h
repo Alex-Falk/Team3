@@ -42,19 +42,6 @@ Description:
 #include <stdint.h>
 #include <functional>
 
-enum Packet_Type { 
-	NEW_USER,			// A new user connected to server - Clients initialize their Avatar vectors to the right size
-	START_POS,			// Server -> Client: Sends all start positions : Client -> Server: Sends own start position
-	END_POS,			// as above for ending positions
-	MAZE_WALLS,			// Sends indeces of edges in maze which are walls
-	PATH,				// Sends indeces of elements of path in order
-	TEXT,				// Sends text
-	NEW_MAZE,			// User requesting new maze from server (could combine with maze_walls for other direction)
-	AVATAR_POS_UPDATE,	// Updates the avatar position(s)
-	HAZARD_POS_UPDATE	// Update Hazards positions 
-};
-
-
 enum PacketTransportType
 {
 	//Packet will be sent, but may be lost in transit

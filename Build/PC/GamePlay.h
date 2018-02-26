@@ -13,7 +13,7 @@
 
 enum Colour
 {
-	RED, GREEN, BLUE, PINK, START_COLOUR
+	RED, GREEN, BLUE, PINK, START_COLOUR //Keep Start colour always at the end
 };
 
 //Name: Nick Bedford

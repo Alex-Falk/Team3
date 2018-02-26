@@ -1,8 +1,30 @@
-#include <nclgl/UserInterface.h>
+#include <PC\UserInterface.h>
 
-CEGUI::OpenGL3Renderer* GUI::m_renderer = NULL;
+CEGUI::OpenGL3Renderer* GUIsystem::m_renderer = NULL;
 
-void GUI::Init(const std::string& resourceDirectory)
+GUIsystem::GUIsystem()
+{
+	Init(CEGUIDIR);
+
+	scorebar = Mesh::GenerateQuad();
+	scorebarShader = new Shader(SHADERDIR"UI/ScorebarVertex.glsl",
+		SHADERDIR"UI/ScorebarFragment.glsl");
+	if (!scorebarShader->LinkProgram()) {
+		NCLERROR("Load scoreBar shader failed");
+	}
+
+	player1name == "\n\n";
+	player2name == "\n\n";
+	player3name == "\n\n";
+	player4name == "\n\n";
+}
+
+GUIsystem::~GUIsystem()
+{
+	Destory();
+}
+
+void GUIsystem::Init(const std::string& resourceDirectory)
 {
 	if (m_renderer == NULL) {
 		//Initialize CEGUI library
@@ -32,15 +54,34 @@ void GUI::Init(const std::string& resourceDirectory)
 	m_root = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "root");
 	m_context->setRootWindow(m_root);
 
+	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
+	LoadScheme("WindowsLook.scheme");
+	LoadScheme("TaharezLook.scheme");
+	LoadScheme("AlfiskoSkin.scheme");
+	LoadScheme("OgreTray.scheme");
+
+	//Set Font sytle
+	SetFont("DejaVuSans-10");
+
+	//SetMouseCursor
+	SetMouseCursor("AlfiskoSkin/MouseArrow");
+	ShowMouseCursor();
 }
 
-void GUI::Destory()
+void GUIsystem::Destory()
 {
 	CEGUI::System::getSingleton().destroyGUIContext(*m_context);
 }
 
-void GUI::Draw()
+void GUIsystem::Reset()
 {
+	Destory();
+	Init(CEGUIDIR);
+}
+
+void GUIsystem::Draw()
+{
+	//Render normal UI
 	glUseProgram(0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -51,27 +92,40 @@ void GUI::Draw()
 	m_renderer->endRendering();
 	glDisable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
+
+	//Render score bar
+	if (drawScorebar == true) {
+		glUseProgram(scorebarShader->GetProgram());
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.9, 0)) * Matrix4::Scale(Vector3(0.4, 0.04, 0));
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
+		scorebar->Draw();
+		glUseProgram(0);
+	}
 }
 
-void GUI::SetMouseCursor(const std::string & imageFile)
+void GUIsystem::SetMouseCursor(const std::string & imageFile)
 {
 	m_context->getMouseCursor().setDefaultImage(imageFile);
 }
 
-void GUI::ShowMouseCursor()
+void GUIsystem::ShowMouseCursor()
 {
 	m_context->getMouseCursor().show();
 }
 
-void GUI::HideMouseCursor()
+void GUIsystem::HideMouseCursor()
 {
 	m_context->getMouseCursor().hide();
 }
 
 
-void GUI::HandleTextInput(KeyboardKeys pressedKey)
+void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 {
-	CEGUI::utf32 codePoint = 61;
+	CEGUI::utf32 codePoint = 46;
 	switch (pressedKey)
 	{
 	case KEYBOARD_A:
@@ -152,16 +206,60 @@ void GUI::HandleTextInput(KeyboardKeys pressedKey)
 	case KEYBOARD_Z:
 		m_context->injectChar(0x7a);
 		break;
+	case KEYBOARD_PERIOD:
+		m_context->injectChar(0x2e);
+		break;
+	case KEYBOARD_0:
+		m_context->injectChar(0x30);
+		break;
+	case KEYBOARD_1:
+		m_context->injectChar(0x31);
+		break;
+	case KEYBOARD_2:
+		m_context->injectChar(0x32);
+		break;
+	case KEYBOARD_3:
+		m_context->injectChar(0x33);
+		break;
+	case KEYBOARD_4:
+		m_context->injectChar(0x34);
+		break;
+	case KEYBOARD_5:
+		m_context->injectChar(0x35);
+		break;
+	case KEYBOARD_6:
+		m_context->injectChar(0x36);
+		break;
+	case KEYBOARD_7:
+		m_context->injectChar(0x37);
+		break;
+	case KEYBOARD_8:
+		m_context->injectChar(0x38);
+		break;
+	case KEYBOARD_9:
+		m_context->injectChar(0x39);
+		break;
 	case KEYBOARD_BACK:
 		m_context->injectKeyDown(CEGUI::Key::Backspace);
 		m_context->injectKeyUp(CEGUI::Key::Backspace);
 		break;
+	case KEYBOARD_F8:
+		m_context->injectChar(0x3a);
+		break;
+	case 23:
+		m_context->injectChar(0x20);
+		break;
 	case KEYBOARD_RETURN:
-		for (int i = 0; i < inputBox.size(); ++i) {
-			if (inputBox[i].type == currentType) {
-				userTyping[i].content = inputBox[i].editbox->getText().c_str();
-				std::cout << userTyping[i].content << std::endl;
+		for (int i = 0; i < editboxes.size(); ++i) {
+			if (editboxes[i].type == currentType) {
+				textInfo[i].content = editboxes[i].editbox->getText().c_str();
+				if (currentType == "UserName") {
+					player1name = textInfo[i].content;
+				}
+				//std::cout << textInfo[i].content << std::endl;
 				break;
+			}
+			else {
 			}
 		}
 		break;
@@ -188,12 +286,12 @@ CEGUI::MouseButton TransferMouseButton(MouseButtons button)
 	return CEGUI::MouseButton();
 }
 
-void GUI::HandleMousePosition(float x, float y)
+void GUIsystem::HandleMousePosition(float x, float y)
 {
 	m_context->injectMousePosition(x, y);
 }
 
-void GUI::onMouseButtonPressed(MouseButtons button)
+void GUIsystem::onMouseButtonPressed(MouseButtons button)
 {
 	CEGUI::MouseButton transferedButton;
 	switch (button)
@@ -211,7 +309,7 @@ void GUI::onMouseButtonPressed(MouseButtons button)
 	}
 }
 
-void GUI::onMouseButtonHold(bool isHold)
+void GUIsystem::onMouseButtonHold(bool isHold)
 {
 	if (isHold == true) {
 		m_context->injectMouseButtonDown(CEGUI::MouseButton::LeftButton);
@@ -221,18 +319,18 @@ void GUI::onMouseButtonHold(bool isHold)
 	}
 }
 
-void GUI::LoadScheme(const std::string & schemeFile)
+void GUIsystem::LoadScheme(const std::string & schemeFile)
 {
 	CEGUI::SchemeManager::getSingleton().createFromFile(schemeFile);
 }
 
-void GUI::SetFont(const std::string & fontFile)
+void GUIsystem::SetFont(const std::string & fontFile)
 {
 	CEGUI::FontManager::getSingleton().createFromFile(fontFile + ".font");
 	m_context->setDefaultFont(fontFile);
 }
 
-CEGUI::Window * GUI::createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name)
+CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name)
 {
 	CEGUI::Window* newWindow = CEGUI::WindowManager::getSingleton().createWindow(type, name);
 	m_root->addChild(newWindow);

@@ -15,22 +15,15 @@ private:
 	//--------------------------------------------------------------------------------------------//
 	// Special objects in the map
 	//--------------------------------------------------------------------------------------------//
+	static const uint npickup = 3;
+	Pickup* pickup[npickup];
+	Vector3 pickupTextOffset[npickup];
+
 	Pickup* pickupSpeedBoost;
 	Pickup* pickupJumpBoost;
 	Pickup* pickupWeapon;
 
 	GameObject* object;
-
-	//--------------------------------------------------------------------------------------------//
-	// Setting up map specific variables for score
-	//--------------------------------------------------------------------------------------------//
-	static const int xDimension = 30;
-	static const int yDimension = 30;
-
-	static const int xOnGrid = 2 * (xDimension + 10)*groundScoreAccuracy; //Array cordinates for the x position of the player on the grid
-	static const int yOnGrid = 2 * (yDimension + 10)*groundScoreAccuracy; //Array cordinates for the y position of the player on the grid
-
-	Colour ground[xOnGrid][yOnGrid];
 
 public:
 	//--------------------------------------------------------------------------------------------//
@@ -46,21 +39,15 @@ public:
 		delete pickupWeapon;
 	}
 
-	void OnCleanUpScene();
-
 	virtual void OnInitializeScene() override;
+	virtual void SetSpawnLocations() override;
+	virtual void AddObjects() override;
 
 	//--------------------------------------------------------------------------------------------//
 	// Special Object udpates (e.g. Pickups)
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 	
-	//--------------------------------------------------------------------------------------------//
-	// Score Related Functions
-	//--------------------------------------------------------------------------------------------//
-	virtual void BuildGroundScore(); //Builds the array for the ground score
-	virtual void UpdateGroundScore(Avatar* player); //Updates the ground cells 
-
 	//--------------------------------------------------------------------------------------------//
 	// Utility
 	//--------------------------------------------------------------------------------------------//

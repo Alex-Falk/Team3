@@ -51,7 +51,10 @@ public:
 	const Vector4&	GetBaseColor()const { return baseColor; }
 	void			SetBaseColor(const Vector4 &c) { baseColor = c; }
 
-	RenderNode *	GetChild() { return children[0]; }
+	RenderNode *	GetChild() {
+		if (!children.empty()) { return children[0]; }
+		else { return nullptr; }
+	}
 
 	const Vector4&  GetChildColor()	const { return children[0]->color; }
 	void			SetChildColor(const Vector4 &c) { children[0]->color = c; }

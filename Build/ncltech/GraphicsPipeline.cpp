@@ -134,10 +134,18 @@ void GraphicsPipeline::AddRenderNode(RenderNode* node)
 		allNodes.push_back(node);
 }
 
+
 void GraphicsPipeline::RemoveRenderNode(RenderNode* node)
 {
 	allNodes.erase(std::remove(allNodes.begin(), allNodes.end(), node), allNodes.end());
 }
+
+void GraphicsPipeline::RemovePlayerRenderNode(RenderNode* node)
+{
+	playerRenderNodes.erase(std::remove(playerRenderNodes.begin(), playerRenderNodes.end(), node), playerRenderNodes.end());
+}
+
+
 
 void GraphicsPipeline::LoadShaders()
 {
@@ -623,9 +631,7 @@ void GraphicsPipeline::RenderObject()
 
 void GraphicsPipeline::RenderUI()
 {
-	if (GUIsystem != NULL) {
-		GUIsystem->Draw();
-	}
+	GUIsystem::Instance()->Draw();
 }
 
 void GraphicsPipeline::RenderPath()
@@ -638,7 +644,7 @@ void GraphicsPipeline::RenderPath()
 
 	Matrix4 projMatrix2 = Matrix4::Orthographic(-40, 40, -groundSize.x, groundSize.x, -groundSize.y, groundSize.y);
 	Matrix4	viewMatrix2 = Matrix4::Rotation(90, Vector3(1, 0, 0)) *Matrix4::Translation(Vector3(0.0f,-20.0f,0.0f));
-	glViewport(0, 0, groundSize.x*PIXELPERSIZE, groundSize.y*PIXELPERSIZE);
+	glViewport(0, 0, (GLsizei)(groundSize.x*PIXELPERSIZE), (GLsizei)(groundSize.y*PIXELPERSIZE));
 	Matrix4 temp = projViewMatrix;
 	projViewMatrix = projMatrix2 * viewMatrix2;
 
@@ -651,6 +657,20 @@ void GraphicsPipeline::RenderPath()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	projViewMatrix = temp;
+
+	//removes destroyed projectiles from the playerRenderNodes
+	//for (std::vector<RenderNode*>::iterator itr = playerRenderNodes.begin(); itr != playerRenderNodes.end(); itr++)
+	//{
+
+	//	PlayerRenderNode * tempPRN = (PlayerRenderNode*)(*itr)->GetChild();
+	//	if (tempPRN)
+	//	{
+	//		if (tempPRN->GetDestroy()) {
+	//			delete * itr;
+	//			itr = playerRenderNodes.erase(itr);
+	//		}	
+	//	}
+	//}
 }
 
 void GraphicsPipeline::RenderPostprocessAndPresent()
@@ -688,7 +708,7 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, groundSize.x*PIXELPERSIZE, groundSize.y*PIXELPERSIZE, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, (GLsizei)(groundSize.x*PIXELPERSIZE), (GLsizei)(groundSize.y*PIXELPERSIZE), 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 
 	//Generate our Framebuffer
 	if (!pathFBO) glGenFramebuffers(1, &pathFBO);
@@ -723,26 +743,4 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 	//Recurse over all children and process them aswell
 	for (auto itr = node->GetChildIteratorStart(); itr != node->GetChildIteratorEnd(); itr++)
 		RecursiveAddToPathRenderLists(*itr);
-}
-
-void GraphicsPipeline::HandleGUIMousePosition(float x, float y)
-{
-	if (GUIsystem != NULL) {
-		GUIsystem->HandleMousePosition(x, y);
-	}
-}
-
-void GraphicsPipeline::HandleMouseButton(MouseButtons button)
-{
-	if (GUIsystem != NULL) {
-		GUIsystem->onMouseButtonPressed(button);
-	}
-}
-
-void GraphicsPipeline::HandleLeftMouseButtonHold(bool isHold)
-{
-	if (GUIsystem != NULL) {
-		GUIsystem->onMouseButtonHold(isHold);
-	}
-
 }

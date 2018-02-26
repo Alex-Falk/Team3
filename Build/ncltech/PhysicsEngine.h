@@ -101,7 +101,8 @@ public:
 	//Debug draw all physics objects, manifolds and constraints
 	void DebugRender();
 
-
+	//Destroys Unwanted objects
+	void CleanUpPhase();
 
 	//Getters / Setters 
 	inline bool IsPaused() const				{ return isPaused; }
@@ -158,8 +159,7 @@ protected:
 
 	//Phil 13/02/2018
 	LineCollision CastRay(Vector3 origin, Vector3 direction, PhysicsNode* self = nullptr);
-	//Destroys Unwanted objects
-	void CleanUpPhase();
+
 
 protected:
 	bool		isPaused;

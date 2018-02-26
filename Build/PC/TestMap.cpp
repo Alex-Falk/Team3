@@ -6,48 +6,23 @@
 //--------------------------------------------------------------------------------------------//
 void TestMap::OnInitializeScene()
 {
+	xDimension = 30;
+	yDimension = 30;
+	groundScoreAccuracy = 15;
+
+	Map::OnInitializeScene();
+}
+
+void TestMap::SetSpawnLocations()
+{
 	spawnPositions[0] = Vector3(20, 5, 20);
 	spawnPositions[1] = Vector3(20, 5, -20);
 	spawnPositions[2] = Vector3(-20, 5, 20);
 	spawnPositions[3] = Vector3(-20, 5, -20);
 
-	// Loading Textures -----------------------------------------------------------------------------------------------------------
-	GraphicsPipeline::Instance()->SetIsMainMenu(false);
-	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
-		NCLERROR("Texture not loaded");
-
-	if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box, TEXTUREDIR"SkyBox\\skyright.jpg", TEXTUREDIR"SkyBox\\skyleft.jpg", TEXTUREDIR"SkyBox\\skytop.jpg",
-		TEXTUREDIR"SkyBox\\skybottom.jpg", TEXTUREDIR"SkyBox\\skyback.jpg", TEXTUREDIR"SkyBox\\skyfront.jpg"))
-		NCLERROR("Texture not loaded");
-	
-	pickupSpeedBoost = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
-	this->AddGameObject(pickupSpeedBoost);
-
-	pickupJumpBoost = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
-	this->AddGameObject(pickupJumpBoost);
-	
-	pickupWeapon = new Pickup(Vector3(1, 3, -5.5), WEAPON);
-	this->AddGameObject(pickupWeapon);
-	
-	CreateEnvironment();	// creates environment & elements within.
-	GameplayTesting();		// gameplay functionality testing.
-
-	GraphicsPipeline::Instance()->InitPath(Vector2(xDimension, yDimension));
-
-	// Score & GUI initialisation -------------------------------------------------------------------------------------------------
-	BuildGroundScore();
-	OnInitializeGUI();
-
-	// General Initialization -----------------------------------------------------------------------------------------------------
-	Map::OnInitializeScene();
 }
 
-void TestMap::OnCleanUpScene()
-{
-	DeleteAllGameObjects();
-	TextureManager::Instance()->RemoveAllTexture();
-	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
-}
+
 
 //--------------------------------------------------------------------------------------------//
 // Special Object udpates (e.g. Pickups)
@@ -56,38 +31,36 @@ void TestMap::OnUpdateScene(float dt)
 {
 	Scene::OnUpdateScene(dt);
 
-	m_AccumTime += dt;
-
-	for (uint i = 0; i < 4; i++) {
-		if (Game::Instance()->GetPlayer(i))
-			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
-	}
-
-	if (pickupJumpBoost)
+	for (uint i = 0; i < npickup; ++i)
 	{
-		pickupJumpBoost->Update(dt);
+		if (pickup[i])
+		{
+			pickup[i]->Update(dt);
+		}
 	}
 
-	if (pickupSpeedBoost)
-	{
-		pickupSpeedBoost->Update(dt);
-	}
-
-	if (pickupWeapon)
-	{
-		pickupWeapon->Update(dt);
-	}
-
-	Vector3 pickupSpeedBoostText = Vector3(0.0, 2.0, 0.0);
-	Vector3 pickupJumpBoostText = Vector3(0.0, 2.0, 0.0);
-	Vector3 pickupWeaponText = Vector3(0.0, 2.0, 0.0);
-
-	NCLDebug::DrawTextWs(pickupSpeedBoostText + Vector3(5.0f, 3.2f, 4.5f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "SPEED");
-	NCLDebug::DrawTextWs(pickupJumpBoostText + Vector3(-7.0f, 3.2f, -1.f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "JUMP");
-	NCLDebug::DrawTextWs(pickupWeaponText + Vector3(1.0f, 3.2f, -5.5f), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "WEAPON");
+	NCLDebug::DrawTextWs(pickupTextOffset[0] + pickup[0]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "SPEED");
+	NCLDebug::DrawTextWs(pickupTextOffset[1] + pickup[1]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "JUMP");
+	NCLDebug::DrawTextWs(pickupTextOffset[2] + pickup[2]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "WEAPON");
 }
 
+void TestMap::AddObjects()
+{
+	pickup[0] = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
+	this->AddGameObject(pickup[0]);
+	pickupTextOffset[0] = Vector3(0, 2, 0);
 
+	pickup[1] = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
+	this->AddGameObject(pickup[1]);
+	pickupTextOffset[1] = Vector3(0, 2, 0);
+
+	pickup[2] = new Pickup(Vector3(1, 3, -5.5), WEAPON);
+	this->AddGameObject(pickup[2]);
+	pickupTextOffset[2] = Vector3(0, 2, 0);
+
+	CreateEnvironment();
+	GameplayTesting();
+}
 
 
 void TestMap::CreateEnvironment()
@@ -193,53 +166,4 @@ void TestMap::GameplayTesting()
 		Vector4(1.0f, 1.0f, 1.0f, 0.5f),	    //Colour	
 		MATERIALTYPE::Forward_Lighting);
 	this->AddGameObject(object);
-}
-
-//--------------------------------------------------------------------------------------------//
-// Score Related Functions
-//--------------------------------------------------------------------------------------------//
-// These two need to be in each scene because they are dependent on the array which is defined in the scene itself
-
-void TestMap::BuildGroundScore() {
-
-
-	for (int i = 0; i < xOnGrid - 1; i++) {
-		for (int j = 0; j < yOnGrid - 1; j++) {
-			ground[i][j] = START_COLOUR;
-		}
-	}
-
-	ground[0][0] = RED;
-	ground[0][yOnGrid - 1] = GREEN;
-	ground[xOnGrid - 1][0] = BLUE;
-	ground[xOnGrid - 1][yOnGrid - 1] = PINK;
-	for (int i = 0; i < 4; i++)
-	{
-		groundTeamScore[i] = 0;
-	}
-}
-
-void TestMap::UpdateGroundScore(Avatar* player) {
-
-	Vector2 playerPos = Vector2((player->GetPosition().x * groundScoreAccuracy) + xOnGrid / 2, (player->GetPosition().z * groundScoreAccuracy) + yOnGrid / 2);
-	int plGridSize = (int)(player->GetLife() * groundScoreAccuracy / 100);
-
-	// Runs through the square arount the center and finds the circle.
-	for (int i = playerPos.x - plGridSize; i <= playerPos.x; i++) {
-		for (int j = playerPos.y - plGridSize; j <= playerPos.y; j++) {
-			if ((i - playerPos.x)*(i - playerPos.x) + (j - playerPos.y)* (j - playerPos.y) <= plGridSize * plGridSize) {
-				int xSym = playerPos.x - (i - playerPos.x);
-				int ySym = playerPos.y - (i - playerPos.y);
-				// Thanks to symetry we take all 4 quadrants of the circle arount the center
-				ChangeGridScore(ground[i][j], player->GetColour());
-				ground[i][j] = player->GetColour();
-				ChangeGridScore(ground[i][ySym], player->GetColour());
-				ground[i][ySym] = player->GetColour();
-				ChangeGridScore(ground[xSym][j], player->GetColour());
-				ground[xSym][j] = player->GetColour();
-				ChangeGridScore(ground[xSym][ySym], player->GetColour());
-				ground[xSym][ySym] = player->GetColour();
-			}
-		}
-	}
 }

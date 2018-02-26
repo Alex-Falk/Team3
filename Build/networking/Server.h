@@ -75,18 +75,19 @@ public:
 	// Player Scores
 	// full map info - on connect -> use map index
 	// changes to map
-	
+	void SendNumberUsers(uint n);
 	void SendConnectionID(uint ID);
-	void SendPosition(uint ID);
-	void SendLinVelocity(uint ID);
-	void SendAngVelocity(uint ID);
-	void SendAcceleration(uint ID);
-	void SendWeaponFire(uint ID);
+	void SendGameStart(uint mapID);
+
+	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
 	void SendSize(uint ID);
+	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
+
 	void SendScores();
 	//void SendMap();
 	//void SendUpdatemap();
 
+	virtual void StartGame(uint mapID = 0);
 	void Disconnect();
 
 	std::string GetPacketData(const ENetEvent & evnt)

@@ -157,18 +157,24 @@
     <ClInclude Include="Arena.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Avatar.h" />
+    <ClInclude Include="Behaviours.h" />
+    <ClInclude Include="CaptureArea.h" />
     <ClInclude Include="ControllableAvatar.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="PaintPool.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Minion.h" />
+    <ClInclude Include="MinionCamp.h" />
     <ClInclude Include="Projectile.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="PaintableGameObject.h" />
     <ClInclude Include="TestMap.h" />
+    <ClInclude Include="UserInterface.h" />
     <ClInclude Include="WeaponPickup.h" />
   </ItemGroup>
   <ItemGroup>
@@ -179,17 +185,23 @@
     <ClCompile Include="Arena.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Avatar.cpp" />
+    <ClCompile Include="Behaviours.cpp" />
+    <ClCompile Include="CaptureArea.cpp" />
     <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Minion.cpp" />
+    <ClCompile Include="MinionCamp.cpp" />
     <ClCompile Include="PaintPool.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="TestMap.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

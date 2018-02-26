@@ -26,6 +26,8 @@ public:
 
 	}
 
+	Colour GetColour() { return colour; }
+
 	void SetObjectWorth(float objWorth) {
 		objectWorth = objWorth;
 	}

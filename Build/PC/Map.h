@@ -13,6 +13,7 @@
 #include "Game.h"
 #include "GamePlay.h"
 #include "WeaponPickup.h"
+#include "Score.h"
 
 //#include "GroundScore.h"
 
@@ -20,21 +21,21 @@ class Map : public Scene
 {
 protected:
 	float m_AccumTime = 0;
-
+	Score* score;
 	Vector3 spawnPositions[4];
 
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
 	//--------------------------------------------------------------------------------------------//
-	CEGUI::ProgressBar* energyBar;
+	//CEGUI::ProgressBar* energyBar;
 
 	//--------------------------------------------------------------------------------------------//
 	// Score Related Variables
 	//--------------------------------------------------------------------------------------------//
-	int groundTeamScore[5];
-	int teamScores[5];
+	int xDimension = 40;
+	int yDimension = 40;
+	int groundScoreAccuracy = 15;
 
-	static const int groundScoreAccuracy = 100;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
@@ -44,22 +45,23 @@ public:
 		TextureManager::Instance()->RemoveAllTexture();
 	};
 
+	virtual void OnCleanupScene();
 
 	void onConnectToScene() override;
 	virtual void OnInitializeScene() override;
 	virtual void OnInitializeGUI() override;
+
+	virtual void LoadTextures();
+	virtual void AddObjects() {};
+	virtual void SetSpawnLocations();
+	virtual void InitializeScores();
 
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars and Scores
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 
-	//--------------------------------------------------------------------------------------------//
-	// Score Related Functions
-	//--------------------------------------------------------------------------------------------//
-	virtual void BuildGroundScore() = 0; //Builds the array for the ground score
-	virtual void UpdateGroundScore(Avatar* player) = 0; //Updates the ground cells 
-	void ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease); // updates the score
-	void PrintScore(int x); // debug
+	inline Score * GetScore() { return score; }
+
 };
 

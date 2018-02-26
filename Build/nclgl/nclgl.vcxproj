@@ -47,7 +47,6 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowMaterial.cpp" />
     <ClCompile Include="StandardMaterial.cpp" />
-    <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="NCLDebug.cpp" />
   </ItemGroup>
@@ -83,7 +82,6 @@
     <ClInclude Include="RenderNode.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="TSingleton.h" />
-    <ClInclude Include="UserInterface.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vector4.h" />
