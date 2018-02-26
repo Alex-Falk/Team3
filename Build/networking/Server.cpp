@@ -167,33 +167,37 @@ void Server::UpdateUser(float dt)
 				case PLAYER_POS:
 				{
 					PlayerVector pvec = ReceiveVector(data);
-					Game::Instance()->SetPosition(pvec.ID, pvec.v);
+					temps.positions[pvec.ID] = pvec.v;
+					//Game::Instance()->SetPosition(pvec.ID, pvec.v);
 					break;
 				}
 				case PLAYER_LINVEL:
 				{
 					PlayerVector pvec = ReceiveVector(data);
-					Game::Instance()->SetLinearVelocity(pvec.ID, pvec.v);
+					temps.linVelocities[pvec.ID] = pvec.v;
+					//Game::Instance()->SetLinearVelocity(pvec.ID, pvec.v);
 					break;
 				}
 				case PLAYER_ANGVEL:
 				{
 					PlayerVector pvec = ReceiveVector(data);
-					Game::Instance()->SetAngularVelocity(pvec.ID, pvec.v);
+					temps.angVelocities[pvec.ID] = pvec.v;
+					//Game::Instance()->SetAngularVelocity(pvec.ID, pvec.v);
 					break;
 				}
 				case PLAYER_ACCELERATION:
 				{
 					PlayerVector pvec = ReceiveVector(data);
-					Game::Instance()->SetAcceleration(pvec.ID, pvec.v);
+					temps.accelerations[pvec.ID] = pvec.v;
+					//Game::Instance()->SetAcceleration(pvec.ID, pvec.v);
 					break;
 				}
-				case PLAYER_SIZES:
-				{
-					PlayerFloat pfloat = ReceiveSizes(data);
-					Game::Instance()->SetSize(pfloat.ID, pfloat.f);
-					break;
-				}
+				//case PLAYER_SIZES:
+				//{
+				//	PlayerFloat pfloat = ReceiveSizes(data);
+				//	Game::Instance()->SetSize(pfloat.ID, pfloat.f);
+				//	break;
+				//}
 
 				case PLAYER_WEAPON:
 				{
@@ -236,6 +240,9 @@ void Server::UpdateUser(float dt)
 			{
 				if (Game::Instance()->GetPlayer(i))
 				{
+
+
+
 					SendVector3(i, PLAYER_POS, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition());
 					SendVector3(i, PLAYER_LINVEL, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity());
 					SendVector3(i, PLAYER_ANGVEL, Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity());

@@ -83,7 +83,7 @@ protected:
 	NetworkBase network;
 	ENetPeer* serverConnection;
 
-	TempData temps;
+	void DeadReckon(uint ID);
 
 };
 

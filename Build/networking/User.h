@@ -16,6 +16,8 @@ protected:
 	string ip;
 	bool destroy = false;
 
+	TempData temps;
+
 public:
 	User();
 	~User();

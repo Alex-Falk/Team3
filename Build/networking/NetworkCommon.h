@@ -83,3 +83,5 @@ vector<string> split_string(string s, char d);
 
 PacketType FindType(string data);
 
+Vector3 LerpVector3(Vector3 a, Vector3 b, float f);
+
