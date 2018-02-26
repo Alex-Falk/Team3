@@ -345,7 +345,7 @@ void HandleGUITextInput()
 void TestPostProcess()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F1)) {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::NORMAL);
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
 	}
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F2)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::INVERSION);

@@ -244,7 +244,7 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 		if (!screenTexColor) glGenTextures(1, &screenTexColor);
 		glBindTexture(GL_TEXTURE_2D, screenTexColor);
 		SetTextureDefaults();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, screenTexWidth, screenTexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenTexWidth, screenTexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 
 		//Depth+Stencil Texture
 		if (!screenTexDepth) glGenTextures(1, &screenTexDepth);

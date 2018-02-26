@@ -13,6 +13,7 @@ enum PostProcessType{
 	GRAYSCALE			= 3,
 	SHARPEN				= 4,
 	EDGE_DETECTION		= 5,
+	HDR_BLOOM			= 6,
 	NUMBER_OF_SHADER
 };
 

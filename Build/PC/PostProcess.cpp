@@ -54,6 +54,14 @@ PostProcess::PostProcess()
 	{
 		NCLERROR("Could not link shader: Post Process Shader/EDGE_DETECTION");
 	}
+
+	postProcessShaders[PostProcessType::HDR_BLOOM] = new Shader(
+		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
+		SHADERDIR"Post Process/HDR+Bloom.glsl");
+	if (!postProcessShaders[PostProcessType::HDR_BLOOM]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Post Process Shader/HDR+Bloom");
+	}
 }
 
 PostProcess::~PostProcess()
