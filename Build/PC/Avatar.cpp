@@ -48,7 +48,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	col = c;
 	size = s;
 
-	standardSpeed = 50.0f;
+	standardSpeed = 30.0f;
 	speed = standardSpeed;
 	boostedSpeed = standardSpeed * 20;
 
@@ -411,40 +411,41 @@ void Avatar::ManageWeapons()
 	}
 }
 
-void Avatar::MovementState(Movement moveDir, float yaw, float dt)
+void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 {
-	
-
 	Vector3 force;
 	moveTimer += dt;
 
-	switch (moveDir)
+	switch (inputDir)
 	{
 	case NO_MOVE: {
 		force = Vector3(0, 0, 0);
-		curMove = NO_MOVE;
 		break;
 	}
-	case MOVE_FORWARD: {
+	case MOVE_FORWARD: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
 		curMove = MOVE_FORWARD;
 		break;
-	}
-	case MOVE_BACKWARD: {
+	
+	case MOVE_BACKWARD: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
 		curMove = MOVE_BACKWARD;
 		break;
-	}
-	case MOVE_LEFT: {
+	
+	case MOVE_LEFT: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
 		curMove = MOVE_LEFT;
 		break;
-	}
-	case MOVE_RIGHT: {
+	
+	case MOVE_RIGHT: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
 		curMove = MOVE_LEFT;
 		break;
-	}
+	
 	default: {
 		break;
 	}
@@ -452,34 +453,30 @@ void Avatar::MovementState(Movement moveDir, float yaw, float dt)
 	force.y = 0;
 
 	// Setting Angular Velocity
-	//if (previousMove == curMove)
-	dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, -1, 0) * speed / 10;
-	vel.x = Physics()->GetLinearVelocity().x;
-	vel.y = 0.f;
-	vel.z = Physics()->GetLinearVelocity().z;
+	int basicSpinSpeed = 50; //Change this number to change the spin speed
+	if (moveTimer > 2.f) { rollSpeed -= 1; }
 
-
-	rollSpeed -= (dt);
-	if (vel != Vector3(0, 0, 0)) {
-		if (rollSpeed < 0.2) { 
-			rollSpeed = 0.2;
+	if (curMove != previousMove)
+	{
+		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * basicSpinSpeed);
+		previousMove = curMove;
+		moveTimer = 0;
+		rollSpeed = 0;
+	}
+	else if (curMove == inputDir){
+		rollSpeed += 1;
+		if (inAir) {
+			if (rollSpeed > 70) { rollSpeed = 70; }
 		}
+		else {
+			if (rollSpeed > 40) { rollSpeed = 40; }
+		}
+		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * (basicSpinSpeed + rollSpeed));
 	}
-	else {
-		rollSpeed = 0.f;
-	}
-
-	if (curMove != previousMove) {
-		rollSpeed = 3;
-	}
-
-	Vector3 axis = Vector3::Cross(vel.Normalise(), dirRotation);
-	Physics()->SetAngularVelocity((Vector3(axis) / 2 * size * PI) * rollSpeed);
-	previousMove = moveDir;
 
 
 	// Setting MoveMent
-	if (inAir) return;
+	if (inAir) { return; }
 
 	Physics()->SetForce(force);
 

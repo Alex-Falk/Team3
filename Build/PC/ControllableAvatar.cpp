@@ -50,25 +50,26 @@ ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) 
 //Takes Player Input and move the player using force
 void ControllableAvatar::ProcessAvatarInput(float dt) 
 {
-	curMove = NO_MOVE;
+	Movement move = NO_MOVE;
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-	if (!inAir) 
+	
+	// Movement 
 	{
 		if (Input::Instance()->GetInput(FORWARD)) { 		//Front
-			curMove = MOVE_FORWARD;
+			move = MOVE_FORWARD;
 		}
 		if (Input::Instance()->GetInput(BACKWARD)) {		//Back
-			curMove = MOVE_BACKWARD;
+			move = MOVE_BACKWARD;
 		}
 		if (Input::Instance()->GetInput(LEFT)) {		//Left
-			curMove = MOVE_LEFT;
+			move = MOVE_LEFT;
 		}
 		if (Input::Instance()->GetInput(RIGHT)) {		//Right
-			curMove = MOVE_RIGHT;
+			move = MOVE_RIGHT;
 		}
 	}
 
-	MovementState(curMove, yaw, dt);
+	MovementState(move, yaw, dt);
 
 	Vector3 vel = Physics()->GetLinearVelocity();
 
