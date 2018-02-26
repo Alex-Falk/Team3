@@ -114,16 +114,16 @@ Server::Server() {
 //--------------------------------------------------------------------------------------------//
 void Server::StartGame(uint mapID)
 {
-	for (uint i = 0; i < server->m_pNetwork->peerCount; ++i)
-	{
-		enet_peer_ping(&server->m_pNetwork->peers[i]);
-	}
-	
 	SendGameStart(mapID);
 	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
+
+	for (uint i = 0; i < server->m_pNetwork->connectedPeers; ++i)
+	{
+		enet_peer_ping(&server->m_pNetwork->peers[i]);
+	}
 }
 
 void Server::UpdateUser(float dt)
@@ -169,7 +169,7 @@ void Server::UpdateUser(float dt)
 			{
 				string data = GetPacketData(evnt);
 				PacketType type = FindType(data);
-
+				cout << (int)server->m_pNetwork->peers[0].roundTripTime / 2000.0f << "\t" << dt << "\n";
 				switch (type) {
 				case AVATAR_UPDATE:
 				{
@@ -179,7 +179,7 @@ void Server::UpdateUser(float dt)
 					uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 
 					ReceiveAvatarUpdate(data);
-					DeadReckon(playerID, dt);//server->m_pNetwork->peers[playerID].roundTripTime / 2000.0f);
+					DeadReckon(playerID, dt);//(int)server->m_pNetwork->peers[playerID].roundTripTime / 2000.0f);
 					break;
 				}
 

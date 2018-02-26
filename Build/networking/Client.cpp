@@ -101,8 +101,8 @@ void Client::UpdateUser(float dt)
 
 		for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 		{
-			if(i != userID)
-				DeadReckon(i, dt);//serverConnection->roundTripTime / 2000.0f);
+			if (i != userID)
+				DeadReckon(i, serverConnection->roundTripTime / 2000.0f);
 		}
 	}
 }
@@ -160,8 +160,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 
 			uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 
-			if (playerID != userID)
-				ReceiveAvatarUpdate(data);
+			ReceiveAvatarUpdate(data);
 			break;
 		}
 		case PLAYER_SIZES:
