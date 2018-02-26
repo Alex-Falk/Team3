@@ -23,18 +23,27 @@
 #pragma once
 #include "state.h"
 #include "Minion.h"
-class StateChaseEnemyPlayer : public State<Minion>
+
+/*
+	bool goToNearestEnemy;
+	bool goToNearestCaptureZone;
+	bool goToClosestAlly;
+	bool fleeTarget;
+	bool wander;
+*/
+
+class MinionStateChaseEnemyPlayer : public State<Minion>
 {
 private:
-	StateChaseEnemyPlayer();
-	~StateChaseEnemyPlayer();
-	static StateChaseEnemyPlayer *instance;
+	MinionStateChaseEnemyPlayer();
+	~MinionStateChaseEnemyPlayer();
+	static MinionStateChaseEnemyPlayer *instance;
 	string stateName;
 public:
 	string GetState();
-	static StateChaseEnemyPlayer* GetInstance();
-	void Enter(Minion* pBot);
-	void Exit(Minion* pBot);
-	void Execute(Minion* pBot);
+	static MinionStateChaseEnemyPlayer* GetInstance();
+	void Enter(Minion* pMinion);
+	void Exit(Minion* pMinion);
+	void Execute(Minion* pMinion);
 	static void Release();
 };

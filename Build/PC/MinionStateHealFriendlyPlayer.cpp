@@ -8,8 +8,8 @@
 														 d8' .d8'       `Y88888888'      `88888888P'       `8b. `8b
 														.8P .88P            """"            """"            Y88. Y8.
 														88  888                 Nick Bedford                 888  88
-														88  888             ChaseEnemyPlayerState            888  88
-														88  888.        ..       21/02/2018       ..        .888  88
+														88  888           HealFriendlyPlayerState            888  88
+														88  888.        ..       26/02/2018       ..        .888  88
 														`8b `88b,     d8888b.od8bo.      .od8bo.d8888b     ,d88' d8'
 														 Y8. `Y88.    8888888888888b    d8888888888888    .88P' .8P
 														  `8b  Y88b.  `88888888888888  88888888888888'  .d88P  d8'
@@ -19,52 +19,41 @@
 																  `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 																	  `^Y888bo.,            ,.od888P^'
 																		   "`^^Y888888888888P^^*/ 
-#include "ChaseEnemyPlayer.h"
+#include "MinionStateHealFriendlyPlayer.h"
 
-StateChaseEnemyPlayer* StateChaseEnemyPlayer::instance;
+MinionStateHealFriendlyPlayer* MinionStateHealFriendlyPlayer::instance;
 
-StateChaseEnemyPlayer::StateChaseEnemyPlayer()
+MinionStateHealFriendlyPlayer::MinionStateHealFriendlyPlayer()
 {
 }
 
-StateChaseEnemyPlayer* StateChaseEnemyPlayer::GetInstance()
+MinionStateHealFriendlyPlayer* MinionStateHealFriendlyPlayer::GetInstance()
 {
 	if (!instance)
 	{
-		instance = new StateChaseEnemyPlayer;
+		instance = new MinionStateHealFriendlyPlayer;
+		instance->stateName = "HealFriendlyPlayer";
 	}
 
 	return instance;
 }
 
-void StateChaseEnemyPlayer::Enter(Minion* pBot)
+void MinionStateHealFriendlyPlayer::Enter(Minion* pMinion)
 {
-	/*pBot->SetPathfind(true);
-	pBot->SetGoToFriendlyPoint(true);
-	pBot->SetArriveStaticPath(true);*/
-
-	stateName = "GoToFriendlyPoint";
+	pMinion->GetMinionBlackBoard()->SetGoToNearestCaptureZone(true);
 }
 
-string StateChaseEnemyPlayer::GetState()
+string MinionStateHealFriendlyPlayer::GetState()
 {
 	return stateName;
 }
 
-void StateChaseEnemyPlayer::Exit(Minion* pBot)
+void MinionStateHealFriendlyPlayer::Exit(Minion* pMinion)
 {
-	/*pBot->SetStartBehaviour(false);
-	pBot->SetPathfind(false);
-	pBot->SetGoToFriendlyPoint(false);
-	pBot->SetGoToUnclaimedPoint(false);
-	pBot->SetGoToSupplyPoint(false);
-	pBot->SetFollowStaticPath(false);
-	pBot->SetArriveStaticPath(false);
-	pBot->SetPursueEnemy(false);
-	pBot->SetAim(false);*/
+	pMinion->GetMinionBlackBoard()->WipeBoard();
 }
 
-void StateChaseEnemyPlayer::Execute(Minion* pBot)
+void MinionStateHealFriendlyPlayer::Execute(Minion* pMinion)
 {
 	//if (pBot->IsAlive())
 	//{
@@ -100,7 +89,7 @@ void StateChaseEnemyPlayer::Execute(Minion* pBot)
 	//}
 }
 
-void StateChaseEnemyPlayer::Release()
+void MinionStateHealFriendlyPlayer::Release()
 {
 	if (instance)
 	{
@@ -109,7 +98,7 @@ void StateChaseEnemyPlayer::Release()
 	}
 }
 
-StateChaseEnemyPlayer::~StateChaseEnemyPlayer()
+MinionStateHealFriendlyPlayer::~MinionStateHealFriendlyPlayer()
 {
 
 }

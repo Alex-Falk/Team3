@@ -67,6 +67,12 @@
     <Filter Include="AI\Source\States">
       <UniqueIdentifier>{59f1b6cf-6b8f-4644-ae00-71cd65f9aafd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="AI\Source\States\Minion">
+      <UniqueIdentifier>{ca1b412b-e61e-430e-96bc-079dc69bd744}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Header\States\Minion">
+      <UniqueIdentifier>{550f6ed5-12b9-48ce-8160-42e58f9bbd75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PaintableGameObject.h">
@@ -153,8 +159,23 @@
     <ClInclude Include="State.h">
       <Filter>AI\Header\States</Filter>
     </ClInclude>
-    <ClInclude Include="ChaseEnemyPlayer.h">
-      <Filter>AI\Header\States</Filter>
+    <ClInclude Include="MinionStateCaptureZone.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateChaseEnemyPlayer.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateEscapeRocket.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateHealFriendlyPlayer.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateWander.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStates.h">
+      <Filter>AI\Header\States\Minion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -233,8 +254,20 @@
     <ClCompile Include="Score.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
-    <ClCompile Include="ChaseEnemyPlayer.cpp">
-      <Filter>AI\Source\States</Filter>
+    <ClCompile Include="MinionStateCaptureZone.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionStateChaseEnemyPlayer.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionStateEscapeRocket.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionStateHealFriendlyPlayer.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionStateWander.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

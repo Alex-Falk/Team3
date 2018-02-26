@@ -1,5 +1,6 @@
 //Michael Davis 16/02/2018
 #include "Minion.h"
+#include "MinionStates.h"
 
 Minion::Minion() : GameObject() {
 	colour = START_COLOUR;
@@ -58,11 +59,46 @@ Minion::~Minion() {
 
 }
 
-void Minion::Update(float dt) {
+void Minion::ChangeState(State<Minion>* newState)
+{
+	// If new state exists
+	if (newState)
+	{
+		previousState = currentState;
+		currentState->Exit(this);
+		currentState = newState;
+		currentState->Enter(this);
+	}
+
+}
+
+void Minion::RevertState()
+{
+	//If a previous state exists
+	if (previousState)
+	{
+		State<Minion>* temp;
+		temp = previousState;
+		previousState = currentState;
+		currentState->Exit(this);
+		currentState = temp;
+		currentState->Enter(this);
+	}
+}
+
+void Minion::Update(float dt)
+{
 
 	float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
 	life -= lifeLoss / (dt * 10);
 	lastPos = Physics()->GetPosition();
+
+	//////////  AI  ////////////////
+	if (currentState)
+	{
+		currentState->Execute(this);
+	}
+	////////////////////////////////
 
 	size = 0.5f * (life / 50);
 
