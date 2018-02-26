@@ -64,6 +64,12 @@ void MainMenu::OnUpdateScene(float dt)
 		+  GUIsystem::Instance()->player2name + "\n\n"
 		+  GUIsystem::Instance()->player3name + "\n\n"
 		+  GUIsystem::Instance()->player4name + "\n\n");
+
+	otherPlayersInfo->setText(otherPlayersText
+		+ GUIsystem::Instance()->player1name + "\n\n"
+		+ GUIsystem::Instance()->player2name + "\n\n"
+		+ GUIsystem::Instance()->player3name + "\n\n"
+		+ GUIsystem::Instance()->player4name + "\n\n");
 }
 
 //Setting UP GUI

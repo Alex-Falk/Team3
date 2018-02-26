@@ -201,7 +201,7 @@ private:
 	CEGUI::RadioButton* Map4Rbutton;
 	//3.3 Lobby Player List
 	CEGUI::Titlebar* AllPlayerInfo;
-	CEGUI::Titlebar* addedPlayerInfo;
+	//CEGUI::Titlebar* addedPlayerInfo;
 	string playerText = "Player List: \n\n";
 	string addedPlayerText = "Added Player List: \n\n";
 

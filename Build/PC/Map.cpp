@@ -46,20 +46,18 @@ void Map::OnInitializeScene() {
 
 void Map::OnInitializeGUI()
 {
-	//Create Push Button handle
-	//energyBar = static_cast<CEGUI::ProgressBar*>(
-	//	GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
-	//		Vector4(0.40f, 0.9f, 0.2f, 0.03f),
-	//		Vector4(),
-	//		"energyBar"
-	//	));
+	lifeBar = static_cast<CEGUI::ProgressBar*>(
+		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
+			Vector4(0.40f, 0.9f, 0.25f, 0.03f),
+			Vector4(),
+			"lifeBar"
+		));
 
-	//if (Game::Instance()->GetUser())
-	//{
-	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
-	//}
-
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			lifeBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	}
 }
 
 void Map::InitializeScores() 
@@ -120,9 +118,9 @@ void Map::OnUpdateScene(float dt)
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
-	//if (Game::Instance()->GetUser())
-	//{
-	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-	//		energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
-	//}
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+	}
 }

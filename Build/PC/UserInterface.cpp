@@ -255,7 +255,10 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 				if (currentType == "UserName") {
 					player1name = editboxes[i].editbox->getText().c_str();
 				}
-				//std::cout << textInfo[i].content << std::endl;
+				else if (currentType == "ClientName") {
+					//TODO: Send clien name to the server
+				}
+				
 				break;
 			}
 			else {
