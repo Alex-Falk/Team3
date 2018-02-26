@@ -48,9 +48,9 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	col = c;
 	size = s;
 
-	standardSpeed = 30.0f;
+	standardSpeed = 15.0f;
 	speed = standardSpeed;
-	boostedSpeed = standardSpeed * 20;
+	boostedSpeed = standardSpeed * 2;
 
 	maxForce = 30;
 
@@ -77,7 +77,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 	collisionTimerActive = false;
 	collisionTimer = 0.0f;
-	timeUntilInAir = 0.1f;
+	timeUntilInAir = 0.5f;
 
 	weapon = NUM_OF_WEAPONS;
 
@@ -230,6 +230,9 @@ void Avatar::OnAvatarUpdate(float dt) {
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 		}
 	}
+
+	curMove = NO_MOVE;
+	Physics()->SetForce(Vector3(0,0,0));
 }
 
 
@@ -428,11 +431,11 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 {
 	Vector3 force;
 	moveTimer += dt;
-
+	curMove = NO_MOVE;
+	force = Vector3(0, 0, 0);
 	switch (inputDir)
 	{
 	case NO_MOVE: {
-		force = Vector3(0, 0, 0);
 		break;
 	}
 	case MOVE_FORWARD: 
@@ -476,7 +479,7 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	force.y = 0;
 
 	// Setting Angular Velocity
-	int basicSpinSpeed = 50; //Change this number to change the spin speed
+	int basicSpinSpeed = 25; //Change this number to change the spin speed
 	if (moveTimer > 2.f) { rollSpeed -= 1; }
 
 	if (curMove != previousMove)
@@ -489,17 +492,20 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	else if (curMove == inputDir){
 		rollSpeed += 1;
 		if (inAir) {
-			if (rollSpeed > 70) { rollSpeed = 70; }
+			if (rollSpeed > 35) { rollSpeed = 35; }
 		}
 		else {
-			if (rollSpeed > 40) { rollSpeed = 40; }
+			if (rollSpeed > 20) { rollSpeed = 20; }
 		}
 		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * (basicSpinSpeed + rollSpeed));
 	}
 
 
 	// Setting MoveMent
-	if (inAir) { return; }
+	if (inAir) 
+	{ 
+		force = Vector3(0, 0, 0);
+	}
 
 	Physics()->SetForce(force);
 

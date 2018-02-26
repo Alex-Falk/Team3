@@ -57,22 +57,28 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	// Movement 
 	if (Input::Instance()->GetInput(FORWARD)) { 		//Front
 		move = MOVE_FORWARD;
+		Game::Instance()->GetUser()->SendInput(Game::Instance()->getUserID(), move, yaw, dt);
 	}
 	if (Input::Instance()->GetInput(BACKWARD)) {		//Back
 		move = MOVE_BACKWARD;
+		Game::Instance()->GetUser()->SendInput(Game::Instance()->getUserID(), move, yaw, dt);
 	}
 	if (Input::Instance()->GetInput(LEFT)) {		//Left
 		move = MOVE_LEFT;
+		Game::Instance()->GetUser()->SendInput(Game::Instance()->getUserID(), move, yaw, dt);
 	}
 	if (Input::Instance()->GetInput(RIGHT)) {		//Right
 		move = MOVE_RIGHT;
+		Game::Instance()->GetUser()->SendInput(Game::Instance()->getUserID(), move, yaw, dt);
 	}
 	if (Input::Instance()->GetInput(JUMP)) {		//Jump
 		move = MOVE_JUMP;
+		Game::Instance()->GetUser()->SendInput(Game::Instance()->getUserID(), move, yaw, dt);
 	}
 
-	Game::Instance()->GetUser()->SendInput(Game::Instance()->getUserID(), curMove, yaw, dt);
+	
 	MovementState(move, yaw, dt);
+
 
 
 
@@ -142,5 +148,6 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 		}
 	}
+
 }
 

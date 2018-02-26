@@ -258,15 +258,6 @@ void Client::SendInput(uint ID, Movement mov, float yaw, float dt)
 {
 	string data;
 
-	if (mov == MOVE_RIGHT)
-	{
-		cout << "right";
-	}
-	if (mov == MOVE_LEFT)
-	{
-		cout << "left";
-	}
-
 	data = to_string(PLAYER_INPUT) + ":"
 		+ to_string(ID) + ";"
 		+ to_string(mov) + ","
