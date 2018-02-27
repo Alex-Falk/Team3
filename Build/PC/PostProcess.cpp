@@ -71,14 +71,6 @@ PostProcess::PostProcess()
 		NCLERROR("Could not link shader: Post Process Shader/BASIC");
 	}
 
-	postProcessShaders[PostProcessType::PERFORMANCE_BLUR] = new Shader(
-		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
-		SHADERDIR"Post Process/BLUR.glsl");
-	if (!postProcessShaders[PostProcessType::PERFORMANCE_BLUR]->LinkProgram())
-	{
-		NCLERROR("Could not link shader: Post Process Shader/BASIC");
-	}
-
 	for (int i = 0; i < 2; ++i) {
 		pingpongBuffers[i] = NULL;
 		pingpongFBO[i] = NULL;
@@ -87,7 +79,7 @@ PostProcess::PostProcess()
 	GenerateTextrue();
 	GenerateScreenFBO2();
 
-	currentPostProcessType = PostProcessType::HDR_BLOOM;
+	currentPostProcessType = PostProcessType::BASIC;
 }
 
 PostProcess::~PostProcess()
@@ -132,7 +124,7 @@ void PostProcess::GenerateTextrue()
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F,
 			GraphicsPipeline::Instance()->GetScreenTexWidth(),
 			GraphicsPipeline::Instance()->GetScreenTexHeight(),
-			0, GL_RGB, GL_FLOAT, NULL);
+			0, GL_RED, GL_UNSIGNED_BYTE, NULL);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 }
@@ -168,7 +160,7 @@ void PostProcess::RenderGaussianBlur(int a)
 	glUniform1i(glGetUniformLocation(postProcessShaders[PostProcessType::BLUR]->GetProgram(), "uColorTex"), 0);
 	glUniform2f(glGetUniformLocation(postProcessShaders[PostProcessType::BLUR]->GetProgram(), "uSinglepixel"),1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(),1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
 	glActiveTexture(GL_TEXTURE0);
-	GLuint amount = 10;
+	GLuint amount = 16;
 	GLboolean horizontal = true, first_iteration = true;
 	for (int i = 0; i < amount; ++i) {
 		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);

@@ -18,7 +18,6 @@ enum PostProcessType{
 	EDGE_DETECTION		= 5,
 	HDR_BLOOM			= 6,
 	BASIC				= 7,
-	PERFORMANCE_BLUR	= 8,
 	NUMBER_OF_SHADER
 };
 

@@ -36,7 +36,7 @@ void SimpleGamePlay::AddObjects()
 		true,
 		false,
 		PhysNodeType::BIG_NODE,
-		Vector4(0.5f, 0.5f, 0.8f, 1.0f),
+		Vector4(0.6f, 0.6f, 0.6f, 1.0f),
 		MATERIALTYPE::Ground);
 
 	this->AddGameObject(ground);

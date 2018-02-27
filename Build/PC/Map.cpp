@@ -28,7 +28,7 @@ void Map::onConnectToScene()
 
 void Map::OnInitializeScene() {
 
-	//GraphicsPipeline::Instance()->SetIsMainMenu(true);
+	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GraphicsPipeline::Instance()->InitPath(Vector2((float)xDimension, (float)yDimension));
 
 	OnInitializeGUI();

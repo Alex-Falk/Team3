@@ -16,28 +16,20 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
 															
 *****************************************************************************/
-//add MRT - Jeff
-# version 330 core
+# version 150 core
 
 uniform sampler2D diffuseTex;
 uniform float brightness;
-
-layout(location = 0) out vec4 OutFrag;
-layout(location = 1) out vec4 BrightColor;
 
 in Vertex {
 	vec2 texCoord;
 } IN;
 
+out vec4 FragColor;
+
 void main()
 {
-	vec4 FinalColor = texture(diffuseTex,IN.texCoord) * brightness;
-	OutFrag = FinalColor;
-	float brightness1 = dot(FinalColor.rgb, vec3(0.2126, 0.7152, 0.0722));
-	if (brightness1 > 0.3) {
-		BrightColor = FinalColor;
-	}
-
+	FragColor = texture(diffuseTex,IN.texCoord) * brightness;
 	//FragColor.r /= FragColor.w;
 	//FragColor.g /= FragColor.w;
 	//FragColor.b /= FragColor.w;
