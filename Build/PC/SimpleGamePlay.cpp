@@ -46,7 +46,12 @@ void SimpleGamePlay::AddObjects()
 
 	pickup[1] = new WeaponPickup(Vector3(5, 1, 5), PAINT_SPRAY, 5.0f);
 
+	
+
 	this->AddGameObject(pickup[1]);
+	
+	mc = new MinionCamp(START_COLOUR, { 0,0,15 }, { 0.5f,2,0.5f }, 10);
+	this->AddGameObject(mc);
 }
 
 //--------------------------------------------------------------------------------------------//
@@ -62,6 +67,9 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 		{
 			pickup[i]->Update(dt);
 		}
+	}
+	if (mc) {
+		mc->Update(dt);
 	}
 
 }
