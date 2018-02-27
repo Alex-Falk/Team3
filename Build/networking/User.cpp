@@ -42,8 +42,6 @@ void User::ReceiveAvatarUpdate(string data)
 	temps.linVelocities[playerID] = vecs[1];
 	temps.angVelocities[playerID] = vecs[2];
 	temps.accelerations[playerID] = vecs[3];
-	Game::Instance()->GetPlayer(playerID)->SetInAir(inAir);
-
 }
 
 PlayerVector User::ReceiveVector(string data)

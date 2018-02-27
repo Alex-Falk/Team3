@@ -181,7 +181,12 @@ void Server::UpdateUser(float dt)
 					DeadReckon(playerID,dt);
 					break;
 				}
-
+				case PLAYER_SIZES:
+				{
+					PlayerFloat pfloat = ReceiveSizes(data);
+					Game::Instance()->SetSize(pfloat.ID, pfloat.f);
+					break;
+				}
 				case PLAYER_NAME:
 				{
 					PlayerName pName = ReceiveUserName(data);

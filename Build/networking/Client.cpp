@@ -169,7 +169,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		case PLAYER_SIZES:
 		{
 			PlayerFloat pfloat = ReceiveSizes(data);
-			temps.sizes[pfloat.ID] = pfloat.f;
+			Game::Instance()->SetSize(pfloat.ID, pfloat.f);
 			break;
 		}
 		case PLAYER_SCORES:
