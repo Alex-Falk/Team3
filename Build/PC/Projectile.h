@@ -31,6 +31,8 @@ public:
 	void SetPredictedCollisionPosition(Vector3 pcp) {
 		predictedCollisionPosition = pcp;
 	}
+
+	void predictCollisionPosition(Vector3 pos, Vector3 vel);
 	
 	virtual ~Projectile();
 

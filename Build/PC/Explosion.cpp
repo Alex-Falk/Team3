@@ -1,5 +1,7 @@
 #include "Explosion.h"
 
+//Michael Davis 26/02/2018
+
 Explosion::Explosion() : Projectile() {
 
 }

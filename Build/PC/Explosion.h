@@ -1,6 +1,8 @@
 #pragma once
 #include "Projectile.h"
 
+//Michael Davis 26/02/2018
+
 class Explosion : public Projectile {
 public:
 	Explosion();

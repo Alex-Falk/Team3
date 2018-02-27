@@ -60,13 +60,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 	exploded = false;
 
-	LineCollision l = PhysicsEngine::Instance()->CastRay(pos, vel.Normalise(), physicsNode);
-	if (l.node == NULL) {
-		predictedCollisionPosition = { 1000,1000,1000 };
-	}
-	else {
-		predictedCollisionPosition = pos + vel.Normalise() * l.dist;
-	}
+	predictCollisionPosition(pos, vel);
 }
 
 Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel, Vector3 size, float inverseMass, PhysNodeType type, int projWorth, const std::string& name) : GameObject(name) {
@@ -124,6 +118,14 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	exploded = false;
 
 
+	predictCollisionPosition(pos, vel);
+}
+
+Projectile::~Projectile() {
+
+}
+
+void Projectile::predictCollisionPosition(Vector3 pos, Vector3 vel) {
 	LineCollision l = PhysicsEngine::Instance()->CastRay(pos, vel.Normalise(), physicsNode);
 	if (l.node == NULL) {
 		predictedCollisionPosition = { 1000,1000,1000 };
@@ -131,10 +133,6 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	else {
 		predictedCollisionPosition = pos + vel.Normalise() * l.dist;
 	}
-}
-
-Projectile::~Projectile() {
-
 }
 
 void Projectile::Explode() {
