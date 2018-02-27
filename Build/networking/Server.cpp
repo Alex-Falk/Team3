@@ -144,14 +144,14 @@ void Server::UpdateUser(float dt)
 				else
 				{
 					// Send over information to new client
-					Game::Instance()->SetPlayerNumber((uint)(1 + server->m_pNetwork->connectedPeers));
-					SendNumberUsers((uint)(1 + server->m_pNetwork->connectedPeers));
 					if (freeIDs.size() > 0)
 					{
-						
+						Game::Instance()->SetPlayerNumber((uint)(1 + server->m_pNetwork->connectedPeers));
+						SendNumberUsers((uint)(1 + server->m_pNetwork->connectedPeers));
+
 						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 						SendConnectionID(freeIDs[freeIDs.size() - 1]);
-						enet_peer_timeout(evnt.peer, 800, 800, 800);
+						enet_peer_timeout(evnt.peer, 800000, 800000, 800000);
 						evnt.peer->pingInterval = 100;
 						freeIDs.pop_back();
 					}

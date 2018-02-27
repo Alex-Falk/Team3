@@ -145,6 +145,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		case NUMBER_USERS:
 		{
 			ReceiveNumberUsers(data);
+			break;
 		}
 
 		case CONNECTION_ID:
