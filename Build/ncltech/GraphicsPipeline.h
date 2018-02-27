@@ -124,6 +124,7 @@ enum SHADERTYPE
 	Ground				= 5,
 	SkyBox				= 6,
 	MiniMap				= 7,
+	Score				= 8,
 	Shader_Number,
 };
 
@@ -186,6 +187,9 @@ public:
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 	bool GetIsMainMenu() { return isMainMenu; }
 
+	//Score
+	inline float GetScore(uint i) { return scores[i]; }
+
 protected:
 	GraphicsPipeline();
 	virtual ~GraphicsPipeline();
@@ -207,6 +211,8 @@ protected:
 	void RenderPostprocessAndPresent();
 	//Phil 20/02/2018
 	void DrawMiniMap();
+	//Alex 27/02/2018
+	void CountScore();
 	
 	void RecursiveAddToPathRenderLists(RenderNode* node);
 
@@ -261,6 +267,7 @@ protected:
 	GLuint		pathFBO;
 	GLuint		pathTex;
 
+	GLuint		scoreBuffer;	uint		scores[4];
 	//For minimap
 	float time;
 	//translates a world position into a position for the minimap

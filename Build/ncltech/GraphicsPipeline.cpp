@@ -222,6 +222,16 @@ void GraphicsPipeline::LoadShaders()
 	if (!shaders[SHADERTYPE::MiniMap]->LinkProgram()) {
 		NCLERROR("Could not link shader: MiniMap");
 	}
+
+	//Alex's Score
+	shaders[SHADERTYPE::Score] = new Shader(
+		SHADERDIR"Game/MiniMapVertex.glsl",
+		SHADERDIR"Game/ScoreFragment.glsl");
+	if (!shaders[SHADERTYPE::Score]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Score");
+	}
+
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -235,6 +245,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::Ground] = new GroundMaterial();
 	materials[MATERIALTYPE::SkyBox] = nullptr;
 	materials[MATERIALTYPE::MiniMap] = nullptr;
+	materials[MATERIALTYPE::Score] = nullptr;
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -311,7 +322,11 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 	//m_ShadowUBO._ShadowMapTex = glGetTextureHandleARB(m_ShadowTex);
 	//glMakeTextureHandleResidentARB(m_ShadowUBO._ShadowMapTex);
 
-
+	if (!scoreBuffer) glGenBuffers(1, &scoreBuffer);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * 4, NULL, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, scoreBuffer);
+	glBindFramebuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
 }
 
 
@@ -401,6 +416,7 @@ void GraphicsPipeline::RenderScene()
 
 	//draw the minimap on screen
 	if (isMainMenu == false) {
+		CountScore();
 		DrawMiniMap();
 	}
 
@@ -684,20 +700,6 @@ void GraphicsPipeline::RenderPath()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	projViewMatrix = temp;
-
-	//removes destroyed projectiles from the playerRenderNodes
-	//for (std::vector<RenderNode*>::iterator itr = playerRenderNodes.begin(); itr != playerRenderNodes.end(); itr++)
-	//{
-
-	//	PlayerRenderNode * tempPRN = (PlayerRenderNode*)(*itr)->GetChild();
-	//	if (tempPRN)
-	//	{
-	//		if (tempPRN->GetDestroy()) {
-	//			delete * itr;
-	//			itr = playerRenderNodes.erase(itr);
-	//		}	
-	//	}
-	//}
 }
 
 void GraphicsPipeline::RenderPostprocessAndPresent()
@@ -772,12 +774,59 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 		RecursiveAddToPathRenderLists(*itr);
 }
 
+void GraphicsPipeline::CountScore()
+{
+	if (pathTex == NULL) {
+		glDeleteTextures(1, &pathTex);
+	}
+	if (!pathTex) {
+		glGenTextures(1, &pathTex);
+		glUseProgram(shaders[SHADERTYPE::Score]->GetProgram());
+		glBindTexture(GL_TEXTURE_2D, pathTex);
+	}
+
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	GLuint a[4] = { 0,0,0,0 };
+	glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, a);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(shaders[SHADERTYPE::Score]->GetProgram());
+	//glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Score]->GetProgram(), "uPathTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, pathTex);
+
+	//these numbers are hardcoded at the moment but will be variables in the end
+	float aspect = (float)width / height;
+	float sx = 0.2;
+	float sy = sx * aspect;
+
+	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Score]->GetProgram(), "modelMatrix"), 1, GL_FALSE,
+		(float*)&(Matrix4::Translation(Vector3(-1.0f + sx, -1.0f + sy, 0.0f)) * Matrix4::Scale(Vector3(sx, sy, 1.0f))));
+
+	fullscreenQuad->Draw();
+
+	GLuint userCounters[4];
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	// again we map the buffer to userCounters, but this time for read-only access
+	glGetBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, userCounters);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+	scores[0] = userCounters[0];
+	scores[1] = userCounters[1];
+	scores[2] = userCounters[2];
+	scores[3] = userCounters[3];
+
+
+	glUseProgram(0);
+}
+
 void GraphicsPipeline::DrawMiniMap() {
 	if (pathTex == NULL) {
 		glDeleteTextures(1, &pathTex);
 	}
 	if (!pathTex) {
 		glGenTextures(1, &pathTex);
+		glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
+		glBindTexture(GL_TEXTURE_2D, pathTex);
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

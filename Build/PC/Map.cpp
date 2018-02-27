@@ -64,13 +64,13 @@ void Map::OnInitializeGUI()
 
 void Map::InitializeScores() 
 {
-	if (Game::Instance()->GetUser())
-	{
-		if (Game::Instance()->getUserID() == 0)
-		{
-			score = new Score(xDimension, yDimension, groundScoreAccuracy);
-		}
-	}
+	//if (Game::Instance()->GetUser())
+	//{
+	//	if (Game::Instance()->getUserID() == 0)
+	//	{
+	//		score = new Score(xDimension, yDimension, groundScoreAccuracy);
+	//	}
+	//}
 }
 
 void Map::LoadTextures()
@@ -106,7 +106,7 @@ void Map::SetSpawnLocations()
 
 void Map::OnCleanupScene()
 {
-	SAFE_DELETE(score);
+	//SAFE_DELETE(score);
 	//SAFE_DELETE(energyBar);
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();

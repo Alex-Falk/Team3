@@ -21,7 +21,7 @@ class Map : public Scene
 {
 protected:
 	float m_AccumTime = 0;
-	Score* score;
+	//Score* score;
 	Vector3 spawnPositions[4];
 	static int mapIndex; // Controls which map will be loaded
 
@@ -77,7 +77,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 
-	inline Score * GetScore() { return score; }
+	//inline Score * GetScore() { return score; }
 
 	//phil 21/02/2018 for minimap
 	inline int GetXDimension() { return xDimension; }
