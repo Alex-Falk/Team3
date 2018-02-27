@@ -243,7 +243,6 @@ void HandleKeyboardInputs()
 
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
-
 	}
 
 	//toggle the camera
@@ -392,6 +391,8 @@ int main()
 		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
 		timer_update.EndTimingSection();
 
+		Game::Instance()->Update(dt);
+
 		//Update Physics	
 		timer_physics.BeginTimingSection();
 		PhysicsEngine::Instance()->Update(dt);
@@ -416,7 +417,7 @@ int main()
 		timer_audio.BeginTimingSection();
 		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
 		timer_audio.EndTimingSection();
-		Game::Instance()->Update(dt);
+		
 
 		//Finish Timing
 		timer_total.EndTimingSection();

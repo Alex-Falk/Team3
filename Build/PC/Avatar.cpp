@@ -36,7 +36,6 @@ Avatar::Avatar()
 	Colour c = START_COLOUR;
 	uint id = 0;
 	float s = 1.0f;
-
 	Avatar(pos, c, id, s);
 }
 
@@ -49,15 +48,19 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	col = c;
 	size = s;
 
-	standardSpeed = 50.0f;
+	standardSpeed = 15.0f;
 	speed = standardSpeed;
-	boostedSpeed = standardSpeed * 20;
+	boostedSpeed = standardSpeed * 2;
 
 	maxForce = 30;
 
 	minLife = 20;
 	maxLife = 100;
 	life = maxLife/2;
+	moveTimer = 0.0f;
+	rollSpeed = 0.2f;
+	curMove = NO_MOVE;
+	previousMove = NO_MOVE;
 
 	jumpImpulse = 8.0f;
 	boostactiveTime = 15.0f;
@@ -227,6 +230,8 @@ void Avatar::OnAvatarUpdate(float dt) {
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 		}
 	}
+
+
 }
 
 
@@ -417,4 +422,90 @@ void Avatar::ManageWeapons()
 				break;
 		}
 	}
+}
+
+void Avatar::MovementState(Movement inputDir, float yaw, float dt)
+{
+	Vector3 force;
+	moveTimer += dt;
+	switch (inputDir)
+	{
+	case NO_MOVE: {
+		force = Vector3(0, 0, 0);
+		break;
+	}
+	case MOVE_FORWARD: 
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+		curMove = MOVE_FORWARD;
+		break;
+	
+	case MOVE_BACKWARD: 
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+		curMove = MOVE_BACKWARD;
+		break;
+	
+	case MOVE_LEFT: 
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+		curMove = MOVE_LEFT;
+		break;
+	
+	case MOVE_RIGHT: 
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+		curMove = MOVE_LEFT;
+		break;
+	case MOVE_JUMP: {
+		curMove = MOVE_JUMP;
+		Vector3 vel = Physics()->GetLinearVelocity();
+		if (canJump) {
+			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
+			inAir = true;
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+			canJump = false;
+		}
+		break;
+	}
+	default: {
+		break;
+	}
+	}
+	force.y = 0;
+
+	// Setting Angular Velocity
+	int basicSpinSpeed = 25; //Change this number to change the spin speed
+	if (moveTimer > 2.f) { rollSpeed -= 1; }
+
+	if (curMove != previousMove)
+	{
+		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * basicSpinSpeed);
+		previousMove = curMove;
+		moveTimer = 0;
+		rollSpeed = 0;
+	}
+	else if (curMove == inputDir && inputDir !=MOVE_JUMP ){
+		rollSpeed += 1;
+		if (inAir) {
+			if (rollSpeed > 35) { rollSpeed = 35; }
+		}
+		else {
+			if (rollSpeed > 20) { rollSpeed = 20; }
+		}
+		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * (basicSpinSpeed + rollSpeed));
+	}
+
+
+	// Setting MoveMent
+	if (inAir) 
+	{ 
+		force = Vector3(0, 0, 0);
+	}
+
+	Physics()->SetForce(force);
+
+//	if (force != Vector3(0, 0, 0)) {}
+
+	
 }

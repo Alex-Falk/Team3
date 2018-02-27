@@ -107,7 +107,7 @@ void Map::OnCleanupScene()
 void Map::OnUpdateScene(float dt)
 {
 	if(Game::Instance()->getUserID() == 0)
-		score->UpdateScores();
+	//	score->UpdateScores();
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;
@@ -125,4 +125,13 @@ void Map::OnUpdateScene(float dt)
 	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 	//		energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	//}
+}
+
+//--------------------------------------------------------------------------------------------//
+// Sets the MAP
+//--------------------------------------------------------------------------------------------//
+int Map::mapIndex;
+void Map::SetMapIndex(int mapIndx)
+{
+	mapIndex = mapIndx;
 }
