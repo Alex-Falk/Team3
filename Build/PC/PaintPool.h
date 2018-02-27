@@ -35,8 +35,8 @@ public:
 	void ChangeColour(Colour newColour);
 	void ChangeSize(Vector3 newSize);
 
+	inline Colour GetColour() { return colour; }
 	~PaintPool();
-
 private:
 
 	Colour colour;

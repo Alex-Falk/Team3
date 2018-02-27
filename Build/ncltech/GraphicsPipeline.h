@@ -108,6 +108,8 @@
 #define CAPTURE_SIZE 40	 
 #define PIXELPERSIZE 100
 
+#define ATOMIC_COUNTER_NUMBER 4
+
 #define DEBUGDRAW_FLAGS_BOUNDING				0x20
 
 typedef std::pair<RenderNode*, float> RenderNodePair;
@@ -121,6 +123,7 @@ enum SHADERTYPE
 	Draw_Path			= 4,
 	Ground				= 5,
 	SkyBox				= 6,
+	MiniMap				= 7,
 	Shader_Number,
 };
 
@@ -202,7 +205,8 @@ protected:
 	void RenderUI();
 	void RenderPath();
 	void RenderPostprocessAndPresent();
-	
+	//Phil 20/02/2018
+	void DrawMiniMap();
 	
 	void RecursiveAddToPathRenderLists(RenderNode* node);
 
@@ -257,6 +261,10 @@ protected:
 	GLuint		pathFBO;
 	GLuint		pathTex;
 
+	//For minimap
+	float time;
+	//translates a world position into a position for the minimap
+	Vector2 VectorToMapCoord(Vector3 pos);
 	//GUI
 	bool isMainMenu = false;
 };
