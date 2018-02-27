@@ -345,7 +345,7 @@ void Avatar::ShootRocket()
 	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.18f,0.18f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
 	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion((float)pitch, (float)yaw, 0.0f));
 
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	ShootRocket(Physics()->GetPosition(),direction);
 
 	// Send over network
 	Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
@@ -361,7 +361,7 @@ void Avatar::ShootProjectile()
 	}
 
 	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
-	ShootProjectile(Physics()->GetPosition(), direction);
+	//ShootProjectile(Physics()->GetPosition(), direction);
 
 }
 
