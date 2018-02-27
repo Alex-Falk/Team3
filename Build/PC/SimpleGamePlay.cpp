@@ -82,9 +82,9 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 			pickup[i]->Update(dt);
 		}
 	}
-	if (mc) {
-		mc->Update(dt);
-	}
+	//if (mc) {
+	//	mc->Update(dt);
+	//}
 
 }
 
