@@ -1,6 +1,7 @@
 //Michael Davis 16/02/2018
 #include "Minion.h"
 #include "MinionStates.h"
+#include "Game.h" 
 
 Minion::Minion() : GameObject() {
 	colour = START_COLOUR;
@@ -24,8 +25,6 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 
 	pnode->SetBoundingRadius(size);
 	rnode->SetBoundingRadius(size);
-	
-	pnode->SetLinearVelocity({ 7.0f,0,0 }); //TODO remove when behaviours are in
 
 	pnode->SetPosition(position);
 	lastPos = position;
@@ -61,6 +60,14 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+
+	isGrounded = false;
+	ChangeState(MinionStateChaseEnemyPlayer::GetInstance());
+	closestPlayer = Game::Instance()->GetPlayer(0);
+	physicsNode->SetFriction(0.0f);
+	physicsNode->SetElasticity(1.0f);
+	wanderTimer = 0.0f;
+	ComputeNewWanderPosition();
 }
 
 Minion::~Minion() {
@@ -72,8 +79,10 @@ void Minion::ChangeState(State<Minion>* newState)
 	// If new state exists
 	if (newState)
 	{
-		previousState = currentState;
-		currentState->Exit(this);
+		if (currentState) {
+			previousState = currentState;
+			currentState->Exit(this);
+		}
 		currentState = newState;
 		currentState->Enter(this);
 	}
@@ -97,18 +106,12 @@ void Minion::RevertState()
 void Minion::Update(float dt)
 {
 
-	float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
-	life -= lifeLoss / (dt * 10);
+	//float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
+	//life -= lifeLoss / (dt * 10);
 	lastPos = Physics()->GetPosition();
 
-	//////////  AI  ////////////////
-	if (currentState)
-	{
-		currentState->Execute(this);
-	}
-	////////////////////////////////
 
-	size = 0.5f * (life / 50);
+	size = 0.3f * (life / 50);
 
 	ChangeSize(size);
 
@@ -117,6 +120,12 @@ void Minion::Update(float dt)
 		destroy = true;
 	}
 	else {
+		//////////  AI  ////////////////
+		if (currentState)
+		{
+			currentState->Execute(this);
+		}
+		////////////////////////////////
 		//TODO implement AI
 		//if no players in range {
 		//	state = PATROL;
@@ -126,6 +135,10 @@ void Minion::Update(float dt)
 		//	state = CHASE;
 		//	will try to hit player, either healing if friendly or damaging if enemy
 		//}
+	}
+	wanderTimer += dt;
+	if (wanderTimer > 2.0f) {
+		ComputeNewWanderPosition();
 	}
 }
 
@@ -152,7 +165,7 @@ bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingO
 		}
 		return false;
 	}
-	else if (collidingObject->GetType() == MINION) {
+	if (collidingObject->GetType() == MINION) {
 		if (!dead && ((Minion*)(collidingObject->GetParent()))->GetDead() == 0) {
 			if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
 				float tempLife = life;
@@ -161,6 +174,12 @@ bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingO
 				return false;
 			}
 		}
+		return true;
+	}
+	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
+		//TODO apply texture to surface like the avatar 
+		isGrounded = true;
+		ChangeLife(-1);
 		return true;
 	}
 	return true;
@@ -173,4 +192,12 @@ void Minion::ChangeSize(float newSize) {
 	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
 
 	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
+}
+
+void Minion::ComputeNewWanderPosition() {
+	wanderTimer = 0.0f;
+
+	float randX = rand() % 80 + -40;
+	float randZ = rand() % 80 + -40;
+	wanderPosition = Vector3{ randX, 0, randZ };
 }

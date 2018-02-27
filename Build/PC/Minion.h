@@ -4,6 +4,7 @@
 #include "GamePlay.h"
 #include "../ncltech/GameObject.h"
 #include "../ncltech/SphereCollisionShape.h"
+#include "CaptureArea.h" 
 #include "Avatar.h"
 #include "../ncltech/SceneManager.h"
 #include "MinionBlackboard.h"
@@ -24,10 +25,17 @@ protected:
 	
 	Vector3 lastPos;
 
+	bool isGrounded;
 	bool dead; 
 
 	State<Minion> *currentState;
 	State<Minion> *previousState;
+
+	Avatar * closestPlayer;
+	CaptureArea * closestCaptureArea;
+
+	Vector3 wanderPosition;
+	float wanderTimer;
 
 public:
 	
@@ -44,6 +52,9 @@ public:
 	void SetDead(bool b) { dead = b; }
 	bool GetDead() { return dead; }
 
+	void SetIsGrounded(bool b) { isGrounded = b; }
+	bool GetIsGrounded() { return isGrounded; }
+
 	MinionBlackboard* GetMinionBlackBoard() { return &minionBlackboard; }
 
 	void ChangeLife(float l);
@@ -59,7 +70,11 @@ public:
 	void Update(float dt);
 	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 	
-	
+	Avatar * GetClosestPlayer() { return closestPlayer; }
+	CaptureArea * GetClosestCaptureArea() { return closestCaptureArea; }
+
+	Vector3 GetWanderPosition() { return wanderPosition; }
+	void ComputeNewWanderPosition();
 
 	~Minion();
 };

@@ -20,6 +20,7 @@
 																	  `^Y888bo.,            ,.od888P^'
 																		   "`^^Y888888888888P^^*/ 
 #include "MinionStateChaseEnemyPlayer.h"
+#include "Behaviours.h"
 
 MinionStateChaseEnemyPlayer* MinionStateChaseEnemyPlayer::instance;
 
@@ -55,6 +56,15 @@ void MinionStateChaseEnemyPlayer::Exit(Minion* pMinion)
 
 void MinionStateChaseEnemyPlayer::Execute(Minion* pMinion)
 {
+	if (pMinion->GetIsGrounded()) {
+		pMinion->Physics()->SetAngularVelocity(Vector3{ 0,0,0 });
+		pMinion->Physics()->SetLinearVelocity(Vector3{ 0,0,0 });
+		pMinion->Physics()->SetAcceleration(Behaviours::Pursue(pMinion->GetClosestPlayer()->Physics(), pMinion->Physics(), pMinion->GetIsGrounded(), 15, 25));
+		pMinion->SetIsGrounded(false);
+	}
+	else {
+		pMinion->Physics()->SetAcceleration({ 0, 0, 0 });
+	}
 	//if (pBot->IsAlive())
 	//{
 	//	if (pBot->GetAmmo() == 0)
