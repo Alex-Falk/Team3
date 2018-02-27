@@ -17,6 +17,7 @@ void main(void)	{
 	float invGammaCorrection = 1.0 / uGammaCorrection;
 	vec3 color = vec3(0.0f);
 	color = texture(uColorTex, IN.texCoord).rgb;
+
 	color = pow(color, vec3(invGammaCorrection));
 	OutFrag = vec4(color, 1.0f);
 }

@@ -362,6 +362,12 @@ void TestPostProcess()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F6)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::EDGE_DETECTION);
 	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F7)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F8)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::BASIC);
+	}
 }
 
 // Program Entry Point

@@ -4,15 +4,13 @@ uniform sampler2D scene;
 uniform sampler2D bloomBlur;
 uniform float	uGammaCorrection;
 
-const float exposure = 1.4f;
-
 in Vertex{
 	vec2 texCoord;
 } IN;
 
-out vec4 OutFrag;
+out vec4 FragColor;
 
-const float reduceFactor = 0.35f;
+const float reduceFactor = 1f;
 
 void main(void) {
 	float invGammaCorrection = 1.0 / uGammaCorrection;
@@ -22,6 +20,11 @@ void main(void) {
 	hdrColor = pow(hdrColor, vec3(invGammaCorrection));
 	bloomColor = pow(bloomColor, vec3(invGammaCorrection));
 
-	vec4 finalColor = vec4(hdrColor*0.8 + bloomColor * reduceFactor, 1.0);
-	OutFrag = finalColor;
+	vec4 finalColor = vec4(hdrColor + bloomColor * reduceFactor, 1.0);
+
+	//finalColor = finalColor / (finalColor + vec4(0.5));
+
+	finalColor.rgb *= 0.6;
+
+	FragColor = finalColor;
 }

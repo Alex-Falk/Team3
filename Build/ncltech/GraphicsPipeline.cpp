@@ -154,7 +154,7 @@ void GraphicsPipeline::LoadShaders()
 
 	shaders[SHADERTYPE::Present_To_Window] = new Shader(
 		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
-		SHADERDIR"SceneRenderer/TechFragSuperSample.glsl");
+		SHADERDIR"Post Process/Basic.glsl");
 	if (!shaders[SHADERTYPE::Present_To_Window]->LinkProgram())
 	{
 		NCLERROR("Could not link shader: Present to window / SuperSampling");
@@ -245,13 +245,13 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 		if (!screenTexColor[0]) glGenTextures(1, &screenTexColor[0]);
 		glBindTexture(GL_TEXTURE_2D, screenTexColor[0]);
 		SetTextureDefaults();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenTexWidth, screenTexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenTexWidth, screenTexHeight, 0, GL_RGB, GL_FLOAT, NULL);
 
 		//Multi-Rendering texture
 		if (!screenTexColor[1]) glGenTextures(1, &screenTexColor[1]);
 		glBindTexture(GL_TEXTURE_2D, screenTexColor[1]);
 		SetTextureDefaults();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenTexWidth, screenTexHeight, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, screenTexWidth, screenTexHeight, 0, GL_RGB, GL_FLOAT, NULL);
 
 		//Depth+Stencil Texture
 		if (!screenTexDepth) glGenTextures(1, &screenTexDepth);

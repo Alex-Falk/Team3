@@ -1,5 +1,7 @@
 #include "MainMenu.h"
 
+float counter = 0;
+
 MainMenu::~MainMenu()
 {
 	enet_deinitialize();
@@ -53,10 +55,18 @@ void MainMenu::OnInitializeScene()
 
 void MainMenu::OnUpdateScene(float dt)
 {
+	counter++;
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 	yaw += 0.1f;
 	GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 	Scene::OnUpdateScene(dt);
+
+	//if (counter >= 500) {
+	//	std::cout << "I love Dong Li" << std::endl;
+	//	int temp = PostProcess::Instance()->GetCurrentPostProcessType() + 1;
+	//	PostProcess::Instance()->SetPostProcessType(static_cast<PostProcessType>(temp));
+	//	counter = 0;
+	//}
 
 	//Update Player Info
 	AllPlayerInfo->setText(playerText 
@@ -70,6 +80,7 @@ void MainMenu::OnUpdateScene(float dt)
 		+ GUIsystem::Instance()->player2name + "\n\n"
 		+ GUIsystem::Instance()->player3name + "\n\n"
 		+ GUIsystem::Instance()->player4name + "\n\n");
+
 }
 
 //Setting UP GUI
