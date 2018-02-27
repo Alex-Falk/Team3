@@ -46,7 +46,7 @@ public:
 
 	MinionBlackboard* GetMinionBlackBoard() { return &minionBlackboard; }
 
-	void ChangeLife(float l) { life += l;}
+	void ChangeLife(float l);
 	float GetLife() { return life; }
 
 	void ChangeState(State<Minion>* newState);

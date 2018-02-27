@@ -45,7 +45,7 @@ void SimpleGamePlay::AddObjects()
 
 	this->AddGameObject(pickup[0]);
 
-	pickup[1] = new WeaponPickup(Vector3(5, 1, 5), PAINT_SPRAY, 5.0f);
+	pickup[1] = new WeaponPickup(Vector3(5, 1, 5), PAINT_ROCKET, 5.0f);
 
 	
 

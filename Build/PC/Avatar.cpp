@@ -340,7 +340,7 @@ void Avatar::ShootRocket()
 	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.18f,0.18f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
 	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion((float)pitch, (float)yaw, 0.0f));
 
-	//SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
 
 	// Send over network
 	Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
@@ -349,16 +349,16 @@ void Avatar::ShootRocket()
 void Avatar::ShootProjectile()
 {
 	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-	
+
 	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	if (canJump && pitch < 0) {
 		pitch = 0;
 	}
-	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 50;
-	ShootProjectile(Physics()->GetPosition(), direction);
 
 	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
-	Projectile* projectile =  new Projectile(col, colour, Physics()->GetPosition(), direction, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
+	ShootProjectile(Physics()->GetPosition(), direction);
+
+}
 
 void Avatar::Spray(Vector3 pos, Vector3 dir)
 {
@@ -375,7 +375,7 @@ void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
 
 void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
 {
-	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.2f, 5.0f, PROJECTILE, 2, "Projectile");
+	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
 }
 
