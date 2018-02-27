@@ -45,9 +45,25 @@ void SimpleGamePlay::AddObjects()
 
 	this->AddGameObject(pickup[0]);
 
-	pickup[1] = new WeaponPickup(Vector3(5, 1, 5), PAINT_SPRAY, 5.0f);
+	pickup[1] = new WeaponPickup(Vector3(20, 1.5, 20), PAINT_SPRAY, 5.0f);
 
 	this->AddGameObject(pickup[1]);
+
+	pickup[2] = new Pickup(Vector3(-10, 1.5, 7), PickupType::SPEED_BOOST);
+
+	this->AddGameObject(pickup[2]);
+
+	pickup[3] = new Pickup(Vector3(2, 1.5, -7), PickupType::JUMP_BOOST);
+
+	this->AddGameObject(pickup[3]);
+
+	pickup[4] = new PaintPool(Vector3(-15.0f, 0.6f, -15.0f), GREEN);
+
+	this->AddGameObject(pickup[4]);
+
+	//add capture area
+	capture[0] = new CaptureArea(Vector3(15, 0.6, -15), Vector3(3.0f, 0.5f, 3.0f), 10);
+	this->AddGameObject(capture[0]);
 }
 
 //--------------------------------------------------------------------------------------------//

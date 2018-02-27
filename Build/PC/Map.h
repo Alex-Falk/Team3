@@ -14,7 +14,7 @@
 #include "GamePlay.h"
 #include "WeaponPickup.h"
 #include "Score.h"
-
+#include "CaptureArea.h"
 //#include "GroundScore.h"
 
 class Map : public Scene
@@ -39,8 +39,9 @@ protected:
 	//pickup stuff
 	uint npickup;
 	Pickup** pickup;
-
-
+	//capture areas for minimap
+	uint ncapture;
+	CaptureArea** capture;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
@@ -49,7 +50,12 @@ public:
 	~Map() {
 		TextureManager::Instance()->RemoveAllTexture();
 		//delete the array of pickups
-		delete[] pickup;
+		if (pickup) {
+			delete[] pickup;
+		}
+		if (capture) {
+			delete[] capture;
+		}
 	};
 
 	virtual void OnCleanupScene();
@@ -76,5 +82,7 @@ public:
 
 	inline uint GetNPickup() { return npickup; }
 	inline Pickup** GetPickups() { return pickup; }
+	inline uint GetNCapture() { return ncapture; }
+	inline CaptureArea** GetCaptureAreas() { return capture; }
 };
 

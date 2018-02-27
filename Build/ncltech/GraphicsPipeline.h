@@ -261,8 +261,10 @@ protected:
 	GLuint		pathFBO;
 	GLuint		pathTex;
 
-	//
-
+	//For minimap
+	float time;
+	//translates a world position into a position for the minimap
+	Vector2 VectorToMapCoord(Vector3 pos);
 	//GUI
 	bool isMainMenu = false;
 };

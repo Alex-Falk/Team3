@@ -25,6 +25,8 @@
 //used by minimap
 #include <PC\Game.h>
 #include <PC\Map.h>
+#include <PC\PaintPool.h>
+
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
 	, camera(new Camera())
@@ -39,6 +41,7 @@ GraphicsPipeline::GraphicsPipeline()
 	, shadowTex(NULL)
 	, pathFBO(NULL)
 	,pathTex(NULL)
+	,time(0.0f)
 {
 
 
@@ -360,6 +363,8 @@ void GraphicsPipeline::UpdateScene(float dt)
 	//update frustum
 	frameFrustum.FromMatrix(projViewMatrix);
 
+	//increment time
+	time += dt;
 	NCLDebug::_SetDebugDrawData(
 		projMatrix,
 		viewMatrix,
@@ -781,18 +786,31 @@ void GraphicsPipeline::DrawMiniMap() {
 	glBindTexture(GL_TEXTURE_2D, pathTex);
 	//TEMPORARY!
 	glActiveTexture(GL_TEXTURE1);
-	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "poolTex"), 1);
-	int a = TextureManager::Instance()->GetTexture(TEXTURETYPE::Paint_Pool);
 	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Paint_Pool));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "poolTex"), 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Gun_Pickup));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "gunTex"), 2);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Jump_Pickup));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "jumpTex"), 3);
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Speed_Pickup));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "speedTex"), 4);
+
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Capture_Point));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "captureTex"), 5);
 
 
 	//these numbers are hardcoded at the moment but will be variables in the end
 	float aspect = (float)width / height;
 	float sx = 0.2;
 	float sy = sx * aspect;
-	//get the x and y dementions of map
-	float xDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetXDimension();
-	float yDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetYDimension();
+
 	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "modelMatrix"), 1, GL_FALSE,
 		(float*)&(Matrix4::Translation(Vector3(-1.0f + sx, -1.0f + sy, 0.0f)) * Matrix4::Scale(Vector3(sx, sy, 1.0f))));
 	uint playerCount = Game::Instance()->GetPlayerNumber();
@@ -810,9 +828,10 @@ void GraphicsPipeline::DrawMiniMap() {
 			if (i == Game::Instance()->getUserID()) {
 				glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "self"), count);
 			}
-			//adding the player's colours
-			players[count * 2] = (xDimension - a->GetPosition().x) / (xDimension * 2);
-			players[(count * 2) + 1] = (yDimension + a->GetPosition().z) / (yDimension * 2);
+			//adding the player's positions
+			Vector2 v = VectorToMapCoord(a->GetPosition());
+			players[count * 2] = v.x;
+			players[(count * 2) + 1] = v.y;
 			//colours
 			colours[count * 3] = a->GetColourRGBA().x;
 			colours[(count * 3) + 1] = a->GetColourRGBA().y;
@@ -826,25 +845,59 @@ void GraphicsPipeline::DrawMiniMap() {
 
 	//get the current map
 	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
-	//uniforms for map things
-	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), map->GetNPickup());
+
 	//int array for pickup type
 	uint pickupTypes[20];
 	float pickupPositions[40];
+	int pickupColours[20];
 	for (int i = 0; i < map->GetNPickup(); i++) {
 		Pickup* p = map->GetPickups()[i];
 		pickupTypes[i] = p->GetPickupType();
-		pickupPositions[i * 2] = (xDimension - p->Physics()->GetPosition().x) / (xDimension * 2);
-		pickupPositions[(i * 2) + 1] = (yDimension + p->Physics()->GetPosition().z) / (yDimension * 2);
+		if (pickupTypes[i] == PickupType::PAINTPOOL) {
+			pickupColours[i] = ((PaintPool*)map->GetPickups()[i])->GetColour();
+		}
+		Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
+		pickupPositions[i * 2] = v.x;
+		pickupPositions[(i * 2) + 1] = v.y;
 	}
+	//capturable object
+	for (int i = 0; i < map->GetNCapture(); i++) {
+		int index = i + map->GetNPickup();
+		//four is one more than the highest number
+		pickupTypes[index] = 4;
+		pickupColours[index] = map->GetCaptureAreas()[i]->GetColour();
+		cout << "colour: " << map->GetCaptureAreas()[i]->GetColour() << "\n";
+		Vector2 v = VectorToMapCoord(map->GetCaptureAreas()[i]->Physics()->GetPosition());
+		pickupPositions[index * 2] = v.x;
+		pickupPositions[(index * 2) + 1] = v.y;
+	}
+
+	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), map->GetNCapture() + map->GetNPickup());
 	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
 	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
+	glUniform1iv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
 
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
+	//pass the view angle through in radians
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
 	//opacity of minimap, this will be a variable eventually
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 0.7);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 1.0);
+	//time
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "time"), time);
 
 	fullscreenQuad->Draw();
 	glUseProgram(0);
 }
 //philip 20/02/2018
+
+Vector2 GraphicsPipeline::VectorToMapCoord(Vector3 pos) {
+	Vector2 r;
+	//get the x and y demensions of map
+	float xDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetXDimension();
+	float yDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetYDimension();
+
+	r.x = (xDimension - pos.x) / (xDimension * 2);
+	r.y = (yDimension + pos.z) / (yDimension * 2);
+
+	return r;
+}
