@@ -76,5 +76,6 @@ public:
 
 	void DeadReckon(uint ID, float dt);
 	float lerpFactor = 0.5f;
+
 };
 

@@ -77,7 +77,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 	collisionTimerActive = false;
 	collisionTimer = 0.0f;
-	timeUntilInAir = 0.5f;
+	timeUntilInAir = 0.1f;
 
 	weapon = NUM_OF_WEAPONS;
 
@@ -231,8 +231,6 @@ void Avatar::OnAvatarUpdate(float dt) {
 		}
 	}
 
-	//Movement mov = NO_MOVE;
-	//MovementState(mov, controllYaw, t);
 
 }
 
@@ -432,7 +430,6 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 {
 	Vector3 force;
 	moveTimer += dt;
-	curMove = NO_MOVE;
 	switch (inputDir)
 	{
 	case NO_MOVE: {
@@ -509,8 +506,6 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	}
 
 	Physics()->SetForce(force);
-	curMove = NO_MOVE;
-
 
 //	if (force != Vector3(0, 0, 0)) {}
 

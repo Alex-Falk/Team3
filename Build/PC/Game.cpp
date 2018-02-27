@@ -10,6 +10,7 @@ void Game::Update(float dt)
 	if (gameRunning)
 	{
 		gameTime += dt;
+		NCLDebug::Log(to_string(gameTime));
 	}
 
 

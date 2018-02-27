@@ -68,11 +68,13 @@ public:
 	inline User * GetUser()					{ return user; }
 
 	inline float GetScore(uint id)			{ return teamScores[id]; }
+	inline float GetTime()					{ return gameTime; }
 
 	inline void StartGame(uint mapID = 0)	{ gameRunning = true; mapIdx = mapID; user->StartGame(mapID); }
 	inline void StopGame()					{ gameRunning = false; }
 
 	inline bool IsRunning()					{ return gameRunning; }
+
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility
