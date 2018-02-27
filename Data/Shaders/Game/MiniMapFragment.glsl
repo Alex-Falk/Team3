@@ -25,7 +25,7 @@ uniform sampler2D captureTex;
 //position of the different players
 uniform uint playerCount;
 uniform vec2 players[4];
-uniform vec3 colours[4];
+uniform int colours[4];
 //pickups etc, 20 is a random quite high number and can
 //be changed to be the exact maximum number of pickups in the future
 uniform uint pickupCount;
@@ -41,7 +41,7 @@ uniform uint self;
 uniform float zoom;
 //angle the camera is at
 uniform float angle;
-
+//time for making the icons grow and shrink
 uniform float time;
 //constants
 uniform const float BASE_POOL_SIZE = 0.05;
@@ -95,7 +95,6 @@ vec3 getColour(int i){
 		case 3:
 		//pink
 			return vec3(1.0f, 0.2f, 1.0f);
-		case 4:
 		default:
 			return vec3(0.5f, 0.5f, 0.5f);
 	}
@@ -105,18 +104,16 @@ void main()
 {
 	//make the pool increase and decrease in size
 	float poolSize = BASE_POOL_SIZE + (0.01 * sin(time * 3));
-	float pickupSize = BASE_PICKUP_SIZE + (0.004 * sin(time * 2.7));
-	//pickups don't for now as the way the size increases isn't smooth for diamonds
-
+	float pickupSize = BASE_PICKUP_SIZE + (0.005 * sin(time * 2.7));
+	//coords relative to the map rather than the fragment
 	vec2 newCoords = (rotate(IN.texCoord - 0.5, angle) * zoom) + players[self];
 	//check the pixel is on the map
 	if(newCoords.x < 0.0f || newCoords.x > 1.0f || newCoords.y < 0.0f || newCoords.y > 1.0f){
 			FragColor.rgb = vec3(0,0,0);
 	}
 	else{
-
-		//TESTING
 		if(texture(diffuseTex,newCoords).rgb == vec3(0,0,0)){
+			//background is grey for now
 			FragColor.rgb = vec3(0.4,0.4,0.4);
 		}
 		else{
@@ -128,18 +125,19 @@ void main()
 	//the powers are multiplied by zoom so they don't change size depending on how far out the zoom is
   for(int i = 0; i < int(playerCount); i++){
     float dist = pow(abs(newCoords.x - players[i].x),2) + pow(abs(newCoords.y - players[i].y),2);
+		vec3 colour = getColour(colours[i]);
 		//0.02^2
 		if(dist < pow(0.02 * zoom,2)){
-      FragColor.rgb = colours[i]/3;
+      FragColor.rgb = colour/3;
     }
     else if(dist < pow(0.025 * zoom, 2)){
-      FragColor.rgb = colours[i];
+      FragColor.rgb = colour;
     }
   }
 
 	//draw pickups
 	for(int i = 0; i < int(pickupCount); i++){
-		//pickup is a paint pool
+		//pickup is a paint pool or capture object (larger and colourable)
 		if(pickupTypes[i] > uint(2)){
 			//TODO pass through the paint pools
 			if(inSquare(pickupPositions[i], newCoords, poolSize)){

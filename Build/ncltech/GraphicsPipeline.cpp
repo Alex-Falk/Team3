@@ -779,12 +779,12 @@ void GraphicsPipeline::DrawMiniMap() {
 	if (!pathTex) {
 		glGenTextures(1, &pathTex);
 	}
-	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//set to the most basic shader
+	//add textures
 	glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
 	glBindTexture(GL_TEXTURE_2D, pathTex);
-	//TEMPORARY!
+
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Paint_Pool));
 	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "poolTex"), 1);
@@ -816,10 +816,11 @@ void GraphicsPipeline::DrawMiniMap() {
 	uint playerCount = Game::Instance()->GetPlayerNumber();
 	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "playerCount"), playerCount);
 	
+	//player uniforms///////////////
 	//four Vector2s
 	float players[8];
 	//four Vector3s
-	float colours[12];
+	int colours[4];
 	uint count = 0;
 	for (int i = 0; i < 4; i++) {
 		Avatar* a = Game::Instance()->GetPlayer(i);
@@ -833,58 +834,62 @@ void GraphicsPipeline::DrawMiniMap() {
 			players[count * 2] = v.x;
 			players[(count * 2) + 1] = v.y;
 			//colours
-			colours[count * 3] = a->GetColourRGBA().x;
-			colours[(count * 3) + 1] = a->GetColourRGBA().y;
-			colours[(count * 3) + 2] = a->GetColourRGBA().z;
+			colours[count * 3] = a->GetColour();
 			//increment count inside here incase a player has left the game
 			count++;
 		}
 	}
 	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "players"), 4, players);
-	glUniform3fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "colours"), 4, colours);
+	glUniform1iv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "colours"), 4, colours);
 
+
+	//map feature uniforms/////////////////
 	//get the current map
 	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
-
 	//int array for pickup type
 	uint pickupTypes[20];
 	float pickupPositions[40];
 	int pickupColours[20];
+	//reset count
+	count = 0;
 	for (int i = 0; i < map->GetNPickup(); i++) {
 		Pickup* p = map->GetPickups()[i];
-		pickupTypes[i] = p->GetPickupType();
-		if (pickupTypes[i] == PickupType::PAINTPOOL) {
-			pickupColours[i] = ((PaintPool*)map->GetPickups()[i])->GetColour();
+		if (p->GetActive()) {
+			pickupTypes[count] = p->GetPickupType();
+			if (pickupTypes[count] == PickupType::PAINTPOOL) {
+				pickupColours[count] = ((PaintPool*)map->GetPickups()[i])->GetColour();
+			}
+			Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
+			pickupPositions[count * 2] = v.x;
+			pickupPositions[(count * 2) + 1] = v.y;
+			count++;
 		}
-		Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
-		pickupPositions[i * 2] = v.x;
-		pickupPositions[(i * 2) + 1] = v.y;
 	}
 	//capturable object
 	for (int i = 0; i < map->GetNCapture(); i++) {
-		int index = i + map->GetNPickup();
 		//four is one more than the highest number
-		pickupTypes[index] = 4;
-		pickupColours[index] = map->GetCaptureAreas()[i]->GetColour();
-		cout << "colour: " << map->GetCaptureAreas()[i]->GetColour() << "\n";
+		pickupTypes[count] = 4;
+		pickupColours[count] = map->GetCaptureAreas()[i]->GetColour();
 		Vector2 v = VectorToMapCoord(map->GetCaptureAreas()[i]->Physics()->GetPosition());
-		pickupPositions[index * 2] = v.x;
-		pickupPositions[(index * 2) + 1] = v.y;
+		pickupPositions[count * 2] = v.x;
+		pickupPositions[(count * 2) + 1] = v.y;
+		count++;
 	}
 
-	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), map->GetNCapture() + map->GetNPickup());
+	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
 	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
 	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
 	glUniform1iv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
 
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
 	//opacity of minimap, this will be a variable eventually
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 1.0);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
 	//time
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "time"), time);
 
+	//finally draw the minimap to the screen
 	fullscreenQuad->Draw();
 	glUseProgram(0);
 }
