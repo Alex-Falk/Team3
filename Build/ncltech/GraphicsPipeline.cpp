@@ -19,6 +19,7 @@
 #include "GraphicsPipeline.h"
 #include "ScreenPicker.h"
 #include "BoundingBox.h"
+#include "CommonMeshes.h"
 #include <nclgl\NCLDebug.h>
 #include <algorithm>
 #include <ncltech\TextureManager.h>
@@ -106,6 +107,16 @@ GraphicsPipeline::~GraphicsPipeline()
 
 	playerRenderNodes.clear();
 	pathRenderNodes.clear();
+
+	if(lastPath)
+	{
+		delete[] lastPath;
+	}
+
+	for (auto itr = pathSmoother.begin(); itr != pathSmoother.end(); ++itr)
+	{
+		delete *itr;
+	}
 }
 
 void GraphicsPipeline::InitializeDefaults()
@@ -636,11 +647,44 @@ void GraphicsPipeline::RenderUI()
 
 void GraphicsPipeline::RenderPath()
 {
+	if (!pathSmoother.size())
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			Mesh* mesh = new Mesh();
+			*mesh = *CommonMeshes::Cube();
+			RenderNode* tempNode = new RenderNode(mesh, "PathSmoother", Vector4(0.5f, 0.5f, 0.5f, 0.5f));
+			pathSmoother.push_back(tempNode);
+		}
+	}
+
 	pathRenderNodes.clear();
 	for (int i = 0; i < playerRenderNodes.size(); ++i)
 	{
 		RecursiveAddToPathRenderLists(playerRenderNodes[i]);
+
+		if(!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+		{
+			if (playerRenderNodes[i]->GetName() == "RED_PLAYER")
+			{
+				scaleToUse[0] = pathRenderNodes[i]->GetWorldTransform().GetScalingVector();
+			}
+			else if (playerRenderNodes[i]->GetName() == "GREEN_PLAYER")
+			{
+				scaleToUse[1] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+			}
+			else if (playerRenderNodes[i]->GetName() == "BLUE_PLAYER")
+			{
+				scaleToUse[2] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+			}
+			else if (playerRenderNodes[i]->GetName() == "PINK_PLAYER")
+			{
+				scaleToUse[3] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+			}
+		}
 	}
+
+	
 
 	Matrix4 projMatrix2 = Matrix4::Orthographic(-40, 40, -groundSize.x, groundSize.x, -groundSize.y, groundSize.y);
 	Matrix4	viewMatrix2 = Matrix4::Rotation(90, Vector3(1, 0, 0)) *Matrix4::Translation(Vector3(0.0f,-20.0f,0.0f));
@@ -648,12 +692,30 @@ void GraphicsPipeline::RenderPath()
 	Matrix4 temp = projViewMatrix;
 	projViewMatrix = projMatrix2 * viewMatrix2;
 
+
+
 	// draw the object and do not clean the color
 	glBindFramebuffer(GL_FRAMEBUFFER, pathFBO);
 	static_cast<DrawPathMaterial*>(materials[MATERIALTYPE::Draw_Path])->SetProjViewMtx(projMatrix2 * viewMatrix2);
-	for (int i = 0; i < pathRenderNodes.size(); i++)
+	for (int i = 0; i < pathRenderNodes.size(); ++i)
 	{
 		pathRenderNodes[i]->DrawOpenGL(true, materials[MATERIALTYPE::Draw_Path]);
+		if (pathRenderNodes[i]->GetName() == "RED_PLAYER")
+		{
+			lastPath[0] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+		}
+		else if (pathRenderNodes[i]->GetName() == "GREEN_PLAYER")
+		{
+			lastPath[1] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+		}
+		else if (pathRenderNodes[i]->GetName() == "BLUE_PLAYER")
+		{
+			lastPath[2] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+		}
+		else if(pathRenderNodes[i]->GetName() == "PINK_PLAYER")
+		{
+			lastPath[3] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+		}
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	projViewMatrix = temp;

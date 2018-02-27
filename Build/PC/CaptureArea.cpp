@@ -63,7 +63,7 @@ CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour c
 	}
 
 	RenderNode* rnode = new RenderNode();
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), paintColour);
+	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), "CaptureArea",paintColour);
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 

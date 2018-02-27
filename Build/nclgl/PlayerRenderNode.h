@@ -23,7 +23,7 @@
 class PlayerRenderNode : public RenderNode
 {
 public :
-	PlayerRenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1, 1, 1, 1));
+	PlayerRenderNode(Mesh*m = NULL, string name = "PlayerRenderNode", Vector4 colour = Vector4(1, 1, 1, 1));
 	virtual ~PlayerRenderNode();
 
 	void SetIsInAir(bool _IsInAir) { isInAir = _IsInAir; }

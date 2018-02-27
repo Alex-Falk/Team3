@@ -252,10 +252,16 @@ protected:
 
 	//path
 	Vector2		groundSize;
+	Vector3		lastPath[4];
+	Vector3		scaleToUse[4];
+	
 	std::vector<RenderNode*>	playerRenderNodes;
 	std::vector<RenderNode*>	pathRenderNodes;
+	std::vector<RenderNode*>    pathSmoother;
+	
 	GLuint		pathFBO;
 	GLuint		pathTex;
+	
 
 	//GUI
 	bool isMainMenu = false;

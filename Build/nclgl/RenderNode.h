@@ -28,7 +28,7 @@ class Material;
 
 class RenderNode	{
 public:
-	 RenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1,1,1,1));
+	 RenderNode(Mesh*m = NULL, string name = "RenderNode", Vector4 colour = Vector4(1,1,1,1));
 	virtual ~RenderNode(void);
 
 	virtual bool IsRenderable()
