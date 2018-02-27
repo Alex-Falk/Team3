@@ -193,6 +193,7 @@ public:
 	float GetGammaCorrection() { return gammaCorrection; }
 	inline int GetWidth() { return width; }
 	inline int GetHeight() { return height; }
+	inline Mesh* GetScreenQuad() { return fullscreenQuad; }
 protected:
 	GraphicsPipeline();
 	virtual ~GraphicsPipeline();

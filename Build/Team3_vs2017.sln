@@ -88,8 +88,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{8F46EB91-D896-
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Post Process", "Post Process", "{A46604DF-82C8-429E-B925-33739FEF5CB0}"
 	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\Post Process\Basic.glsl = ..\Data\Shaders\Post Process\Basic.glsl
 		..\Data\Shaders\Post Process\BLUR.glsl = ..\Data\Shaders\Post Process\BLUR.glsl
 		..\Data\Shaders\Post Process\EDGE_DETECTION.glsl = ..\Data\Shaders\Post Process\EDGE_DETECTION.glsl
+		..\Data\Shaders\Post Process\GaussianBlur.glsl = ..\Data\Shaders\Post Process\GaussianBlur.glsl
 		..\Data\Shaders\Post Process\GRAYSCALE.glsl = ..\Data\Shaders\Post Process\GRAYSCALE.glsl
 		..\Data\Shaders\Post Process\HDR+Bloom.glsl = ..\Data\Shaders\Post Process\HDR+Bloom.glsl
 		..\Data\Shaders\Post Process\INVERSION.glsl = ..\Data\Shaders\Post Process\INVERSION.glsl

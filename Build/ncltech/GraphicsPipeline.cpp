@@ -678,7 +678,6 @@ void GraphicsPipeline::RenderPath()
 void GraphicsPipeline::RenderPostprocessAndPresent()
 {
 	PostProcess::Instance()->RenderPostProcess();
-	fullscreenQuad->Draw();
 	glUseProgram(0);
 }
 

@@ -7,7 +7,6 @@ uniform vec2 	uSinglepixel;
 uniform float	uGammaCorrection;
 uniform float	uNumSuperSamples;
 
-	
 in Vertex	{
 	vec2 texCoord;
 } IN;
@@ -31,7 +30,7 @@ void main(void)	{
 	}
 	color = color / samples_taken;
 	
-	
+	//color = vec3(texture(uColorTex, IN.texCoord));
 	//Inverse Gamma Ramp
 	color = pow(color, vec3(invGammaCorrection));
 	OutFrag = vec4(color, 1.0f);
