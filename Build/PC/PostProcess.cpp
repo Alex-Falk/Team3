@@ -75,9 +75,6 @@ PostProcess::PostProcess()
 		pingpongBuffers[i] = NULL;
 		pingpongFBO[i] = NULL;
 	}
-
-	screenFBO1 = NULL;
-	screenFBO1texture = NULL;
 	screenQuad2 = Mesh::GenerateQuad();
 	GenerateTextrue();
 	GenerateScreenFBO2();
@@ -99,7 +96,15 @@ void PostProcess::RenderPostProcess()
 	//Render two passes to get gaussian blur with only bright part of the scene
 	//afterwards, this will act as a texture of screenFBO2
 	//then by sampling normal texture and screenFBO2texture, we get bloom effect
-	RenderToScreenFBO2();
+
+	switch (currentPostProcessType) {
+	case PostProcessType::HDR_BLOOM:
+		RenderGaussianBlur(1);
+		break;
+	case PostProcessType::BLUR:
+		RenderGaussianBlur();
+		break;
+	}
 	RenderToBackBuffer();
 }
 
@@ -111,17 +116,6 @@ void PostProcess::GenerateTextrue()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	};
-	
-	if (screenFBO1texture == NULL) {
-		glGenTextures(1, &screenFBO1texture);
-		glBindTexture(GL_TEXTURE_2D, screenFBO1texture);
-		SetTextureDefaults();
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F,
-			GraphicsPipeline::Instance()->GetScreenTexWidth(),
-			GraphicsPipeline::Instance()->GetScreenTexHeight(),
-			0, GL_RED, GL_UNSIGNED_BYTE, NULL);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
 
 	for (int i = 0; i < 2; ++i) {
 		glGenTextures(1, &pingpongBuffers[i]);
@@ -137,20 +131,6 @@ void PostProcess::GenerateTextrue()
 
 void PostProcess::GenerateScreenFBO2()
 {
-	if (screenFBO1 == NULL) {
-		glGenFramebuffers(1, &screenFBO1);
-		glBindFramebuffer(GL_FRAMEBUFFER, screenFBO1);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenFBO1texture, 0);
-		GLenum buf1 = GL_COLOR_ATTACHMENT0;
-		glDrawBuffers(1, &buf1);
-		//Validate our framebuffer
-		if ((glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE)
-		{
-			NCLERROR("Unable to create Screen Framebuffer! StatusCode: %x");
-		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
 	for (int i = 0; i < 2; ++i) {
 		glGenFramebuffers(1, &pingpongFBO[i]);
 		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
@@ -167,7 +147,7 @@ void PostProcess::GenerateScreenFBO2()
 }
 
 //Render Pass 2: Applying GaussianBlur
-void PostProcess::RenderToScreenFBO2()
+void PostProcess::RenderGaussianBlur(int a)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//Basic settings for Renderring
@@ -186,7 +166,12 @@ void PostProcess::RenderToScreenFBO2()
 		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
 		glUniform1i(glGetUniformLocation(postProcessShaders[PostProcessType::BLUR]->GetProgram(), "horizontal"), horizontal);
 		if (first_iteration == true) {
-			glBindTexture(GL_TEXTURE_2D, GraphicsPipeline::Instance()->GetScreenTexColor2());
+			if (a == 1) {
+				glBindTexture(GL_TEXTURE_2D, GraphicsPipeline::Instance()->GetScreenTexColor2());
+			}
+			else {
+				glBindTexture(GL_TEXTURE_2D, GraphicsPipeline::Instance()->GetScreenTexColor1());
+			}
 			first_iteration = false;
 		}
 		else {
@@ -211,12 +196,22 @@ void PostProcess::RenderToBackBuffer()
 		GraphicsPipeline::Instance()->GetGammaCorrection());
 	glActiveTexture(GL_TEXTURE0);
 
-	if (GetCurrentPostProcessShader() != postProcessShaders[PostProcessType::HDR_BLOOM]) {
+	if (GetCurrentPostProcessShader() != postProcessShaders[PostProcessType::HDR_BLOOM] && currentPostProcessType != PostProcessType::BLUR) {
 		glUniform1i(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
 		//glBindTexture(GL_TEXTURE_2D, pingpongBuffers[0]);
 		glBindTexture(GL_TEXTURE_2D, GraphicsPipeline::Instance()->GetScreenTexColor1());
 		glUniform1f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uNumSuperSamples"), superSamples);
 		glUniform2f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uSinglepixel"),1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(),1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
+	}
+	else if (currentPostProcessType == PostProcessType::BLUR) {
+		glUseProgram(postProcessShaders[PostProcessType::BASIC]->GetProgram());
+		glUniform1f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uGammaCorrection"),
+			GraphicsPipeline::Instance()->GetGammaCorrection());
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
+		glBindTexture(GL_TEXTURE_2D, pingpongBuffers[0]);
+		glUniform1f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uNumSuperSamples"), superSamples);
+		glUniform2f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
 	}
 	else {
 		glActiveTexture(GL_TEXTURE0);
@@ -229,27 +224,3 @@ void PostProcess::RenderToBackBuffer()
 	GraphicsPipeline::Instance()->GetScreenQuad()->Draw();
 }
 
-/*
-void PostProcess::RenderToScreenFBO1()
-{
-glBindFramebuffer(GL_FRAMEBUFFER, 0);
-glViewport(0, 0, GraphicsPipeline::Instance()->GetWidth(),
-GraphicsPipeline::Instance()->GetHeight());
-glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
-glUseProgram(GetCurrentPostProcessShader()->GetProgram());
-glActiveTexture(GL_TEXTURE0);
-glUniform1i(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
-glUniform1i(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uColorTex"), 0);
-
-glBindTexture(GL_TEXTURE_2D, GraphicsPipeline::Instance()->GetScreenTexColor1());
-//glBindTexture(GL_TEXTURE_2D, screenFBO2texture);
-glUniform1f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uGammaCorrection"),
-GraphicsPipeline::Instance()->GetGammaCorrection());
-glUniform1f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uNumSuperSamples"), superSamples);
-glUniform2f(glGetUniformLocation(GetCurrentPostProcessShader()->GetProgram(), "uSinglepixel"),
-1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(),
-1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
-GraphicsPipeline::Instance()->GetScreenQuad()->Draw();
-}
-*/

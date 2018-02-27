@@ -37,22 +37,16 @@ public:
 	//Creating screen FBO 2
 	void GenerateTextrue();
 	void GenerateScreenFBO2();
-	void RenderToScreenFBO2();
-	void RenderToScreenFBO1();
+	void RenderGaussianBlur(int a = 0);
 	void RenderToBackBuffer();
+
 private:
 	Shader** postProcessShaders;
 	PostProcessType currentPostProcessType;
 
 	//FBO parameter
-	GLuint screenFBO1;
-	GLuint screenFBO2;
-	GLuint screenFBO1texture;
-	GLuint screenFBO2texture;
 	GLuint pingpongFBO[2];
 	GLuint pingpongBuffers[2];
 
 	Mesh* screenQuad2;
-
-	bool bloom = false;
 };

@@ -45,5 +45,7 @@ void main(void) {
 
 	for (int i = 0; i < 5; i++) {
 		 vec4 tmp = texture2D (uColorTex, IN.texCoord.xy + values[i]);
-		 OutFrag += tmp * n_weight[i];	}
+		 OutFrag += tmp * n_weight[i];
+	}
+
 }
