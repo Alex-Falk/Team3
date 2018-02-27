@@ -87,7 +87,6 @@ public:
 	void SendScores();
 	void SendMap();
 	//void SendUpdatemap();
-	virtual void SendInput(uint ID, Movement mov, float yaw, float dt) {};
 
 	//--------------------------------------------------------------------------------------------//
 	// Receiving

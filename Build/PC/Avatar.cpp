@@ -487,7 +487,7 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 		moveTimer = 0;
 		rollSpeed = 0;
 	}
-	else if (curMove == inputDir){
+	else if (curMove == inputDir && inputDir !=MOVE_JUMP ){
 		rollSpeed += 1;
 		if (inAir) {
 			if (rollSpeed > 35) { rollSpeed = 35; }

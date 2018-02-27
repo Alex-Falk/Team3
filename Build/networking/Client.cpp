@@ -77,6 +77,7 @@ void Client::UpdateUser(float dt)
 		std::placeholders::_1);				// Where to place the first parameter
 	network.ServiceNetwork(dt, callback);
 
+	// has to be outside the callback for some reason... so the callback sets destroy to true
 	if (destroy)
 	{
 		enet_peer_disconnect_now(serverConnection, 0);
@@ -88,6 +89,7 @@ void Client::UpdateUser(float dt)
 		return;
 	}
 
+	// Send Info to server
 	if (Game::Instance()->IsRunning())
 	{
 		Avatar * p = Game::Instance()->GetCurrentAvatar();
@@ -98,12 +100,6 @@ void Client::UpdateUser(float dt)
 			p->Physics()->GetAcceleration(),
 			p->IsPlayerInAir()
 		);
-
-		//for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
-		//{
-		//	if (i != userID)
-		//		
-		//}
 	}
 }
 
@@ -279,21 +275,6 @@ void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_peer_send(serverConnection, 0, packet);
 }
-
-void Client::SendInput(uint ID, Movement mov, float yaw, float dt)
-{
-	string data;
-
-	data = to_string(PLAYER_INPUT) + ":"
-		+ to_string(ID) + ";"
-		+ to_string(mov) + ","
-		+ to_string(yaw) + ","
-		+ to_string(dt);
-
-	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
-	enet_peer_send(serverConnection, 0, packet);
-}
-
 
 //Nikos Fragkas
 //Date 19/02

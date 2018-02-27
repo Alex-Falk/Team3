@@ -359,29 +359,3 @@ void Server::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 		+ Vector3ToString(pos) + ","
 		+ Vector3ToString(dir);
 }
-
-//--------------------------------------------------------------------------------------------//
-// Receiving
-//--------------------------------------------------------------------------------------------//
-
-//void Server::ReceiveInput(string data)
-//{
-//	size_t colonIdx = data.find_first_of(':');
-//	size_t semicolonIdx = data.find_first_of(';');
-//	size_t commaIdx = data.find_first_of(',');
-//	size_t secondCommaIdx = commaIdx + 1 + (uint)(data.substr(commaIdx + 1).find_first_of(','));
-//
-//	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-//
-//	Movement mov = Movement(stoi(data.substr(semicolonIdx + 1, commaIdx)));
-//
-//	float yaw = stof(data.substr(commaIdx + 1));
-//	float dt = stof(data.substr(secondCommaIdx + 1));
-//
-//	Avatar * p = Game::Instance()->GetPlayer(playerID);
-//	p->mov = mov;
-//	p->controllYaw = yaw;
-//	p->t = dt;
-//
-//	p->MovementState(mov, yaw, dt);
-//}
