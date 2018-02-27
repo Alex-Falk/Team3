@@ -9,12 +9,15 @@
 #include "MinionBlackboard.h"
 #include "State.h"
 
+
 class Minion : public GameObject {
 protected:
 	Colour colour;
 	Vector4 RGBA;
 	
 	float life;
+	float minLife;
+	float maxLife;
 	float size;
 
 	MinionBlackboard minionBlackboard;

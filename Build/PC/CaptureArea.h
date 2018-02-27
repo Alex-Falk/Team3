@@ -43,6 +43,8 @@ public:
 	
 	~CaptureArea();
 
+	virtual void Update(float dt) {}
+
 protected:
 
 	int scoreValue;

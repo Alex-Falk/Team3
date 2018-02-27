@@ -144,6 +144,10 @@ public:
 
 	//allow the camera access to all the physics nodes
 	friend class Camera;
+
+	//Phil 13/02/2018
+	LineCollision CastRay(Vector3 origin, Vector3 direction, PhysicsNode* self = nullptr);
+
 protected:
 	PhysicsEngine();
 	~PhysicsEngine();
@@ -156,9 +160,6 @@ protected:
 
 	//Handles narrowphase collision detection
 	void NarrowPhaseCollisions();
-
-	//Phil 13/02/2018
-	LineCollision CastRay(Vector3 origin, Vector3 direction, PhysicsNode* self = nullptr);
 
 
 protected:

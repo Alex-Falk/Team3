@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Map.h"
+#include "MinionCamp.h"
 
 class SimpleGamePlay : public Map
 {
@@ -13,6 +14,7 @@ private:
 	//--------------------------------------------------------------------------------------------//
 	static const uint npickup = 2;
 	Pickup* pickup[npickup];
+	MinionCamp * mc;
 
 public:
 	//--------------------------------------------------------------------------------------------//
@@ -24,6 +26,7 @@ public:
 
 	~SimpleGamePlay() {
 		delete[] pickup;
+		delete mc;
 	}
 
 	virtual void OnInitializeScene() override;

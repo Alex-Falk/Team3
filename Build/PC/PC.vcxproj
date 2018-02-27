@@ -162,6 +162,7 @@
     <ClInclude Include="ControllableAvatar.h" />
     <ClInclude Include="MinionStateCaptureZone.h" />
     <ClInclude Include="MinionStateChaseEnemyPlayer.h" />
+    <ClInclude Include="Explosion.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="MainMenu.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="MinionStateCaptureZone.cpp" />
     <ClCompile Include="MinionStateChaseEnemyPlayer.cpp" />
     <ClCompile Include="ControllableAvatar.cpp" />
+    <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Minion.cpp" />

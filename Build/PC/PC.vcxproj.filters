@@ -156,6 +156,9 @@
     <ClInclude Include="Behaviours.h">
       <Filter>AI\Header</Filter>
     </ClInclude>
+    <ClInclude Include="Explosion.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
     <ClInclude Include="MinionBlackboard.h">
       <Filter>AI\Header</Filter>
     </ClInclude>
@@ -252,6 +255,9 @@
       <Filter>AI\Source</Filter>
     </ClCompile>
     <ClCompile Include="Score.cpp">
+      <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Explosion.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="MinionStateCaptureZone.cpp">
