@@ -154,7 +154,6 @@
     <ClInclude Include="..\networking\NetworkCommon.h" />
     <ClInclude Include="..\networking\Server.h" />
     <ClInclude Include="..\networking\User.h" />
-    <ClInclude Include="Arena.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Avatar.h" />
     <ClInclude Include="Behaviours.h" />
@@ -162,7 +161,9 @@
     <ClInclude Include="ControllableAvatar.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameInput.h" />
+    <ClInclude Include="Arena.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Mountains.h" />
     <ClInclude Include="PaintPool.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Minion.h" />
@@ -181,16 +182,17 @@
     <ClCompile Include="..\networking\NetworkCommon.cpp" />
     <ClCompile Include="..\networking\Server.cpp" />
     <ClCompile Include="..\networking\User.cpp" />
-    <ClCompile Include="Arena.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="Behaviours.cpp" />
     <ClCompile Include="CaptureArea.cpp" />
     <ClCompile Include="ControllableAvatar.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Arena.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Minion.cpp" />
     <ClCompile Include="MinionCamp.cpp" />
+    <ClCompile Include="Mountains.cpp" />
     <ClCompile Include="PaintPool.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />

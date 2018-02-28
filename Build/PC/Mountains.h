@@ -4,9 +4,7 @@
 
 #include "Map.h"
 
-
-
-class level : public Map
+class level2 : public Map
 {
 private:
 
@@ -20,10 +18,7 @@ private:
 
 	Pickup* pickupSpeedBoost;
 	Pickup* pickupJumpBoost;
-	Pickup* pickupPaintSpray;
-	Pickup* pickupPaintPistol;
-	Pickup* pickupAutoPaintLauncher;
-	Pickup* pickupPaintRocket;
+	Pickup* pickupWeapon;
 	Pickup* pickupPool;
 
 	GameObject* object;
@@ -32,17 +27,14 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
-	level(const std::string& friendly_name)
+	level2(const std::string& friendly_name)
 		: Map(friendly_name) {}
 
-	~level()
+	~level2()
 	{
 		delete pickupJumpBoost;
 		delete pickupSpeedBoost;
-		delete pickupPaintSpray;
-		delete pickupPaintPistol;
-		delete pickupAutoPaintLauncher;
-		delete pickupPaintRocket;
+		delete pickupWeapon;
 	}
 
 	virtual void OnInitializeScene() override;
