@@ -288,6 +288,12 @@ void HandleGUIMouseButton()
 		float a3 = (Game::Instance()->GetScore(2));
 		float a4 = (Game::Instance()->GetScore(3));
 		GUIsystem::Instance()->UpdateScorebar(a1, a2, a3, a4);
+		//update the weapon bar part of the interface
+		Avatar* p = Game::Instance()->GetPlayer(Game::Instance()->getUserID());
+		GUIsystem::Instance()->SetHasWeapon(p->GetWeaponActive());
+		GUIsystem::Instance()->SetCurrentWeapon(p->GetWeapon());
+		//only needs setting once
+		GUIsystem::Instance()->SetPlayerColour(p->GetColourRGBA().ToVector3());
 	}
 
 	fpsCounter++;
@@ -368,7 +374,7 @@ int main()
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
-	Window::GetWindow().LockMouseToWindow(true);
+	Window::GetWindow().LockMouseToWindow(false);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
