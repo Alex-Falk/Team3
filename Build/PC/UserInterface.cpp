@@ -13,6 +13,30 @@ GUIsystem::GUIsystem()
 		NCLERROR("Load scoreBar shader failed");
 	}
 
+	//phil 28/02/2018
+	//weapon icon
+	weaponIcon = Mesh::GenerateQuad();
+	weaponShader = new Shader(SHADERDIR"Game/MiniMapVertex.glsl",
+		SHADERDIR"UI/WeaponTextureFrag.glsl");
+	if (!weaponShader->LinkProgram()) {
+		NCLERROR("Linking weapon shader failed :(");
+	}
+	//load icons
+	weaponTextures[0] = SOIL_load_OGL_texture(TEXTUREDIR"SprayIcon.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	weaponTextures[1] = SOIL_load_OGL_texture(TEXTUREDIR"PistolIcon.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	weaponTextures[2] = SOIL_load_OGL_texture(TEXTUREDIR"AutoPaintIcon.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	weaponTextures[3] = SOIL_load_OGL_texture(TEXTUREDIR"RocketIcon.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	for (int i = 0; i < 4; i++) {
+		glBindTexture(GL_TEXTURE_2D, weaponTextures[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	currentWeapon = 0;
+	hasWeapon = false;
+
+
 	player1name == "\n\n";
 	player2name == "\n\n";
 	player3name == "\n\n";
@@ -105,6 +129,9 @@ void GUIsystem::Draw()
 		scorebar->Draw();
 		glUseProgram(0);
 	}
+
+	//draw weapon icon
+	DrawWeaponIcon();
 }
 
 void GUIsystem::SetMouseCursor(const std::string & imageFile)
@@ -339,4 +366,18 @@ CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& d
 	newWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(destRectPerc.x, destRectPix.x), CEGUI::UDim(destRectPerc.y, destRectPix.y)));
 	newWindow->setSize(CEGUI::USize(CEGUI::UDim(destRectPerc.z, destRectPix.z), CEGUI::UDim(destRectPerc.w, destRectPix.w)));
 	return newWindow;
+}
+
+
+void GUIsystem::DrawWeaponIcon(){
+	if (hasWeapon) {
+		glUseProgram(weaponShader->GetProgram());
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.9, -0.9, 0)) * Matrix4::Scale(Vector3(0.1, 0.1, 0));
+		glUniformMatrix4fv(glGetUniformLocation(weaponShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+		glUniform3fv(glGetUniformLocation(weaponShader->GetProgram(), "playerColour"), 1, (float*)&playerColour);
+		//displays the weapom the user has equipped
+		glBindTexture(GL_TEXTURE_2D, weaponTextures[currentWeapon]);
+		weaponIcon->Draw();
+		glUseProgram(0);
+	}
 }

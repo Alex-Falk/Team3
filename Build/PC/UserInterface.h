@@ -101,6 +101,10 @@ public:
 		p4 = a4;
 	}
 
+	inline void SetCurrentWeapon(int w) { currentWeapon = w; }
+	inline void SetHasWeapon(bool b) { hasWeapon = b; }
+	inline void SetPlayerColour(Vector3 c) { playerColour = c; }
+
 	string player1name;
 	string player2name;
 	string player3name;
@@ -117,5 +121,15 @@ protected:
 	Mesh* scorebar;
 	Shader* scorebarShader;
 	bool drawScorebar = false;
+
+	//weapon icon
+	Mesh* weaponIcon;
+	Shader* weaponShader;
+	GLuint weaponTextures[4];
+	int currentWeapon;
+	bool hasWeapon;
+	Vector3 playerColour;
+	void DrawWeaponIcon();
+
 	float p1, p2, p3, p4;
 };

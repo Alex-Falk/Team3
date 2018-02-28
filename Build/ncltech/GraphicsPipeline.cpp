@@ -889,7 +889,7 @@ void GraphicsPipeline::DrawMiniMap() {
 			players[count * 2] = v.x;
 			players[(count * 2) + 1] = v.y;
 			//colours
-			colours[count * 3] = a->GetColour();
+			colours[count] = a->GetColour();
 			//increment count inside here incase a player has left the game
 			count++;
 		}

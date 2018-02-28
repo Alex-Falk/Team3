@@ -152,6 +152,8 @@ public:
 	
 	virtual void ManageWeapons();
 	virtual bool GetShooting() { return shooting; }
+	
+	inline bool GetWeaponActive() { return weaponActive; }
 	//Example of member callback ('this' parameter is bound at bind time)
 	bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
