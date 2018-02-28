@@ -219,9 +219,13 @@ void Client::ReceiveNumberUsers(string data)
 
 void Client::ReceiveScores(string data) 
 {
-
 	string s = data.substr(data.find_first_of(':') + 1);
 	vector<string> splitData = split_string(s, ' ');	
+
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
+	{
+		Game::Instance()->SetScore(i, stoi(splitData[i]));
+	}
 }
 
 void Client::ReceiveMapIndex(string data)

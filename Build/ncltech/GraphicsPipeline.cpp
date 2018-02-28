@@ -40,7 +40,8 @@ GraphicsPipeline::GraphicsPipeline()
 	, shadowFBO(NULL)
 	, shadowTex(NULL)
 	, pathFBO(NULL)
-	,pathTex(NULL)
+	, pathTex(NULL)
+	, scoreFBO(NULL)
 	,time(0.0f)
 {
 
@@ -108,6 +109,12 @@ GraphicsPipeline::~GraphicsPipeline()
 		glDeleteTextures(1, &pathTex);
 		glDeleteFramebuffers(1, &pathFBO);
 		pathFBO = NULL;
+	}
+
+	if (scoreFBO)
+	{
+		glDeleteFramebuffers(1, &scoreFBO);
+		scoreFBO = NULL;
 	}
 
 	playerRenderNodes.clear();
@@ -222,6 +229,16 @@ void GraphicsPipeline::LoadShaders()
 	if (!shaders[SHADERTYPE::MiniMap]->LinkProgram()) {
 		NCLERROR("Could not link shader: MiniMap");
 	}
+
+	//Alex's Score
+	shaders[SHADERTYPE::Score] = new Shader(
+		SHADERDIR"Game/ScoreVertex.glsl",
+		SHADERDIR"Game/ScoreFragment.glsl");
+	if (!shaders[SHADERTYPE::Score]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Score");
+	}
+
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -235,6 +252,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::Ground] = new GroundMaterial();
 	materials[MATERIALTYPE::SkyBox] = nullptr;
 	materials[MATERIALTYPE::MiniMap] = nullptr;
+	materials[MATERIALTYPE::Score] = nullptr;
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -310,7 +328,6 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//m_ShadowUBO._ShadowMapTex = glGetTextureHandleARB(m_ShadowTex);
 	//glMakeTextureHandleResidentARB(m_ShadowUBO._ShadowMapTex);
-
 
 }
 
@@ -401,6 +418,7 @@ void GraphicsPipeline::RenderScene()
 
 	//draw the minimap on screen
 	if (isMainMenu == false) {
+		CountScore();
 		DrawMiniMap();
 	}
 
@@ -684,20 +702,6 @@ void GraphicsPipeline::RenderPath()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	projViewMatrix = temp;
-
-	//removes destroyed projectiles from the playerRenderNodes
-	//for (std::vector<RenderNode*>::iterator itr = playerRenderNodes.begin(); itr != playerRenderNodes.end(); itr++)
-	//{
-
-	//	PlayerRenderNode * tempPRN = (PlayerRenderNode*)(*itr)->GetChild();
-	//	if (tempPRN)
-	//	{
-	//		if (tempPRN->GetDestroy()) {
-	//			delete * itr;
-	//			itr = playerRenderNodes.erase(itr);
-	//		}	
-	//	}
-	//}
 }
 
 void GraphicsPipeline::RenderPostprocessAndPresent()
@@ -754,6 +758,37 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//Score Init - I put this here because score only needs to be initialized if we initialize the path
+	// and because it requires the same size
+		if (!scoreBuffer) glGenBuffers(1, &scoreBuffer);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * 4, NULL, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, scoreBuffer);
+	glBindFramebuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+
+	//Color Texture
+	if (!scoreTex) glGenTextures(1, &scoreTex);
+	glBindTexture(GL_TEXTURE_2D, scoreTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, (GLsizei)(groundSize.x*PIXELPERSIZE), (GLsizei)(groundSize.y*PIXELPERSIZE), 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+
+	if (!scoreFBO) glGenFramebuffers(1, &scoreFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, scoreFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, scoreTex, 0);
+	GLenum buf2 = GL_COLOR_ATTACHMENT0;
+	glDrawBuffers(1, &buf2);
+
+	if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		NCLERROR("Unable to create Screen Framebuffer! StatusCode: %x", status);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
@@ -772,12 +807,46 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 		RecursiveAddToPathRenderLists(*itr);
 }
 
+// Score - Alex - 27/02/2018
+void GraphicsPipeline::CountScore()
+{
+	ResetScoreBuffer();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, scoreFBO);
+	glUseProgram(shaders[SHADERTYPE::Score]->GetProgram());
+	
+	glBindTexture(GL_TEXTURE_2D, scoreTex);
+
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Score]->GetProgram(), "uPathTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, pathTex);
+
+	fullscreenQuad->Draw();
+
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	glGetBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, scores);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+
+	glUseProgram(0);
+}
+
+void GraphicsPipeline::ResetScoreBuffer()
+{
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	GLuint a[4] = { 0,0,0,0 };
+	glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, a);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+}
+
+// Minimap - philip 20/02/2018
 void GraphicsPipeline::DrawMiniMap() {
 	if (pathTex == NULL) {
 		glDeleteTextures(1, &pathTex);
 	}
 	if (!pathTex) {
 		glGenTextures(1, &pathTex);
+		glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
+		glBindTexture(GL_TEXTURE_2D, pathTex);
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -893,7 +962,7 @@ void GraphicsPipeline::DrawMiniMap() {
 	fullscreenQuad->Draw();
 	glUseProgram(0);
 }
-//philip 20/02/2018
+
 
 Vector2 GraphicsPipeline::VectorToMapCoord(Vector3 pos) {
 	Vector2 r;

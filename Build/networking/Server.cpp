@@ -335,6 +335,11 @@ void Server::SendScores()
 
 	data = to_string(PLAYER_SCORES) + ":";
 
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
+	{
+		data = data + to_string(Game::Instance()->GetScore(i)) + " ";
+	}
+
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }

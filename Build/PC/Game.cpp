@@ -10,6 +10,14 @@ void Game::Update(float dt)
 	if (gameRunning)
 	{
 		gameTime += dt;
+
+		if (getUserID() == 0)
+		{
+			for (uint i = 0; i < playerNumber; ++i)
+			{
+				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i);
+			}
+		}
 		//NCLDebug::Log(to_string(gameTime));
 	}
 
