@@ -128,15 +128,18 @@ PlayerFloat User::ReceiveSizes(string data)
 }
 
 PlayerName  User::ReceiveUserName(string data) {
+	
+	uint playerID;
 
-	size_t colonIdx = data.find_first_of(':');
-	size_t semicolonIdx = data.find_first_of(';');
-
-	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
-
+	for (uint i = 0; i < 4;i++) {
+		if (userName[i] == " ") { 
+			playerID = i;
+			break;
+		}
+	}
 	PlayerName pname;
+	pname.n = (data);
 	pname.ID = playerID;
-	pname.n = data.substr(semicolonIdx + 1);
 
 	return pname;
 }
