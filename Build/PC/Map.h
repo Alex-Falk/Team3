@@ -13,15 +13,12 @@
 #include "Game.h"
 #include "GamePlay.h"
 #include "WeaponPickup.h"
-#include "Score.h"
 #include "CaptureArea.h"
-//#include "GroundScore.h"
 
 class Map : public Scene
 {
 protected:
 	float m_AccumTime = 0;
-	//Score* score;
 	Vector3 spawnPositions[4];
 	static int mapIndex; // Controls which map will be loaded
 
@@ -31,11 +28,10 @@ protected:
 	//CEGUI::ProgressBar* energyBar;
 
 	//--------------------------------------------------------------------------------------------//
-	// Score Related Variables
+	// Map Size
 	//--------------------------------------------------------------------------------------------//
 	int xDimension = 40;
 	int yDimension = 40;
-	int groundScoreAccuracy = 15;
 
 	//pickup stuff
 	uint npickup;
@@ -68,16 +64,13 @@ public:
 	virtual void LoadTextures();
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
-	virtual void InitializeScores();
 
 	static int GetMapIndex() { return mapIndex; }
 	void SetMapIndex(int mapIndx); 
 	//--------------------------------------------------------------------------------------------//
-	// Updating Avatars and Scores
+	// Updating Avatars
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
-
-	//inline Score * GetScore() { return score; }
 
 	//phil 21/02/2018 for minimap
 	inline int GetXDimension() { return xDimension; }

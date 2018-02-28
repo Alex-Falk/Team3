@@ -147,9 +147,6 @@
     <ClInclude Include="MinionCamp.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Score.h">
-      <Filter>Gameplay\Header</Filter>
-    </ClInclude>
     <ClInclude Include="UserInterface.h">
       <Filter>GUI</Filter>
     </ClInclude>
@@ -253,9 +250,6 @@
     </ClCompile>
     <ClCompile Include="Behaviours.cpp">
       <Filter>AI\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Score.cpp">
-      <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="Explosion.cpp">
       <Filter>Gameplay\Source</Filter>

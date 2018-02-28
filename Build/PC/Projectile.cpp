@@ -2,7 +2,6 @@
 
 #include "Projectile.h"
 #include "Avatar.h"
-#include "Score.h"
 #include "Explosion.h"
 
 Projectile::Projectile() : GameObject() {

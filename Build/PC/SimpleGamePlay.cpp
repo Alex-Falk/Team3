@@ -10,7 +10,6 @@ void SimpleGamePlay::OnInitializeScene()
 {
 	xDimension = 40;
 	yDimension = 40;
-	groundScoreAccuracy = 15;
 
 	Map::OnInitializeScene();
 }

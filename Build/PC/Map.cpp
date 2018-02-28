@@ -33,8 +33,6 @@ void Map::OnInitializeScene() {
 
 	OnInitializeGUI();
 
-	InitializeScores();
-
 	SetSpawnLocations();
 
 	LoadTextures();
@@ -60,17 +58,6 @@ void Map::OnInitializeGUI()
 	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
 	//}
 
-}
-
-void Map::InitializeScores() 
-{
-	//if (Game::Instance()->GetUser())
-	//{
-	//	if (Game::Instance()->getUserID() == 0)
-	//	{
-	//		score = new Score(xDimension, yDimension, groundScoreAccuracy);
-	//	}
-	//}
 }
 
 void Map::LoadTextures()
@@ -106,7 +93,6 @@ void Map::SetSpawnLocations()
 
 void Map::OnCleanupScene()
 {
-	//SAFE_DELETE(score);
 	//SAFE_DELETE(energyBar);
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();
@@ -115,12 +101,11 @@ void Map::OnCleanupScene()
 
 
 //--------------------------------------------------------------------------------------------//
-// Updating Avatars and Scores
+// Updating Avatars
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {
 	if(Game::Instance()->getUserID() == 0)
-	//	score->UpdateScores();
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;

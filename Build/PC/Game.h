@@ -23,7 +23,6 @@
 #include <networking\Client.h>
 #include <networking\Server.h>
 #include "ControllableAvatar.h"
-#include "Score.h"
 
 
 class Game: public TSingleton<Game>

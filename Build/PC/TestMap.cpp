@@ -8,7 +8,6 @@ void TestMap::OnInitializeScene()
 {
 	xDimension = 30;
 	yDimension = 30;
-	groundScoreAccuracy = 15;
 
 	Map::OnInitializeScene();
 }
