@@ -423,6 +423,9 @@ void GraphicsPipeline::RenderScene()
 	//draw the minimap on screen
 	if (isMainMenu == false) {
 		CountScore();
+	}
+
+	if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
 		DrawMiniMap();
 	}
 

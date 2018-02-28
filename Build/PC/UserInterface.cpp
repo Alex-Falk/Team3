@@ -1,4 +1,5 @@
-#include <PC\UserInterface.h>
+#include <PC/UserInterface.h>
+
 
 CEGUI::OpenGL3Renderer* GUIsystem::m_renderer = NULL;
 
@@ -37,10 +38,10 @@ GUIsystem::GUIsystem()
 	hasWeapon = false;
 
 
-	player1name == "\n\n";
-	player2name == "\n\n";
-	player3name == "\n\n";
-	player4name == "\n\n";
+	playersName[0] = "\n\n";
+	playersName[1] = "\n\n";
+	playersName[2] = "\n\n";
+	playersName[3] = "\n\n";
 }
 
 GUIsystem::~GUIsystem()
@@ -280,12 +281,11 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		for (int i = 0; i < editboxes.size(); ++i) {
 			if (editboxes[i].type == currentType) {
 				if (currentType == "UserName") {
-					player1name = editboxes[i].editbox->getText().c_str();
+					
 				}
 				else if (currentType == "ClientName") {
-					//TODO: Send clien name to the server
+					
 				}
-				
 				break;
 			}
 			else {

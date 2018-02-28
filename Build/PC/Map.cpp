@@ -47,6 +47,7 @@ void Map::OnInitializeScene() {
 void Map::OnInitializeGUI()
 {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
+	GUIsystem::Instance()->SetDrawMiniMap(true);
 	lifeBar = static_cast<CEGUI::ProgressBar*>(
 		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
 			Vector4(0.40f, 0.9f, 0.25f, 0.03f),

@@ -101,14 +101,13 @@ public:
 		p4 = a4;
 	}
 
+	inline void SetDrawMiniMap(bool a) { drawMiniMap = a; }
 	inline void SetCurrentWeapon(int w) { currentWeapon = w; }
 	inline void SetHasWeapon(bool b) { hasWeapon = b; }
+	inline bool GetDrawMiniMap() { return drawMiniMap; }
 	inline void SetPlayerColour(Vector3 c) { playerColour = c; }
 
-	string player1name;
-	string player2name;
-	string player3name;
-	string player4name;
+	string playersName[4];
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -121,6 +120,8 @@ protected:
 	Mesh* scorebar;
 	Shader* scorebarShader;
 	bool drawScorebar = false;
+
+	bool drawMiniMap = false;
 
 	//weapon icon
 	Mesh* weaponIcon;

@@ -181,8 +181,9 @@ private:
 	CEGUI::RadioButton* enableVsync;
 	CEGUI::RadioButton* disableVsync;
 	CEGUI::Titlebar* background;
-	//2.4 Debug Control
-	CEGUI::PushButton* DebugButton;
+	//2.4 Bloom Control
+	CEGUI::RadioButton* enableBloomButton;
+	CEGUI::RadioButton* disableBloomButton;
 
 	//3. Create Game Menu
 	CEGUI::Titlebar* ipText;
@@ -244,12 +245,13 @@ public:
 	void OnOptionMenuBackClicked() { ShowMainMenu(); HideOptionMenu(); }
 	void OnEnableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(true); }
 	void OnDisableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(false); }
-	void OnDebugRenderClicked() { GraphicsPipeline::Instance()->SetIsMainMenu(!GraphicsPipeline::Instance()->GetIsMainMenu()); }
 	//Slider function
 	void onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
 	void onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
 	void onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
 	void onCameraSensitivityChanged();
+	void onEnableBloomButtonClicked();
+
 
 	//3. create game menu buttons
 	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); }

@@ -18,6 +18,7 @@ void MainMenu::OnInitializeScene()
 {
 	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GUIsystem::Instance()->SetDrawScoreBar(false);
+	GUIsystem::Instance()->SetDrawMiniMap(false);
 
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
@@ -58,18 +59,24 @@ void MainMenu::OnUpdateScene(float dt)
 	GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 	Scene::OnUpdateScene(dt);
 
+	for (int i = 0; i < 4; ++i) {
+		if (Game::Instance()->GetPlayer(i) != NULL) {
+			GUIsystem::Instance()->playersName[0] = Game::Instance()->GetPlayer(i)->GetName();
+		}
+	}
+
 	//Update Player Info
 	AllPlayerInfo->setText(playerText 
-		+  GUIsystem::Instance()->player1name + "\n\n"
-		+  GUIsystem::Instance()->player2name + "\n\n"
-		+  GUIsystem::Instance()->player3name + "\n\n"
-		+  GUIsystem::Instance()->player4name + "\n\n");
+		+  GUIsystem::Instance()->playersName[0] + "\n\n"
+		+  GUIsystem::Instance()->playersName[1] + "\n\n"
+		+  GUIsystem::Instance()->playersName[2] + "\n\n"
+		+  GUIsystem::Instance()->playersName[3] + "\n\n");
 
 	otherPlayersInfo->setText(otherPlayersText
-		+ GUIsystem::Instance()->player1name + "\n\n"
-		+ GUIsystem::Instance()->player2name + "\n\n"
-		+ GUIsystem::Instance()->player3name + "\n\n"
-		+ GUIsystem::Instance()->player4name + "\n\n");
+		+ GUIsystem::Instance()->playersName[0] + "\n\n"
+		+ GUIsystem::Instance()->playersName[1] + "\n\n"
+		+ GUIsystem::Instance()->playersName[2] + "\n\n"
+		+ GUIsystem::Instance()->playersName[3] + "\n\n");
 }
 
 //Setting UP GUI
@@ -231,11 +238,6 @@ void MainMenu::SetUpLobby()
 	AllPlayerInfo->setAlpha(0.8);
 	AllPlayerInfo->disable();
 	AllPlayerInfo->setVisible(false);
-	AllPlayerInfo->setText(playerText
-		+  GUIsystem::Instance()->player1name + "\n\n"
-		+  GUIsystem::Instance()->player2name + "\n\n"
-		+  GUIsystem::Instance()->player3name + "\n\n"
-		+  GUIsystem::Instance()->player4name + "\n\n");
 
 	lobbyMenuBack = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
@@ -540,11 +542,11 @@ void MainMenu::SetUpOptionMenu()
 
 	background = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.40f, 0.485f, 0.24f, 0.07f),
+			Vector4(0.40f, 0.485f, 0.30f, 0.30f),
 			Vector4(),
 			"VsyncBackground"
 		));
-	background->setText("Enable                   Disable");
+	background->setText("");
 	background->disable();
 	background->setVisible(false);
 
@@ -554,39 +556,52 @@ void MainMenu::SetUpOptionMenu()
 			Vector4(),
 			"VsyncText"
 		));
-	VsyncText->setText("Vsync Setting");
+	VsyncText->setText("Other Settings");
 	VsyncText->disable();
 
 	enableVsync = static_cast<CEGUI::RadioButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
-			Vector4(0.45f, 0.495f, 0.08f, 0.05f),
+			Vector4(0.42f, 0.495f, 0.11f, 0.05f),
 			Vector4(),
 			"EnableVsync"
 		));
+	enableVsync->setText("EnableVsync");
 	enableVsync->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnEnableVsyncClicked, this));
 	enableVsync->setSelected(true);
 
 	disableVsync = static_cast<CEGUI::RadioButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
-			Vector4(0.55f, 0.495f, 0.08f, 0.05f),
+			Vector4(0.55f, 0.495f, 0.11f, 0.05f),
 			Vector4(),
 			"DisableVsync"
 		));
+	disableVsync->setText("DisableVsync");
 	disableVsync->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDisableVsyncClicked, this));
-
-	DebugButton = static_cast<CEGUI::PushButton*>(
-		GUIsystem::Instance()->createWidget("OgreTray/Button",
-			Vector4(0.20f, 0.60f, 0.2f, 0.1f),
+	
+	enableBloomButton = static_cast<CEGUI::RadioButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Checkbox",
+			Vector4(0.42f, 0.55f, 0.11f, 0.05f),
 			Vector4(),
-			"debugButton"
+			"bloomButton"
 		));
-	DebugButton->setText("Debug Rendering");
-	DebugButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDebugRenderClicked, this));
+	enableBloomButton->setText("Enable Bloom");
+	enableBloomButton->subscribeEvent(CEGUI::Slider::EventMouseButtonDown, CEGUI::Event::Subscriber(&MainMenu::onEnableBloomButtonClicked, this));
+	enableBloomButton->setSelected(false);
 }
 
 void MainMenu::onCameraSensitivityChanged()
 {
+	float temp = CameraSensitivity->getCurrentValue(); 
+}
 
+void MainMenu::onEnableBloomButtonClicked()
+{
+	if (PostProcess::Instance()->GetCurrentPostProcessType() == PostProcessType::BASIC) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
+	}
+	else {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::BASIC);
+	}
 }
 
 void MainMenu::onCreateGameClicked()
@@ -726,8 +741,8 @@ void MainMenu::HideOptionMenu()
 	disableVsync->setVisible(false);
 	background->setVisible(false);
 
-	DebugButton->disable();
-	DebugButton->setVisible(false);
+	enableBloomButton->disable();
+	enableBloomButton->setVisible(false);
 }
 
 void MainMenu::HideMainMenu()
@@ -792,7 +807,7 @@ void MainMenu::ShowOptionMenu1()
 	disableVsync->setVisible(true);
 	background->setVisible(true);
 
-	DebugButton->enable();
-	DebugButton->setVisible(true);
+	enableBloomButton->enable();
+	enableBloomButton->setVisible(true);
 }
 

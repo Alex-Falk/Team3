@@ -282,12 +282,11 @@ void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 
 //Nikos Fragkas
 //Date 19/02
-void Client::SendUsername(uint ID)
+void Client::SendUsername()
 {
 	string data;
 
-	data = to_string(PLAYER_NAME) + ":" +
-		to_string(ID) + ";" ;
+	data = to_string(PLAYER_NAME) +  ";" ;
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);
