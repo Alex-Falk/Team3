@@ -6,10 +6,9 @@
 //--------------------------------------------------------------------------------------------//
 void TestMap::OnInitializeScene()
 {
-	xDimension = 30;
-	yDimension = 30;
-	groundScoreAccuracy = 15;
+	dimensions = Vector2(30,30);
 
+	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();
 }
 
