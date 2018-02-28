@@ -4,14 +4,14 @@
 MinionCamp::MinionCamp() : CaptureArea() {
 	spawnTimer = 5.0f;
 	currentSpawnTimer = 0.0f;
-	maxMinions = 5;
+	maxMinions = 2;
 	colour = START_COLOUR;
 }
 
 MinionCamp::MinionCamp(Colour col, Vector3 pos, Vector3 halfdims, int scoreValue) : CaptureArea(pos,halfdims,scoreValue, col) {
 	spawnTimer = 5.0f;
 	currentSpawnTimer = 0.0f;
-	maxMinions = 5;
+	maxMinions = 2;
 	colour = col;
 }
 

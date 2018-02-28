@@ -15,6 +15,7 @@ private:
 	static const uint npickup = 2;
 	Pickup* pickup[npickup];
 	MinionCamp * mc;
+	MinionCamp * mc2;
 
 public:
 	//--------------------------------------------------------------------------------------------//
@@ -27,6 +28,7 @@ public:
 	~SimpleGamePlay() {
 		delete[] pickup;
 		delete mc;
+		delete mc2;
 	}
 
 	virtual void OnInitializeScene() override;

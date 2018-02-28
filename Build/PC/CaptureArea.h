@@ -51,7 +51,17 @@ public:
 	bool CheckPlayerCollision(PhysicsNode * p, int index);
 	bool CheckProjectileCollision(PhysicsNode * p, int index);
 	bool CheckMinionCollision(PhysicsNode * p, int index);
+
+	float GetPercentageCaptured() { return percentageCaptured; }
+	Colour GetCurrentlyCapturing() { return currentlyCapturing; }
+
+	void UpdatePercentage();
+
+
 protected:
+
+	Colour currentlyCapturing;
+	float percentageCaptured;
 
 	float playerScores[4];
 	float lifeReq;

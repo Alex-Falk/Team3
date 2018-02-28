@@ -20,6 +20,8 @@
 																	  `^Y888bo.,            ,.od888P^'
 																		   "`^^Y888888888888P^^*/ 
 #include "MinionStateCaptureZone.h"
+#include "MinionStateWander.h"
+#include "Behaviours.h"
 
 MinionStateCaptureZone* MinionStateCaptureZone::instance;
 
@@ -55,6 +57,17 @@ void MinionStateCaptureZone::Exit(Minion* pMinion)
 
 void MinionStateCaptureZone::Execute(Minion* pMinion)
 {
+	if (pMinion->GetIsGrounded()) {
+		if (pMinion->GetClosestCaptureArea()) {
+			pMinion->Physics()->SetAngularVelocity(Vector3{ 0,0,0 });
+			pMinion->Physics()->SetLinearVelocity(Vector3{ 0,0,0 });
+			pMinion->Physics()->SetAcceleration(Behaviours::Seek(pMinion->GetClosestCaptureArea()->Physics(), pMinion->Physics(), pMinion->GetIsGrounded(), 15, 25));
+			pMinion->SetIsGrounded(false);
+		}
+	}
+	else {
+		pMinion->Physics()->SetAcceleration({ 0, 0, 0 });
+	}
 	//if (pBot->IsAlive())
 	//{
 	//	if (pBot->GetAmmo() == 0)

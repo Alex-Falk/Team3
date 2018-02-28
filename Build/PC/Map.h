@@ -23,6 +23,7 @@ protected:
 	float m_AccumTime = 0;
 	Score* score;
 	Vector3 spawnPositions[4];
+	vector<CaptureArea*> captureAreas;
 
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
@@ -55,6 +56,12 @@ public:
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
 	virtual void InitializeScores();
+
+	void AddCaptureArea(CaptureArea * ca) {
+		captureAreas.push_back(ca);
+	}
+	CaptureArea * GetCaptureArea(int i) { return captureAreas[i]; }
+	vector<CaptureArea*> GetCaptureAreaVector() { return captureAreas; }
 
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars and Scores

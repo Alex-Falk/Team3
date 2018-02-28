@@ -37,10 +37,9 @@ protected:
 	Vector3 wanderPosition;
 	float wanderTimer;
 	float closestPlayerTimer;
+	float closestCaptureAreaTimer;
 
 public:
-	
-
 	Minion();
 	Minion(Colour c, Vector4 RGBA, Vector3 position, const string name = "");
 	
@@ -77,6 +76,9 @@ public:
 	Vector3 GetWanderPosition() { return wanderPosition; }
 	void ComputeNewWanderPosition();
 	void ComputeClosestPlayer();
+	void ComputeClosestCaptureArea();
+
+	bool WanderPositionInRange();
 
 	~Minion();
 };

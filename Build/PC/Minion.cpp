@@ -2,6 +2,7 @@
 #include "Minion.h"
 #include "MinionStates.h"
 #include "Game.h" 
+#include "Map.h"
 
 Minion::Minion() : GameObject() {
 	colour = START_COLOUR;
@@ -62,13 +63,13 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 
 	isGrounded = false;
-	ChangeState(MinionStateChaseEnemyPlayer::GetInstance());
-	closestPlayer = Game::Instance()->GetPlayer(0);
+	ChangeState(MinionStateWander::GetInstance());
 	physicsNode->SetFriction(0.0f);
 	physicsNode->SetElasticity(1.0f);
-	wanderTimer = 0.0f;
-	closestPlayerTimer = 0.0f;
+
+	ComputeClosestPlayer();
 	ComputeNewWanderPosition();
+	ComputeClosestCaptureArea();
 }
 
 Minion::~Minion() {
@@ -138,13 +139,17 @@ void Minion::Update(float dt)
 	}
 	wanderTimer += dt;
 	closestPlayerTimer += dt;
-	if (wanderTimer > 2.0f) {
+	closestCaptureAreaTimer += dt;
+	if (wanderTimer > 2.0f || WanderPositionInRange()) {
 		ComputeNewWanderPosition();
 	}
+	
 	if (closestPlayerTimer > 0.25f) {
 		ComputeClosestPlayer();
 	}
-	
+	if (closestCaptureAreaTimer > 0.75f) {
+		ComputeClosestCaptureArea();
+	}
 }
 
 void Minion::ChangeLife(float l) {
@@ -182,10 +187,12 @@ bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingO
 		return true;
 	}
 	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
-		//TODO apply texture to surface like the avatar 
 		isGrounded = true;
 		ChangeLife(-1);
 		return true;
+	}
+	if (collidingObject->GetType() == PICKUP) {
+		return false;
 	}
 	return true;
 }
@@ -201,10 +208,9 @@ void Minion::ChangeSize(float newSize) {
 
 void Minion::ComputeNewWanderPosition() {
 	wanderTimer = 0.0f;
-
 	float randX = rand() % 80 + -40;
 	float randZ = rand() % 80 + -40;
-	wanderPosition = Vector3{ randX, 0, randZ };
+	wanderPosition = Vector3{ randX, 2.5f, randZ };
 }
 
 void Minion::ComputeClosestPlayer() {
@@ -219,4 +225,32 @@ void Minion::ComputeClosestPlayer() {
 			}
 		}
 	}
+}
+
+void Minion::ComputeClosestCaptureArea() {
+	closestCaptureAreaTimer = 0.0f;
+	float minDist = 10000.0f;
+	for (int i = 0; i < ((Map*)SceneManager::Instance()->GetCurrentScene())->GetCaptureAreaVector().size(); i++) {
+		if (((Map*)SceneManager::Instance()->GetCurrentScene())->GetCaptureArea(i)->GetColour() != this->colour) {
+			float dist = (this->physicsNode->GetPosition() - ((Map*)SceneManager::Instance()->GetCurrentScene())->GetCaptureArea(i)->Physics()->GetPosition()).Length();
+			if (dist < minDist) {
+				closestCaptureArea = ((Map*)SceneManager::Instance()->GetCurrentScene())->GetCaptureArea(i);
+				minDist = dist;
+			}
+		}
+	}
+	if (closestCaptureArea) {
+		if (closestCaptureArea->GetColour() == this->GetColour()) {
+			closestCaptureArea = NULL;
+		}
+	}
+}
+
+bool Minion::WanderPositionInRange() {
+	if (abs(wanderPosition.x - physicsNode->GetPosition().x) < 5.f) {
+		if (abs(wanderPosition.z - physicsNode->GetPosition().z) < 5.f) {
+			return true;
+		}
+	}
+	return false;
 }

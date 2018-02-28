@@ -67,7 +67,6 @@ CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour c
 	CollisionShape* pColshape = new CuboidCollisionShape(halfdims);
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
-
 	this->friendlyName = "CaptureArea";
 	this->renderNode = rnode;
 	this->physicsNode = pnode;
@@ -85,6 +84,8 @@ CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour c
 
 	lifeReq = scoreValue;
 	SetColour(colour);
+	UpdatePercentage();
+	currentlyCapturing = RED;
 }
 
 void CaptureArea::SetColour(Colour c)
@@ -191,6 +192,7 @@ bool CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) {
 				this->SetColour(((Avatar*)p->GetParent())->GetColour());
 				((Avatar*)p->GetParent())->ChangeLife(-lifeToTake);
 			}
+			UpdatePercentage();
 			return true;
 		}
 	}
@@ -225,6 +227,7 @@ bool CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) {
 					this->SetColour(((Minion*)p->GetParent())->GetColour());
 				}
 			}	
+			UpdatePercentage();
 			return true;
 		}
 	}
@@ -259,10 +262,26 @@ bool CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index) {
 					this->SetColour(((Projectile*)p->GetParent())->GetColour());
 				}
 			}
+			UpdatePercentage();
 			return true;
 		}
 	}
 	return false;
+}
+
+void CaptureArea::UpdatePercentage() {
+	bool updated = false;
+	for (int i = 0; i < 4; i++) {
+		if (Game::Instance()->GetPlayer(i)) {
+			if (playerScores[i] > 0) {
+				currentlyCapturing = Game::Instance()->GetPlayer(i)->GetColour();
+				percentageCaptured = playerScores[i] / lifeReq;
+				updated = true;
+				break;
+			}
+		}
+	}
+	if (!updated) percentageCaptured = 0;
 }
 
 CaptureArea::~CaptureArea()
