@@ -363,4 +363,7 @@ void Server::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 		+ to_string(type) + ";"
 		+ Vector3ToString(pos) + ","
 		+ Vector3ToString(dir);
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
