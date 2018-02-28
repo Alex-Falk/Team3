@@ -32,6 +32,7 @@
 #include "Client.h"
 #include <ncltech\SceneManager.h>
 #include <PC/Game.h>
+#include <PC/Map.h>
 const Vector3 status_color3 = Vector3(1.0f, 0.6f, 0.6f);
 
 Client::Client() : serverConnection(NULL)
@@ -178,9 +179,9 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveMapIndex(data);
 			break;
 		}
-		case MAP_UPDATE:
+		case MAP_PICKUP_REQUEST:
 		{
-			//ReceiveMapChange(data);
+			ReceiveRequestResponse(data);
 			break;
 		}
 		case PLAYER_WEAPON:
@@ -244,6 +245,26 @@ void Client::ReceiveMapChange(string data)
 	//Game::Instance()->LoadLevel(mapIndex);
 }
 
+void Client::ReceiveRequestResponse(string data)
+{
+	uint colonIdx = (uint)(data.find_first_of(':'));
+	uint semicolonIdx = (uint)(data.find_first_of(';'));
+	uint commaIdx = (uint)(data.find_first_of(','));
+
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+	uint objectID = stoi(data.substr(semicolonIdx + 1));
+	
+	bool active = stoi(data.substr(commaIdx + 1));
+
+	Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
+
+	if (!active)
+	{
+		m->GetPickups()[objectID]->SetActive(false);
+		Game::Instance()->GetCurrentAvatar()->PickUpBuffActivated();
+	}
+
+}
 
 //--------------------------------------------------------------------------------------------//
 // Sending
@@ -291,13 +312,20 @@ void Client::SendSize(uint ID)
 	enet_peer_send(serverConnection, 0, packet);
 }
 
-//Nikos Fragkas
-//Date 19/02
-void Client::SendUsername()
+void Client::RequestPickup(uint ID, string uniqueName)
 {
 	string data;
 
-	data = to_string(PLAYER_NAME) + ";" ;
+	data = to_string(MAP_PICKUP_REQUEST) + ":" +
+		to_string(ID) + ";" +
+		uniqueName;
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_peer_send(serverConnection, 0, packet);
+}
+//--------------------------------------------------------------------------------------------//
+// Utility
+//--------------------------------------------------------------------------------------------//
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);

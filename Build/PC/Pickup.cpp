@@ -76,7 +76,7 @@ Pickup::Pickup()
 
 }
 
-Pickup::Pickup(Vector3 pos, PickupType type, float respawnTime)
+Pickup::Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTime)
 {
 	active = true;
 	this->respawnTime = respawnTime;
@@ -89,6 +89,8 @@ Pickup::Pickup(Vector3 pos, PickupType type, float respawnTime)
 	currentRespawnTimer = 0.0;
 
 	Vector3 halfdims(0.5f, 0.5f, 0.5f);
+
+	friendlyName = unique_name;
 
 	RenderNode* rnode = new RenderNode();
 	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -108,6 +110,7 @@ Pickup::Pickup(Vector3 pos, PickupType type, float respawnTime)
 	pnode->SetPosition(pos);
 	pnode->SetInverseMass(0.0f);
 	pnode->SetType(PICKUP);
+	pnode->SetName(unique_name);
 
 	float x = halfdims.x*2.0f;
 	float y = halfdims.y*2.0f;
@@ -123,12 +126,12 @@ Pickup::Pickup(Vector3 pos, PickupType type, float respawnTime)
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
 
-	this->friendlyName = "Pickup";
+	//this->friendlyName = "Pickup";
 	this->renderNode = rnode;
 	this->physicsNode = pnode;
 	RegisterPhysicsToRenderTransformCallback();
 	SetPhysics(pnode);
-	pnode->SetName("Pickup");
+	//pnode->SetName("Pickup");
 
 	Physics()->SetOnCollisionCallback(
 		std::bind(&Pickup::PickupCallbackFunction,
@@ -168,19 +171,7 @@ void Pickup::Update(float dt)
 
 bool Pickup::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
 {
-	if (collidingObject->GetType() == PLAYER)
-	{
-		if (this->active)
-		{
-			((Avatar*)collidingObject->GetParent())->PickUpBuffActivated(this->type);
-		}
-		
-		this->active = false;
-	}
-
-	//Return true to enable collision resolution, for Pickup just return false so we can drop the collision pair from the system
 	return false;
-
 }
 
 Pickup::~Pickup()

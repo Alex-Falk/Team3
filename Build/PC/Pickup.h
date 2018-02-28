@@ -30,7 +30,7 @@ class Pickup : public GameObject
 {
 public:
 	Pickup();
-	Pickup(Vector3 pos, PickupType type, float respawnTime = 30.0);
+	Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTime = 30.0);
 
 	virtual void Update(float dt);
 	
