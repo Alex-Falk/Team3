@@ -21,10 +21,11 @@
 //                   "`^^Y888888888888P^^'"      
 
 #pragma once
+#include "Avatar.h"
 #include "GamePlay.h"
 #include <ncltech\GameObject.h>
 #include <ncltech\CommonUtils.h>
-#include "Avatar.h"
+
 
 
 class ControllableAvatar : public Avatar
@@ -40,6 +41,8 @@ public:
 	virtual void OnAvatarUpdate(float dt);
 
 	void ProcessAvatarInput(float time);		// Takes the keyboard input to control ball
+
+	virtual bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) override;
 	
 	~ControllableAvatar();
 

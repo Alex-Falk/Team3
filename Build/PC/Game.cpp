@@ -38,7 +38,7 @@ void Game::ResetGame()
 	gameTime = 0;
 }
 
-bool Game::ClaimPickup(Avatar * player, Pickup * pickup)
+void Game::ClaimPickup(Avatar * player, Pickup * pickup)
 {
-	if (getUserID() == 0);
+	((Client*)user)->RequestPickup(getUserID(), pickup->GetName());
 }

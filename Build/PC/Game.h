@@ -82,8 +82,8 @@ public:
 	void Update(float dt);
 	void ResetGame();
 
-	bool ClaimPickup(Avatar * player, Pickup * pickup);
-	bool ClaimArea(Avatar * player, CaptureArea *object);
+	void ClaimPickup(Avatar * player, Pickup * pickup);
+	//bool ClaimArea(Avatar * player, CaptureArea *object);
 
 
 private:

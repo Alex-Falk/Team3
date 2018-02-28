@@ -76,7 +76,7 @@ Pickup::Pickup()
 
 }
 
-Pickup::Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTime) :
+Pickup::Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTime)
 {
 	active = true;
 	this->respawnTime = respawnTime;
@@ -126,12 +126,12 @@ Pickup::Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTi
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
 
-	this->friendlyName = "Pickup";
+	//this->friendlyName = "Pickup";
 	this->renderNode = rnode;
 	this->physicsNode = pnode;
 	RegisterPhysicsToRenderTransformCallback();
 	SetPhysics(pnode);
-	pnode->SetName("Pickup");
+	//pnode->SetName("Pickup");
 
 	Physics()->SetOnCollisionCallback(
 		std::bind(&Pickup::PickupCallbackFunction,

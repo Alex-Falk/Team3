@@ -30,6 +30,7 @@
 #include "Projectile.h"
 #include "Pickup.h"
 #include "WeaponPickup.h"
+
 Avatar::Avatar()
 {
 	Vector3 pos = Vector3(0.0f, 1.0f, 0.0f);
@@ -169,7 +170,7 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 		inAir = false;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 	}
-	else if (collidingObject->GetType() == PICKUP)
+	/*else if (collidingObject->GetType() == PICKUP)
 	{
 		Pickup * p = (Pickup*)(collidingObject->GetParent());
 		if (p->GetActive())
@@ -188,7 +189,7 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 		}
 
 		return false;
-	}
+	}*/
 	return true;
 }
 
@@ -242,6 +243,10 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 }
 
+void Avatar::PickUpBuffActivated()
+{
+	PickUpBuffActivated(activePickUp);
+}
 
 void Avatar::PickUpBuffActivated(PickupType pickType) {
 

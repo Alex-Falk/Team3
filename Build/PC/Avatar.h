@@ -144,6 +144,7 @@ public:
 	float GetLife() { return life; }
 	void SetLife(float l) { life = l; }
 
+	virtual void PickUpBuffActivated();
 	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is picked up			Nikos 13.20
 	void UpdatePickUp(float dt);			// Update Pick Ups based on time
 
@@ -153,7 +154,7 @@ public:
 	virtual void ManageWeapons();
 	virtual bool GetShooting() { return shooting; }
 	//Example of member callback ('this' parameter is bound at bind time)
-	bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
+	virtual bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
 	virtual ~Avatar();
 

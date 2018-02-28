@@ -28,6 +28,9 @@
 #include <ncltech\CommonMeshes.h> 
 #include <nclgl\PlayerRenderNode.h> 
 #include <nclgl\common.h> 
+#include "Projectile.h"
+#include "Pickup.h"
+#include "WeaponPickup.h"
 
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
@@ -144,5 +147,42 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 		}
 	}
 
+}
+
+bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
+	if (collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == BIG_NODE || (collidingObject->GetType() == PAINTABLE_OBJECT))
+	{
+		canJump = true;
+		collisionTimerActive = true;
+		collisionTimer = timeUntilInAir;
+		inAir = false;
+		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+	}
+	else if (collidingObject->GetType() == PICKUP)
+	{
+		Pickup * p = (Pickup*)(collidingObject->GetParent());
+		if (p->GetActive())
+		{
+			activePickUp = p->GetPickupType();
+			if (activePickUp == WEAPON)
+			{
+				weapon = ((WeaponPickup*)p)->GetWeaponType();
+			}
+
+			if (Game::Instance()->getUserID() == 0)
+			{
+				PickUpBuffActivated(activePickUp);
+				p->SetActive(false);
+			}
+			else
+			{
+				Game::Instance()->ClaimPickup(this, p);
+			}
+
+		}
+
+		return false;
+	}
+	return true;
 }
 

@@ -32,6 +32,7 @@
 #include "Server.h"
 #include <ncltech\SceneManager.h>
 #include <PC/Game.h>
+#include <PC/Map.h>
 
 string Win32_PrintAllAdapterIPAddresses()
 {
@@ -234,6 +235,7 @@ void Server::UpdateUser(float dt)
 
 		if (Game::Instance()->IsRunning())
 		{
+			HandleRequests();
 			for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 			{
 				if (Game::Instance()->GetPlayer(i))
@@ -264,7 +266,46 @@ void Server::Disconnect()
 
 void Server::HandleRequests()
 {
+	int numRequests = requests.size();
+	string data;
 
+
+	for (uint i = 0; i < numRequests; ++i)
+	{
+		UserCaptureRequest r = requests.front();
+
+		data = to_string(MAP_PICKUP_REQUEST) + ":" +
+			to_string(r.userID) + ";" +
+			to_string(r.objectID) + ",";
+
+		Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
+
+		if (r.type == PICKUP)
+		{
+			if (m->GetPickups()[r.objectID]->GetActive())
+			{
+				data = data + "0";
+				m->GetPickups()[r.objectID]->SetActive(false);
+			}
+			else
+			{
+				data = data + "1";
+				
+			}
+
+			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+			enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
+		}
+		else // It shouldn't really get here
+		{
+			data = data + "0";
+		}
+
+		requests.pop();
+
+
+
+	}
 }
 
 //--------------------------------------------------------------------------------------------//
@@ -274,6 +315,7 @@ void Server::HandleRequests()
 // PACKET_TYPE:player_ID;object_ID
 void Server::ReceiveRequest(string data, PhysNodeType physType)
 {
+
 	uint colonIdx = (uint)(data.find_first_of(':'));
 	uint semicolonIdx = (uint)(data.find_first_of(';'));
 
