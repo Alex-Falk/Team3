@@ -186,6 +186,12 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 		return false;
 	}
 
+	if (collidingObject->GetType() == INVISIBLE_WALL) {
+		if (projectileWorth >= 5 && !exploded) Explode();
+		destroy = true;
+		return false;
+	}
+
 	if (collidingObject->GetType() == PICKUP || collidingObject->GetType() == PROJECTILE || collidingObject->GetType() == SPRAY) {
 		return false;
 	}

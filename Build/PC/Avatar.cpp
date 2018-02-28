@@ -193,6 +193,7 @@ void Avatar::ChangeSize(float newSize)
 	Physics()->SetInverseMass(0.5f/newSize);
 	standardSpeed = 25.0f*newSize;
 	boostedSpeed = 50.0f*newSize;
+	standarSpinSpeed = 40 * newSize;
 	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
 	
 	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
@@ -436,31 +437,31 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	}
 	case MOVE_FORWARD: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * (standarSpinSpeed);
 		curMove = MOVE_FORWARD;
 		break;
 	
 	case MOVE_BACKWARD: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * (standarSpinSpeed);
 		curMove = MOVE_BACKWARD;
 		break;
 	
 	case MOVE_LEFT: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * (standarSpinSpeed);
 		curMove = MOVE_LEFT;
 		break;
 	
 	case MOVE_RIGHT: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * (standarSpinSpeed);
 		curMove = MOVE_RIGHT;
 		break;
 	case MOVE_JUMP: {
 		curMove = MOVE_JUMP;
-		Vector3 vel = Physics()->GetLinearVelocity();
 		if (canJump) {
+			Vector3 vel = Physics()->GetLinearVelocity();
 			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
 			inAir = true;
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
@@ -475,7 +476,7 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	force.y = 0;
 
 	// Setting Angular Velocity
-	int basicSpinSpeed = 25; //Change this number to change the spin speed
+	int basicSpinSpeed = 55; //Change this number to change the spin speed
 	if (moveTimer > 2.f) { rollSpeed -= 1; }
 
 	if (curMove != previousMove)
@@ -503,9 +504,5 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 		force = Vector3(0, 0, 0);
 	}
 
-	Physics()->SetForce(force);
-
-//	if (force != Vector3(0, 0, 0)) {}
-
-	
+	Physics()->SetForce(force);	
 }

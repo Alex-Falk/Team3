@@ -6,9 +6,9 @@
 //--------------------------------------------------------------------------------------------//
 void TestMap::OnInitializeScene()
 {
-	xDimension = 30;
-	yDimension = 30;
+	dimensions = Vector2(30,30);
 
+	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();
 }
 

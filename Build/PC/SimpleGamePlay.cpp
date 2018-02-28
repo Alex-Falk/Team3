@@ -8,9 +8,9 @@
 //--------------------------------------------------------------------------------------------//
 void SimpleGamePlay::OnInitializeScene()
 {
-	xDimension = 40;
-	yDimension = 40;
+	dimensions = Vector2(35, 50);
 
+	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();
 }
 
@@ -26,44 +26,31 @@ void SimpleGamePlay::SetSpawnLocations()
 
 void SimpleGamePlay::AddObjects()
 {
-	GameObject* ground = CommonUtils::BuildCuboidObject(
-		"Ground",
-		Vector3(0.0f, 0.0f, 0.0f),
-		Vector3((float)xDimension, 1.0f, (float)yDimension),
-		true,
-		0.0f,
-		true,
-		false,
-		PhysNodeType::BIG_NODE,
-		Vector4(0.6f, 0.6f, 0.6f, 1.0f),
-		MATERIALTYPE::Ground);
 
-	this->AddGameObject(ground);
+	BuildGround(dimensions);
 
-	pickup[0] = new PaintPool(Vector3(0, 0.6f, 0), RED);
+	pickup[0] = new PaintPool(Vector3(0, 1.0f, 0), RED);
 
 	this->AddGameObject(pickup[0]);
 
-	pickup[1] = new WeaponPickup(Vector3(20, 1.5, 20), PAINT_SPRAY, 5.0f);
-
-	
+	pickup[1] = new WeaponPickup(Vector3(20, 2.5, 20), PAINT_SPRAY, 5.0f);
 
 	this->AddGameObject(pickup[1]);
 
-	pickup[2] = new Pickup(Vector3(-10, 1.5, 7), PickupType::SPEED_BOOST);
+	pickup[2] = new Pickup(Vector3(-10, 2.5, 7), PickupType::SPEED_BOOST);
 
 	this->AddGameObject(pickup[2]);
 
-	pickup[3] = new Pickup(Vector3(2, 1.5, -7), PickupType::JUMP_BOOST);
+	pickup[3] = new Pickup(Vector3(2, 2.5, -7), PickupType::JUMP_BOOST);
 
 	this->AddGameObject(pickup[3]);
 
-	pickup[4] = new PaintPool(Vector3(-15.0f, 0.6f, -15.0f), GREEN);
+	pickup[4] = new PaintPool(Vector3(-15.0f, 1.f, -15.0f), GREEN);
 
 	this->AddGameObject(pickup[4]);
 
 	//add capture area
-	capture[0] = new CaptureArea(Vector3(15, 0.6, -15), Vector3(3.0f, 0.5f, 3.0f), 10);
+	capture[0] = new CaptureArea(Vector3(15, 3.0f, -15), Vector3(3.0f, 2.f, 3.0f), 10);
 	this->AddGameObject(capture[0]);
 }
 

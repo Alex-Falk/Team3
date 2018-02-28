@@ -7,6 +7,9 @@ class SimpleGamePlay : public Map
 {
 private:
 	float m_AccumTime = 0;
+	Vector2 dimensions;
+	Map* map;
+
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup

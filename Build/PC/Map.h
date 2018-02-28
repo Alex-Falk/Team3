@@ -31,8 +31,10 @@ protected:
 	//--------------------------------------------------------------------------------------------//
 	// Map Size
 	//--------------------------------------------------------------------------------------------//
-	int xDimension = 40;
-	int yDimension = 40;
+	Vector2 dimensions;
+	inline void SetMapDimensions(Vector2 dimens)	{ dimensions = dimens; }
+	inline Vector2 GetMapDimensions()				{ return dimensions; }
+
 
 	//pickup stuff
 	uint npickup;
@@ -62,6 +64,7 @@ public:
 	virtual void OnInitializeScene() override;
 	virtual void OnInitializeGUI() override;
 
+	void BuildGround(Vector2 Dimensions);
 	virtual void LoadTextures();
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
@@ -74,8 +77,8 @@ public:
 	virtual void OnUpdateScene(float dt) override;
 
 	//phil 21/02/2018 for minimap
-	inline int GetXDimension() { return xDimension; }
-	inline int GetYDimension() { return yDimension; }
+	inline int GetXDimension() { return dimensions.x; }
+	inline int GetYDimension() { return dimensions.y; }
 
 	inline uint GetNPickup() { return npickup; }
 	inline Pickup** GetPickups() { return pickup; }
