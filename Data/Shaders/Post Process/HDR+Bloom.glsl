@@ -12,7 +12,7 @@ in Vertex{
 
 out vec4 OutFrag;
 
-const float reduceFactor = 0.35f;
+const float reduceFactor = 1f;
 
 void main(void) {
 	float invGammaCorrection = 1.0 / uGammaCorrection;
@@ -22,6 +22,7 @@ void main(void) {
 	hdrColor = pow(hdrColor, vec3(invGammaCorrection));
 	bloomColor = pow(bloomColor, vec3(invGammaCorrection));
 
-	vec4 finalColor = vec4(hdrColor*0.8 + bloomColor * reduceFactor, 1.0);
+	vec4 finalColor = vec4(hdrColor + bloomColor * reduceFactor, 1.0);
+	finalColor *= 0.8;
 	OutFrag = finalColor;
 }

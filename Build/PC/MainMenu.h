@@ -204,14 +204,17 @@ private:
 	//CEGUI::Titlebar* addedPlayerInfo;
 	string playerText = "Player List: \n\n";
 	string addedPlayerText = "Added Player List: \n\n";
+	//3.4 Back Button
+	CEGUI::PushButton* lobbyMenuBack;
 
 	//4. Connect to host menu
+	CEGUI::PushButton* connectMenuBack;
 	CEGUI::PushButton* connectToHostButton;
 	inputBox clientName;
 	CEGUI::PushButton* disconnectToHost;
 	CEGUI::Titlebar* otherPlayersInfo;
 	string otherPlayersText = "Other players in lobby: \n\n";
-
+	
 	//User chosen map
 	int nextMapID = 1;
 public:
@@ -247,6 +250,7 @@ public:
 	void onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
 	void onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
 	void onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
+	void onCameraSensitivityChanged();
 
 	//3. create game menu buttons
 	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); }
@@ -259,7 +263,8 @@ public:
 		GUIsystem::Instance()->SetIsTyping(true);
 		GUIsystem::Instance()->currentType = "UserName";
 	}
-
+	void onLobbyMenuBackButtonClicked();
+	
 	//4. join game menu buttons
 	void onConnectButtonClicked();
 	void ShowWaitingInfo();
@@ -267,10 +272,10 @@ public:
 	void HideWaitingInfo();
 	void OnClientNameClicked();
 	void OndisconnectButtonClicked();
+	void OnConnectMenuBackButtonClicked();
 
 	//Hide/show Menu helper function
 	void ShowLobbyMenuServer();
-	void ShowLobbyMenuClient(){}
 	void ShowMainMenu();
 	void ShowConnectionMenu();
 	void ShowOptionMenu1();

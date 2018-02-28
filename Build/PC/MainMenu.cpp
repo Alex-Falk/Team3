@@ -236,6 +236,63 @@ void MainMenu::SetUpLobby()
 		+  GUIsystem::Instance()->player2name + "\n\n"
 		+  GUIsystem::Instance()->player3name + "\n\n"
 		+  GUIsystem::Instance()->player4name + "\n\n");
+
+	lobbyMenuBack = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.40f, 0.85f, 0.2f, 0.1f),
+			Vector4(),
+			"lobbyMenuBack"
+		));
+	lobbyMenuBack->setText("BACK");
+	lobbyMenuBack->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onLobbyMenuBackButtonClicked, this));
+}
+
+void MainMenu::HideLobby()
+{
+	ipText->setVisible(false);
+	ipText->disable();
+
+	startButton->setVisible(false);
+	startButton->disable();
+
+	Map1Text->setVisible(false);
+	Map1Text->disable();
+
+	Map2Text->setVisible(false);
+	Map2Text->disable();
+
+	Map3Text->setVisible(false);
+	Map3Text->disable();
+
+	Map4Text->setVisible(false);
+	Map4Text->disable();
+
+	userName.editbox->setVisible(false);
+	userName.editbox->disable();
+
+	Map1Rbutton->setVisible(false);
+	Map1Rbutton->disable();
+
+	Map2Rbutton->setVisible(false);
+	Map2Rbutton->disable();
+
+	Map3Rbutton->setVisible(false);
+	Map3Rbutton->disable();
+
+	Map4Rbutton->setVisible(false);
+	Map4Rbutton->disable();
+
+	AllPlayerInfo->disable();
+	AllPlayerInfo->setVisible(false);
+
+	lobbyMenuBack->disable();
+	lobbyMenuBack->setVisible(false);
+}
+
+void MainMenu::onLobbyMenuBackButtonClicked()
+{
+	HideLobby();
+	ShowMainMenu();
 }
 
 void MainMenu::onMap1selected()
@@ -295,45 +352,9 @@ void MainMenu::ShowLobbyMenuServer()
 
 	AllPlayerInfo->enable();
 	AllPlayerInfo->setVisible(true);
-}
 
-void MainMenu::HideLobby()
-{
-	ipText->setVisible(false);
-	ipText->disable();
-
-	startButton->setVisible(false);
-	startButton->disable();
-
-	Map1Text->setVisible(false);
-	Map1Text->disable();
-
-	Map2Text->setVisible(false);
-	Map2Text->disable();
-
-	Map3Text->setVisible(false);
-	Map3Text->disable();
-
-	Map4Text->setVisible(false);
-	Map4Text->disable();
-
-	userName.editbox->setVisible(false);
-	userName.editbox->disable();
-
-	Map1Rbutton->setVisible(false);
-	Map1Rbutton->disable();
-
-	Map2Rbutton->setVisible(false);
-	Map2Rbutton->disable();
-
-	Map3Rbutton->setVisible(false);
-	Map3Rbutton->disable();
-
-	Map4Rbutton->setVisible(false);
-	Map4Rbutton->disable();
-
-	AllPlayerInfo->disable();
-	AllPlayerInfo->setVisible(false);
+	lobbyMenuBack->enable();
+	lobbyMenuBack->setVisible(true);
 }
 
 void MainMenu::SetUpconnectionMenu()
@@ -341,7 +362,7 @@ void MainMenu::SetUpconnectionMenu()
 	//Inputting IP
 	IpInputBox.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
-			Vector4(0.40f, 0.65f, 0.2f, 0.1f),
+			Vector4(0.40f, 0.55f, 0.2f, 0.1f),
 			Vector4(),
 			"IpInputBox"
 		));
@@ -352,7 +373,7 @@ void MainMenu::SetUpconnectionMenu()
 
 	connectToHostButton = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
-			Vector4(0.40f, 0.75f, 0.2f, 0.1f),
+			Vector4(0.40f, 0.65f, 0.2f, 0.1f),
 			Vector4(),
 			"connectToHostButton"
 		));
@@ -366,7 +387,7 @@ void MainMenu::SetUpconnectionMenu()
 			"disconnectToHost"
 		));
 	disconnectToHost->setText("DISCONNECT");
-	disconnectToHost->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onConnectButtonClicked, this));
+	disconnectToHost->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OndisconnectButtonClicked, this));
 
 	otherPlayersInfo = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -390,6 +411,21 @@ void MainMenu::SetUpconnectionMenu()
 	clientName.editbox->setText("Your name");
 	clientName.type = "ClientName";
 	clientName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnClientNameClicked, this));
+
+	connectMenuBack = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.40f, 0.80f, 0.2f, 0.1f),
+			Vector4(),
+			"connectMenuBack"
+		));
+	connectMenuBack->setText("BACK");
+	connectMenuBack->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnConnectMenuBackButtonClicked, this));
+}
+
+void MainMenu::OnConnectMenuBackButtonClicked()
+{
+	HideConnectionMenu();
+	ShowMainMenu();
 }
 
 void MainMenu::onIPinputClicked()
@@ -420,7 +456,7 @@ void MainMenu::SetUpOptionMenu()
 	//Sound volume Control
 	mastervolumeSlider = static_cast<CEGUI::Slider*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Slider",
-			Vector4(0.40f, 0.15f, 0.30f, 0.03f),
+			Vector4(0.40f, 0.10f, 0.30f, 0.03f),
 			Vector4(),
 			"mastervolumeSlider"
 		));
@@ -433,7 +469,7 @@ void MainMenu::SetUpOptionMenu()
 
 	GameSoundsSlider = static_cast<CEGUI::Slider*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Slider",
-			Vector4(0.40f, 0.25f, 0.30f, 0.03f),
+			Vector4(0.40f, 0.20f, 0.30f, 0.03f),
 			Vector4(),
 			"GameSoundsSlider"
 		));
@@ -446,7 +482,7 @@ void MainMenu::SetUpOptionMenu()
 	GameSoundsSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onGameSoundvolumeChanged, this));
 	MusicSlider = static_cast<CEGUI::Slider*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Slider",
-			Vector4(0.40f, 0.35f, 0.30f, 0.03f),
+			Vector4(0.40f, 0.30f, 0.30f, 0.03f),
 			Vector4(),
 			"MusicSlider"
 		));
@@ -459,7 +495,7 @@ void MainMenu::SetUpOptionMenu()
 
 	mastervolumeText = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.28f, 0.145f, 0.12f, 0.04f),
+			Vector4(0.28f, 0.095f, 0.12f, 0.04f),
 			Vector4(),
 			"mastervolumeText"
 		));
@@ -467,7 +503,7 @@ void MainMenu::SetUpOptionMenu()
 
 	GameSoundvolumeText = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.28f, 0.245f, 0.12f, 0.04f),
+			Vector4(0.28f, 0.195f, 0.12f, 0.04f),
 			Vector4(),
 			"GameSoundvolumeText"
 		));
@@ -475,7 +511,7 @@ void MainMenu::SetUpOptionMenu()
 
 	MusicvolumeText = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.28f, 0.345f, 0.12f, 0.04f),
+			Vector4(0.28f, 0.295f, 0.12f, 0.04f),
 			Vector4(),
 			"MusicvolumeText"
 		));
@@ -485,7 +521,7 @@ void MainMenu::SetUpOptionMenu()
 	//TODO: link with the actual camera sensitivity
 	CameraSensitivity = static_cast<CEGUI::Slider*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Slider",
-			Vector4(0.40f, 0.45f, 0.30f, 0.03f),
+			Vector4(0.40f, 0.40f, 0.30f, 0.03f),
 			Vector4(),
 			"CameraSensitivity"
 		));
@@ -494,7 +530,7 @@ void MainMenu::SetUpOptionMenu()
 
 	CameraSensitivityText = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.28f, 0.445f, 0.12f, 0.04f),
+			Vector4(0.28f, 0.395f, 0.12f, 0.04f),
 			Vector4(),
 			"CameraSensitivityText"
 		));
@@ -504,7 +540,7 @@ void MainMenu::SetUpOptionMenu()
 
 	background = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.40f, 0.535f, 0.24f, 0.07f),
+			Vector4(0.40f, 0.485f, 0.24f, 0.07f),
 			Vector4(),
 			"VsyncBackground"
 		));
@@ -514,7 +550,7 @@ void MainMenu::SetUpOptionMenu()
 
 	VsyncText = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.28f, 0.545f, 0.12f, 0.04f),
+			Vector4(0.28f, 0.495f, 0.12f, 0.04f),
 			Vector4(),
 			"VsyncText"
 		));
@@ -523,7 +559,7 @@ void MainMenu::SetUpOptionMenu()
 
 	enableVsync = static_cast<CEGUI::RadioButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
-			Vector4(0.45f, 0.545f, 0.08f, 0.05f),
+			Vector4(0.45f, 0.495f, 0.08f, 0.05f),
 			Vector4(),
 			"EnableVsync"
 		));
@@ -532,7 +568,7 @@ void MainMenu::SetUpOptionMenu()
 
 	disableVsync = static_cast<CEGUI::RadioButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
-			Vector4(0.55f, 0.545f, 0.08f, 0.05f),
+			Vector4(0.55f, 0.495f, 0.08f, 0.05f),
 			Vector4(),
 			"DisableVsync"
 		));
@@ -540,7 +576,7 @@ void MainMenu::SetUpOptionMenu()
 
 	DebugButton = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
-			Vector4(0.40f, 0.65f, 0.2f, 0.1f),
+			Vector4(0.20f, 0.60f, 0.2f, 0.1f),
 			Vector4(),
 			"debugButton"
 		));
@@ -548,16 +584,22 @@ void MainMenu::SetUpOptionMenu()
 	DebugButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDebugRenderClicked, this));
 }
 
+void MainMenu::onCameraSensitivityChanged()
+{
+
+}
+
 void MainMenu::onCreateGameClicked()
 {
+	
 	if (!Game::Instance()->GetUser())
 	{
 		Game::Instance()->SetServer();
 		ipText->setText("Your IP: \n" + Game::Instance()->GetUser()->GetIP());
-		HideMainMenu();
-		ShowLobbyMenuServer();
 		createButton->disable();
 	}
+	HideMainMenu();
+	ShowLobbyMenuServer();
 }
 
 void MainMenu::onConnectButtonClicked()
@@ -592,11 +634,10 @@ void MainMenu::onConnectButtonClicked()
 		if (!Game::Instance()->GetUser())
 		{
 			Game::Instance()->setClient(ip);
-			HideConnectionMenu();
-			ShowLobbyMenuClient();
-			ShowWaitingInfo();
 		}
 	}
+	HideConnectionMenu();
+	ShowWaitingInfo();
 }
 
 void MainMenu::ShowWaitingInfo()
@@ -617,13 +658,13 @@ void MainMenu::HideWaitingInfo()
 	otherPlayersInfo->setVisible(false);
 }
 
-//TODO: complete the function
 void MainMenu::OndisconnectButtonClicked()
 {
-
+	//TODO:disconnect from lobby
+	Game::Instance()->GetUser()->Disconnect();
+	HideWaitingInfo();
+	ShowConnectionMenu();
 }
-
-
 
 void MainMenu::ShowMainMenu()
 {
@@ -648,6 +689,9 @@ void MainMenu::ShowConnectionMenu()
 
 	clientName.editbox->enable();
 	clientName.editbox->setVisible(true);
+
+	connectMenuBack->enable();
+	connectMenuBack->setVisible(true);
 }
 
 void MainMenu::HideOptionMenu()
@@ -711,6 +755,9 @@ void MainMenu::HideConnectionMenu()
 
 	clientName.editbox->disable();
 	clientName.editbox->setVisible(false);
+
+	connectMenuBack->disable();
+	connectMenuBack->setVisible(false);
 }
 
 void MainMenu::ShowOptionMenu1()
