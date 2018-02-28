@@ -180,9 +180,15 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 		return false;
 	}
 
-	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == INVISIBLE_WALL) {
+	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
 		if (projectileWorth >= 5 && !exploded) Explode();
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		destroy = true;
+		return false;
+	}
+
+	if (collidingObject->GetType() == INVISIBLE_WALL) {
+		if (projectileWorth >= 5 && !exploded) Explode();
 		destroy = true;
 		return false;
 	}

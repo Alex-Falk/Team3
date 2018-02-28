@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------------------------------//
 void SimpleGamePlay::OnInitializeScene()
 {
-	dimensions = Vector2(50, 50);
+	dimensions = Vector2(35, 50);
 
 	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();
