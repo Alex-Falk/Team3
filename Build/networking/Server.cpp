@@ -338,23 +338,15 @@ void Server::SendMap()
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
-void Server::SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir) 
+void Server::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 {
 	string data;
 
 	data = to_string(PLAYER_WEAPON) + ":"
 		+ to_string(ID) + ";"
-		+ to_string(type) + ";" 
+		+ to_string(type) + ";"
 		+ Vector3ToString(pos) + ","
 		+ Vector3ToString(dir);
 
-void Server::SendMap()
-{
-
-	string data;
-	data = to_string(MAP_INDEX) + ":" + to_string(mapID);
-
-	ENetPacket* packet = CreatePacket(data);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 

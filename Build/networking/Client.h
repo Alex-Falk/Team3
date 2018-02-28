@@ -70,7 +70,7 @@ public:
 	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
 	void SendSize(uint ID);
-	void SendUsername(uint ID);
+	void SendUsername();
 
 	//--------------------------------------------------------------------------------------------//
 	// Recieving
