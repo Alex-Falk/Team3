@@ -201,6 +201,10 @@ void Server::UpdateUser(float dt)
 					enet_host_broadcast(server->m_pNetwork, 0, packet);
 					break;
 				}
+				case MAP_PICKUP_REQUEST:
+				{
+					ReceiveRequest(data,PICKUP);
+				}
 				}
 				break;
 			}
@@ -256,6 +260,32 @@ void Server::UpdateUser(float dt)
 void Server::Disconnect()
 {
 	server->Release();
+}
+
+void Server::HandleRequests()
+{
+
+}
+
+//--------------------------------------------------------------------------------------------//
+// Receiving
+//--------------------------------------------------------------------------------------------//
+
+// PACKET_TYPE:player_ID;object_ID
+void Server::ReceiveRequest(string data, PhysNodeType physType)
+{
+	uint colonIdx = (uint)(data.find_first_of(':'));
+	uint semicolonIdx = (uint)(data.find_first_of(';'));
+
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+	uint objectID = stoi(data.substr(semicolonIdx + 1));
+
+	UserCaptureRequest r;
+	r.userID = playerID;
+	r.objectID = objectID;
+	r.type = physType;
+
+	requests.push(r);
 }
 
 //--------------------------------------------------------------------------------------------//

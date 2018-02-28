@@ -44,8 +44,8 @@ enum PacketType {
 	PLAYER_SCORES,			// Server->Client: Broadcast Scores
 	PLAYER_NAME,			// Client->Server: Send Username
 	MAP_INDEX,				// Server->Client: Boradcast Map to load
-	MAP_PICKUP_TAKEN,
-	MAP_OBJECT_TAKEN,
+	MAP_PICKUP_REQUEST,
+	MAP_OBJECT_REQUEST,
 	TEXT_PACKET,
 	GAME_END				// Server->Client: Informs clients game has ended
 };

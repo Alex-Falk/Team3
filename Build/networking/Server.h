@@ -35,9 +35,17 @@
 
 #pragma once
 #include "User.h"
+#include <queue>
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 
+
+struct UserCaptureRequest
+{
+	uint userID;
+	PhysNodeType type;
+	uint objectID;
+};
 
 using namespace std;
 
@@ -92,7 +100,7 @@ public:
 	// Receiving
 	//--------------------------------------------------------------------------------------------//
 
-	/*void ReceiveInput(string data);*/
+	void ReceiveRequest(string data, PhysNodeType physType);
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility
@@ -101,6 +109,7 @@ public:
 
 	virtual void StartGame(uint mapID = 0);
 	void Disconnect();
+	void HandleRequests();
 
 	std::string GetPacketData(const ENetEvent & evnt)
 	{
@@ -116,11 +125,6 @@ public:
 	// Stored Variables
 	//--------------------------------------------------------------------------------------------//
 
-	// Stores:
-	// Players
-	// Scores
-	// World
-
-
+	std::queue<UserCaptureRequest> requests;
 };
 

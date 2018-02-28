@@ -40,5 +40,5 @@ void Game::ResetGame()
 
 bool Game::ClaimPickup(Avatar * player, Pickup * pickup)
 {
-
+	if (getUserID() == 0);
 }

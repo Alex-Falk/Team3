@@ -63,6 +63,8 @@ public:
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
 	void SendUsername(uint ID);
 
+	virtual void RequestPickup(uint ID, string uniqueName);
+
 	//--------------------------------------------------------------------------------------------//
 	// Recieving
 	//--------------------------------------------------------------------------------------------//
