@@ -5,7 +5,8 @@ in Vertex	{
 	smooth vec2 	 texCoord;
 } IN;
 
-uniform vec4 uColor;
+out vec4 FragColor;
+
 uniform sampler2D	uPathTex;
 
 layout(binding = 0, offset = 0) uniform atomic_uint scores[4];
@@ -26,4 +27,6 @@ void main(void)	{
 	{
 		atomicCounterIncrement(scores[2]);
 	}
+
+	//FragColor = color;
 }

@@ -266,8 +266,12 @@ protected:
 	std::vector<RenderNode*>	pathRenderNodes;
 	GLuint		pathFBO;
 	GLuint		pathTex;
+	GLuint		scoreFBO;
+	GLuint		scoreTex;
 
-	GLuint		scoreBuffer;	uint		scores[4];
+	GLuint		scoreBuffer;
+	uint		scores[4];
+
 	//For minimap
 	float time;
 	//translates a world position into a position for the minimap
