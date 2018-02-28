@@ -79,6 +79,14 @@ PostProcess::PostProcess()
 		NCLERROR("Could not link shader: Post Process Shader/BLUR");
 	}
 
+	postProcessShaders[PostProcessType::SOBEL] = new Shader(
+		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
+		SHADERDIR"Post Process/SOBEL.glsl");
+	if (!postProcessShaders[PostProcessType::SOBEL]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Post Process Shader/SOBEL");
+	}
+
 	for (int i = 0; i < 2; ++i) {
 		pingpongBuffers[i] = NULL;
 		pingpongFBO[i] = NULL;
@@ -87,7 +95,7 @@ PostProcess::PostProcess()
 	GenerateTextrue();
 	GenerateScreenFBO2();
 
-	currentPostProcessType = PostProcessType::HDR_BLOOM;
+	currentPostProcessType = PostProcessType::BASIC;
 }
 
 PostProcess::~PostProcess()

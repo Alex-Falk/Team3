@@ -46,6 +46,7 @@ void Map::OnInitializeScene() {
 
 void Map::OnInitializeGUI()
 {
+	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 	lifeBar = static_cast<CEGUI::ProgressBar*>(
 		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
 			Vector4(0.40f, 0.9f, 0.25f, 0.03f),
@@ -58,14 +59,6 @@ void Map::OnInitializeGUI()
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			lifeBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
 	}
-
-	currentPickUp = static_cast<CEGUI::Titlebar*>(
-		GUIsystem::Instance()->createWidget("TaharezLook/Titlebar",
-			Vector4(0.80f, 0.8f, 0.15f, 0.10f),
-			Vector4(),
-			"currentPickUp"
-		));
-	currentPickUp->setText("Current Item: ");
 }
 
 void Map::InitializeScores() 

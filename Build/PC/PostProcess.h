@@ -19,6 +19,7 @@ enum PostProcessType{
 	HDR_BLOOM			= 6,
 	BASIC				= 7,
 	PERFORMANCE_BLUR	= 8,
+	SOBEL				= 9,
 	NUMBER_OF_SHADER
 };
 

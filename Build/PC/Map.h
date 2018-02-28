@@ -26,7 +26,6 @@ protected:
 	static int mapIndex; // Controls which map will be loaded
 
 	CEGUI::ProgressBar* lifeBar;
-	CEGUI::Titlebar* currentPickUp;
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
 	//--------------------------------------------------------------------------------------------//

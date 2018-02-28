@@ -96,6 +96,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Post Process", "Post Proces
 		..\Data\Shaders\Post Process\HDR+Bloom.glsl = ..\Data\Shaders\Post Process\HDR+Bloom.glsl
 		..\Data\Shaders\Post Process\INVERSION.glsl = ..\Data\Shaders\Post Process\INVERSION.glsl
 		..\Data\Shaders\Post Process\SHARPEN.glsl = ..\Data\Shaders\Post Process\SHARPEN.glsl
+		..\Data\Shaders\Post Process\SOBEL.glsl = ..\Data\Shaders\Post Process\SOBEL.glsl
 	EndProjectSection
 EndProject
 Global
