@@ -70,4 +70,9 @@ namespace CommonUtils
 		PhysNodeType objectType = DEFAULT_PHYSICS,
 		const Vector4& color = Vector4(1.0f, 1.0f, 1.0f, 1.0f),
 		MATERIALTYPE matType = MATERIALTYPE::Forward_Lighting);
+
+	GameObject* InvisibleWall(
+		const std::string& name,
+		const Vector3& pos,
+		const Vector3& halfdims);
 };

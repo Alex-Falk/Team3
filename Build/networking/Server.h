@@ -35,9 +35,17 @@
 
 #pragma once
 #include "User.h"
+#include <queue>
 #include <iphlpapi.h>
 #pragma comment(lib, "IPHLPAPI.lib")
 
+
+struct UserCaptureRequest
+{
+	uint userID;
+	PhysNodeType type;
+	uint objectID;
+};
 
 using namespace std;
 
@@ -47,14 +55,12 @@ private:
 	NetworkBase * server;
 	GameTimer timer;
 	uint serverPort = 1234;
+	vector<string> clientIPAddress;
 
 	vector<uint> connectedIDs;
 	vector<uint> freeIDs;
 
 public:
-
-
-
 	Server();
 	~Server() {
 		server->Release();
@@ -79,16 +85,28 @@ public:
 	void SendConnectionID(uint ID);
 	void SendGameStart(uint mapID);
 
-	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir);
 	void SendSize(uint ID);
 	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
 
 	void SendScores();
-	//void SendMap();
+	void SendMap();
 	//void SendUpdatemap();
+
+	//--------------------------------------------------------------------------------------------//
+	// Receiving
+	//--------------------------------------------------------------------------------------------//
+
+	void ReceiveRequest(string data, PhysNodeType physType);
+
+	//--------------------------------------------------------------------------------------------//
+	// Utility
+	//--------------------------------------------------------------------------------------------//
+
 
 	virtual void StartGame(uint mapID = 0);
 	void Disconnect();
+	void HandleRequests();
 
 	std::string GetPacketData(const ENetEvent & evnt)
 	{
@@ -101,18 +119,9 @@ public:
 	}
 
 	//--------------------------------------------------------------------------------------------//
-	// Recieving
-	//--------------------------------------------------------------------------------------------//
-
-	// Updates from players
-
-	//--------------------------------------------------------------------------------------------//
 	// Stored Variables
 	//--------------------------------------------------------------------------------------------//
 
-	// Stores:
-	// Players
-	// Scores
-	// World
+	std::queue<UserCaptureRequest> requests;
 };
 

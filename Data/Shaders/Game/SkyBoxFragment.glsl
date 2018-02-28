@@ -16,20 +16,27 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::.::..:... ..  .
 															
 *****************************************************************************/
-# version 150 core
+# version 330 core
 
 uniform samplerCube cubeTex;
 uniform float brightness;
 
+layout(location = 0) out vec4 OutFrag;
+layout(location = 1) out vec4 BrightColor;
+
 in Vertex {
 	vec3 normal;
-} IN;
+} IN; 
 
 out vec4 FragColor;
 
 void main()
 {
-	FragColor = texture(cubeTex, normalize(IN.normal))*brightness;
+	OutFrag = texture(cubeTex, normalize(IN.normal))*brightness;
+	float brightness1 = dot(OutFrag.rgb, vec3(0.2126, 0.7152, 0.0722));
+	if (brightness1 >= 0.10) {
+		BrightColor = vec4(OutFrag.rgb, 1.0);
+	}
 }
 
 

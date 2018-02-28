@@ -28,11 +28,12 @@
 
 CaptureArea::CaptureArea()
 {
-	CaptureArea({ 0,0,0 });
+	CaptureArea({ 0,0,0 },"CAPTUREAREA");
 }
 
-CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour colour)
+CaptureArea::CaptureArea(Vector3 pos, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
 {
+	friendlyName = unique_name;
 	Vector4 paintColour;
 
 	switch (colour)
@@ -62,6 +63,8 @@ CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour c
 		break;
 	}
 
+	this->colour = colour;
+
 	RenderNode* rnode = new RenderNode();
 	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), paintColour);
 
@@ -79,6 +82,7 @@ CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour c
 	pnode = new PhysicsNode();
 	pnode->SetPosition(pos);
 	pnode->SetInverseMass(0.0f);
+	pnode->SetName(unique_name);
 
 	float x = halfdims.x*2.0f;
 	float y = halfdims.y*2.0f;

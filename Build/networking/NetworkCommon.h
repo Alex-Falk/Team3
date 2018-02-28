@@ -38,15 +38,14 @@ enum PacketType {
 	GAME_START,				// Informs clients the game has started
 	CONNECTION_ID,
 	NUMBER_USERS,
-	PLAYER_POS,				// Server->Client: Broadcast positions.		Client->Server: Inform on Update
-	PLAYER_LINVEL,
-	PLAYER_ANGVEL,
-	PLAYER_ACCELERATION,	// Server->Client: Broadcast.				Client->Server:			"
+	AVATAR_UPDATE,
 	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
 	PLAYER_WEAPON,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
 	PLAYER_SCORES,			// Server->Client: Broadcast Scores
+	PLAYER_NAME,			// Client->Server: Send Username
 	MAP_INDEX,				// Server->Client: Boradcast Map to load
-	MAP_UPDATE,				//
+	MAP_PICKUP_REQUEST,
+	MAP_OBJECT_REQUEST,
 	TEXT_PACKET,
 	GAME_END				// Server->Client: Informs clients game has ended
 };
@@ -69,6 +68,11 @@ struct PlayerFloat {
 	float f;
 };
 
+struct PlayerName {
+	uint ID;
+	std::string n;
+};
+
 //--------------------------------------------------------------------------------------------//
 // Functions
 //--------------------------------------------------------------------------------------------//
@@ -82,4 +86,6 @@ string Vector3ToString(Vector3 in);
 vector<string> split_string(string s, char d);
 
 PacketType FindType(string data);
+
+Vector3 LerpVector3(Vector3 a, Vector3 b, float f);
 

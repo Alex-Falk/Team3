@@ -24,6 +24,7 @@
 #include <nclgl\Frustum.h>
 #include <nclgl\Mouse.h>
 #include <PC\UserInterface.h>
+#include <PC\PostProcess.h>
 
 //material
 #include <nclgl\Material.h>
@@ -108,6 +109,8 @@
 #define CAPTURE_SIZE 40	 
 #define PIXELPERSIZE 100
 
+#define ATOMIC_COUNTER_NUMBER 4
+
 #define DEBUGDRAW_FLAGS_BOUNDING				0x20
 
 typedef std::pair<RenderNode*, float> RenderNodePair;
@@ -121,6 +124,8 @@ enum SHADERTYPE
 	Draw_Path			= 4,
 	Ground				= 5,
 	SkyBox				= 6,
+	MiniMap				= 7,
+	Score				= 8,
 	Shader_Number,
 };
 
@@ -183,6 +188,19 @@ public:
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 	bool GetIsMainMenu() { return isMainMenu; }
 
+	inline GLuint GetScreenTexWidth() { return screenTexWidth; }
+	inline GLuint GetScreenTexHeight() { return screenTexHeight; }
+	inline GLuint GetscreenFBO() { return screenFBO; }
+	inline uint GetNumSuperSamples() { return numSuperSamples; }
+	inline GLuint GetScreenTexColor1() { return screenTexColor[0]; }
+	inline GLuint GetScreenTexColor2() { return screenTexColor[1]; }
+	float GetGammaCorrection() { return gammaCorrection; }
+	inline int GetWidth() { return width; }
+	inline int GetHeight() { return height; }
+	inline Mesh* GetScreenQuad() { return fullscreenQuad; }
+	//Score
+	inline float GetScore(uint i) { return scores[i]; }
+
 protected:
 	GraphicsPipeline();
 	virtual ~GraphicsPipeline();
@@ -202,7 +220,11 @@ protected:
 	void RenderUI();
 	void RenderPath();
 	void RenderPostprocessAndPresent();
-	
+	//Phil 20/02/2018
+	void DrawMiniMap();
+	//Alex 27/02/2018
+	void CountScore();
+	void ResetScoreBuffer();
 	
 	void RecursiveAddToPathRenderLists(RenderNode* node);
 
@@ -212,7 +234,7 @@ protected:
 	//Render FBO
 	GLuint		screenTexWidth, screenTexHeight;
 	GLuint		screenFBO;
-	GLuint		screenTexColor;
+	GLuint		screenTexColor[2];
 	GLuint		screenTexDepth;
 
 	//Shaders
@@ -257,6 +279,16 @@ protected:
 	GLuint		pathFBO;
 	GLuint		pathTex;
 
+	//Score - Alex 27/02/2018
+	GLuint		scoreFBO;
+	GLuint		scoreTex;
+	GLuint		scoreBuffer;
+	uint		scores[4];
+
+	//For minimap
+	float time;
+	//translates a world position into a position for the minimap
+	Vector2 VectorToMapCoord(Vector3 pos);
 	//GUI
 	bool isMainMenu = false;
 };

@@ -6,10 +6,9 @@
 //--------------------------------------------------------------------------------------------//
 void TestMap::OnInitializeScene()
 {
-	xDimension = 30;
-	yDimension = 30;
-	groundScoreAccuracy = 15;
+	dimensions = Vector2(30,30);
 
+	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();
 }
 
@@ -46,15 +45,15 @@ void TestMap::OnUpdateScene(float dt)
 
 void TestMap::AddObjects()
 {
-	pickup[0] = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST);
+	pickup[0] = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST, "0");
 	this->AddGameObject(pickup[0]);
 	pickupTextOffset[0] = Vector3(0, 2, 0);
 
-	pickup[1] = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST);
+	pickup[1] = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST, "1");
 	this->AddGameObject(pickup[1]);
 	pickupTextOffset[1] = Vector3(0, 2, 0);
 
-	pickup[2] = new Pickup(Vector3(1, 3, -5.5), WEAPON);
+	pickup[2] = new Pickup(Vector3(1, 3, -5.5), WEAPON, "2");
 	this->AddGameObject(pickup[2]);
 	pickupTextOffset[2] = Vector3(0, 2, 0);
 

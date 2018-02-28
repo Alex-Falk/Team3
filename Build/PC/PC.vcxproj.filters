@@ -48,10 +48,6 @@
     <Filter Include="Gameplay\Source">
       <UniqueIdentifier>{27103adf-a3a6-409f-948d-fbfb0f179103}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GUI">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="AI">
       <UniqueIdentifier>{6a2fe7f2-6adc-4252-8957-7c8305204426}</UniqueIdentifier>
     </Filter>
@@ -60,6 +56,22 @@
     </Filter>
     <Filter Include="AI\Source">
       <UniqueIdentifier>{d8845519-0c62-47f7-9310-43ded6a125d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Header\States">
+      <UniqueIdentifier>{24195f69-5e44-4788-ab7d-ad3b1878c034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Source\States">
+      <UniqueIdentifier>{59f1b6cf-6b8f-4644-ae00-71cd65f9aafd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Source\States\Minion">
+      <UniqueIdentifier>{ca1b412b-e61e-430e-96bc-079dc69bd744}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AI\Header\States\Minion">
+      <UniqueIdentifier>{550f6ed5-12b9-48ce-8160-42e58f9bbd75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI/Post process">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,10 +82,10 @@
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
     <ClInclude Include="MainMenu.h">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
     <ClInclude Include="AudioSystem.h">
       <Filter>Audio\Header</Filter>
@@ -121,7 +133,7 @@
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
     <ClInclude Include="GameInput.h">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
     <ClInclude Include="PaintPool.h">
       <Filter>GamePlay\Header</Filter>
@@ -135,14 +147,41 @@
     <ClInclude Include="MinionCamp.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Score.h">
-      <Filter>Gameplay\Header</Filter>
-    </ClInclude>
     <ClInclude Include="UserInterface.h">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
     <ClInclude Include="Behaviours.h">
       <Filter>AI\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Explosion.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionBlackboard.h">
+      <Filter>AI\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>AI\Header\States</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateCaptureZone.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateChaseEnemyPlayer.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateEscapeRocket.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateHealFriendlyPlayer.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStateWander.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionStates.h">
+      <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcess.h">
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -215,14 +254,32 @@
     <ClCompile Include="Behaviours.cpp">
       <Filter>AI\Source</Filter>
     </ClCompile>
-    <ClCompile Include="Score.cpp">
+    <ClCompile Include="Explosion.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
+    <ClCompile Include="MinionStateCaptureZone.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionStateChaseEnemyPlayer.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionStateEscapeRocket.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionStateHealFriendlyPlayer.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionStateWander.cpp">
+      <Filter>AI\Source\States\Minion</Filter>
+    </ClCompile>
     <ClCompile Include="UserInterface.cpp">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcess.cpp">
+      <Filter>GUI/Post process</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

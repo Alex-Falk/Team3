@@ -13,29 +13,35 @@
 #include "Game.h"
 #include "GamePlay.h"
 #include "WeaponPickup.h"
-#include "Score.h"
-
-//#include "GroundScore.h"
+#include "CaptureArea.h"
 
 class Map : public Scene
 {
 protected:
 	float m_AccumTime = 0;
-	Score* score;
 	Vector3 spawnPositions[4];
+	static int mapIndex; // Controls which map will be loaded
 
+	CEGUI::ProgressBar* lifeBar;
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
 	//--------------------------------------------------------------------------------------------//
 	//CEGUI::ProgressBar* energyBar;
 
 	//--------------------------------------------------------------------------------------------//
-	// Score Related Variables
+	// Map Size
 	//--------------------------------------------------------------------------------------------//
-	int xDimension = 40;
-	int yDimension = 40;
-	int groundScoreAccuracy = 15;
+	Vector2 dimensions;
+	inline void SetMapDimensions(Vector2 dimens)	{ dimensions = dimens; }
+	inline Vector2 GetMapDimensions()				{ return dimensions; }
 
+
+	//pickup stuff
+	uint npickup;
+	Pickup** pickup;
+	//capture areas for minimap
+	uint ncapture;
+	CaptureArea** capture;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
@@ -43,6 +49,13 @@ public:
 	Map(const std::string& friendly_name) : Scene(friendly_name) {}
 	~Map() {
 		TextureManager::Instance()->RemoveAllTexture();
+		//delete the array of pickups
+		if (pickup) {
+			delete[] pickup;
+		}
+		if (capture) {
+			delete[] capture;
+		}
 	};
 
 	virtual void OnCleanupScene();
@@ -51,17 +64,25 @@ public:
 	virtual void OnInitializeScene() override;
 	virtual void OnInitializeGUI() override;
 
+	void BuildGround(Vector2 Dimensions);
 	virtual void LoadTextures();
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
-	virtual void InitializeScores();
 
+	static int GetMapIndex() { return mapIndex; }
+	void SetMapIndex(int mapIndx); 
 	//--------------------------------------------------------------------------------------------//
-	// Updating Avatars and Scores
+	// Updating Avatars
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 
-	inline Score * GetScore() { return score; }
+	//phil 21/02/2018 for minimap
+	inline int GetXDimension() { return dimensions.x; }
+	inline int GetYDimension() { return dimensions.y; }
 
+	inline uint GetNPickup() { return npickup; }
+	inline Pickup** GetPickups() { return pickup; }
+	inline uint GetNCapture() { return ncapture; }
+	inline CaptureArea** GetCaptureAreas() { return capture; }
 };
 

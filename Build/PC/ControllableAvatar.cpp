@@ -24,9 +24,13 @@
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
+#include "Game.h"
 #include <ncltech\CommonMeshes.h> 
 #include <nclgl\PlayerRenderNode.h> 
 #include <nclgl\common.h> 
+#include "Projectile.h"
+#include "Pickup.h"
+#include "WeaponPickup.h"
 
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
@@ -48,47 +52,33 @@ ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) 
 
 
 //Takes Player Input and move the player using force
-void ControllableAvatar::ProcessAvatarInput(float dt) 
+void ControllableAvatar::ProcessAvatarInput(float dt)
 {
-	Vector3 force(0,0,0);
+	Movement move = NO_MOVE;
+	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
-	if (!inAir) 
-	{
-		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-
-		if (Input::Instance()->GetInput(FORWARD)) { 		//Front
-			force =  Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
-		}
-		if (Input::Instance()->GetInput(BACKWARD)) {		//Back
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
-		}
-		if (Input::Instance()->GetInput(LEFT)) {		//Left
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
-		}
-		if (Input::Instance()->GetInput(RIGHT)) {		//Right
-			force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
-		}
-		force.y = 0;
+	// Movement 
+	if (Input::Instance()->GetInput(FORWARD)) { 		//Front
+		move = MOVE_FORWARD;
+	}
+	if (Input::Instance()->GetInput(BACKWARD)) {		//Back
+		move = MOVE_BACKWARD;
+	}
+	if (Input::Instance()->GetInput(LEFT)) {		//Left
+		move = MOVE_LEFT;
+	}
+	if (Input::Instance()->GetInput(RIGHT)) {		//Right
+		move = MOVE_RIGHT;
+	}
+	if (Input::Instance()->GetInput(JUMP)) {		//Jump
+		move = MOVE_JUMP;
 	}
 
-	if (force.x > maxForce)force.x = maxForce;
-	if (force.x < -maxForce)force.x = -maxForce;
-	if (force.z > maxForce)force.z = maxForce;
-	if (force.z < -maxForce)force.z = -maxForce;
-
-	Physics()->SetForce(force);
-
-	if (Input::Instance()->GetInput(JUMP) && canJump)
-	{		//Jump
-		Vector3 vel = Physics()->GetLinearVelocity();
-		Physics()->SetLinearVelocity(Vector3(vel.x*.8f,jumpImpulse,vel.z*.8f));
-
-		inAir = true;
-		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
-		canJump = false;
-	}
 	
-	
+	MovementState(move, yaw, dt);
+
+
+
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
 		NCLDebug::Log("Pistol Activated");
@@ -156,5 +146,43 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 		}
 	}
+
+}
+
+bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
+	if (collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == BIG_NODE || (collidingObject->GetType() == PAINTABLE_OBJECT))
+	{
+		canJump = true;
+		collisionTimerActive = true;
+		collisionTimer = timeUntilInAir;
+		inAir = false;
+		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+	}
+	else if (collidingObject->GetType() == PICKUP)
+	{
+		Pickup * p = (Pickup*)(collidingObject->GetParent());
+		if (p->GetActive())
+		{
+			activePickUp = p->GetPickupType();
+			if (activePickUp == WEAPON)
+			{
+				weapon = ((WeaponPickup*)p)->GetWeaponType();
+			}
+
+			if (Game::Instance()->getUserID() == 0)
+			{
+				PickUpBuffActivated(activePickUp);
+				p->SetActive(false);
+			}
+			else
+			{
+				Game::Instance()->ClaimPickup(this, p);
+			}
+
+		}
+
+		return false;
+	}
+	return true;
 }
 

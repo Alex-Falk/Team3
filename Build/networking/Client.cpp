@@ -32,6 +32,7 @@
 #include "Client.h"
 #include <ncltech\SceneManager.h>
 #include <PC/Game.h>
+#include <PC/Map.h>
 const Vector3 status_color3 = Vector3(1.0f, 0.6f, 0.6f);
 
 Client::Client() : serverConnection(NULL)
@@ -77,6 +78,7 @@ void Client::UpdateUser(float dt)
 		std::placeholders::_1);				// Where to place the first parameter
 	network.ServiceNetwork(dt, callback);
 
+	// has to be outside the callback for some reason... so the callback sets destroy to true
 	if (destroy)
 	{
 		enet_peer_disconnect_now(serverConnection, 0);
@@ -88,29 +90,17 @@ void Client::UpdateUser(float dt)
 		return;
 	}
 
+	// Send Info to server
 	if (Game::Instance()->IsRunning())
 	{
-
-		if (userID != 0) {
-			SendVector3(userID, PLAYER_POS,			 Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetPosition());
-			SendVector3(userID, PLAYER_LINVEL,		 Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetLinearVelocity());
-			SendVector3(userID, PLAYER_ANGVEL,		 Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetAngularVelocity());
-			SendVector3(userID, PLAYER_ACCELERATION, Game::Instance()->GetPlayer(userID)->GetGameObject()->Physics()->GetAcceleration());
-			SendSize(userID);
-
-			for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
-			{
-				if (i != userID)
-				{
-					Game::Instance()->SetPosition(i, temps.positions[i]);
-					Game::Instance()->SetLinearVelocity(i, temps.linVelocities[i]);
-					Game::Instance()->SetAngularVelocity(i, temps.angVelocities[i]);
-					Game::Instance()->SetAcceleration(i, temps.accelerations[i]);
-					Game::Instance()->SetSize(i, temps.sizes[i]);
-				}
-
-			}
-		}
+		Avatar * p = Game::Instance()->GetCurrentAvatar();
+		SendAvatarUpdate(userID,
+			p->Physics()->GetPosition(),
+			p->Physics()->GetLinearVelocity(),
+			p->Physics()->GetAngularVelocity(),
+			p->Physics()->GetAcceleration(),
+			p->IsPlayerInAir()
+		);
 	}
 }
 
@@ -152,6 +142,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		case NUMBER_USERS:
 		{
 			ReceiveNumberUsers(data);
+			break;
 		}
 
 		case CONNECTION_ID:
@@ -160,39 +151,22 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			NCLDebug::Log("Connection ID recieved");
 			break;
 		}
-		case PLAYER_POS:
+		case AVATAR_UPDATE:
 		{
-			PlayerVector pvec = ReceiveVector(data);
-			if (pvec.ID != userID)
-				temps.positions[pvec.ID] = pvec.v;
-			break;
-		}
-		case PLAYER_LINVEL:
-		{
-			PlayerVector pvec = ReceiveVector(data);
-			if (pvec.ID != userID)
-				temps.linVelocities[pvec.ID] = pvec.v;
-			break;
-		}
-		case PLAYER_ANGVEL:
-		{
-			PlayerVector pvec = ReceiveVector(data);
-			if (pvec.ID != userID)
-				temps.angVelocities[pvec.ID] = pvec.v;
-			break;
-		}
-		case PLAYER_ACCELERATION:
-		{
-			PlayerVector pvec = ReceiveVector(data);
-			if (pvec.ID != userID)
-				temps.accelerations[pvec.ID] = pvec.v;
+			size_t colonIdx = data.find_first_of(':');
+			size_t semicolonIdx = data.find_first_of(';');
+
+			uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+			ReceiveAvatarUpdate(data);
+			if (userID != playerID)
+				DeadReckon(playerID, serverConnection->roundTripTime / 2000.0f);
 			break;
 		}
 		case PLAYER_SIZES:
 		{
 			PlayerFloat pfloat = ReceiveSizes(data);
-			if (pfloat.ID != userID)
-				temps.sizes[pfloat.ID] = pfloat.f;
+			Game::Instance()->SetSize(pfloat.ID, pfloat.f);
 			break;
 		}
 		case PLAYER_SCORES:
@@ -205,9 +179,9 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveMapIndex(data);
 			break;
 		}
-		case MAP_UPDATE:
+		case MAP_PICKUP_REQUEST:
 		{
-			//ReceiveMapChange(data);
+			ReceiveRequestResponse(data);
 			break;
 		}
 		case PLAYER_WEAPON:
@@ -246,15 +220,13 @@ void Client::ReceiveNumberUsers(string data)
 
 void Client::ReceiveScores(string data) 
 {
-
 	string s = data.substr(data.find_first_of(':') + 1);
-	vector<string> splitData = split_string(s, ' ');
+	vector<string> splitData = split_string(s, ' ');	
 
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 	{
 		Game::Instance()->SetScore(i, stoi(splitData[i]));
 	}
-	
 }
 
 void Client::ReceiveMapIndex(string data)
@@ -265,19 +237,54 @@ void Client::ReceiveMapIndex(string data)
 	//Game::Instance()->LoadLevel(mapIndex);
 }
 
+void Client::ReceiveMapChange(string data)
+{
+	string s = data.substr(data.find_first_of(':') + 1);
+	uint mapIndex = stoi(s);
+
+	//Game::Instance()->LoadLevel(mapIndex);
+}
+
+void Client::ReceiveRequestResponse(string data)
+{
+	uint colonIdx = (uint)(data.find_first_of(':'));
+	uint semicolonIdx = (uint)(data.find_first_of(';'));
+	uint commaIdx = (uint)(data.find_first_of(','));
+
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+	uint objectID = stoi(data.substr(semicolonIdx + 1));
+	
+	bool active = stoi(data.substr(commaIdx + 1));
+
+	Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
+
+	if (!active)
+	{
+		m->GetPickups()[objectID]->SetActive(false);
+		Game::Instance()->GetCurrentAvatar()->PickUpBuffActivated();
+	}
+
+}
 
 //--------------------------------------------------------------------------------------------//
 // Sending
 //--------------------------------------------------------------------------------------------//
 
-void Client::SendVector3(uint ID,PacketType type, Vector3 vec)
+void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir)
 {
-	string data = to_string(type) + ":"
-		+ to_string(ID) + ";"
-		+ Vector3ToString(vec);
+	string data;
 
-	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	data = to_string(AVATAR_UPDATE) + ":" +
+		to_string(ID) + ";" +
+		Vector3ToString(pos) + "," +
+		Vector3ToString(linVel) + "," +
+		Vector3ToString(angVel) + "," +
+		Vector3ToString(acc) + "," +
+		to_string(inAir);
+
+	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);
+
 }
 
 void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
@@ -304,3 +311,18 @@ void Client::SendSize(uint ID)
 	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);
 }
+
+void Client::RequestPickup(uint ID, string uniqueName)
+{
+	string data;
+
+	data = to_string(MAP_PICKUP_REQUEST) + ":" +
+		to_string(ID) + ";" +
+		uniqueName;
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_peer_send(serverConnection, 0, packet);
+}
+//--------------------------------------------------------------------------------------------//
+// Utility
+//--------------------------------------------------------------------------------------------//

@@ -43,7 +43,7 @@ FixedWorldPartition::FixedWorldPartition(Vector3 mins, Vector3 maxs, std::vector
 
 	for (std::vector<PhysicsNode*>::iterator itr = elements->begin(); itr != elements->end(); ++itr)
 	{
-		if ((*itr)->GetType() == BIG_NODE)
+		if ((*itr)->GetType() == BIG_NODE || (*itr)->GetType() == INVISIBLE_WALL)		//Nikos, Added Invisible Walls here so the camera can move pass them But we still want them as big nodes
 		{
 			bigNodes->push_back((*itr));
 		}

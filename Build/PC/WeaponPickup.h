@@ -27,7 +27,7 @@ class WeaponPickup : public Pickup
 {
 public:
 	WeaponPickup();
-	WeaponPickup(Vector3 pos, WeaponType type, float respawnTime = 30.0);
+	WeaponPickup(Vector3 pos, WeaponType type, string unique_name, float respawnTime = 30.0);
 	
 	void Reactivate();
 

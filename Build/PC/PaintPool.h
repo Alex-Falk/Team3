@@ -27,7 +27,7 @@ class PaintPool : public Pickup
 {
 public:
 	PaintPool();
-	PaintPool(Vector3 pos, Colour colour, float respawnTime = 30.0);
+	PaintPool(Vector3 pos, Colour colour, string unique_name, float respawnTime = 30.0);
 	
 	bool PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 	void Update(float dt);
@@ -35,8 +35,8 @@ public:
 	void ChangeColour(Colour newColour);
 	void ChangeSize(Vector3 newSize);
 
+	inline Colour GetColour() { return colour; }
 	~PaintPool();
-
 private:
 
 	Colour colour;

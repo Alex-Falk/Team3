@@ -1,18 +1,14 @@
 #pragma once
 
 #include "Map.h"
+#include "MinionCamp.h"
 
 class SimpleGamePlay : public Map
 {
 private:
-
 	float m_AccumTime = 0;
-
-	//--------------------------------------------------------------------------------------------//
-	// Special objects in the map
-	//--------------------------------------------------------------------------------------------//
-	static const uint npickup = 2;
-	Pickup* pickup[npickup];
+	Vector2 dimensions;
+	Map* map;
 
 public:
 	//--------------------------------------------------------------------------------------------//
@@ -20,10 +16,14 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	SimpleGamePlay(const std::string& friendly_name) :
 		Map(friendly_name)
-	{}
+	{
+		npickup = 5;
+		pickup = new Pickup*[npickup];
+		ncapture = 1;
+		capture = new CaptureArea*[ncapture];
+	}
 
 	~SimpleGamePlay() {
-		delete[] pickup;
 	}
 
 	virtual void OnInitializeScene() override;
