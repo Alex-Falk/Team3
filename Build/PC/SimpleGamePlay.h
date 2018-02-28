@@ -6,27 +6,21 @@
 class SimpleGamePlay : public Map
 {
 private:
-
 	float m_AccumTime = 0;
-
-	//--------------------------------------------------------------------------------------------//
-	// Special objects in the map
-	//--------------------------------------------------------------------------------------------//
-	static const uint npickup = 2;
-	Pickup* pickup[npickup];
-	MinionCamp * mc;
-
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
 	SimpleGamePlay(const std::string& friendly_name) :
 		Map(friendly_name)
-	{}
+	{
+		npickup = 5;
+		pickup = new Pickup*[npickup];
+		ncapture = 1;
+		capture = new CaptureArea*[ncapture];
+	}
 
 	~SimpleGamePlay() {
-		delete[] pickup;
-		delete mc;
 	}
 
 	virtual void OnInitializeScene() override;

@@ -47,6 +47,7 @@ private:
 	NetworkBase * server;
 	GameTimer timer;
 	uint serverPort = 1234;
+	vector<string> clientIPAddress;
 
 	vector<uint> connectedIDs;
 	vector<uint> freeIDs;
@@ -76,13 +77,24 @@ public:
 	void SendConnectionID(uint ID);
 	void SendGameStart(uint mapID);
 
-	virtual void SendVector3(uint ID, PacketType type, Vector3 vec);
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir);
 	void SendSize(uint ID);
 	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
 
 	void SendScores();
-	//void SendMap();
+	void SendMap();
 	//void SendUpdatemap();
+
+	//--------------------------------------------------------------------------------------------//
+	// Receiving
+	//--------------------------------------------------------------------------------------------//
+
+	/*void ReceiveInput(string data);*/
+
+	//--------------------------------------------------------------------------------------------//
+	// Utility
+	//--------------------------------------------------------------------------------------------//
+
 
 	virtual void StartGame(uint mapID = 0);
 	void Disconnect();
@@ -98,12 +110,6 @@ public:
 	}
 
 	//--------------------------------------------------------------------------------------------//
-	// Recieving
-	//--------------------------------------------------------------------------------------------//
-
-	// Updates from players
-
-	//--------------------------------------------------------------------------------------------//
 	// Stored Variables
 	//--------------------------------------------------------------------------------------------//
 
@@ -111,5 +117,7 @@ public:
 	// Players
 	// Scores
 	// World
+
+
 };
 

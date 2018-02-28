@@ -159,46 +159,41 @@ void Score::UpdateGroundScore(Avatar* player) {
 	float halfxGrid = (float)(xOnGrid / 2);
 	float halfyGrid = (float)(yOnGrid / 2);
 
-	Vector2 playerPos = Vector2((player->GetPosition().x *groundScoreAccuracy) + (halfxGrid + (10 * groundScoreAccuracy)), (player->GetPosition().z *groundScoreAccuracy + halfyGrid + (10 * groundScoreAccuracy)));
+	Vector2 playerPos = Vector2((player->GetPosition().x * groundScoreAccuracy) + halfxGrid, (player->GetPosition().z * groundScoreAccuracy) + halfyGrid);
 
-	float plGridSize = player->GetSize() * groundScoreAccuracy * 10;
-	int gridArea = xOnGrid * yOnGrid;
+	float plGridSize = (player->GetSize() +3) * groundScoreAccuracy;
 	float radius = plGridSize * plGridSize;
 	
 	// Runs through the square arount the center and finds the circle.
-	for (int i = (int)(playerPos.x - plGridSize); i <= playerPos.x; i++) {
-		for (int j = (int)(playerPos.y - plGridSize); j <= playerPos.y; j++) {
+	for (int i = playerPos.x - plGridSize; i <= playerPos.x * (yOnGrid-1); i * xOnGrid) {
+		for (int j = (playerPos.y + i) - plGridSize; j <= playerPos.y + i; j++) {
 			// check if inside vector boundries
-			if ((i > 0 && j > 0) && (i + j < xOnGrid * yOnGrid - radius)) {
-				if ((i - playerPos.x)*(i - playerPos.x) + (j - playerPos.y)* (j - playerPos.y) <= radius) {
+			if ((i > 0 && j > 0) && ( j < xOnGrid * yOnGrid - radius)) {
+				if ((j - (playerPos.y + i)) * (j - (playerPos.y + i)) + (i - playerPos.x)*(i - playerPos.x) <= radius) {
 					// new position based on 2 dimensional position
-					int posi = i * (xOnGrid);
 					int posj = i * (xOnGrid)+j;
-					int xSym = (int)(playerPos.x* (xOnGrid)-(posi - playerPos.x* (xOnGrid)));
-					int ySym = (int)(i * (xOnGrid)+playerPos.y - (posj - (i * (xOnGrid)+playerPos.y)));
+					int xSym = playerPos.x -i;
+					int ySym = i * (xOnGrid)+playerPos.y - (posj - (i * (xOnGrid)+playerPos.y));
 					// Thanks to symetry we take all 4 quadrants of the circle arount the center
-					ChangeGridScore(ground[posi + posj], player->GetColour());
-					ground[posi + posj] = player->GetColour();
-					ChangeGridScore(ground[posi + ySym], player->GetColour());
-					ground[posi + ySym] = player->GetColour();
-					ChangeGridScore(ground[xSym + posj], player->GetColour());
-					ground[xSym + posj] = player->GetColour();
+					ChangeGridScore(ground[j], player->GetColour());
+					ground[j] = player->GetColour();
+					ChangeGridScore(ground[j + ySym], player->GetColour());
+					ground[j + ySym] = player->GetColour();
+					ChangeGridScore(ground[xSym +j], player->GetColour());
+					ground[xSym + j] = player->GetColour();
 					ChangeGridScore(ground[xSym + ySym], player->GetColour());
 					ground[xSym + ySym] = player->GetColour();
 				}
 			}
 		}
+		i++;
 	}
 }
 
 // Decreases the score from previous team and increases the score to the new team.
 void Score::ChangeGridScore(Colour teamToDecrease, Colour teamToIncrease) {
-	if (teamToDecrease != teamToIncrease)
-	{
-		groundTeamScore[teamToDecrease] -= 1;
-		groundTeamScore[teamToIncrease] += 1;
-	}
-
+	groundTeamScore[teamToDecrease] -= .01;
+	groundTeamScore[teamToIncrease] += .01;
 }
 
 // TODO: If needed update only the Capturable objects that got changed last frame

@@ -27,6 +27,15 @@
 #include <ncltech\CommonMeshes.h>
 #include <nclgl\PlayerRenderNode.h>
 
+enum Movement {
+	NO_MOVE,
+	MOVE_FORWARD,
+	MOVE_BACKWARD,
+	MOVE_LEFT,
+	MOVE_RIGHT,
+	MOVE_JUMP
+};
+
 
 class Avatar : public GameObject
 {
@@ -59,7 +68,6 @@ protected:
 	bool collisionTimerActive;
 	float collisionTimer;
 	float timeUntilInAir;
-	
 
 
 	// Boosts
@@ -78,8 +86,13 @@ protected:
 	float weaponTimer;				// Weapon timer
 	bool shooting;
 
-	Vector3 velocity;
-	Vector3 lastPos; //used to determine distance travelled each frame for life
+	Vector3 dirRotation;	//The rotation based on camera
+	float moveTimer;		//Timer used for spining balance
+	float rollSpeed;		//A variable that increases over time. adds to spin
+	Movement curMove;		//The current movement direction
+	Movement previousMove;	//The previous movement direction
+
+	Vector3 lastPos;		//used to determine distance travelled each frame for life
 
 	uint playerId;
 
@@ -88,6 +101,10 @@ protected:
 public:
 	Avatar();
 	Avatar(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
+
+	//Movement mov;
+	//float controllYaw = 0;
+	//float t = 0;
 
 	virtual void OnAvatarUpdate(float dt);
 
@@ -103,8 +120,12 @@ public:
 	void SetWeapon(WeaponType newWeapon) { weapon = newWeapon; }
 
 	bool IsPlayerInAir() { return inAir; }
+	void SetInAir(bool b) { inAir = b; ((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(b);
+	}
 	
 	Vector4 GetColourRGBA() { return colour; }
+
+	void MovementState(Movement moveDir, float yaw, float dt); // handles the movement of the player.
 
 	void Spray();
 	void ShootRocket();

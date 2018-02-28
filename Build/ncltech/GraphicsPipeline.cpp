@@ -24,6 +24,11 @@
 #include <nclgl\NCLDebug.h>
 #include <algorithm>
 #include <ncltech\TextureManager.h>
+//used by minimap
+#include <PC\Game.h>
+#include <PC\Map.h>
+#include <PC\PaintPool.h>
+
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
 	, camera(new Camera())
@@ -36,7 +41,9 @@ GraphicsPipeline::GraphicsPipeline()
 	, shadowFBO(NULL)
 	, shadowTex(NULL)
 	, pathFBO(NULL)
-	,pathTex(NULL)
+	, pathTex(NULL)
+	, scoreFBO(NULL)
+	,time(0.0f)
 {
 	for (int i = 0; i < 2; ++i) {
 		screenTexColor[i] = NULL;
@@ -105,6 +112,12 @@ GraphicsPipeline::~GraphicsPipeline()
 		glDeleteTextures(1, &pathTex);
 		glDeleteFramebuffers(1, &pathFBO);
 		pathFBO = NULL;
+	}
+
+	if (scoreFBO)
+	{
+		glDeleteFramebuffers(1, &scoreFBO);
+		scoreFBO = NULL;
 	}
 
 	playerRenderNodes.clear();
@@ -208,6 +221,25 @@ void GraphicsPipeline::LoadShaders()
 	{
 		NCLERROR("Could not link shader: SkyBox");
 	}
+
+	//phil's minimap
+	shaders[SHADERTYPE::MiniMap] = new Shader(
+		SHADERDIR"Game/MiniMapVertex.glsl",
+		SHADERDIR"Game/MiniMapFragment.glsl"
+	);
+	if (!shaders[SHADERTYPE::MiniMap]->LinkProgram()) {
+		NCLERROR("Could not link shader: MiniMap");
+	}
+
+	//Alex's Score
+	shaders[SHADERTYPE::Score] = new Shader(
+		SHADERDIR"Game/ScoreVertex.glsl",
+		SHADERDIR"Game/ScoreFragment.glsl");
+	if (!shaders[SHADERTYPE::Score]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Score");
+	}
+
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -220,6 +252,8 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::Draw_Path] = new DrawPathMaterial();
 	materials[MATERIALTYPE::Ground] = new GroundMaterial();
 	materials[MATERIALTYPE::SkyBox] = nullptr;
+	materials[MATERIALTYPE::MiniMap] = nullptr;
+	materials[MATERIALTYPE::Score] = nullptr;
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -297,9 +331,11 @@ void GraphicsPipeline::UpdateAssets(int width, int height)
 	{
 		NCLERROR("Unable to create Shadow Framebuffer! StatusCode: %x", status);
 	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//m_ShadowUBO._ShadowMapTex = glGetTextureHandleARB(m_ShadowTex);
 	//glMakeTextureHandleResidentARB(m_ShadowUBO._ShadowMapTex);
+
 }
 
 void GraphicsPipeline::DebugRender()
@@ -350,6 +386,8 @@ void GraphicsPipeline::UpdateScene(float dt)
 	//update frustum
 	frameFrustum.FromMatrix(projViewMatrix);
 
+	//increment time
+	time += dt;
 	NCLDebug::_SetDebugDrawData(
 		projMatrix,
 		viewMatrix,
@@ -382,6 +420,12 @@ void GraphicsPipeline::RenderScene()
 	//post process and present
 	RenderPostprocessAndPresent();
 
+	//draw the minimap on screen
+	if (isMainMenu == false) {
+		CountScore();
+		DrawMiniMap();
+	}
+
 	//NCLDEBUG - Text Elements (aliased)
 	if (isMainMenu == false) {
 		NCLDebug::_RenderDebugClipSpace();
@@ -391,6 +435,7 @@ void GraphicsPipeline::RenderScene()
 
 	//RenderUI
 	RenderUI();
+
 
 	OGLRenderer::SwapBuffers();
 }
@@ -659,20 +704,6 @@ void GraphicsPipeline::RenderPath()
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	projViewMatrix = temp;
-
-	//removes destroyed projectiles from the playerRenderNodes
-	//for (std::vector<RenderNode*>::iterator itr = playerRenderNodes.begin(); itr != playerRenderNodes.end(); itr++)
-	//{
-
-	//	PlayerRenderNode * tempPRN = (PlayerRenderNode*)(*itr)->GetChild();
-	//	if (tempPRN)
-	//	{
-	//		if (tempPRN->GetDestroy()) {
-	//			delete * itr;
-	//			itr = playerRenderNodes.erase(itr);
-	//		}	
-	//	}
-	//}
 }
 
 void GraphicsPipeline::RenderPostprocessAndPresent()
@@ -713,6 +744,37 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//Score Init - I put this here because score only needs to be initialized if we initialize the path
+	// and because it requires the same size
+		if (!scoreBuffer) glGenBuffers(1, &scoreBuffer);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * 4, NULL, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, scoreBuffer);
+	glBindFramebuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+
+	//Color Texture
+	if (!scoreTex) glGenTextures(1, &scoreTex);
+	glBindTexture(GL_TEXTURE_2D, scoreTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, (GLsizei)(groundSize.x*PIXELPERSIZE), (GLsizei)(groundSize.y*PIXELPERSIZE), 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+
+	if (!scoreFBO) glGenFramebuffers(1, &scoreFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, scoreFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, scoreTex, 0);
+	GLenum buf2 = GL_COLOR_ATTACHMENT0;
+	glDrawBuffers(1, &buf2);
+
+	if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		NCLERROR("Unable to create Screen Framebuffer! StatusCode: %x", status);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
@@ -729,4 +791,173 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 	//Recurse over all children and process them aswell
 	for (auto itr = node->GetChildIteratorStart(); itr != node->GetChildIteratorEnd(); itr++)
 		RecursiveAddToPathRenderLists(*itr);
+}
+
+// Score - Alex - 27/02/2018
+void GraphicsPipeline::CountScore()
+{
+	ResetScoreBuffer();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, scoreFBO);
+	glUseProgram(shaders[SHADERTYPE::Score]->GetProgram());
+	
+	glBindTexture(GL_TEXTURE_2D, scoreTex);
+
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Score]->GetProgram(), "uPathTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, pathTex);
+
+	fullscreenQuad->Draw();
+
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	glGetBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, scores);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+
+	glUseProgram(0);
+}
+
+void GraphicsPipeline::ResetScoreBuffer()
+{
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	GLuint a[4] = { 0,0,0,0 };
+	glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, a);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+}
+
+// Minimap - philip 20/02/2018
+void GraphicsPipeline::DrawMiniMap() {
+	if (pathTex == NULL) {
+		glDeleteTextures(1, &pathTex);
+	}
+	if (!pathTex) {
+		glGenTextures(1, &pathTex);
+		glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
+		glBindTexture(GL_TEXTURE_2D, pathTex);
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//add textures
+	glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
+	glBindTexture(GL_TEXTURE_2D, pathTex);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Paint_Pool));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "poolTex"), 1);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Gun_Pickup));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "gunTex"), 2);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Jump_Pickup));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "jumpTex"), 3);
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Speed_Pickup));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "speedTex"), 4);
+
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, TextureManager::Instance()->GetTexture(TEXTURETYPE::Capture_Point));
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "captureTex"), 5);
+
+
+	//these numbers are hardcoded at the moment but will be variables in the end
+	float aspect = (float)width / height;
+	float sx = 0.2;
+	float sy = sx * aspect;
+
+	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "modelMatrix"), 1, GL_FALSE,
+		(float*)&(Matrix4::Translation(Vector3(-1.0f + sx, -1.0f + sy, 0.0f)) * Matrix4::Scale(Vector3(sx, sy, 1.0f))));
+	uint playerCount = Game::Instance()->GetPlayerNumber();
+	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "playerCount"), playerCount);
+	
+	//player uniforms///////////////
+	//four Vector2s
+	float players[8];
+	//four Vector3s
+	int colours[4];
+	uint count = 0;
+	for (int i = 0; i < 4; i++) {
+		Avatar* a = Game::Instance()->GetPlayer(i);
+		if (a) {
+			//let the shader know which is the current player
+			if (i == Game::Instance()->getUserID()) {
+				glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "self"), count);
+			}
+			//adding the player's positions
+			Vector2 v = VectorToMapCoord(a->GetPosition());
+			players[count * 2] = v.x;
+			players[(count * 2) + 1] = v.y;
+			//colours
+			colours[count * 3] = a->GetColour();
+			//increment count inside here incase a player has left the game
+			count++;
+		}
+	}
+	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "players"), 4, players);
+	glUniform1iv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "colours"), 4, colours);
+
+
+	//map feature uniforms/////////////////
+	//get the current map
+	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
+	//int array for pickup type
+	uint pickupTypes[20];
+	float pickupPositions[40];
+	int pickupColours[20];
+	//reset count
+	count = 0;
+	for (int i = 0; i < map->GetNPickup(); i++) {
+		Pickup* p = map->GetPickups()[i];
+		if (p->GetActive()) {
+			pickupTypes[count] = p->GetPickupType();
+			if (pickupTypes[count] == PickupType::PAINTPOOL) {
+				pickupColours[count] = ((PaintPool*)map->GetPickups()[i])->GetColour();
+			}
+			Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
+			pickupPositions[count * 2] = v.x;
+			pickupPositions[(count * 2) + 1] = v.y;
+			count++;
+		}
+	}
+	//capturable object
+	for (int i = 0; i < map->GetNCapture(); i++) {
+		//four is one more than the highest number
+		pickupTypes[count] = 4;
+		pickupColours[count] = map->GetCaptureAreas()[i]->GetColour();
+		Vector2 v = VectorToMapCoord(map->GetCaptureAreas()[i]->Physics()->GetPosition());
+		pickupPositions[count * 2] = v.x;
+		pickupPositions[(count * 2) + 1] = v.y;
+		count++;
+	}
+
+	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
+	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
+	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
+	glUniform1iv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
+
+	//pass the view angle through in radians
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
+	//opacity of minimap, this will be a variable eventually
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 1.0);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
+	//time
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "time"), time);
+
+	//finally draw the minimap to the screen
+	fullscreenQuad->Draw();
+	glUseProgram(0);
+}
+
+
+Vector2 GraphicsPipeline::VectorToMapCoord(Vector3 pos) {
+	Vector2 r;
+	//get the x and y demensions of map
+	float xDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetXDimension();
+	float yDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetYDimension();
+
+	r.x = (xDimension - pos.x) / (xDimension * 2);
+	r.y = (yDimension + pos.z) / (yDimension * 2);
+
+	return r;
 }

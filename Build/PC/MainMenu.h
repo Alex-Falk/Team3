@@ -150,8 +150,7 @@
 #include "Game.h"
 #include "AudioSystem.h"
 #include <cstring>
-
-// Scene that shows simple Sphere-Sphere, Sphere-Cube and Cube-Cube colissions
+#include "Map.h"
 
 class MainMenu : public Scene
 {

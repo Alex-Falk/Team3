@@ -62,6 +62,8 @@ CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour c
 		break;
 	}
 
+	this->colour = colour;
+
 	RenderNode* rnode = new RenderNode();
 	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), paintColour);
 
