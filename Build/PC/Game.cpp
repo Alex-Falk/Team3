@@ -37,3 +37,8 @@ void Game::ResetGame()
 	gameRunning = false;
 	gameTime = 0;
 }
+
+bool Game::ClaimPickup(Avatar * player, Pickup * pickup)
+{
+
+}

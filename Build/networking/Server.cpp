@@ -201,11 +201,6 @@ void Server::UpdateUser(float dt)
 					enet_host_broadcast(server->m_pNetwork, 0, packet);
 					break;
 				}
-				case PLAYER_INPUT:
-				{
-					//ReceiveInput(data);
-					break;
-				}
 				}
 				break;
 			}

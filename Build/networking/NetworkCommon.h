@@ -39,13 +39,13 @@ enum PacketType {
 	CONNECTION_ID,
 	NUMBER_USERS,
 	AVATAR_UPDATE,
-	PLAYER_INPUT,
 	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
 	PLAYER_WEAPON,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
 	PLAYER_SCORES,			// Server->Client: Broadcast Scores
 	PLAYER_NAME,			// Client->Server: Send Username
 	MAP_INDEX,				// Server->Client: Boradcast Map to load
-	MAP_UPDATE,				//
+	MAP_PICKUP_TAKEN,
+	MAP_OBJECT_TAKEN,
 	TEXT_PACKET,
 	GAME_END				// Server->Client: Informs clients game has ended
 };

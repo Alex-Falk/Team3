@@ -178,11 +178,11 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveMapIndex(data);
 			break;
 		}
-		case MAP_UPDATE:
-		{
-			//ReceiveMapChange(data);
-			break;
-		}
+		//case MAP_UPDATE:
+		//{
+		//	//ReceiveMapChange(data);
+		//	break;
+		//}
 		case PLAYER_WEAPON:
 		{
 			ReceiveWeapon(data);
