@@ -24,6 +24,7 @@
 #include <nclgl\Frustum.h>
 #include <nclgl\Mouse.h>
 #include <PC\UserInterface.h>
+#include <PC\PostProcess.h>
 
 //material
 #include <nclgl\Material.h>
@@ -187,6 +188,16 @@ public:
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 	bool GetIsMainMenu() { return isMainMenu; }
 
+	inline GLuint GetScreenTexWidth() { return screenTexWidth; }
+	inline GLuint GetScreenTexHeight() { return screenTexHeight; }
+	inline GLuint GetscreenFBO() { return screenFBO; }
+	inline uint GetNumSuperSamples() { return numSuperSamples; }
+	inline GLuint GetScreenTexColor1() { return screenTexColor[0]; }
+	inline GLuint GetScreenTexColor2() { return screenTexColor[1]; }
+	float GetGammaCorrection() { return gammaCorrection; }
+	inline int GetWidth() { return width; }
+	inline int GetHeight() { return height; }
+	inline Mesh* GetScreenQuad() { return fullscreenQuad; }
 	//Score
 	inline float GetScore(uint i) { return scores[i]; }
 
@@ -223,7 +234,7 @@ protected:
 	//Render FBO
 	GLuint		screenTexWidth, screenTexHeight;
 	GLuint		screenFBO;
-	GLuint		screenTexColor;
+	GLuint		screenTexColor[2];
 	GLuint		screenTexDepth;
 
 	//Shaders

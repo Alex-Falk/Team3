@@ -28,7 +28,7 @@ void Map::onConnectToScene()
 
 void Map::OnInitializeScene() {
 
-	GraphicsPipeline::Instance()->SetIsMainMenu(false);
+	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GraphicsPipeline::Instance()->InitPath(Vector2((float)xDimension, (float)yDimension));
 
 	OnInitializeGUI();
@@ -44,20 +44,19 @@ void Map::OnInitializeScene() {
 
 void Map::OnInitializeGUI()
 {
-	//Create Push Button handle
-	//energyBar = static_cast<CEGUI::ProgressBar*>(
-	//	GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
-	//		Vector4(0.40f, 0.9f, 0.2f, 0.03f),
-	//		Vector4(),
-	//		"energyBar"
-	//	));
+	GraphicsPipeline::Instance()->SetIsMainMenu(false);
+	lifeBar = static_cast<CEGUI::ProgressBar*>(
+		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
+			Vector4(0.40f, 0.9f, 0.25f, 0.03f),
+			Vector4(),
+			"lifeBar"
+		));
 
-	//if (Game::Instance()->GetUser())
-	//{
-	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
-	//}
-
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			lifeBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	}
 }
 
 void Map::LoadTextures()
@@ -118,11 +117,11 @@ void Map::OnUpdateScene(float dt)
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
-	//if (Game::Instance()->GetUser())
-	//{
-	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-	//		energyBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
-	//}
+	if (Game::Instance()->GetUser())
+	{
+		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+	}
 }
 
 //--------------------------------------------------------------------------------------------//

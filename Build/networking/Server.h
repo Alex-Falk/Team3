@@ -53,9 +53,6 @@ private:
 	vector<uint> freeIDs;
 
 public:
-
-
-
 	Server();
 	~Server() {
 		server->Release();

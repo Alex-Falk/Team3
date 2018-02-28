@@ -158,65 +158,64 @@ private:
 	Avatar* player;
 	bool ShowOptionMenu;
 
+	//1. MainMenu
 	CEGUI::PushButton* createButton;
 	CEGUI::PushButton* startButton;
 	CEGUI::PushButton* joinButton;
 	CEGUI::PushButton* optionButton;
+	CEGUI::PushButton* exitButton;
+	//2. OptionMenu
 	CEGUI::PushButton* OptionMenuBack;
-	CEGUI::PushButton* connectToHostButton;
-
-	CEGUI::DefaultWindow* ipText;
-	//Sound Control
+	//2.1 Sound Control
 	CEGUI::Slider* mastervolumeSlider;
 	CEGUI::Slider* GameSoundsSlider;
 	CEGUI::Slider* MusicSlider;
 	CEGUI::Titlebar* mastervolumeText;
 	CEGUI::Titlebar* GameSoundvolumeText;
 	CEGUI::Titlebar* MusicvolumeText;
-
-	//Camera Control
+	//2.2 Camera Control
 	CEGUI::Slider* CameraSensitivity;
 	CEGUI::Titlebar* CameraSensitivityText;
-
-	//Vsync Control
+	//2.3 Vsync Control
 	CEGUI::Titlebar* VsyncText;
 	CEGUI::RadioButton* enableVsync;
 	CEGUI::RadioButton* disableVsync;
 	CEGUI::Titlebar* background;
-
-	//Debug Control
+	//2.4 Debug Control
 	CEGUI::PushButton* DebugButton;
 
-	//Testing text box for creating game
+	//3. Create Game Menu
+	CEGUI::Titlebar* ipText;
 	inputBox IpInputBox;
 	inputBox userName;
-
-	//Exit Button
-	CEGUI::PushButton* exitButton;
-
-	//Map text
+	//3.1 Map text
 	CEGUI::Titlebar* Map1Text;
 	CEGUI::Titlebar* Map2Text;
 	CEGUI::Titlebar* Map3Text;
 	CEGUI::Titlebar* Map4Text;
-	//Map radio Button
+	//3.2 Map radio Button
 	CEGUI::RadioButton* Map1Rbutton;
 	CEGUI::RadioButton* Map2Rbutton;
 	CEGUI::RadioButton* Map3Rbutton;
 	CEGUI::RadioButton* Map4Rbutton;
-	//Lobby Player List
+	//3.3 Lobby Player List
 	CEGUI::Titlebar* AllPlayerInfo;
-	CEGUI::Titlebar* addedPlayerInfo;
+	//CEGUI::Titlebar* addedPlayerInfo;
 	string playerText = "Player List: \n\n";
 	string addedPlayerText = "Added Player List: \n\n";
-	//User chosen map
-	int nextMapID = 1;
+	//3.4 Back Button
+	CEGUI::PushButton* lobbyMenuBack;
 
-	//Connect to host menu
+	//4. Connect to host menu
+	CEGUI::PushButton* connectMenuBack;
+	CEGUI::PushButton* connectToHostButton;
+	inputBox clientName;
 	CEGUI::PushButton* disconnectToHost;
 	CEGUI::Titlebar* otherPlayersInfo;
 	string otherPlayersText = "Other players in lobby: \n\n";
-
+	
+	//User chosen map
+	int nextMapID = 1;
 public:
 	MainMenu(const std::string& friendly_name)
 		: Scene(friendly_name) {}
@@ -250,6 +249,7 @@ public:
 	void onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
 	void onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
 	void onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
+	void onCameraSensitivityChanged();
 
 	//3. create game menu buttons
 	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); }
@@ -262,17 +262,19 @@ public:
 		GUIsystem::Instance()->SetIsTyping(true);
 		GUIsystem::Instance()->currentType = "UserName";
 	}
-
+	void onLobbyMenuBackButtonClicked();
+	
 	//4. join game menu buttons
 	void onConnectButtonClicked();
 	void ShowWaitingInfo();
 	void onIPinputClicked();
 	void HideWaitingInfo();
+	void OnClientNameClicked();
 	void OndisconnectButtonClicked();
+	void OnConnectMenuBackButtonClicked();
 
 	//Hide/show Menu helper function
 	void ShowLobbyMenuServer();
-	void ShowLobbyMenuClient(){}
 	void ShowMainMenu();
 	void ShowConnectionMenu();
 	void ShowOptionMenu1();

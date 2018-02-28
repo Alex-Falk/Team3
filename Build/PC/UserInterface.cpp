@@ -96,7 +96,7 @@ void GUIsystem::Draw()
 	//Render score bar
 	if (drawScorebar == true) {
 		glUseProgram(scorebarShader->GetProgram());
-		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.9, 0)) * Matrix4::Scale(Vector3(0.4, 0.04, 0));
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.9, 0)) * Matrix4::Scale(Vector3(0.4, 0.03, 0));
 		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
@@ -252,11 +252,13 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 	case KEYBOARD_RETURN:
 		for (int i = 0; i < editboxes.size(); ++i) {
 			if (editboxes[i].type == currentType) {
-				textInfo[i].content = editboxes[i].editbox->getText().c_str();
 				if (currentType == "UserName") {
-					player1name = textInfo[i].content;
+					player1name = editboxes[i].editbox->getText().c_str();
 				}
-				//std::cout << textInfo[i].content << std::endl;
+				else if (currentType == "ClientName") {
+					//TODO: Send clien name to the server
+				}
+				
 				break;
 			}
 			else {

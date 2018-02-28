@@ -15,7 +15,7 @@
 //           .:::'       :::::  .:::::::::' ':::::.
 //          .::'        :::::.:::::::::'      ':::::.
 //         .::'         ::::::::::::::'         ``::::.
-//     …:::             ::::::::::::'              ``::.
+//     ?::             ::::::::::::'              ``::.
 //    ```` ':.          ':::::::::'                  ::::..
 //                       '.:::::'                    ':'````..
 //
@@ -45,13 +45,6 @@ struct inputBox
 	CEGUI::Editbox* editbox;
 };
 
-//Struct for handling user input content
-struct userInput
-{
-	std::string type;
-	std::string content;
-};
-
 class GUIsystem: public TSingleton<GUIsystem>
 {
 public:
@@ -61,7 +54,6 @@ public:
 	~GUIsystem();
 
 	std::vector<inputBox> editboxes;
-	std::vector<userInput> textInfo;
 	//Tell which textBox is typing now?
 	std::string currentType;
 

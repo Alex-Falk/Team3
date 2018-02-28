@@ -4,7 +4,7 @@
 #include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
-
+#include "UserInterface.h"
 #include "AudioSystem.h"
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
@@ -12,6 +12,7 @@
 #include "TestMap.h"
 #include "GameInput.h"
 #include "Game.h"
+#include "PostProcess.h"
 
 
 bool draw_debug = true;
@@ -37,6 +38,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	//Release Singletons
 	SceneManager::Release();
 	PhysicsEngine::Release();
+	PostProcess::Release();
 	GUIsystem::Release();
 	GraphicsPipeline::Release();
 	enet_deinitialize();
@@ -72,6 +74,7 @@ void Initialize()
 
 	GUIsystem::Instance();
 
+	PostProcess::Instance();
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
 
@@ -284,18 +287,6 @@ void HandleGUIMouseButton()
 		float a2 = (Game::Instance()->GetScore(1));
 		float a3 = (Game::Instance()->GetScore(2));
 		float a4 = (Game::Instance()->GetScore(3));
-		float total = a1 + a2 + a3 + a4;
-		a1 = a1 / total;
-		a2 = a2 / total;
-		a3 = a3 / total;
-		a4 = a4 / total;
-		a2 = a1 + a2;
-		a3 = a3 + a2;
-		a4 = a4 + a3;
-		a1 = a1 * 2 - 1;
-		a2 = a2 * 2 - 1;
-		a3 = a3 * 2 - 1;
-		a4 = a4 * 2 - 1;
 		GUIsystem::Instance()->UpdateScorebar(a1, a2, a3, a4);
 	}
 
@@ -338,6 +329,34 @@ void HandleGUITextInput()
 	}
 }
 
+void TestPostProcess()
+{
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F1)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F2)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::INVERSION);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F3)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::GRAYSCALE);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F4)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::SHARPEN);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F5)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::BLUR);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F6)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::EDGE_DETECTION);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F7)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::BASIC);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F8)) {
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
+	}
+}
+
 // Program Entry Point
 int main()
 {
@@ -374,6 +393,9 @@ int main()
 
 		//Print Status Entries
 		PrintStatusEntries();
+
+		//Test Post Process
+		TestPostProcess();
 
 		//Handle Keyboard Inputs
 		if (GUIsystem::Instance()->GetIsTyping() == false) {

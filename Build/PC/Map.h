@@ -22,6 +22,7 @@ protected:
 	Vector3 spawnPositions[4];
 	static int mapIndex; // Controls which map will be loaded
 
+	CEGUI::ProgressBar* lifeBar;
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
 	//--------------------------------------------------------------------------------------------//

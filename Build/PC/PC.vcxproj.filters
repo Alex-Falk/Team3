@@ -48,10 +48,6 @@
     <Filter Include="Gameplay\Source">
       <UniqueIdentifier>{27103adf-a3a6-409f-948d-fbfb0f179103}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GUI">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="AI">
       <UniqueIdentifier>{6a2fe7f2-6adc-4252-8957-7c8305204426}</UniqueIdentifier>
     </Filter>
@@ -73,6 +69,10 @@
     <Filter Include="AI\Header\States\Minion">
       <UniqueIdentifier>{550f6ed5-12b9-48ce-8160-42e58f9bbd75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI/Post process">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PaintableGameObject.h">
@@ -82,10 +82,10 @@
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
     <ClInclude Include="Game.h">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
     <ClInclude Include="MainMenu.h">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
     <ClInclude Include="AudioSystem.h">
       <Filter>Audio\Header</Filter>
@@ -133,7 +133,7 @@
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
     <ClInclude Include="GameInput.h">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
     <ClInclude Include="PaintPool.h">
       <Filter>GamePlay\Header</Filter>
@@ -148,7 +148,7 @@
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
     <ClInclude Include="UserInterface.h">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
     <ClInclude Include="Behaviours.h">
       <Filter>AI\Header</Filter>
@@ -179,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="MinionStates.h">
       <Filter>AI\Header\States\Minion</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcess.h">
+      <Filter>GUI/Post process</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -270,10 +273,13 @@
       <Filter>AI\Source\States\Minion</Filter>
     </ClCompile>
     <ClCompile Include="UserInterface.cpp">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
-      <Filter>GUI</Filter>
+      <Filter>GUI/Post process</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcess.cpp">
+      <Filter>GUI/Post process</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
