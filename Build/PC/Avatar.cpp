@@ -375,7 +375,7 @@ void Avatar::ShootProjectile()
 	}
 
 	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
-	//ShootProjectile(Physics()->GetPosition(), direction);
+	ShootProjectile(Physics()->GetPosition(), direction);
 
 }
 
