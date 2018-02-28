@@ -55,8 +55,8 @@ void MinionStateEscapeRocket::Exit(Minion* pMinion)
 
 void MinionStateEscapeRocket::Execute(Minion* pMinion)
 {
-	//if (pBot->IsAlive())
-	//{
+	if (pMinion->IsAlive())
+	{
 	//	if (pBot->GetAmmo() == 0)
 	//	{
 	//		pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
@@ -83,10 +83,7 @@ void MinionStateEscapeRocket::Execute(Minion* pMinion)
 	//		pBot->ChangeState(StateAim::GetInstance());
 	//	}
 	//}
-	//else
-	//{
-	//	pBot->ChangeState(StateStart::GetInstance());
-	//}
+	}
 }
 
 void MinionStateEscapeRocket::Release()

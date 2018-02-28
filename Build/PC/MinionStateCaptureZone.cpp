@@ -19,7 +19,7 @@
 																  `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 																	  `^Y888bo.,            ,.od888P^'
 																		   "`^^Y888888888888P^^*/ 
-#include "MinionStateCaptureZone.h"
+#include "MinionStates.h"
 
 MinionStateCaptureZone* MinionStateCaptureZone::instance;
 
@@ -55,38 +55,28 @@ void MinionStateCaptureZone::Exit(Minion* pMinion)
 
 void MinionStateCaptureZone::Execute(Minion* pMinion)
 {
-	//if (pBot->IsAlive())
-	//{
-	//	if (pBot->GetAmmo() == 0)
-	//	{
-	//		pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}
-
-	//	/*else if(pBot->GetAmmo() < 5 && pBot->NoEnemyWithin(500.0f))
-	//	{
-	//	pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}*/
-
-	//	else if (FuzzyLogic::GetAmmoQuery(pBot->GetAmmo(), pBot->GetClosestEnemyDistance()))
-	//	{
-	//		pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}
-
-	//	// Else path has been completed or the domination point has been taken by enemy team.
-	//	else if (pBot->GetPathComplete() || DynamicObjects::GetInstance()->GetDominationPoint(pBot->GetTargetDominationPoint()).m_OwnerTeamNumber != pBot->GetTeamNumber())
-	//	{
-	//		pBot->ChangeState(StateTumbleweed::GetInstance());
-	//	}
-
-	//	else if (pBot->BotCanSeeEnemy())
-	//	{
-	//		pBot->ChangeState(StateAim::GetInstance());
-	//	}
-	//}
-	//else
-	//{
-	//	pBot->ChangeState(StateStart::GetInstance());
-	//}
+	if (pMinion->IsAlive())
+	{
+		if (pMinion->IsAlive())
+		{
+			if (pMinion->IncomingProjectile())
+			{
+				pMinion->ChangeState(MinionStateEscapeRocket::GetInstance());
+			}
+			else if (pMinion->DistanceToClosestFrendly() <= pMinion->GetDetectionRadius() && pMinion->HealthOfClosestFriendly() <= 0.5f)
+			{
+				pMinion->ChangeState(MinionStateHealFriendlyPlayer::GetInstance());
+			}
+			else if (pMinion->DistanceToClosestEnemy() <= pMinion->GetDetectionRadius() && pMinion->DistanceToClosestEnemy() < pMinion->DistanceToEnemyZone())
+			{
+				pMinion->ChangeState(MinionStateCaptureZone::GetInstance());
+			}
+			else if (pMinion->DistanceToClosestEnemy() > pMinion->GetPursueRadius())
+			{
+				pMinion->ChangeState(MinionStateWander::GetInstance());
+			}
+		}
+	}
 }
 
 void MinionStateCaptureZone::Release()

@@ -12,6 +12,7 @@
 #include "TestMap.h"
 #include "GameInput.h"
 #include "Game.h"
+#include "MinionStates.h"
 
 
 bool draw_debug = true;
@@ -27,7 +28,14 @@ uint shadowCycleKey = 4;
 //Prevent multiple clicking from happening
 int fpsCounter = 6;
 
-
+void ReleaseAIStates()
+{
+	MinionStateCaptureZone::Release();
+	MinionStateChaseEnemyPlayer::Release();
+	MinionStateEscapeRocket::Release();
+	MinionStateHealFriendlyPlayer::Release();
+	MinionStateWander::Release();
+}
 
 // Program Deconstructor
 //  - Releases all global components and memory
@@ -41,6 +49,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	GraphicsPipeline::Release();
 	enet_deinitialize();
 	AudioSystem::Release();
+	ReleaseAIStates();
 	Window::Destroy();
 	
 	//Show console reason before exit

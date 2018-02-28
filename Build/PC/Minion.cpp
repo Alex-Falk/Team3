@@ -153,7 +153,7 @@ bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingO
 		return false;
 	}
 	else if (collidingObject->GetType() == MINION) {
-		if (!dead && ((Minion*)(collidingObject->GetParent()))->GetDead() == 0) {
+		if (!dead && ((Minion*)(collidingObject->GetParent()))->IsAlive()) {
 			if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
 				float tempLife = life;
 				ChangeLife(-((Minion*)collidingObject->GetParent())->GetLife());

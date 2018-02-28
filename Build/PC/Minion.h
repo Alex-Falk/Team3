@@ -25,6 +25,8 @@ protected:
 	Vector3 lastPos;
 
 	bool dead; 
+	float detectionRadius;
+	float pursueRadius;
 
 	State<Minion> *currentState;
 	State<Minion> *previousState;
@@ -58,8 +60,21 @@ public:
 
 	void Update(float dt);
 	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
-	
-	
+	bool IsAlive() { return !dead; }
+
+
+	//TODO: change physics engine to hold sperate lists of objects
+	bool IncomingProjectile() {/*Needs implimentation*/ return false; };
+	float GetDetectionRadius() { return detectionRadius; }
+	float GetPursueRadius() { return pursueRadius; }
+
+	float DistanceToClosestFrendly() {/*Needs implimentation*/ return 0.0f; }
+	float HealthOfClosestFriendly() {/*Needs implimentation*/ return 0.0f; }
+
+	float DistanceToClosestEnemy() {/*Needs implimentation*/ return 0.0f; }
+	float DistanceToEnemyZone() {/*Needs implimentation*/ return 0.0f; }
+
+
 
 	~Minion();
 };
