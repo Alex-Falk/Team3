@@ -29,5 +29,5 @@ out Vertex {
  void main(void) {
 	vec4 pos = vec4(position.x, -position.y, position.z, 1.0f);
 	gl_Position = modelMatrix*pos;
-	OUT.texCoord = (vec4(texCoord, 0.0, 1.0)).xy;
+	OUT.texCoord = texCoord;
 }
