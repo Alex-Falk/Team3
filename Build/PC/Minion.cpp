@@ -52,9 +52,15 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 	physicsNode->SetName(name);
 
 	dead = false;
-	life = 50;
+	
 	minLife = 10;
 	maxLife = 50;
+	life = maxLife;
+
+	detectionRadius = 5.0f;
+	pursueRadius = 7.5f;
+	allyHealPursueLimit = 50.0f; 
+
 	colour = c;
 	this->RGBA = RGBA;
 
@@ -64,7 +70,6 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 }
 
 Minion::~Minion() {
-
 }
 
 void Minion::ChangeState(State<Minion>* newState)

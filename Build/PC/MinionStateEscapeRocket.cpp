@@ -55,34 +55,9 @@ void MinionStateEscapeRocket::Exit(Minion* pMinion)
 
 void MinionStateEscapeRocket::Execute(Minion* pMinion)
 {
-	if (pMinion->IsAlive())
+	if (pMinion->IsAlive() && !pMinion->IncomingProjectile())
 	{
-	//	if (pBot->GetAmmo() == 0)
-	//	{
-	//		pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}
-
-	//	/*else if(pBot->GetAmmo() < 5 && pBot->NoEnemyWithin(500.0f))
-	//	{
-	//	pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}*/
-
-	//	else if (FuzzyLogic::GetAmmoQuery(pBot->GetAmmo(), pBot->GetClosestEnemyDistance()))
-	//	{
-	//		pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}
-
-	//	// Else path has been completed or the domination point has been taken by enemy team.
-	//	else if (pBot->GetPathComplete() || DynamicObjects::GetInstance()->GetDominationPoint(pBot->GetTargetDominationPoint()).m_OwnerTeamNumber != pBot->GetTeamNumber())
-	//	{
-	//		pBot->ChangeState(StateTumbleweed::GetInstance());
-	//	}
-
-	//	else if (pBot->BotCanSeeEnemy())
-	//	{
-	//		pBot->ChangeState(StateAim::GetInstance());
-	//	}
-	//}
+		pMinion->RevertState();
 	}
 }
 
@@ -91,7 +66,7 @@ void MinionStateEscapeRocket::Release()
 	if (instance)
 	{
 		delete instance;
-		instance = NULL;
+		instance = nullptr;
 	}
 }
 

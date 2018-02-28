@@ -61,11 +61,12 @@ void MinionStateChaseEnemyPlayer::Execute(Minion* pMinion)
 		{
 			pMinion->ChangeState(MinionStateEscapeRocket::GetInstance());
 		}
-		else if (pMinion->DistanceToClosestFrendly() <= pMinion->GetDetectionRadius() && pMinion->HealthOfClosestFriendly() <= 0.5f)
+		else if (pMinion->DistanceToClosestFrendly() <= pMinion->GetDetectionRadius() && pMinion->HealthOfClosestFriendly() <= pMinion->GetAllyHealPursueLimit())
 		{
 			pMinion->ChangeState(MinionStateHealFriendlyPlayer::GetInstance());
 		}
-		else if (pMinion->DistanceToClosestEnemy() > pMinion->DistanceToEnemyZone())
+		else if (pMinion->DistanceToClosestEnemy() <= pMinion->GetDetectionRadius() && 
+			    ((pMinion->DistanceToClosestEnemy() < pMinion->DistanceToEnemyZone() && pMinion->DistanceToEnemyZone() != NO_ENEMY_ZONES_FLAG) || pMinion->DistanceToEnemyZone() == NO_ENEMY_ZONES_FLAG))
 		{
 			pMinion->ChangeState(MinionStateCaptureZone::GetInstance());
 		}
@@ -81,7 +82,7 @@ void MinionStateChaseEnemyPlayer::Release()
 	if (instance)
 	{
 		delete instance;
-		instance = NULL;
+		instance = nullptr;
 	}
 }
 

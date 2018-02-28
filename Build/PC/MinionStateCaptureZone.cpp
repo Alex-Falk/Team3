@@ -57,24 +57,22 @@ void MinionStateCaptureZone::Execute(Minion* pMinion)
 {
 	if (pMinion->IsAlive())
 	{
-		if (pMinion->IsAlive())
+		if (pMinion->IncomingProjectile())
 		{
-			if (pMinion->IncomingProjectile())
-			{
-				pMinion->ChangeState(MinionStateEscapeRocket::GetInstance());
-			}
-			else if (pMinion->DistanceToClosestFrendly() <= pMinion->GetDetectionRadius() && pMinion->HealthOfClosestFriendly() <= 0.5f)
-			{
-				pMinion->ChangeState(MinionStateHealFriendlyPlayer::GetInstance());
-			}
-			else if (pMinion->DistanceToClosestEnemy() <= pMinion->GetDetectionRadius() && pMinion->DistanceToClosestEnemy() < pMinion->DistanceToEnemyZone())
-			{
-				pMinion->ChangeState(MinionStateCaptureZone::GetInstance());
-			}
-			else if (pMinion->DistanceToClosestEnemy() > pMinion->GetPursueRadius())
-			{
-				pMinion->ChangeState(MinionStateWander::GetInstance());
-			}
+			pMinion->ChangeState(MinionStateEscapeRocket::GetInstance());
+		}
+		else if (pMinion->DistanceToClosestFrendly() <= pMinion->GetDetectionRadius() && pMinion->HealthOfClosestFriendly() <= pMinion->GetAllyHealPursueLimit())
+		{
+			pMinion->ChangeState(MinionStateHealFriendlyPlayer::GetInstance());
+		}
+		else if (pMinion->DistanceToClosestEnemy() <= pMinion->GetDetectionRadius() && 
+			    ((pMinion->DistanceToClosestEnemy() < pMinion->DistanceToEnemyZone() && pMinion->DistanceToEnemyZone() != NO_ENEMY_ZONES_FLAG) || pMinion->DistanceToEnemyZone() == NO_ENEMY_ZONES_FLAG))
+		{
+			pMinion->ChangeState(MinionStateChaseEnemyPlayer::GetInstance());
+		}
+		else if (pMinion->DistanceToEnemyZone() == NO_ENEMY_ZONES_FLAG)
+		{
+			pMinion->ChangeState(MinionStateWander::GetInstance());
 		}
 	}
 }
@@ -84,7 +82,7 @@ void MinionStateCaptureZone::Release()
 	if (instance)
 	{
 		delete instance;
-		instance = NULL;
+		instance = nullptr;
 	}
 }
 

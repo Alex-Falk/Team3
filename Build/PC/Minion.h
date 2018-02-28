@@ -27,6 +27,7 @@ protected:
 	bool dead; 
 	float detectionRadius;
 	float pursueRadius;
+	float allyHealPursueLimit;  //Life level of ally where the minion will not pursue them
 
 	State<Minion> *currentState;
 	State<Minion> *previousState;
@@ -44,7 +45,6 @@ public:
 	Vector4 GetRGBA() { return RGBA; }
 
 	void SetDead(bool b) { dead = b; }
-	bool GetDead() { return dead; }
 
 	MinionBlackboard* GetMinionBlackBoard() { return &minionBlackboard; }
 
@@ -62,7 +62,6 @@ public:
 	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 	bool IsAlive() { return !dead; }
 
-
 	//TODO: change physics engine to hold sperate lists of objects
 	bool IncomingProjectile() {/*Needs implimentation*/ return false; };
 	float GetDetectionRadius() { return detectionRadius; }
@@ -70,11 +69,10 @@ public:
 
 	float DistanceToClosestFrendly() {/*Needs implimentation*/ return 0.0f; }
 	float HealthOfClosestFriendly() {/*Needs implimentation*/ return 0.0f; }
+	float GetAllyHealPursueLimit() { return allyHealPursueLimit; }
 
 	float DistanceToClosestEnemy() {/*Needs implimentation*/ return 0.0f; }
-	float DistanceToEnemyZone() {/*Needs implimentation*/ return 0.0f; }
-
-
+	float DistanceToEnemyZone() {/*Needs implimentation return NO_ENEMY_ZONES_FLAG if none are in range from spawn*/ return 0.0f; }
 
 	~Minion();
 };
