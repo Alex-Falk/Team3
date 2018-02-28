@@ -759,7 +759,8 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	//Score Init
+	//Score Init - I put this here because score only needs to be initialized if we initialize the path
+	// and because it requires the same size
 		if (!scoreBuffer) glGenBuffers(1, &scoreBuffer);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
 	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * 4, NULL, GL_DYNAMIC_DRAW);
@@ -806,53 +807,38 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 		RecursiveAddToPathRenderLists(*itr);
 }
 
+// Score - Alex - 27/02/2018
 void GraphicsPipeline::CountScore()
 {
-	//if (pathTex == NULL) {
-	//	glDeleteTextures(1, &pathTex);
-	//}
-	//if (!pathTex) {
-	//	glGenTextures(1, &pathTex);
-	//	glUseProgram(shaders[SHADERTYPE::Score]->GetProgram());
-	//	glBindTexture(GL_TEXTURE_2D, pathTex);
-	//}
-
-	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
-	GLuint a[4] = { 0,0,0,0 };
-	glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, a);
-	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+	ResetScoreBuffer();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, scoreFBO);
 	glUseProgram(shaders[SHADERTYPE::Score]->GetProgram());
 	
 	glBindTexture(GL_TEXTURE_2D, scoreTex);
 
-	Matrix4 temp;
-	temp.ToIdentity();
-
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Score]->GetProgram(), "uPathTex"), 0);
 	glBindTexture(GL_TEXTURE_2D, pathTex);
 
-	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::Score]->GetProgram(), "uProjViewMtx"), 1, GL_FALSE,
-		(float*)&(temp));
-
 	fullscreenQuad->Draw();
 
-	GLuint userCounters[4];
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
-	// again we map the buffer to userCounters, but this time for read-only access
-	glGetBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, userCounters);
+	glGetBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, scores);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
-	scores[0] = userCounters[0];
-	scores[1] = userCounters[1];
-	scores[2] = userCounters[2];
-	scores[3] = userCounters[3];
 
-	projViewMatrix = temp;
 	glUseProgram(0);
 }
 
+void GraphicsPipeline::ResetScoreBuffer()
+{
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	GLuint a[4] = { 0,0,0,0 };
+	glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, a);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+}
+
+// Minimap - philip 20/02/2018
 void GraphicsPipeline::DrawMiniMap() {
 	if (pathTex == NULL) {
 		glDeleteTextures(1, &pathTex);
@@ -976,7 +962,7 @@ void GraphicsPipeline::DrawMiniMap() {
 	fullscreenQuad->Draw();
 	glUseProgram(0);
 }
-//philip 20/02/2018
+
 
 Vector2 GraphicsPipeline::VectorToMapCoord(Vector3 pos) {
 	Vector2 r;

@@ -213,6 +213,7 @@ protected:
 	void DrawMiniMap();
 	//Alex 27/02/2018
 	void CountScore();
+	void ResetScoreBuffer();
 	
 	void RecursiveAddToPathRenderLists(RenderNode* node);
 
@@ -266,9 +267,10 @@ protected:
 	std::vector<RenderNode*>	pathRenderNodes;
 	GLuint		pathFBO;
 	GLuint		pathTex;
+
+	//Score - Alex 27/02/2018
 	GLuint		scoreFBO;
 	GLuint		scoreTex;
-
 	GLuint		scoreBuffer;
 	uint		scores[4];
 

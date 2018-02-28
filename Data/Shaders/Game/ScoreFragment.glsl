@@ -27,6 +27,10 @@ void main(void)	{
 	{
 		atomicCounterIncrement(scores[2]);
 	}
+	else if (color == vec4(0.5f, 0.5f, 0.5f,1))
+	{
+		atomicCounterIncrement(scores[3]);
+	}
 
-	//FragColor = color;
+	FragColor = color;
 }
