@@ -326,7 +326,3 @@ void Client::RequestPickup(uint ID, string uniqueName)
 //--------------------------------------------------------------------------------------------//
 // Utility
 //--------------------------------------------------------------------------------------------//
-
-	ENetPacket* packet = CreatePacket(data);
-	enet_peer_send(serverConnection, 0, packet);
-}

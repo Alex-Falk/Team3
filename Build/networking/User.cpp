@@ -8,6 +8,7 @@ User::User()
 
 User::~User()
 {
+	Disconnect();
 }
 
 // packetType:ID;posx posy posz, linvx linvy linvz, angvx angvy angvz, accx accy accz

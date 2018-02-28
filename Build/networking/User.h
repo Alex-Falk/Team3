@@ -65,7 +65,7 @@ public:
 	inline void SetIP(string _ip) { ip = _ip; }
 
 	virtual void UpdateUser(float dt) = 0;
-	virtual void Disconnect() = 0;
+	virtual void Disconnect() {};
 
 	virtual void StartGame(uint mapID = 0);
 

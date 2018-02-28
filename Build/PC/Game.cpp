@@ -31,6 +31,7 @@ void Game::ResetGame()
 		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(avatars[i]);
 		avatars[i] = nullptr;
 	}
+	user->Disconnect();
 	delete user;
 	user = nullptr;
 	enet_deinitialize();
