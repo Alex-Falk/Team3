@@ -59,24 +59,26 @@ void MainMenu::OnUpdateScene(float dt)
 	GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 	Scene::OnUpdateScene(dt);
 
+	string temp[4];
+
 	for (int i = 0; i < 4; ++i) {
 		if (Game::Instance()->GetPlayer(i) != NULL) {
-			GUIsystem::Instance()->playersName[0] = Game::Instance()->GetPlayer(i)->GetName();
+			temp[i] = Game::Instance()->GetPlayer(i)->GetName();
 		}
 	}
 
 	//Update Player Info
 	AllPlayerInfo->setText(playerText 
-		+  GUIsystem::Instance()->playersName[0] + "\n\n"
-		+  GUIsystem::Instance()->playersName[1] + "\n\n"
-		+  GUIsystem::Instance()->playersName[2] + "\n\n"
-		+  GUIsystem::Instance()->playersName[3] + "\n\n");
+		+ temp[0] + "\n\n"
+		+ temp[1] + "\n\n"
+		+ temp[2] + "\n\n"
+		+ temp[3] + "\n\n");
 
 	otherPlayersInfo->setText(otherPlayersText
-		+ GUIsystem::Instance()->playersName[0] + "\n\n"
-		+ GUIsystem::Instance()->playersName[1] + "\n\n"
-		+ GUIsystem::Instance()->playersName[2] + "\n\n"
-		+ GUIsystem::Instance()->playersName[3] + "\n\n");
+		+ temp[0] + "\n\n"
+		+ temp[1] + "\n\n"
+		+ temp[2] + "\n\n"
+		+ temp[3] + "\n\n");
 }
 
 //Setting UP GUI
@@ -192,7 +194,7 @@ void MainMenu::SetUpLobby()
 			"userName"
 		));
 	userName.type = "UserName";
-	userName.editbox->setText("Please type your name here");
+	userName.editbox->setText("Dong Li");
 	userName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnUserNameClicked, this));
 	GUIsystem::Instance()->editboxes.push_back(userName);
 
@@ -247,6 +249,21 @@ void MainMenu::SetUpLobby()
 		));
 	lobbyMenuBack->setText("BACK");
 	lobbyMenuBack->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onLobbyMenuBackButtonClicked, this));
+
+	ComfirmHostName = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.15f, 0.70f, 0.2f, 0.1f),
+			Vector4(),
+			"ComfirmHostName"
+		));
+	ComfirmHostName->setText("CONFIRM");
+	ComfirmHostName->subscribeEvent(CEGUI::PushButton::EventMouseButtonDown, CEGUI::Event::Subscriber(&MainMenu::onHostNameConfirmed, this));
+}
+
+void MainMenu::onHostNameConfirmed()
+{
+	//TODO: Set Host Name
+	
 }
 
 void MainMenu::HideLobby()
@@ -289,6 +306,9 @@ void MainMenu::HideLobby()
 
 	lobbyMenuBack->disable();
 	lobbyMenuBack->setVisible(false);
+
+	ComfirmHostName->disable();
+	ComfirmHostName->setVisible(false);
 }
 
 void MainMenu::onLobbyMenuBackButtonClicked()
@@ -357,6 +377,9 @@ void MainMenu::ShowLobbyMenuServer()
 
 	lobbyMenuBack->enable();
 	lobbyMenuBack->setVisible(true);
+
+	ComfirmHostName->enable();
+	ComfirmHostName->setVisible(true);
 }
 
 void MainMenu::SetUpconnectionMenu()
@@ -410,7 +433,7 @@ void MainMenu::SetUpconnectionMenu()
 			Vector4(),
 			"Client Name"
 		));
-	clientName.editbox->setText("Your name");
+	clientName.editbox->setText("Dong Li");
 	clientName.type = "ClientName";
 	clientName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnClientNameClicked, this));
 
@@ -621,6 +644,7 @@ void MainMenu::onConnectButtonClicked()
 {
 	IP ip;
 	string IPstring(IpInputBox.editbox->getText().c_str());
+	string clientNameString(clientName.editbox->getText().c_str());
 
 	if (IPstring.find_first_of('.') != string::npos)
 	{
@@ -648,6 +672,9 @@ void MainMenu::onConnectButtonClicked()
 
 		if (!Game::Instance()->GetUser())
 		{
+			//TODO: Set User Name and Sent to the server
+			
+
 			Game::Instance()->setClient(ip);
 		}
 	}

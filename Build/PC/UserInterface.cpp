@@ -36,12 +36,6 @@ GUIsystem::GUIsystem()
 
 	currentWeapon = 0;
 	hasWeapon = false;
-
-
-	playersName[0] = "\n\n";
-	playersName[1] = "\n\n";
-	playersName[2] = "\n\n";
-	playersName[3] = "\n\n";
 }
 
 GUIsystem::~GUIsystem()
@@ -278,19 +272,19 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		m_context->injectChar(0x20);
 		break;
 	case KEYBOARD_RETURN:
-		for (int i = 0; i < editboxes.size(); ++i) {
+		/*for (int i = 0; i < editboxes.size(); ++i) {
 			if (editboxes[i].type == currentType) {
 				if (currentType == "UserName") {
 					
 				}
 				else if (currentType == "ClientName") {
-					
+					updateClientName = true;
 				}
 				break;
 			}
 			else {
 			}
-		}
+		}*/
 		break;
 	default:
 		break;

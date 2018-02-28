@@ -189,6 +189,7 @@ private:
 	CEGUI::Titlebar* ipText;
 	inputBox IpInputBox;
 	inputBox userName;
+	CEGUI::PushButton* ComfirmHostName;
 	//3.1 Map text
 	CEGUI::Titlebar* Map1Text;
 	CEGUI::Titlebar* Map2Text;
@@ -214,7 +215,7 @@ private:
 	CEGUI::PushButton* disconnectToHost;
 	CEGUI::Titlebar* otherPlayersInfo;
 	string otherPlayersText = "Other players in lobby: \n\n";
-	
+
 	//User chosen map
 	int nextMapID = 1;
 public:
@@ -259,6 +260,7 @@ public:
 	void onMap2selected();
 	void onMap3selected();
 	void onMap4selected();
+	void onHostNameConfirmed();
 	void OnUserNameClicked() {
 		userName.editbox->setText("");
 		GUIsystem::Instance()->SetIsTyping(true);
