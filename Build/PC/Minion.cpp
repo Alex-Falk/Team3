@@ -67,6 +67,7 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 	physicsNode->SetFriction(0.0f);
 	physicsNode->SetElasticity(1.0f);
 	wanderTimer = 0.0f;
+	closestPlayerTimer = 0.0f;
 	ComputeNewWanderPosition();
 }
 
@@ -105,7 +106,6 @@ void Minion::RevertState()
 
 void Minion::Update(float dt)
 {
-
 	//float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
 	//life -= lifeLoss / (dt * 10);
 	lastPos = Physics()->GetPosition();
@@ -137,9 +137,14 @@ void Minion::Update(float dt)
 		//}
 	}
 	wanderTimer += dt;
+	closestPlayerTimer += dt;
 	if (wanderTimer > 2.0f) {
 		ComputeNewWanderPosition();
 	}
+	if (closestPlayerTimer > 0.25f) {
+		ComputeClosestPlayer();
+	}
+	
 }
 
 void Minion::ChangeLife(float l) {
@@ -200,4 +205,18 @@ void Minion::ComputeNewWanderPosition() {
 	float randX = rand() % 80 + -40;
 	float randZ = rand() % 80 + -40;
 	wanderPosition = Vector3{ randX, 0, randZ };
+}
+
+void Minion::ComputeClosestPlayer() {
+	closestPlayerTimer = 0.0f;
+	float minDist = 10000.0f;
+	for (int i = 0; i < 4; i++) {
+		if (Game::Instance()->GetPlayer(i)) {
+			float dist = (this->physicsNode->GetPosition() - Game::Instance()->GetPlayer(i)->Physics()->GetPosition()).Length();
+			if (dist < minDist) {
+				closestPlayer = Game::Instance()->GetPlayer(i);
+				minDist = dist;
+			}
+		}
+	}
 }

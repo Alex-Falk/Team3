@@ -40,13 +40,21 @@ public:
 
 	virtual void SetColour(Colour c);
 	void SetScoreValue(int i) { scoreValue = i; }
+
+	void SetLifeReq(float l) { lifeReq = l; }
+	float GetLifeReq() { return lifeReq; }
 	
 	~CaptureArea();
 
 	virtual void Update(float dt) {}
 
+	bool CheckPlayerCollision(PhysicsNode * p, int index);
+	bool CheckProjectileCollision(PhysicsNode * p, int index);
+	bool CheckMinionCollision(PhysicsNode * p, int index);
 protected:
 
+	float playerScores[4];
+	float lifeReq;
 	int scoreValue;
 	Colour colour;
 };

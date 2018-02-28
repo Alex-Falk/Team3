@@ -25,7 +25,7 @@ void MinionCamp::Update(float dt) {
 	currentSpawnTimer += dt;
 
 	//if the spawntimer is over 5 seconds and there is less than 5 active minions from this spawner, spawn minion
-	if (currentSpawnTimer > spawnTimer && minions.size() < maxMinions) {
+	if (colour != START_COLOUR && currentSpawnTimer > spawnTimer && minions.size() < maxMinions) {
 		Minion * m = new Minion(colour, Render()->GetchildBaseColor(), Physics()->GetPosition() + Vector3{ 0,Render()->GetBoundingRadius() * 1.2f,0 }, "Minion");
 		minions.push_back(m);
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(m);

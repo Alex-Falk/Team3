@@ -36,6 +36,7 @@ protected:
 
 	Vector3 wanderPosition;
 	float wanderTimer;
+	float closestPlayerTimer;
 
 public:
 	
@@ -75,6 +76,7 @@ public:
 
 	Vector3 GetWanderPosition() { return wanderPosition; }
 	void ComputeNewWanderPosition();
+	void ComputeClosestPlayer();
 
 	~Minion();
 };
