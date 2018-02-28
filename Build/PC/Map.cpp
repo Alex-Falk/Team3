@@ -104,17 +104,6 @@ void Map::BuildGround(Vector2 dimensions) {
 	this->AddGameObject(southWall);
 }
 
-void Map::InitializeScores() 
-{
-	if (Game::Instance()->GetUser())
-	{
-		if (Game::Instance()->getUserID() == 0)
-		{
-			score = new Score(dimensions.x, dimensions.y);
-		}
-	}
-}
-
 void Map::LoadTextures()
 {
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
