@@ -168,6 +168,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MinionBlackboard.h" />
     <ClInclude Include="MinionStates.h" />
+    <ClInclude Include="MultiPaintPool.h" />
     <ClInclude Include="PaintPool.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Minion.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Minion.cpp" />
     <ClCompile Include="MinionCamp.cpp" />
+    <ClCompile Include="MultiPaintPool.cpp" />
     <ClCompile Include="PaintPool.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />

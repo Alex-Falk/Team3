@@ -30,7 +30,7 @@ class CaptureArea : public GameObject
 {
 public:
 	CaptureArea();
-	CaptureArea(Vector3 pos, string unique_name, Vector3 halfdims = { 3.0f, 0.5f, 3.0f }, int scoreValue = 10, Colour colour = START_COLOUR);
+	CaptureArea(Vector3 pos, string unique_name, Vector3 halfdims = { 3.0f, 2.0f, 3.0f }, int scoreValue = 10, Colour colour = START_COLOUR);
 
 	//Example of member callback ('this' parameter is bound at bind time)
 	virtual bool CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
@@ -40,13 +40,14 @@ public:
 
 	virtual void SetColour(Colour c);
 	void SetScoreValue(int i) { scoreValue = i; }
+
+	void ChangeSize(Vector3 newSize);
 	
 	~CaptureArea();
 
 	virtual void Update(float dt) {}
 
 protected:
-
 	int scoreValue;
 	Colour colour;
 };

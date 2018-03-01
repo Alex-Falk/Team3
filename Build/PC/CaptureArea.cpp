@@ -31,8 +31,9 @@ CaptureArea::CaptureArea()
 	CaptureArea({ 0,0,0 },"CAPTUREAREA");
 }
 
-CaptureArea::CaptureArea(Vector3 pos, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
+CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
 {
+	Vector3 pos = Vector3(posit.x + 0.0f, posit.y + 2.0f, posit.z + 0.0f);
 	friendlyName = unique_name;
 	Vector4 paintColour;
 
@@ -166,6 +167,20 @@ bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* co
 	//Return true to enable collision resolution
 	return true;
 
+}
+
+void CaptureArea::ChangeSize(Vector3 newSize)
+{
+	float maxSize = (float)max(max(newSize.x, newSize.y), newSize.z);
+	Render()->GetChild()->SetBoundingRadius(maxSize);
+	Render()->SetBoundingRadius(maxSize);
+	Physics()->SetBoundingRadius(maxSize);
+
+	((CuboidCollisionShape*)Physics()->GetCollisionShape())->SetHalfWidth(newSize.x);
+	((CuboidCollisionShape*)Physics()->GetCollisionShape())->SetHalfHeight(newSize.y);
+	((CuboidCollisionShape*)Physics()->GetCollisionShape())->SetHalfDepth(newSize.z);
+
+	Render()->GetChild()->SetTransform(Matrix4::Scale(newSize));
 }
 
 CaptureArea::~CaptureArea()

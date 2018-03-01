@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------------------------------//
 void SimpleGamePlay::OnInitializeScene()
 {
-	dimensions = Vector2(35, 50);
+	dimensions = Vector2(50, 50);
 
 	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();
@@ -51,6 +51,15 @@ void SimpleGamePlay::AddObjects()
 	//add capture area
 	capture[0] = new CaptureArea(Vector3(15, 0.6, -15), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
 	this->AddGameObject(capture[0]);
+
+	//add multi capture pool
+	pickup[5] = new MultiPaintPool(Vector3(-40.0f, 0.25f, 40.0f),"MultiPaintPool");
+	for (int i = 0;i < 3;i++) {
+		capture[0 + i] = new CaptureArea(Vector3(-46.0f+ (6*i), 0.25f, 40.0f + (6 * i)), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
+		this->AddGameObject(capture[0 + i]);
+		((MultiPaintPool*)(pickup[5]))->AddCaptAreaToPool(capture[0 + i]);
+	}
+	this->AddGameObject(pickup[5]);
 }
 
 //--------------------------------------------------------------------------------------------//
@@ -70,7 +79,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	//if (mc) {
 	//	mc->Update(dt);
 	//}
-
+	((MultiPaintPool*)(pickup[5]))->UpdateMultiColourToPool();
 }
 
 //--------------------------------------------------------------------------------------------//
