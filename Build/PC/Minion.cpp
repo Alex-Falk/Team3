@@ -73,7 +73,8 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 }
 
 Minion::~Minion() {
-
+	closestCaptureArea = NULL;
+	closestPlayer = NULL;
 }
 
 void Minion::ChangeState(State<Minion>* newState)

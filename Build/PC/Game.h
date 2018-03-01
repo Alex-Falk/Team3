@@ -62,12 +62,14 @@ public:
 
 	void Update(float dt);
 	void ResetGame();
+	void DetermineWinner();
 private:
 	//private constructor
 	Game() {
 		for (uint i = 0; i < 4; i++) {
 			avatars[i] = nullptr;
 		}
+		time = 0.0f;
 	};
 	~Game() {
 		for (int i = 0; i < 4; i++) {
@@ -82,4 +84,5 @@ private:
 	Avatar* avatars[4];
 	User* user = nullptr;
 	bool gameRunning = false;
+	float time;
 };

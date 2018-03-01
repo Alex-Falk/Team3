@@ -98,6 +98,7 @@ void Map::OnCleanupScene()
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();
 	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
+	captureAreas.clear();
 };
 
 
