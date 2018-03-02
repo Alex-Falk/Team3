@@ -78,30 +78,30 @@ void Map::BuildGround(Vector2 dimensions) {
 
 	GameObject* upWall = CommonUtils::InvisibleWall(
 		"UpWall",
-		Vector3(-1.0f, 100, -1.0f),
+		Vector3(-1.0f, 80, -1.0f),
 		Vector3(dimensions.x+2, 2.0f, dimensions.y+2));
 	this->AddGameObject(upWall);
 
 	GameObject* eastWall = CommonUtils::InvisibleWall(
 		"EastWall",
-		Vector3(0.0f, 50, dimensions.y + 1),
-		Vector3(dimensions.x, 50.f, 1));
+		Vector3(0.0f, 50, dimensions.x + 5),
+		Vector3(dimensions.x, 50.f, 5));
 	this->AddGameObject(eastWall);
 	GameObject* westWall = CommonUtils::InvisibleWall(
 		"WestWall",
-		Vector3(0.0f, 50, -dimensions.x - 1),
-		Vector3(dimensions.x, 50.f, 1));
+		Vector3(0.0f, 50, -dimensions.x - 5),
+		Vector3(dimensions.x, 50.f, 5));
 	this->AddGameObject(westWall);
 
 	GameObject* northWall = CommonUtils::InvisibleWall(
 		"NorthWall",
-		Vector3(dimensions.x + 1, 50, 0.0f),
-		Vector3(1, 50.f, dimensions.y));
+		Vector3(dimensions.x + 5, 50, 0.0f),
+		Vector3(5, 50.f, dimensions.y));
 	this->AddGameObject(northWall);
 	GameObject* southWall = CommonUtils::InvisibleWall(
 		"SouthWall",
-		Vector3(-dimensions.x - 1, 50, 0.0f),
-		Vector3(1, 50.f, dimensions.y));
+		Vector3(-dimensions.x - 5, 50, 0.0f),
+		Vector3(5, 50.f, dimensions.y));
 	this->AddGameObject(southWall);
 }
 

@@ -35,8 +35,13 @@ public:
 	//--------------------------------------------------------------------------------------------//
 
 	inline void SetScore(uint id, int score)			{ teamScores[id] = (float)score; }
+
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
+
+	inline void SetPlayerName(uint id, string name)		{ userNames[id] = name; }
+
 	inline void SetSize(uint id, float size)			{ avatars[id]->SetLife(size); }
+
 	inline void SetAcceleration(uint id, Vector3 a)		{ avatars[id]->GetGameObject()->Physics()->SetAcceleration(a); }
 	inline void SetLinearVelocity(uint id, Vector3 v)	{ avatars[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
 	inline void SetAngularVelocity(uint id, Vector3 v)	{ avatars[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }
@@ -65,6 +70,8 @@ public:
 	inline Avatar * GetCurrentAvatar()		{ return avatars[user->GetUserID()]; }
 
 	inline User * GetUser()					{ return user; }
+
+	inline string GetName(uint id)			{ return userNames[id]; }
 
 	inline float GetScore(uint id)			{ return teamScores[id]; }
 	inline float GetTime()					{ return gameTime; }
@@ -108,10 +115,14 @@ private:
 
 	uint playerNumber = 0;
 	uint mapIdx;
+
 	float teamScores[4];
 	Avatar* avatars[4];
-	User* user = nullptr;
-	bool gameRunning = false;
+	string userNames[4] = { "Player 1","Player 2","Player 3","Player 4" };
 
+	User* user = nullptr;
+
+
+	bool gameRunning = false;
 	float gameTime = 0.0f;
 };

@@ -121,9 +121,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		{
 			NCLDebug::Log(status_color3, "Network: Successfully connected to server!");
 
-			string data = to_string(TEXT_PACKET) + ":Hellooo!";
-			ENetPacket* posPacket = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
-			enet_peer_send(serverConnection, 0, posPacket);
+			SendUsername();
 		}
 		break;
 	}
@@ -144,12 +142,15 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveNumberUsers(data);
 			break;
 		}
-
 		case CONNECTION_ID:
 		{
 			userID = stoi(data.substr(data.find_first_of(':') + 1));
 			NCLDebug::Log("Connection ID recieved");
 			break;
+		}
+		case PLAYER_NAME:
+		{
+			ReceiveUserNames(data);
 		}
 		case AVATAR_UPDATE:
 		{
@@ -218,6 +219,19 @@ void Client::ReceiveNumberUsers(string data)
 	Game::Instance()->SetPlayerNumber(stoi(s));
 }
 
+void Client::ReceiveUserNames(string data)
+{
+	string s = data.substr(data.find_first_of(':') + 1);
+	vector<string> splitData = split_string(s, ' ');
+
+	for (uint i = 0; i < 4; ++i)
+	{
+		if (userID != i)
+			Game::Instance()->SetPlayerName(i, splitData[i]);
+	}
+	
+}
+
 void Client::ReceiveScores(string data) 
 {
 	string s = data.substr(data.find_first_of(':') + 1);
@@ -270,6 +284,16 @@ void Client::ReceiveRequestResponse(string data)
 // Sending
 //--------------------------------------------------------------------------------------------//
 
+void Client::SendUsername()
+{
+	string data = to_string(PLAYER_NAME) + ":" +
+		to_string(userID) + ";" +
+		userName;
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_peer_send(serverConnection, 0, packet);
+}
+
 void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir)
 {
 	string data;
@@ -286,6 +310,8 @@ void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angV
 	enet_peer_send(serverConnection, 0, packet);
 
 }
+
+
 
 void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 {
