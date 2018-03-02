@@ -95,7 +95,7 @@ PostProcess::PostProcess()
 	GenerateTextrue();
 	GenerateScreenFBO2();
 
-	currentPostProcessType = PostProcessType::BASIC;
+	currentPostProcessType = PostProcessType::HDR_BLOOM;
 }
 
 PostProcess::~PostProcess()

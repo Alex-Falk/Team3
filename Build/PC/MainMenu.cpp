@@ -609,7 +609,7 @@ void MainMenu::SetUpOptionMenu()
 		));
 	enableBloomButton->setText("Enable Bloom");
 	enableBloomButton->subscribeEvent(CEGUI::Slider::EventMouseButtonDown, CEGUI::Event::Subscriber(&MainMenu::onEnableBloomButtonClicked, this));
-	enableBloomButton->setSelected(false);
+	enableBloomButton->setSelected(true);
 }
 
 void MainMenu::onCameraSensitivityChanged()
