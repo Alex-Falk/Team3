@@ -11,7 +11,7 @@ void Game::Update(float dt)
 		time += dt;
 	}
 	
-	if (time > 30.0f) {
+	if (time > gameLength) {
 		DetermineWinner();
 		//StopGame();
 		time = 0.0f;

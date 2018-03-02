@@ -15,7 +15,7 @@ protected:
 
 public:
 	MinionCamp();
-	MinionCamp(Colour col, Vector3 pos, Vector3 halfdims, int scoreValue);
+	MinionCamp(Colour col, Vector3 pos, Vector3 halfdims, int scoreValue = 10, float lifeReq = 0);
 	
 	void SetMaxMinions(int mm) {maxMinions = mm;}
 	int GetMaxMinions() { return maxMinions; }

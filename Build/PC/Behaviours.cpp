@@ -28,8 +28,8 @@ Vector3 Behaviours::Seek(Vector3 targetPos, Vector3 currentPos, Vector3 currentV
 	Vector3 behaviourAccn(0,0,0); // = WallAvoid(currentPos, currentVelocity);
 
 	// If no wall avoidance was needed
-	//if (grounded && currentVelocity.LengthSQ() < 2)
-	if (grounded)
+	if (grounded && currentVelocity.LengthSQ() < 2)
+	//if (grounded)
 	{
 		// Create a vector to the target point 
 		Vector3 desiredDirection = (targetPos - currentPos).Normalise();

@@ -455,7 +455,7 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	case MOVE_RIGHT: 
 		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
 		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
-		curMove = MOVE_LEFT;
+		curMove = MOVE_RIGHT;
 		break;
 	case MOVE_JUMP: {
 		curMove = MOVE_JUMP;

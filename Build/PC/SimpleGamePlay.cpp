@@ -51,8 +51,8 @@ void SimpleGamePlay::AddObjects()
 
 	this->AddGameObject(pickup[1]);
 	
-	mc = new MinionCamp(START_COLOUR, { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10);
-	mc2 = new MinionCamp(START_COLOUR, { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10);
+	mc = new MinionCamp(START_COLOUR, { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10, 10);
+	mc2 = new MinionCamp(START_COLOUR, { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10, 10);
 	this->AddGameObject(mc);
 	this->AddGameObject(mc2);
 	AddCaptureArea(mc);
@@ -73,6 +73,7 @@ void SimpleGamePlay::AddObjects()
 	//add capture area
 	capture[0] = new CaptureArea(Vector3(15, 0.6, -15), Vector3(3.0f, 0.5f, 3.0f), 10);
 	this->AddGameObject(capture[0]);
+	AddCaptureArea(capture[0]);
 }
 
 //--------------------------------------------------------------------------------------------//

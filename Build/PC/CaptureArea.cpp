@@ -31,36 +31,9 @@ CaptureArea::CaptureArea()
 	CaptureArea({ 0,0,0 });
 }
 
-CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour colour)
+CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, float life, Colour colour)
 {
 	Vector4 paintColour;
-
-	switch (colour)
-	{
-	case RED:
-		paintColour = RED_COLOUR;
-		break;
-
-	case GREEN:
-		paintColour = GREEN_COLOUR;
-		break;
-
-	case BLUE:
-		paintColour = BLUE_COLOUR;
-		break;
-
-	case PINK:
-		paintColour = PINK_COLOUR;
-		break;
-
-	case START_COLOUR:
-		paintColour = DEFAULT_COLOUR;
-		break;
-
-	default:
-		paintColour = DEFAULT_COLOUR;
-		break;
-	}
 
 	this->colour = colour;
 
@@ -111,7 +84,8 @@ CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour c
 		)
 	);
 
-	lifeReq = scoreValue;
+	lifeReq = life;
+	this->scoreValue = scoreValue;
 	SetColour(colour);
 	UpdatePercentage();
 	currentlyCapturing = RED;
@@ -202,12 +176,14 @@ bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* co
 
 }
 
+//TODO allow player, minion, projectile to defend their own capture point instead of no interaction
 bool CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) {
 	if (Game::Instance()->GetPlayer(index)) {
-		if (this->GetColour() == Game::Instance()->GetPlayer(index)->GetColour() || Game::Instance()->GetPlayer(index)->GetColour() != ((Avatar*)p->GetParent())->GetColour()) {
+		if (this->GetColour() == ((Avatar*)p->GetParent())->GetColour()) {
 			return false;
 		}
 		else {
+			//calculate the amount of life it takes to capture
 			float lifeToTake = lifeReq;
 			for (int i = 0; i < 4; i++) {
 				if (i == index) {
@@ -217,6 +193,7 @@ bool CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) {
 					lifeToTake += playerScores[i];
 				}
 			}
+			//check if player actually has enough life to take the point
 			if (((Avatar*)p->GetParent())->GetLife() >= ((Avatar*)p->GetParent())->GetMinLife() + (lifeToTake)) {
 				this->SetColour(((Avatar*)p->GetParent())->GetColour());
 				((Avatar*)p->GetParent())->ChangeLife(-lifeToTake);
@@ -235,6 +212,8 @@ bool CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) {
 		}
 		else {
 			float lifeToTake = ((Minion*)p->GetParent())->GetLife() / 10;
+			((Minion*)p->GetParent())->ChangeLife(-50);
+			//take the amount of life of the minion from whoever is currently capturing the area
 			for (int i = 0; i < 4; i++) {
 				if (playerScores[i] > 0 && i != index) {
 					float tempLifeToTake = lifeToTake;
@@ -245,11 +224,11 @@ bool CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) {
 					}
 				}
 			}
+			//if area has been set to neutral, add remaining life of minion to the player
 			if (lifeToTake > 0) {
 				for (int i = 0; i < 4; i++) {
 					if (i == index) {
 						playerScores[index] += lifeToTake;
-						((Minion*)p->GetParent())->ChangeLife(-50);
 					}
 				}
 				if (playerScores[index] >= lifeReq) {

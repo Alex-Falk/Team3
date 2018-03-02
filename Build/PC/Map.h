@@ -23,7 +23,7 @@ protected:
 	float m_AccumTime = 0;
 	Score* score;
 	Vector3 spawnPositions[4];
-	vector<CaptureArea*> captureAreas;
+	vector<CaptureArea*> captureAreas; //TODO move this to wherever is best, used in minion class (ClosestCaptureArea)
 	static int mapIndex; // Controls which map will be loaded
 
 	//--------------------------------------------------------------------------------------------//

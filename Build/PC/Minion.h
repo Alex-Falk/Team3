@@ -27,20 +27,24 @@ protected:
 
 	bool isGrounded;
 	bool dead; 
-	float detectionRadius;
-	float pursueRadius;
+	float detectionRadiusSQ;
+	float pursueRadiusSQ;
 	float allyHealPursueLimit;  //Life level of ally where the minion will not pursue them
 
 	State<Minion> *currentState;
 	State<Minion> *previousState;
 
-	Avatar * closestPlayer;
+	Avatar * closestEnemyPlayer;
+	Avatar * closestFriendlyPlayer;
 	CaptureArea * closestCaptureArea;
 
 	Vector3 wanderPosition;
 	float wanderTimer;
 	float closestPlayerTimer;
 	float closestCaptureAreaTimer;
+
+	float behaviourWeight;
+	float behaviourXZMagnitude;
 
 public:
 	Minion();
@@ -73,24 +77,35 @@ public:
 	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 	bool IsAlive() { return !dead; }
 	
-	Avatar * GetClosestPlayer() { return closestPlayer; }
+	Avatar * GetClosestEnemyPlayer() { return closestEnemyPlayer; }
+	Avatar * GetClosestFriendlyPlayer() { return closestFriendlyPlayer; }
 	CaptureArea * GetClosestCaptureArea() { return closestCaptureArea; }
 
 	//TODO: change physics engine to hold sperate lists of objects
 	bool IncomingProjectile() {/*Needs implimentation*/ return false; };
-	float GetDetectionRadius() { return detectionRadius; }
-	float GetPursueRadius() { return pursueRadius; }
+	float GetDetectionRadiusSQ() { return detectionRadiusSQ; }
+	float GetPursueRadiusSQ() { return pursueRadiusSQ; }
 
-	float DistanceToClosestFrendly() {/*Needs implimentation*/ return 0.0f; }
-	float HealthOfClosestFriendly() {/*Needs implimentation*/ return 0.0f; }
+	float DistanceToClosestFriendlySQ() {
+		if (closestFriendlyPlayer) return (physicsNode->GetPosition() - closestFriendlyPlayer->Physics()->GetPosition()).LengthSQ();
+		else return detectionRadiusSQ + 1;
+	}
+	float HealthOfClosestFriendly() {  return closestFriendlyPlayer->GetLife(); }
 	float GetAllyHealPursueLimit() { return allyHealPursueLimit; }
 
-	float DistanceToClosestEnemy() {/*Needs implimentation*/ return 0.0f; }
-	float DistanceToEnemyZone() {/*Needs implimentation return NO_ENEMY_ZONES_FLAG if none are in range from spawn*/ return 0.0f; }
+	float DistanceToClosestEnemySQ() { 
+		if (closestEnemyPlayer) return (physicsNode->GetPosition() - closestEnemyPlayer->Physics()->GetPosition()).LengthSQ();
+		else return detectionRadiusSQ + 1;
+	}
+	float DistanceToEnemyZoneSQ() { 
+		if (closestCaptureArea) return (physicsNode->GetPosition() - closestCaptureArea->Physics()->GetPosition()).LengthSQ();
+		else return -1.0f;
+	}
 
 	Vector3 GetWanderPosition() { return wanderPosition; }
 	void ComputeNewWanderPosition();
-	void ComputeClosestPlayer();
+	void ComputeClosestEnemyPlayer();
+	void ComputeClosestFriendlyPlayer();
 	void ComputeClosestCaptureArea();
 
 	bool WanderPositionInRange();

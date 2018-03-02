@@ -61,14 +61,16 @@ void MinionStateHealFriendlyPlayer::Execute(Minion* pMinion)
 		{
 			pMinion->ChangeState(MinionStateEscapeRocket::GetInstance());
 		}
-		else if (pMinion->DistanceToClosestFrendly() >= pMinion->GetPursueRadius() || pMinion->HealthOfClosestFriendly() > pMinion->GetAllyHealPursueLimit())
+		else if (pMinion->DistanceToClosestFriendlySQ() >= pMinion->GetPursueRadiusSQ() || pMinion->HealthOfClosestFriendly() > pMinion->GetAllyHealPursueLimit())
 		{
-			if (pMinion->DistanceToClosestEnemy() <= pMinion->GetDetectionRadius() && 
-			   ((pMinion->DistanceToClosestEnemy() < pMinion->DistanceToEnemyZone() && pMinion->DistanceToEnemyZone() != NO_ENEMY_ZONES_FLAG) || pMinion->DistanceToEnemyZone() == NO_ENEMY_ZONES_FLAG))
+			if (pMinion->DistanceToClosestEnemySQ() <= pMinion->GetDetectionRadiusSQ() && 
+			   pMinion->DistanceToClosestEnemySQ() < pMinion->DistanceToEnemyZoneSQ())
+				//&& pMinion->DistanceToEnemyZone() != NO_ENEMY_ZONES_FLAG) || pMinion->DistanceToEnemyZone() == NO_ENEMY_ZONES_FLAG) Always equals true
 			{
 				pMinion->ChangeState(MinionStateChaseEnemyPlayer::GetInstance());
 			}
-			else if (pMinion->DistanceToEnemyZone() != NO_ENEMY_ZONES_FLAG)
+			else if (pMinion->DistanceToEnemyZoneSQ() != NO_ENEMY_ZONES_FLAG)
+			//else if (pMinion->DistanceToEnemyZoneSQ() != NO_ENEMY_ZONES_FLAG && pMinion->DistanceToEnemyZoneSQ() <= pMinion->GetDetectionRadiusSQ())
 			{
 				pMinion->ChangeState(MinionStateCaptureZone::GetInstance());
 			}
