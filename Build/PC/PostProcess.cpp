@@ -165,7 +165,6 @@ void PostProcess::GenerateScreenFBO2()
 //Render Pass 2: Applying GaussianBlur
 void PostProcess::RenderGaussianBlur(int a)
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//Basic settings for Renderring
 	glViewport(0, 0, GraphicsPipeline::Instance()->GetScreenTexWidth(),
 		GraphicsPipeline::Instance()->GetScreenTexHeight());
@@ -202,9 +201,7 @@ void PostProcess::RenderGaussianBlur(int a)
 void PostProcess::RenderToBackBuffer()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, GraphicsPipeline::Instance()->GetWidth(),
-		GraphicsPipeline::Instance()->GetHeight());
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glViewport(0, 0, GraphicsPipeline::Instance()->GetWidth(), GraphicsPipeline::Instance()->GetHeight());
 
 	float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
 	glUseProgram(GetCurrentPostProcessShader()->GetProgram());

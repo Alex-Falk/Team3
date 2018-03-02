@@ -601,15 +601,23 @@ void MainMenu::SetUpOptionMenu()
 	disableVsync->setText("DisableVsync");
 	disableVsync->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDisableVsyncClicked, this));
 	
-	enableBloomButton = static_cast<CEGUI::RadioButton*>(
-		GUIsystem::Instance()->createWidget("OgreTray/Checkbox",
+	enableBloomButton = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
 			Vector4(0.42f, 0.55f, 0.11f, 0.05f),
 			Vector4(),
 			"bloomButton"
 		));
-	enableBloomButton->setText("Enable Bloom");
+	enableBloomButton->setText("ENABLE BLOOM");
 	enableBloomButton->subscribeEvent(CEGUI::Slider::EventMouseButtonDown, CEGUI::Event::Subscriber(&MainMenu::onEnableBloomButtonClicked, this));
-	enableBloomButton->setSelected(true);
+
+	disableBloomButton = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.55f, 0.55f, 0.11f, 0.05f),
+			Vector4(),
+			"disableBloomButton"
+		));
+	disableBloomButton->setText("DISABLE BLOOM");
+	disableBloomButton->subscribeEvent(CEGUI::Slider::EventMouseButtonDown, CEGUI::Event::Subscriber(&MainMenu::onDisableBloomButtonClicked, this));
 }
 
 void MainMenu::onCameraSensitivityChanged()
@@ -619,12 +627,12 @@ void MainMenu::onCameraSensitivityChanged()
 
 void MainMenu::onEnableBloomButtonClicked()
 {
-	if (PostProcess::Instance()->GetCurrentPostProcessType() == PostProcessType::BASIC) {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
-	}
-	else {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::BASIC);
-	}
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
+}
+
+void MainMenu::onDisableBloomButtonClicked()
+{
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::BASIC);
 }
 
 void MainMenu::onCreateGameClicked()
@@ -770,6 +778,9 @@ void MainMenu::HideOptionMenu()
 
 	enableBloomButton->disable();
 	enableBloomButton->setVisible(false);
+
+	disableBloomButton->disable();
+	disableBloomButton->setVisible(false);
 }
 
 void MainMenu::HideMainMenu()
@@ -836,5 +847,8 @@ void MainMenu::ShowOptionMenu1()
 
 	enableBloomButton->enable();
 	enableBloomButton->setVisible(true);
+
+	disableBloomButton->enable();
+	disableBloomButton->setVisible(true);
 }
 

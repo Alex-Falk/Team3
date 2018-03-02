@@ -1,6 +1,5 @@
 #include <PC/UserInterface.h>
 
-
 CEGUI::OpenGL3Renderer* GUIsystem::m_renderer = NULL;
 
 GUIsystem::GUIsystem()
@@ -41,6 +40,7 @@ GUIsystem::GUIsystem()
 GUIsystem::~GUIsystem()
 {
 	Destory();
+
 }
 
 void GUIsystem::Init(const std::string& resourceDirectory)
@@ -68,9 +68,12 @@ void GUIsystem::Init(const std::string& resourceDirectory)
 
 	//Generate CEGUI context
 	m_context = &CEGUI::System::getSingleton().createGUIContext(m_renderer->getDefaultRenderTarget());
+	m_context_public = &CEGUI::System::getSingleton().createGUIContext(m_renderer->getDefaultRenderTarget());
 
 	//Create Root window
 	m_root = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "root");
+	m_loadingRoot = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "loadingRoot");
+	m_context_public->setRootWindow(m_loadingRoot);
 	m_context->setRootWindow(m_root);
 
 	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
@@ -85,6 +88,7 @@ void GUIsystem::Init(const std::string& resourceDirectory)
 	//SetMouseCursor
 	SetMouseCursor("AlfiskoSkin/MouseArrow");
 	ShowMouseCursor();
+
 }
 
 void GUIsystem::Destory()
@@ -351,6 +355,7 @@ void GUIsystem::SetFont(const std::string & fontFile)
 {
 	CEGUI::FontManager::getSingleton().createFromFile(fontFile + ".font");
 	m_context->setDefaultFont(fontFile);
+	m_context_public->setDefaultFont(fontFile);
 }
 
 CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name)
@@ -362,6 +367,99 @@ CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& d
 	return newWindow;
 }
 
+CEGUI::Window * GUIsystem::createWidgetForLoadingScreen(const std::string type, const Vector4 & destRectPerc, const Vector4 & destRectPix, const std::string name)
+{
+	CEGUI::Window* newWindow = CEGUI::WindowManager::getSingleton().createWindow(type, name);
+	m_loadingRoot->addChild(newWindow);
+	newWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(destRectPerc.x, destRectPix.x), CEGUI::UDim(destRectPerc.y, destRectPix.y)));
+	newWindow->setSize(CEGUI::USize(CEGUI::UDim(destRectPerc.z, destRectPix.z), CEGUI::UDim(destRectPerc.w, destRectPix.w)));
+	return newWindow;
+}
+
+void GUIsystem::DrawTransitionLoadingScreen()
+{
+
+}
+
+void GUIsystem::DrawStartLoadingScreen()
+{
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glUseProgram(loadingScreenShader->GetProgram());
+	float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
+	//Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 1));
+	Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 0));
+	Matrix4 textureMatrix;
+	//textureMatrix.ToIdentity();
+	//Matrix4 textureMatrix = Matrix4::Scale(Vector3(0.8,0.8,0))* Matrix4::Translation(Vector3(translation, 0, 0));
+	//Matrix4 textureMatrix = Matrix4::Scale(Vector3(0.9, 0.9, 0)) * Matrix4::Translation(Vector3(texRotation,0,0));
+	glUniformMatrix4fv(glGetUniformLocation(loadingScreenShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(loadingScreenShader->GetProgram(), "textureMatrix"), 1, GL_FALSE, (float*)&textureMatrix);
+	glUniform1f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uGammaCorrection"),
+		GraphicsPipeline::Instance()->GetGammaCorrection());
+	glUniform1f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uNumSuperSamples"), superSamples);
+	glUniform2f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(loadingScreenShader->GetProgram(), "DiffuseTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, loadingScreenTexture[START]);
+	loadingScreen->Draw();
+	
+	glUseProgram(0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_renderer->beginRendering();
+	m_context_public->draw();
+	m_renderer->endRendering();
+	glDisable(GL_SCISSOR_TEST);
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(0);
+}
+
+void GUIsystem::SetUpLoadingScreen()
+{
+	loadingScreen = Mesh::GenerateQuad();
+
+	//Loading Texture for background
+	loadingScreenTexture[START] = SOIL_load_OGL_texture(TEXTUREDIR"LoadingScreen/Van-Gogh-Starry-Night.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	loadingScreenTexture[TRANSITION] = SOIL_load_OGL_texture(TEXTUREDIR"LoadingScreen/Paint2.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	//LoadingTexture for animated icon
+
+	for (int i = 0; i < Num_of_loadingTex; i++) {
+		glBindTexture(GL_TEXTURE_2D, weaponTextures[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	//Loading Shader for loading screen
+	if (loadingScreenShader == NULL) {
+		loadingScreenShader = new Shader(SHADERDIR"UI/LoadingScreenVertex.glsl",
+			SHADERDIR"UI/LoadingScreenFrag.glsl");
+		if (!loadingScreenShader->LinkProgram()) {
+			NCLERROR("Linking loading screen shader failed :(");
+		}
+	}
+
+	loadingMessage = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/Title",
+			Vector4(0.40f, 0.6f, 0.20f, 0.05f),
+			Vector4(),
+			"loadingMessage"
+		));
+	loadingMessage->setText("Advertising spaces for rent");
+
+	loadingProgress = static_cast<CEGUI::ProgressBar*>(
+		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/ProgressBar",
+			Vector4(0.30f, 0.7f, 0.40f, 0.05f),
+			Vector4(),
+			"loadingProgress"
+		));
+	
+
+}
 
 void GUIsystem::DrawWeaponIcon(){
 	if (hasWeapon) {

@@ -182,8 +182,8 @@ private:
 	CEGUI::RadioButton* disableVsync;
 	CEGUI::Titlebar* background;
 	//2.4 Bloom Control
-	CEGUI::RadioButton* enableBloomButton;
-	CEGUI::RadioButton* disableBloomButton;
+	CEGUI::PushButton* enableBloomButton;
+	CEGUI::PushButton* disableBloomButton;
 
 	//3. Create Game Menu
 	CEGUI::Titlebar* ipText;
@@ -252,6 +252,7 @@ public:
 	void onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
 	void onCameraSensitivityChanged();
 	void onEnableBloomButtonClicked();
+	void onDisableBloomButtonClicked();
 
 
 	//3. create game menu buttons

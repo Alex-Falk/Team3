@@ -37,6 +37,16 @@
 #include <nclgl\Mesh.h>
 #include <nclgl\NCLDebug.h>
 #include <cstring>
+#include <ncltech\GraphicsPipeline.h>
+
+const int Num_of_loadingTex = 2;
+
+enum LoadingScreenType
+{
+	START = 0,
+	TRANSITION = 1,
+	NOT_LOADING
+};
 
 //Box struct for user text input
 struct inputBox
@@ -83,6 +93,8 @@ public:
 
 	//GUI create helper function
 	CEGUI::Window* createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name = "");
+	
+	CEGUI::Window* createWidgetForLoadingScreen(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name = "");
 
 	static CEGUI::OpenGL3Renderer* GetRenderer() { return m_renderer; }
 	const CEGUI::GUIContext* GetContext() { return m_context; }
@@ -108,10 +120,25 @@ public:
 	inline void SetPlayerColour(Vector3 c) { playerColour = c; }
 
 	bool updateClientName = false;
+
+	//Getter Setter of isLoading boolean
+	inline LoadingScreenType GetCurrentLoadingScreen() { return currentLoadingScreen; }
+	inline void SetLoadingScreen(LoadingScreenType currentType) { currentLoadingScreen = currentType; }
+
+	//Functions for loading Screen
+	void DrawTransitionLoadingScreen();
+	void DrawStartLoadingScreen();
+	void SetUpLoadingScreen();
+
+	float translation = 0.01;
+	
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
+	CEGUI::GUIContext* m_context_public = NULL;
 	CEGUI::Window* m_root = NULL;
+	CEGUI::Window* m_loadingRoot = NULL;
+	CEGUI::RenderTarget* target;
 
 	Vector2 realMousePos;
 	float mouseSensitivity;
@@ -133,4 +160,12 @@ protected:
 	void DrawWeaponIcon();
 
 	float p1, p2, p3, p4;
+
+	//Loading Screen
+	Shader* loadingScreenShader = NULL;
+	LoadingScreenType currentLoadingScreen = NOT_LOADING;
+	Mesh* loadingScreen;
+	GLuint loadingScreenTexture[Num_of_loadingTex];
+	CEGUI::Titlebar* loadingMessage;
+	CEGUI::ProgressBar* loadingProgress;
 };
