@@ -35,6 +35,35 @@ CaptureArea::CaptureArea(Vector3 pos, Vector3 halfdims, int scoreValue, Colour c
 {
 	Vector4 paintColour;
 
+	switch (colour)
+	{
+	case RED:
+		paintColour = RED_COLOUR;
+		break;
+
+	case GREEN:
+		paintColour = GREEN_COLOUR;
+		break;
+
+	case BLUE:
+		paintColour = BLUE_COLOUR;
+		break;
+
+	case PINK:
+		paintColour = PINK_COLOUR;
+		break;
+
+	case START_COLOUR:
+		paintColour = DEFAULT_COLOUR;
+		break;
+
+	default:
+		paintColour = DEFAULT_COLOUR;
+		break;
+	}
+
+	this->colour = colour;
+
 	RenderNode* rnode = new RenderNode();
 	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), paintColour);
 

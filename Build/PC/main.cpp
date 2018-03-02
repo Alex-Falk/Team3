@@ -12,6 +12,7 @@
 #include "TestMap.h"
 #include "GameInput.h"
 #include "Game.h"
+#include "MinionStates.h"
 
 
 bool draw_debug = true;
@@ -27,7 +28,14 @@ uint shadowCycleKey = 4;
 //Prevent multiple clicking from happening
 int fpsCounter = 6;
 
-
+void ReleaseAIStates()
+{
+	MinionStateCaptureZone::Release();
+	MinionStateChaseEnemyPlayer::Release();
+	MinionStateEscapeRocket::Release();
+	MinionStateHealFriendlyPlayer::Release();
+	MinionStateWander::Release();
+}
 
 // Program Deconstructor
 //  - Releases all global components and memory
@@ -41,6 +49,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	GraphicsPipeline::Release();
 	enet_deinitialize();
 	AudioSystem::Release();
+	ReleaseAIStates();
 	Window::Destroy();
 	
 	//Show console reason before exit
@@ -243,7 +252,6 @@ void HandleKeyboardInputs()
 
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
-
 	}
 
 	//toggle the camera
@@ -350,7 +358,7 @@ int main()
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
-	Window::GetWindow().LockMouseToWindow(false);
+	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
@@ -392,6 +400,8 @@ int main()
 		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
 		timer_update.EndTimingSection();
 
+		Game::Instance()->Update(dt);
+
 		//Update Physics	
 		timer_physics.BeginTimingSection();
 		PhysicsEngine::Instance()->Update(dt);
@@ -416,7 +426,7 @@ int main()
 		timer_audio.BeginTimingSection();
 		AudioSystem::Instance()->Update(GraphicsPipeline::Instance()->GetCamera()->GetPosition(), GraphicsPipeline::Instance()->GetCamera()->GetViewDirection(), GraphicsPipeline::Instance()->GetCamera()->GetUpDirection(), dt);
 		timer_audio.EndTimingSection();
-		Game::Instance()->Update(dt);
+		
 
 		//Finish Timing
 		timer_total.EndTimingSection();

@@ -43,6 +43,12 @@ enum TEXTURETYPE
 {
 	Checker_Board = 0,
 	Sky_Box		  = 1,
+	//minimap stuff (phil 26/02/2018)
+	Paint_Pool	  = 2,
+	Gun_Pickup	  = 3,
+	Speed_Pickup  = 4,
+	Jump_Pickup	  = 5,
+	Capture_Point = 6,
 	Texture_Number,
 };
 

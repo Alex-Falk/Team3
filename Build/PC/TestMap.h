@@ -15,9 +15,7 @@ private:
 	//--------------------------------------------------------------------------------------------//
 	// Special objects in the map
 	//--------------------------------------------------------------------------------------------//
-	static const uint npickup = 3;
-	Pickup* pickup[npickup];
-	Vector3 pickupTextOffset[npickup];
+	Vector3* pickupTextOffset;
 
 	Pickup* pickupSpeedBoost;
 	Pickup* pickupJumpBoost;
@@ -30,13 +28,19 @@ public:
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
 	TestMap(const std::string& friendly_name)
-		: Map(friendly_name) {}
+		: Map(friendly_name) {
+		npickup = 3;
+		pickup = new Pickup*[npickup];
+		pickupTextOffset = new Vector3[npickup];
+	}
 
 	~TestMap()
 	{
 		delete pickupJumpBoost;
 		delete pickupSpeedBoost;
 		delete pickupWeapon;
+
+		delete[] pickupTextOffset;
 	}
 
 	virtual void OnInitializeScene() override;

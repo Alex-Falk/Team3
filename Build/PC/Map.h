@@ -14,7 +14,7 @@
 #include "GamePlay.h"
 #include "WeaponPickup.h"
 #include "Score.h"
-
+#include "CaptureArea.h"
 //#include "GroundScore.h"
 
 class Map : public Scene
@@ -24,6 +24,7 @@ protected:
 	Score* score;
 	Vector3 spawnPositions[4];
 	vector<CaptureArea*> captureAreas;
+	static int mapIndex; // Controls which map will be loaded
 
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
@@ -37,6 +38,12 @@ protected:
 	int yDimension = 40;
 	int groundScoreAccuracy = 15;
 
+	//pickup stuff
+	uint npickup;
+	Pickup** pickup;
+	//capture areas for minimap
+	uint ncapture;
+	CaptureArea** capture;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
@@ -44,6 +51,13 @@ public:
 	Map(const std::string& friendly_name) : Scene(friendly_name) {}
 	~Map() {
 		TextureManager::Instance()->RemoveAllTexture();
+		//delete the array of pickups
+		if (pickup) {
+			delete[] pickup;
+		}
+		if (capture) {
+			delete[] capture;
+		}
 	};
 
 	virtual void OnCleanupScene();
@@ -63,6 +77,8 @@ public:
 	CaptureArea * GetCaptureArea(int i) { return captureAreas[i]; }
 	vector<CaptureArea*> GetCaptureAreaVector() { return captureAreas; }
 
+	static int GetMapIndex() { return mapIndex; }
+	void SetMapIndex(int mapIndx); 
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars and Scores
 	//--------------------------------------------------------------------------------------------//
@@ -70,5 +86,13 @@ public:
 
 	inline Score * GetScore() { return score; }
 
+	//phil 21/02/2018 for minimap
+	inline int GetXDimension() { return xDimension; }
+	inline int GetYDimension() { return yDimension; }
+
+	inline uint GetNPickup() { return npickup; }
+	inline Pickup** GetPickups() { return pickup; }
+	inline uint GetNCapture() { return ncapture; }
+	inline CaptureArea** GetCaptureAreas() { return capture; }
 };
 

@@ -27,6 +27,9 @@ protected:
 
 	bool isGrounded;
 	bool dead; 
+	float detectionRadius;
+	float pursueRadius;
+	float allyHealPursueLimit;  //Life level of ally where the minion will not pursue them
 
 	State<Minion> *currentState;
 	State<Minion> *previousState;
@@ -50,7 +53,6 @@ public:
 	Vector4 GetRGBA() { return RGBA; }
 
 	void SetDead(bool b) { dead = b; }
-	bool GetDead() { return dead; }
 
 	void SetIsGrounded(bool b) { isGrounded = b; }
 	bool GetIsGrounded() { return isGrounded; }
@@ -69,9 +71,22 @@ public:
 
 	void Update(float dt);
 	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
+	bool IsAlive() { return !dead; }
 	
 	Avatar * GetClosestPlayer() { return closestPlayer; }
 	CaptureArea * GetClosestCaptureArea() { return closestCaptureArea; }
+
+	//TODO: change physics engine to hold sperate lists of objects
+	bool IncomingProjectile() {/*Needs implimentation*/ return false; };
+	float GetDetectionRadius() { return detectionRadius; }
+	float GetPursueRadius() { return pursueRadius; }
+
+	float DistanceToClosestFrendly() {/*Needs implimentation*/ return 0.0f; }
+	float HealthOfClosestFriendly() {/*Needs implimentation*/ return 0.0f; }
+	float GetAllyHealPursueLimit() { return allyHealPursueLimit; }
+
+	float DistanceToClosestEnemy() {/*Needs implimentation*/ return 0.0f; }
+	float DistanceToEnemyZone() {/*Needs implimentation return NO_ENEMY_ZONES_FLAG if none are in range from spawn*/ return 0.0f; }
 
 	Vector3 GetWanderPosition() { return wanderPosition; }
 	void ComputeNewWanderPosition();

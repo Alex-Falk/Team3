@@ -6,7 +6,6 @@
 class SimpleGamePlay : public Map
 {
 private:
-
 	float m_AccumTime = 0;
 
 	//--------------------------------------------------------------------------------------------//
@@ -23,7 +22,12 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	SimpleGamePlay(const std::string& friendly_name) :
 		Map(friendly_name)
-	{}
+	{
+		npickup = 5;
+		pickup = new Pickup*[npickup];
+		ncapture = 1;
+		capture = new CaptureArea*[ncapture];
+	}
 
 	~SimpleGamePlay() {
 		delete[] pickup;

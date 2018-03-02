@@ -53,9 +53,15 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 	physicsNode->SetName(name);
 
 	dead = false;
-	life = 50;
+	
 	minLife = 10;
 	maxLife = 50;
+	life = maxLife;
+
+	detectionRadius = 5.0f;
+	pursueRadius = 7.5f;
+	allyHealPursueLimit = 50.0f; 
+
 	colour = c;
 	this->RGBA = RGBA;
 
@@ -228,8 +234,8 @@ bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingO
 		}
 		return false;
 	}
-	if (collidingObject->GetType() == MINION) {
-		if (!dead && ((Minion*)(collidingObject->GetParent()))->GetDead() == 0) {
+	else if (collidingObject->GetType() == MINION) {
+		if (!dead && ((Minion*)(collidingObject->GetParent()))->IsAlive()) {
 			if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
 				float tempLife = life;
 				ChangeLife(-((Minion*)collidingObject->GetParent())->GetLife());

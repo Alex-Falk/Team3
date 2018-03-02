@@ -73,3 +73,11 @@ PacketType FindType(string data)
 
 	return PacketType(i);
 }
+
+Vector3 LerpVector3(Vector3 a, Vector3 b, float f)
+{
+	Vector3 na = a * f;
+	Vector3 nb = b * (1 - f);
+	Vector3 c = na + nb;
+	return c;
+}
