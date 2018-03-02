@@ -21,8 +21,10 @@ bool draw_performance = false;
 const Vector4 status_colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 const Vector4 status_colour_header = Vector4(0.8f, 0.9f, 1.0f, 1.0f);
 
-bool show_perf_metrics = false;
-PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio;
+bool show_full_perf_metrics = false;
+bool show_debug = false;
+
+PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio, timer_gameplay;
 uint shadowCycleKey = 4;
 
 //Prevent multiple clicking from happening
@@ -93,33 +95,48 @@ void Initialize()
 //    hand corner of the screen each frame.
 void PrintStatusEntries()
 {
+	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
+	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [0] ---");
+	if (!show_debug)
+		return;
+
 	//Print Engine Options
 	NCLDebug::AddStatusEntry(status_colour_header, "NCLTech Settings");
 	NCLDebug::AddStatusEntry(status_colour, "     Physics Engine: %s (Press P to toggle)", PhysicsEngine::Instance()->IsPaused() ? "Paused  " : "Enabled ");
 	NCLDebug::AddStatusEntry(status_colour, "     Monitor V-Sync: %s (Press V to toggle)", GraphicsPipeline::Instance()->GetVsyncEnabled() ? "Enabled " : "Disabled");
 	NCLDebug::AddStatusEntry(status_colour, "");
 
-	//Print Current Scene Name
-	NCLDebug::AddStatusEntry(status_colour_header, "[%d/%d]: %s",
-		SceneManager::Instance()->GetCurrentSceneIndex() + 1,
-		SceneManager::Instance()->SceneCount(),
-		SceneManager::Instance()->GetCurrentScene()->GetSceneName().c_str()
-		);
-	NCLDebug::AddStatusEntry(status_colour, "     \x01 T/Y to cycle or R to reload scene");
+	////Print Current Scene Name
+	//NCLDebug::AddStatusEntry(status_colour_header, "[%d/%d]: %s",
+	//	SceneManager::Instance()->GetCurrentSceneIndex() + 1,
+	//	SceneManager::Instance()->SceneCount(),
+	//	SceneManager::Instance()->GetCurrentScene()->GetSceneName().c_str()
+	//	);
+	//NCLDebug::AddStatusEntry(status_colour, "     \x01 T/Y to cycle or R to reload scene");
 
 	//Print Performance Timers
-	NCLDebug::AddStatusEntry(status_colour, "     FPS: %5.2f  (Press G for %s info)", 1000.f / timer_total.GetAvg(), show_perf_metrics ? "less" : "more");
-	if (show_perf_metrics)
-	{
-		timer_total.PrintOutputToStatusEntry(status_colour, "          Total Time     :");
-		timer_update.PrintOutputToStatusEntry(status_colour, "          Scene Update   :");
-		timer_physics.PrintOutputToStatusEntry(status_colour, "          Physics Update :");
-		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
-		timer_render.PrintOutputToStatusEntry(status_colour, "          Render Scene   :");
-		timer_audio.PrintOutputToStatusEntry(status_colour, "         Audio Update   :");
-	}
 
-	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
+
+	NCLDebug::AddStatusEntry(status_colour, "     FPS: %5.2f  (Press 9 for %s info)", 1000.f / timer_total.GetAvg(), show_full_perf_metrics ? "less" : "more");
+	if (!show_full_perf_metrics) {
+		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
+		timer_update.PrintOutputToStatusEntry(status_colour,	"            Scene Update    :");
+		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    :");
+	//	timer_gameplay.PrintOutputToStatusEntry(status_colour,	"            Gameplay update :");
+		timer_audio.PrintOutputToStatusEntry(status_colour,		"            Audio Update    :");
+	}
+	else 
+	{
+		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
+		timer_update.PrintOutputToStatusEntry(status_colour,	"            Scene Update    :");
+		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
+		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    :");
+	//	timer_gameplay.PrintOutputToStatusEntry(status_colour,	"            Gameplay update :");
+	//	Game::Instance()->PrintPerformanceTimers(status_colour);
+		timer_audio.PrintOutputToStatusEntry(status_colour,		"            Audio Update    :");
+	}
 
 	//Physics Debug Drawing options
 	if (Game::Instance()->IsRunning())
@@ -133,14 +150,13 @@ void PrintStatusEntries()
 	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [G] ---");
 	if (draw_debug)
 	{
-		NCLDebug::AddStatusEntry(status_color_debug, "Constraints       : %s [Z] - Tut 3+", (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] - Tut 4", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] - Tut 4+", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] - Tut 5+", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
+		//NCLDebug::AddStatusEntry(status_color_debug, "Constraints       : %s [Z] ", (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT) ? "Enabled " : "Disabled");
+		//NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
+		//NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
+		//NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] ", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "World Partition   : %s [B] ", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
 		//NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
 
 		NCLDebug::AddStatusEntry(status_color_debug, "");
@@ -169,15 +185,18 @@ void HandleKeyboardInputs()
 	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
 	uint sceneMax = SceneManager::Instance()->SceneCount();
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE))
 	{
 		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene(0);
 	}
 		
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
-		show_perf_metrics = !show_perf_metrics;
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
+		show_full_perf_metrics = !show_full_perf_metrics;
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
+		show_debug = !show_debug;
 
 	//audio test functionality
 	//TODO remove this when finished testing
@@ -209,17 +228,17 @@ void HandleKeyboardInputs()
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
-		drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
+	//	drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
-		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
+	//	drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
-		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+	//	drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
-		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+	//	drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
 		drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
@@ -377,8 +396,7 @@ int main()
 	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
-	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
-		&& SceneManager::Instance()->GetExitButtonClicked() == false) 
+	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false) 
 	{
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
 																			//Update Performance Timers (Show results every second)

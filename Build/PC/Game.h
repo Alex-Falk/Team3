@@ -85,6 +85,16 @@ public:
 	void ClaimPickup(Avatar * player, Pickup * pickup);
 	//bool ClaimArea(Avatar * player, CaptureArea *object);
 
+	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
+	// Performance Timers																				Date: 02/03/2018
+	//--------------------------------------------------------------------------------------------//	
+	void PrintPerformanceTimers(const Vector4& color)
+	{
+		perfPlayer.PrintOutputToStatusEntry(color,		"              Player   :");
+		perfAI.PrintOutputToStatusEntry(color,			"              AI       :");
+		perfMapObjects.PrintOutputToStatusEntry(color,	"              Map Objs :");
+	}
+
 
 private:
 	//private constructor
@@ -114,4 +124,12 @@ private:
 	bool gameRunning = false;
 
 	float gameTime = 0.0f;
+
+	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
+	// Performance Timers																				Date: 02/03/2018
+	//--------------------------------------------------------------------------------------------//	
+	PerfTimer perfUpdate;
+	PerfTimer perfPlayer;
+	PerfTimer perfAI;
+	PerfTimer perfMapObjects;
 };
