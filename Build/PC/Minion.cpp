@@ -3,6 +3,7 @@
 #include "MinionStates.h"
 #include "Game.h" 
 #include "Map.h"
+#include "Behaviours.h"
 
 Minion::Minion() : GameObject() {
 	colour = START_COLOUR;
@@ -116,6 +117,10 @@ void Minion::Update(float dt)
 	size = 0.3f * (life / 50);
 
 	ChangeSize(size);
+	
+	if (currentState){
+		currentState->Execute(this);
+	}
 
 	if (life < minLife) {
 		dead = true;
@@ -123,9 +128,56 @@ void Minion::Update(float dt)
 	}
 	else {
 		//////////  AI  ////////////////
-		if (currentState)
-		{
-			currentState->Execute(this);
+		if (minionBlackboard.GetGoToNearestCaptureZone()) {
+			if (GetIsGrounded()) {
+				if (GetClosestCaptureArea()) {
+					Physics()->SetAngularVelocity(Vector3{ 0,0,0 });
+					Physics()->SetLinearVelocity(Vector3{ 0,0,0 });
+					Physics()->SetAcceleration(Behaviours::Seek(GetClosestCaptureArea()->Physics(), Physics(), GetIsGrounded(), 15, 25));
+					SetIsGrounded(false);
+				}
+			}
+			else {
+				Physics()->SetAcceleration({ 0, 0, 0 });
+			}
+		}
+		else if (minionBlackboard.GetWander()) {
+			if (GetIsGrounded()) {
+				Physics()->SetAngularVelocity(Vector3{ 0,0,0 });
+				Physics()->SetLinearVelocity(Vector3{ 0,0,0 });
+				Physics()->SetAcceleration(Behaviours::Seek(GetWanderPosition(), Physics()->GetPosition(), Physics()->GetLinearVelocity(), GetIsGrounded(), 15, 25));
+				SetIsGrounded(false);
+			}
+			else {
+				Physics()->SetAcceleration({ 0, 0, 0 });
+			}
+		}
+
+		else if (minionBlackboard.GetFleeTarget()) {
+
+		}
+		else if (minionBlackboard.GetGoToClosestAlly()) {
+			//TODO change this so we have get closestEnemyPlayer and get closestAllyPlayer
+			if (GetIsGrounded()) {
+				Physics()->SetAngularVelocity(Vector3{ 0,0,0 });
+				Physics()->SetLinearVelocity(Vector3{ 0,0,0 });
+				Physics()->SetAcceleration(Behaviours::Pursue(GetClosestPlayer()->Physics(), Physics(), GetIsGrounded(), 15, 25));
+				SetIsGrounded(false);
+			}
+			else {
+				Physics()->SetAcceleration({ 0, 0, 0 });
+			}
+		}
+		else if (minionBlackboard.GetGoToNearestEnemy()) {
+			if (GetIsGrounded()) {
+				Physics()->SetAngularVelocity(Vector3{ 0,0,0 });
+				Physics()->SetLinearVelocity(Vector3{ 0,0,0 });
+				Physics()->SetAcceleration(Behaviours::Pursue(GetClosestPlayer()->Physics(), Physics(), GetIsGrounded(), 15, 25));
+				SetIsGrounded(false);
+			}
+			else {
+				Physics()->SetAcceleration({ 0, 0, 0 });
+			}
 		}
 		////////////////////////////////
 		//TODO implement AI
