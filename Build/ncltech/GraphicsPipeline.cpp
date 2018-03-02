@@ -107,12 +107,7 @@ GraphicsPipeline::~GraphicsPipeline()
 
 	playerRenderNodes.clear();
 	pathRenderNodes.clear();
-
-	if(lastPath)
-	{
-		delete[] lastPath;
-	}
-
+	
 	for (auto itr = pathSmoother.begin(); itr != pathSmoother.end(); ++itr)
 	{
 		delete *itr;
@@ -394,15 +389,38 @@ void GraphicsPipeline::RenderScene()
 		NCLDebug::_RenderDebugClipSpace();
 	}
 	NCLDebug::_ClearDebugLists();
-
-
+	
 	//RenderUI
 	RenderUI();
 
 	OGLRenderer::SwapBuffers();
 }
 
+void GraphicsPipeline::ResetPath()
+{
+	pathRenderNodes.clear();
+	for (int i = 0; i < playerRenderNodes.size(); ++i)
+	{
+		RecursiveAddToPathRenderLists(playerRenderNodes[i]);
 
+		if (playerRenderNodes[i]->GetName() == "RED_PLAYER")
+		{
+			lastPath[0] = playerRenderNodes[i]->GetParent()->GetTransform().GetPositionVector();
+		}
+		else if (playerRenderNodes[i]->GetName() == "GREEN_PLAYER")
+		{
+			lastPath[1] = playerRenderNodes[i]->GetParent()->GetTransform().GetPositionVector();
+		}
+		else if (playerRenderNodes[i]->GetName() == "BLUE_PLAYER")
+		{
+			lastPath[2] = playerRenderNodes[i]->GetParent()->GetTransform().GetPositionVector();
+		}
+		else if (playerRenderNodes[i]->GetName() == "PINK_PLAYER")
+		{
+			lastPath[3] = playerRenderNodes[i]->GetParent()->GetTransform().GetPositionVector();
+		}
+	}
+}
 
 void GraphicsPipeline::Resize(int x, int y)
 {
@@ -645,17 +663,79 @@ void GraphicsPipeline::RenderUI()
 	GUIsystem::Instance()->Draw();
 }
 
+
+void GraphicsPipeline::SetPath(RenderNode* playerRenderNode, uint playerNumber)
+{
+	auto pathNode = std::find(pathRenderNodes.begin(), pathRenderNodes.end(), playerRenderNode);
+	if (pathNode != pathRenderNodes.end())
+	{
+		Vector3 scale((*pathNode)->GetBoundingRadius(), 1.0f, (lastPath[playerNumber] - (*pathNode)->GetWorldTransform().GetPositionVector()).Length() / 2.0f);
+
+		Vector3 a = Vector3(lastPath[playerNumber].x, 0, lastPath[playerNumber].z);
+		Vector3 temp = (*pathNode)->GetParent()->GetWorldTransform().GetPositionVector();
+
+		Vector3 ab = Vector3(temp.x, 0, temp.z) - a;
+
+		float yaw = 90 + (float)RadToDeg(acos(Vector3::Dot(ab, { 1.0f, 0.0f, 0.0f }) / (ab.Length())));
+
+		if (ab.x > 0 && ab.z > 0)
+		{
+			yaw = 360 - yaw;
+		}
+		else if (ab.x > 0 && ab.z <= 0)
+		{
+			yaw = yaw;
+		}
+		else if (ab.x <= 0 && ab.z <= 0)
+		{
+			yaw = 180 + yaw;
+		}
+		else if (ab.x <= 0 && ab.z > 0)
+		{
+			yaw = 180 - yaw;
+		}
+
+		
+
+		Matrix4 tempMatrix;
+		tempMatrix.ToIdentity();
+		tempMatrix.SetPositionVector(lastPath[playerNumber] + (((*pathNode)->GetParent()->GetWorldTransform().GetPositionVector() - lastPath[playerNumber]) / 2));
+		tempMatrix = tempMatrix * Matrix4::Rotation(yaw, { 0,1,0 });
+
+		pathSmoother[playerNumber]->SetTransform(tempMatrix);
+
+		tempMatrix.ToIdentity();
+		tempMatrix.SetScalingVector(scale);
+		tempMatrix = tempMatrix;
+		pathSmoother[playerNumber]->GetChild()->SetTransform(tempMatrix);
+
+		pathSmoother[playerNumber]->Update(0);
+
+		pathSmoother[playerNumber]->SetChildBaseColor(playerRenderNode->GetBaseColor());
+		playerRenderNodes.push_back(pathSmoother[playerNumber]);
+		
+		lastPath[playerNumber] = playerRenderNode->GetParent()->GetWorldTransform().GetPositionVector();
+	}
+}
+
+void GraphicsPipeline::SetupPathSmoother()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		Mesh* mesh = new Mesh();
+		*mesh = *CommonMeshes::Cube();
+		RenderNode* tempNode = new RenderNode(NULL, "PathSmoother", Vector4(0.5f, 0.5f, 0.5f, 0.5f));
+		RenderNode* dummy = new PlayerRenderNode(mesh, "PathSmoother", Vector4(0.5f, 0.5f, 0.5f, 0.5f));
+		tempNode->AddChild(dummy);
+		pathSmoother.push_back(tempNode);
+	}
+}
+
 void GraphicsPipeline::RenderPath()
 {
 	if (!pathSmoother.size())
 	{
-		for (int i = 0; i < 4; ++i)
-		{
-			Mesh* mesh = new Mesh();
-			*mesh = *CommonMeshes::Cube();
-			RenderNode* tempNode = new RenderNode(mesh, "PathSmoother", Vector4(0.5f, 0.5f, 0.5f, 0.5f));
-			pathSmoother.push_back(tempNode);
-		}
+		SetupPathSmoother();
 	}
 
 	pathRenderNodes.clear();
@@ -663,25 +743,34 @@ void GraphicsPipeline::RenderPath()
 	{
 		RecursiveAddToPathRenderLists(playerRenderNodes[i]);
 
-		if(!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
-		{
 			if (playerRenderNodes[i]->GetName() == "RED_PLAYER")
 			{
-				scaleToUse[0] = pathRenderNodes[i]->GetWorldTransform().GetScalingVector();
+				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+				{ 
+					SetPath(playerRenderNodes[i], 0);
+				}				
 			}
 			else if (playerRenderNodes[i]->GetName() == "GREEN_PLAYER")
 			{
-				scaleToUse[1] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+				{
+					SetPath(playerRenderNodes[i], 1);
+				}
 			}
 			else if (playerRenderNodes[i]->GetName() == "BLUE_PLAYER")
 			{
-				scaleToUse[2] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+				{
+					SetPath(playerRenderNodes[i], 2);
+				}
 			}
 			else if (playerRenderNodes[i]->GetName() == "PINK_PLAYER")
 			{
-				scaleToUse[3] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
+				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+				{
+					SetPath(playerRenderNodes[i], 3);
+				}
 			}
-		}
 	}
 
 	
@@ -700,22 +789,6 @@ void GraphicsPipeline::RenderPath()
 	for (int i = 0; i < pathRenderNodes.size(); ++i)
 	{
 		pathRenderNodes[i]->DrawOpenGL(true, materials[MATERIALTYPE::Draw_Path]);
-		if (pathRenderNodes[i]->GetName() == "RED_PLAYER")
-		{
-			lastPath[0] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
-		}
-		else if (pathRenderNodes[i]->GetName() == "GREEN_PLAYER")
-		{
-			lastPath[1] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
-		}
-		else if (pathRenderNodes[i]->GetName() == "BLUE_PLAYER")
-		{
-			lastPath[2] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
-		}
-		else if(pathRenderNodes[i]->GetName() == "PINK_PLAYER")
-		{
-			lastPath[3] = pathRenderNodes[i]->GetWorldTransform().GetPositionVector();
-		}
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	projViewMatrix = temp;

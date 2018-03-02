@@ -317,7 +317,7 @@ Quaternion Quaternion::GetRotation(const Vector3& from_dir, const Vector3& to_di
 	return Quaternion::AxisAngleToQuaterion(rotAxis, (float)RadToDeg(theta));
 }
 
-void GetAngles(const Quaternion& q, double& roll, double& pitch, double& yaw)
+void Quaternion::GetAngles(const Quaternion& q, float& roll, float& pitch, float& yaw)
 {
 	// roll (x-axis rotation)
 	float sinr = 2.0 * (q.w * q.x + q.y * q.z);
@@ -325,14 +325,39 @@ void GetAngles(const Quaternion& q, double& roll, double& pitch, double& yaw)
 	roll = atan2(sinr, cosr);
 
 	// pitch (y-axis rotation)
-	double sinp = +2.0 * (q.w * q.y - q.z * q.x);
+	double sinp = 2.0 * (q.w * q.y - q.z * q.x);
 	if (fabs(sinp) >= 1)
 		pitch = copysign(PI / 2, sinp); // use 90 degrees if out of range
 	else
 		pitch = asin(sinp);
 
 	// yaw (z-axis rotation)
-	double siny = +2.0 * (q.w * q.z + q.x * q.y);
-	double cosy = +1.0 - 2.0 * (q.y * q.y + q.z * q.z);
+	double siny = 2.0 * (q.w * q.z + q.x * q.y);
+	double cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z);
 	yaw = atan2(siny, cosy);
+}
+
+float Quaternion::GetYaw(const Quaternion& q)
+{
+	// yaw (z-axis rotation)
+	float siny = 2.0 * (q.w * q.z + q.x * q.y);
+	float cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z);
+	return atan2(siny, cosy);
+}
+
+float Quaternion::GetPitch(const Quaternion& q)
+{
+	// pitch (y-axis rotation)
+	float sinp = 2.0 * (q.w * q.y - q.z * q.x);
+	if (fabs(sinp) >= 1)
+		return copysign(PI / 2, sinp); // use 90 degrees if out of range
+	else
+		return asin(sinp);
+}
+
+float Quaternion::GetRoll(const Quaternion& q)
+{
+	float sinr = 2.0 * (q.w * q.x + q.y * q.z);
+	float cosr = 1.0 - 2.0 * (q.x * q.x + q.y * q.y);
+	return atan2(sinr, cosr);
 }

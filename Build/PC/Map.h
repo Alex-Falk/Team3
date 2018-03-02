@@ -41,7 +41,7 @@ public:
 	// Initialization
 	//--------------------------------------------------------------------------------------------//
 	Map(const std::string& friendly_name) : Scene(friendly_name) {}
-	~Map() {
+	virtual ~Map() {
 		TextureManager::Instance()->RemoveAllTexture();
 	};
 

@@ -335,14 +335,14 @@ void Avatar::Spray()
 
 void Avatar::ShootRocket()
 {
-	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-
-	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	
 	if (canJump && pitch < 0) {
-		pitch = 0;
+		pitch = 0.0f;
 	}
 
-	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 30;
+	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30.0f;
 	ShootRocket(Physics()->GetPosition(), direction);
 	//Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
 	//projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0));
@@ -355,13 +355,12 @@ void Avatar::ShootRocket()
 
 void Avatar::ShootProjectile()
 {
-	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-	
-	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 	if (canJump && pitch < 0) {
 		pitch = 0;
 	}
-	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1, 0, 0)) * Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * 50;
+	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50.0f;
 	ShootProjectile(Physics()->GetPosition(), direction);
 
 	// Send over network

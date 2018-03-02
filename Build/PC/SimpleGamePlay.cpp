@@ -41,7 +41,7 @@ void SimpleGamePlay::AddObjects()
 
 	this->AddGameObject(ground);
 
-	pickup[0] = new PaintPool(Vector3(0, 0.6f, 0), RED);
+	pickup[0] = new PaintPool(Vector3(0, 0.6f, 0), GREEN);
 
 	this->AddGameObject(pickup[0]);
 
