@@ -155,6 +155,7 @@ void Server::UpdateUser(float dt)
 						enet_peer_timeout(evnt.peer, 800000, 800000, 800000);
 						evnt.peer->pingInterval = 100;
 						freeIDs.pop_back();
+						SendPlayerNames();
 					}
 					else
 					{
@@ -191,7 +192,8 @@ void Server::UpdateUser(float dt)
 				case PLAYER_NAME:
 				{
 					PlayerName pName = ReceiveUserName(data);
-					SetPlayerName(pName.ID, pName.n);
+					Game::Instance()->SetPlayerName(pName.ID, pName.n);
+					SendPlayerNames();
 					break;
 				}
 				case PLAYER_WEAPON:
@@ -224,10 +226,6 @@ void Server::UpdateUser(float dt)
 				GraphicsPipeline::Instance()->RemovePlayerRenderNode((Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1))->Render()->GetChild());
 				SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
 				Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
-
-				//Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
-				//SendNumberUsers(1 + server->m_pNetwork->connectedPeers);
-
 				break;
 			}
 			}
@@ -355,6 +353,20 @@ void Server::SendConnectionID(uint ID)
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(&server->m_pNetwork->peers[ID-1], 0, packet);
 
+}
+
+void Server::SendPlayerNames()
+{
+	string data;
+
+	data = to_string(PLAYER_NAME) + ":" +
+		Game::Instance()->GetName(0) + " " +
+		Game::Instance()->GetName(1) + " " +
+		Game::Instance()->GetName(2) + " " +
+		Game::Instance()->GetName(3);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
 void Server::SendGameStart(uint mapID)

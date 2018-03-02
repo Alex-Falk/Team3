@@ -99,8 +99,6 @@ void User::ReceiveWeapon(string data) {
 
 }
 
-
-
 string User::GetPacketData(const ENetEvent & evnt)
 {
 	std::string out;
@@ -130,16 +128,13 @@ PlayerFloat User::ReceiveSizes(string data)
 
 PlayerName  User::ReceiveUserName(string data) {
 	
-	uint playerID;
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
 
-	for (uint i = 0; i < 4;i++) {
-		if (userName[i] == " ") { 
-			playerID = i;
-			break;
-		}
-	}
+	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
 	PlayerName pname;
-	pname.n = (data);
+	pname.n = (data.substr(semicolonIdx + 1));
 	pname.ID = playerID;
 
 	return pname;

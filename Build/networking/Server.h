@@ -91,7 +91,7 @@ public:
 
 	void SendScores();
 	void SendMap();
-	//void SendUpdatemap();
+	void SendPlayerNames();
 
 	//--------------------------------------------------------------------------------------------//
 	// Receiving
