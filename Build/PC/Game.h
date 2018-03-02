@@ -22,9 +22,8 @@
 #include "GamePlay.h"
 #include <networking\Client.h>
 #include <networking\Server.h>
-#include "ControllableAvatar.h"
-#include "Score.h"
-
+#include "Pickup.h"
+#include "CaptureArea.h"
 
 class Game: public TSingleton<Game>
 {
@@ -82,6 +81,11 @@ public:
 
 	void Update(float dt);
 	void ResetGame();
+
+	void ClaimPickup(Avatar * player, Pickup * pickup);
+	//bool ClaimArea(Avatar * player, CaptureArea *object);
+
+
 private:
 	//private constructor
 	Game() 

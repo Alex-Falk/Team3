@@ -20,7 +20,7 @@ class User
 {
 protected: 
 	uint userID = 0;
-	string Username[4] = { "Player1","Player2","Player3","Player4" }; //The client's name.
+	string userName[4] = { " "," "," "," " }; //The client's name.
 	string ip;
 	int mapID = 0;
 	bool destroy = false;
@@ -59,13 +59,13 @@ public:
 	inline uint GetUserID() { return userID; }
 	inline string GetIP() { return ip; }
 
-	inline string GetPlayerName(uint ID) { return Username[ID]; }
-	inline void SetPlayerName(uint ID,string name) { Username[ID] = name; }
+	inline string GetPlayerName(uint ID) { return userName[ID]; }
+	inline void SetPlayerName(uint ID,string name) { userName[ID] = name; }
 
 	inline void SetIP(string _ip) { ip = _ip; }
 
 	virtual void UpdateUser(float dt) = 0;
-	virtual void Disconnect() = 0;
+	virtual void Disconnect() {};
 
 	virtual void StartGame(uint mapID = 0);
 

@@ -86,11 +86,12 @@ protected:
 	float weaponTimer;				// Weapon timer
 	bool shooting;
 
-	Vector3 dirRotation;	//The rotation based on camera
-	float moveTimer;		//Timer used for spining balance
-	float rollSpeed;		//A variable that increases over time. adds to spin
-	Movement curMove;		//The current movement direction
-	Movement previousMove;	//The previous movement direction
+	Vector3 dirRotation;		//The rotation based on camera
+	float moveTimer;			//Timer used for spining balance
+	float standarSpinSpeed;		//Based on size spin speed.
+	float rollSpeed;			//A variable that increases over time. adds to spin
+	Movement curMove;			//The current movement direction
+	Movement previousMove;		//The previous movement direction
 
 	Vector3 lastPos;		//used to determine distance travelled each frame for life
 
@@ -144,6 +145,7 @@ public:
 	float GetLife() { return life; }
 	void SetLife(float l) { life = l; }
 
+	virtual void PickUpBuffActivated();
 	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is picked up			Nikos 13.20
 	void UpdatePickUp(float dt);			// Update Pick Ups based on time
 
@@ -155,7 +157,7 @@ public:
 	
 	inline bool GetWeaponActive() { return weaponActive; }
 	//Example of member callback ('this' parameter is bound at bind time)
-	bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
+	virtual bool PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
 	virtual ~Avatar();
 

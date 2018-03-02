@@ -27,7 +27,7 @@ WeaponPickup::WeaponPickup() : Pickup()
 {
 }
 
-WeaponPickup::WeaponPickup(Vector3 pos, WeaponType type, float respawnTime) : Pickup(pos, WEAPON, respawnTime)
+WeaponPickup::WeaponPickup(Vector3 pos, WeaponType type, string unique_name, float respawnTime) : Pickup(pos, WEAPON, unique_name, respawnTime)
 {
 	friendlyName = "WeaponPickup";
 	Physics()->SetName("WeaponPickup");

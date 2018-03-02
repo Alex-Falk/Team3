@@ -31,9 +31,15 @@ void Game::ResetGame()
 		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(avatars[i]);
 		avatars[i] = nullptr;
 	}
+	user->Disconnect();
 	delete user;
 	user = nullptr;
 	enet_deinitialize();
 	gameRunning = false;
 	gameTime = 0;
+}
+
+void Game::ClaimPickup(Avatar * player, Pickup * pickup)
+{
+	((Client*)user)->RequestPickup(getUserID(), pickup->GetName());
 }

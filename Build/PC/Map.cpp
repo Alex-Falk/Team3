@@ -28,12 +28,11 @@ void Map::onConnectToScene()
 
 void Map::OnInitializeScene() {
 
-	GraphicsPipeline::Instance()->SetIsMainMenu(true);
-	GraphicsPipeline::Instance()->InitPath(Vector2((float)xDimension, (float)yDimension));
+	GraphicsPipeline::Instance()->SetIsMainMenu(false);
+	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
+	
 
 	OnInitializeGUI();
-
-	InitializeScores();
 
 	SetSpawnLocations();
 
@@ -55,22 +54,55 @@ void Map::OnInitializeGUI()
 			"lifeBar"
 		));
 
-	if (Game::Instance()->GetUser())
-	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			lifeBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
-	}
-}
-
-void Map::InitializeScores() 
-{
 	//if (Game::Instance()->GetUser())
 	//{
-	//	if (Game::Instance()->getUserID() == 0)
-	//	{
-	//		score = new Score(xDimension, yDimension, groundScoreAccuracy);
-	//	}
+	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
 	//}
+
+}
+
+void Map::BuildGround(Vector2 dimensions) {
+	GameObject* ground = CommonUtils::BuildCuboidObject(
+		"Ground",
+		Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
+		Vector3(dimensions.x, 1.0f, dimensions.y),		// Scale
+		true,
+		0.0f,
+		true,
+		false,								// Dragable By User
+		BIG_NODE,
+		Vector4(0.6f, 0.6f, 0.6f, 1.0f),
+		MATERIALTYPE::Ground);	// Colour
+	this->AddGameObject(ground);
+
+	GameObject* upWall = CommonUtils::InvisibleWall(
+		"UpWall",
+		Vector3(-1.0f, 100, -1.0f),
+		Vector3(dimensions.x+2, 2.0f, dimensions.y+2));
+	this->AddGameObject(upWall);
+
+	GameObject* eastWall = CommonUtils::InvisibleWall(
+		"EastWall",
+		Vector3(0.0f, 50, dimensions.y + 1),
+		Vector3(dimensions.x, 50.f, 1));
+	this->AddGameObject(eastWall);
+	GameObject* westWall = CommonUtils::InvisibleWall(
+		"WestWall",
+		Vector3(0.0f, 50, -dimensions.x - 1),
+		Vector3(dimensions.x, 50.f, 1));
+	this->AddGameObject(westWall);
+
+	GameObject* northWall = CommonUtils::InvisibleWall(
+		"NorthWall",
+		Vector3(dimensions.x + 1, 50, 0.0f),
+		Vector3(1, 50.f, dimensions.y));
+	this->AddGameObject(northWall);
+	GameObject* southWall = CommonUtils::InvisibleWall(
+		"SouthWall",
+		Vector3(-dimensions.x - 1, 50, 0.0f),
+		Vector3(1, 50.f, dimensions.y));
+	this->AddGameObject(southWall);
 }
 
 void Map::LoadTextures()
@@ -106,7 +138,6 @@ void Map::SetSpawnLocations()
 
 void Map::OnCleanupScene()
 {
-	//SAFE_DELETE(score);
 	//SAFE_DELETE(energyBar);
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();
@@ -115,12 +146,11 @@ void Map::OnCleanupScene()
 
 
 //--------------------------------------------------------------------------------------------//
-// Updating Avatars and Scores
+// Updating Avatars
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {
 	if(Game::Instance()->getUserID() == 0)
-	//	score->UpdateScores();
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;

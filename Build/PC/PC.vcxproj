@@ -174,7 +174,6 @@
     <ClInclude Include="MinionCamp.h" />
     <ClInclude Include="PostProcess.h" />
     <ClInclude Include="Projectile.h" />
-    <ClInclude Include="Score.h" />
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
@@ -212,7 +211,6 @@
     <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="Projectile.cpp" />
-    <ClCompile Include="Score.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />
     <ClCompile Include="MinionStateEscapeRocket.cpp" />
     <ClCompile Include="MinionStateHealFriendlyPlayer.cpp" />

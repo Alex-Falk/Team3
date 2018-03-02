@@ -304,3 +304,35 @@ GameObject* CommonUtils::BuildPlaneObject(
 	return obj;
 }
 
+GameObject* CommonUtils::InvisibleWall(
+	const std::string& name,
+	const Vector3& pos,
+	const Vector3& halfdims)
+{
+	PhysicsNode* pnode = NULL;
+
+	pnode = new PhysicsNode();
+	pnode->SetPosition(pos);
+	pnode->SetInverseMass(0);
+	pnode->SetType(INVISIBLE_WALL);
+
+	float x = halfdims.x*2.0f;
+	float y = halfdims.y*2.0f;
+	float z = halfdims.z*2.0f;
+	float a;
+	if (x >= y && x >= z) { a = x; }
+	else if (y > x && y >= z) { a = y; }
+	else { a = z; }
+
+	pnode->SetBoundingRadius(a * sqrt(3.0f) / 2.0f);
+
+
+	CollisionShape* pColshape = new CuboidCollisionShape(halfdims);
+	pnode->SetCollisionShape(pColshape);
+	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0));
+
+	RenderNode* rnode = new RenderNode();
+	GameObject* obj = new GameObject(name, rnode, pnode);
+
+	return obj;
+}

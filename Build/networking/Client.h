@@ -61,7 +61,10 @@ public:
 
 	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir);
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
+	void SendSize(uint ID);
 	void SendUsername();
+
+	void RequestPickup(uint ID, string uniqueName);
 
 	//--------------------------------------------------------------------------------------------//
 	// Recieving
@@ -71,6 +74,7 @@ public:
 	void ReceiveScores(string data);
 	void ReceiveMapIndex(string data);
 	void ReceiveMapChange(string data);
+	void ReceiveRequestResponse(string data);
 
 protected:
 	NetworkBase network;

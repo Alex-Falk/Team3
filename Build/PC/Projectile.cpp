@@ -2,7 +2,6 @@
 
 #include "Projectile.h"
 #include "Avatar.h"
-#include "Score.h"
 #include "Explosion.h"
 
 Projectile::Projectile() : GameObject() {
@@ -183,6 +182,12 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
 		if (projectileWorth >= 5 && !exploded) Explode();
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		destroy = true;
+		return false;
+	}
+
+	if (collidingObject->GetType() == INVISIBLE_WALL) {
+		if (projectileWorth >= 5 && !exploded) Explode();
 		destroy = true;
 		return false;
 	}

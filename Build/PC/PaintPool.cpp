@@ -31,11 +31,8 @@ PaintPool::PaintPool() : Pickup()
 {
 }
 
-PaintPool::PaintPool(Vector3 pos, Colour colour, float respawnTime) : Pickup(pos, PAINTPOOL, respawnTime)
+PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respawnTime) : Pickup(pos, PAINTPOOL, unique_name, respawnTime)
 {
-	friendlyName = "PaintPool";
-	Physics()->SetName("PaintPool");
-
 	ChangeColour(colour);
 	ChangeSize({3, 0.5, 3});
 	
