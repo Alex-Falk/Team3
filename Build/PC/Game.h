@@ -71,6 +71,8 @@ public:
 
 	inline User * GetUser()					{ return user; }
 
+	inline string GetName(uint id)			{ return userNames[id]; }
+
 	inline float GetScore(uint id)			{ return teamScores[id]; }
 	inline float GetTime()					{ return gameTime; }
 
