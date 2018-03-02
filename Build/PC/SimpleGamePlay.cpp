@@ -2,6 +2,7 @@
 #include "SimpleGamePlay.h"
 #include "PaintPool.h"
 #include "Game.h"
+#include "MultiPaintPool.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
@@ -29,7 +30,7 @@ void SimpleGamePlay::AddObjects()
 
 	BuildGround(dimensions);
 
-	pickup[0] = new PaintPool(Vector3(0, 0.6f, 0), RED,"0");
+	pickup[0] = new PaintPool(Vector3(0, 0.6f, 0), START_COLOUR, "0");
 	this->AddGameObject(pickup[0]);
 
 	pickup[1] = new WeaponPickup(Vector3(20, 1.5, 20), PAINT_SPRAY, "1", 5.0f);
@@ -49,17 +50,14 @@ void SimpleGamePlay::AddObjects()
 	this->AddGameObject(pickup[4]);
 
 	//add capture area
-	capture[0] = new CaptureArea(Vector3(15, 0.6, -15), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
+	capture[0] = new MultiPaintPool(Vector3(15, 0.6, -15), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
 	this->AddGameObject(capture[0]);
+	//Add paint pool to capture area
+	static_cast<MultiPaintPool*>(capture[0])->AddPool(static_cast<PaintPool*>(pickup[0]));
 
 	//add multi capture pool
-	pickup[5] = new MultiPaintPool(Vector3(-40.0f, 0.25f, 40.0f),"MultiPaintPool");
-	for (int i = 0;i < 3;i++) {
-		capture[0 + i] = new CaptureArea(Vector3(-46.0f+ (6*i), 0.25f, 40.0f + (6 * i)), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
-		this->AddGameObject(capture[0 + i]);
-		((MultiPaintPool*)(pickup[5]))->AddCaptAreaToPool(capture[0 + i]);
-	}
-	this->AddGameObject(pickup[5]);
+	
+
 }
 
 //--------------------------------------------------------------------------------------------//
@@ -79,7 +77,6 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	//if (mc) {
 	//	mc->Update(dt);
 	//}
-	((MultiPaintPool*)(pickup[5]))->UpdateMultiColourToPool();
 }
 
 //--------------------------------------------------------------------------------------------//

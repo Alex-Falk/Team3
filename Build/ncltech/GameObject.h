@@ -68,6 +68,8 @@ public:
 
 	//<------- Object Parameters ------>
 	inline const std::string& GetName()		{ return friendlyName; }
+	inline void SetName(std::string s) { friendlyName = s; }
+
 	inline const Scene* GetScene() const	{ return scene; }
 	inline		 Scene* GetScene()			{ return scene; }
 
