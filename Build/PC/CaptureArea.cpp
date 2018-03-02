@@ -179,6 +179,8 @@ bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* co
 //TODO allow player, minion, projectile to defend their own capture point instead of no interaction
 bool CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) {
 	if (Game::Instance()->GetPlayer(index)) {
+		//Can use this for above to do
+		//if (Game::Instance()->GetPlayer(index)->GetColour() != ((Avatar*)p->GetParent())->GetColour()) {
 		if (this->GetColour() == ((Avatar*)p->GetParent())->GetColour()) {
 			return false;
 		}
