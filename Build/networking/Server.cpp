@@ -191,7 +191,7 @@ void Server::UpdateUser(float dt)
 				case PLAYER_NAME:
 				{
 					PlayerName pName = ReceiveUserName(data);
-					SetPlayerName(pName.ID, pName.n);
+					Game::Instance()->SetPlayerName(pName.ID, pName.n);
 					break;
 				}
 				case PLAYER_WEAPON:
@@ -224,10 +224,6 @@ void Server::UpdateUser(float dt)
 				GraphicsPipeline::Instance()->RemovePlayerRenderNode((Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1))->Render()->GetChild());
 				SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
 				Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
-
-				//Game::Instance()->SetPlayerNumber(1 + server->m_pNetwork->connectedPeers);
-				//SendNumberUsers(1 + server->m_pNetwork->connectedPeers);
-
 				break;
 			}
 			}

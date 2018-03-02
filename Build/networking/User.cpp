@@ -99,8 +99,6 @@ void User::ReceiveWeapon(string data) {
 
 }
 
-
-
 string User::GetPacketData(const ENetEvent & evnt)
 {
 	std::string out;
@@ -132,12 +130,6 @@ PlayerName  User::ReceiveUserName(string data) {
 	
 	uint playerID;
 
-	for (uint i = 0; i < 4;i++) {
-		if (userName[i] == " ") { 
-			playerID = i;
-			break;
-		}
-	}
 	PlayerName pname;
 	pname.n = (data);
 	pname.ID = playerID;
