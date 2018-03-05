@@ -183,6 +183,9 @@
     <ClInclude Include="PostProcess.h">
       <Filter>GUI/Post process</Filter>
     </ClInclude>
+    <ClInclude Include="MinionBase.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -280,6 +283,9 @@
     </ClCompile>
     <ClCompile Include="PostProcess.cpp">
       <Filter>GUI/Post process</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionBase.cpp">
+      <Filter>Gameplay\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

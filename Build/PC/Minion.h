@@ -1,32 +1,17 @@
 //Michael Davis 16/02/2018
 #pragma once
 
-#include "GamePlay.h"
-#include "../ncltech/GameObject.h"
-#include "../ncltech/SphereCollisionShape.h"
-#include "CaptureArea.h" 
-#include "Avatar.h"
-#include "../ncltech/SceneManager.h"
+#include "MinionBase.h"
 #include "MinionBlackboard.h"
 #include "State.h"
 
 
-class Minion : public GameObject {
+class Minion : public MinionBase {
 protected:
-	Colour colour;
-	Vector4 RGBA;
-	
-	float life;
-	float minLife;
-	float maxLife;
-	float size;
+
 
 	MinionBlackboard minionBlackboard;
 	
-	Vector3 lastPos;
-
-	bool isGrounded;
-	bool dead; 
 	float detectionRadiusSQ;
 	float pursueRadiusSQ;
 	float allyHealPursueLimit;  //Life level of ally where the minion will not pursue them
@@ -50,35 +35,18 @@ public:
 	Minion();
 	Minion(Colour c, Vector4 RGBA, Vector3 position, const string name = "");
 	
-	void SetColour(Colour c) { colour = c;	}
-	Colour GetColour() { return colour; }
-
-	float GetMinLife() { return minLife; }
-
-	void SetRGBA(Vector4 r) { RGBA = r; }
-	Vector4 GetRGBA() { return RGBA; }
-
-	void SetDead(bool b) { dead = b; }
-
-	void SetIsGrounded(bool b) { isGrounded = b; }
-	bool GetIsGrounded() { return isGrounded; }
 
 	MinionBlackboard* GetMinionBlackBoard() { return &minionBlackboard; }
-
-	void ChangeLife(float l);
-	float GetLife() { return life; }
 
 	void ChangeState(State<Minion>* newState);
 	void RevertState();
 
 	string GetCurrentState() { return currentState->GetState(); }
 
-	void ChangeSize(float newSize);
+	virtual void Update(float dt);
 
-	void Update(float dt);
 	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
-	bool IsAlive() { return !dead; }
-	
+
 	Avatar * GetClosestEnemyPlayer() { return closestEnemyPlayer; }
 	Avatar * GetClosestFriendlyPlayer() { return closestFriendlyPlayer; }
 	CaptureArea * GetClosestCaptureArea() { return closestCaptureArea; }

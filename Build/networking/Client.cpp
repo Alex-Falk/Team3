@@ -177,6 +177,11 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveScores(data);
 			break;
 		}
+		case PLAYER_WEAPON:
+		{
+			ReceiveWeapon(data);
+			break;
+		}
 		case MAP_INDEX:
 		{
 			ReceiveMapIndex(data);
@@ -192,9 +197,9 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveRequestResponse(data,PAINTABLE_OBJECT);
 			break;
 		}
-		case PLAYER_WEAPON:
+		case MINION_SPAWN:
 		{
-			ReceiveWeapon(data);
+			ReceiveMinionSpawn(data);
 			break;
 		}
 		case GAME_END:
@@ -292,14 +297,26 @@ void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
 	{
 		m->GetCaptureArea(objectID)->SetColour(Colour(playerID));
 	}
-	
-	
+}
 
-	
+// PACKET_TYPE:SPAWNER_ID;POSX POSY POSZ,SIZE
+void Client::ReceiveMinionSpawn(string data)
+{
+	Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
 
+	uint colonIdx = (uint)(data.find_first_of(':'));
+	uint semicolonIdx = (uint)(data.find_first_of(';'));
+	uint commaIdx = (uint)(data.find_first_of(','));
 
+	uint objectID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+}
+
+// PACKET_TYPE:posx posy posz, linvx linvy linvz, angvx angvy angvz, accx accy accz
+void Client::ReceiveMinionSpawn(string data)
+{
 
 }
+
 
 //--------------------------------------------------------------------------------------------//
 // Sending

@@ -5,58 +5,20 @@
 #include "Map.h"
 #include "Behaviours.h"
 
-Minion::Minion() : GameObject() {
-	colour = START_COLOUR;
-	RGBA = DEFAULT_COLOUR;
-	life = 50;
-	size = 0.3f;
+Minion::Minion() : MinionBase() {
+
 }
 
-Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : GameObject(name) {
-	size = 0.3f;
-	RenderNode * rnode = new RenderNode();
-	PhysicsNode * pnode = new PhysicsNode();
+Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : MinionBase(c, RGBA, position, name) {
 
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), "Minion", RGBA);
-	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
-	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
-	rnode->AddChild(dummy);
 
-	rnode->GetChild()->SetBaseColor(RGBA);
-	rnode->SetTransform(Matrix4::Translation(position));
-
-	pnode->SetBoundingRadius(size);
-	rnode->SetBoundingRadius(size);
-
-	pnode->SetPosition(position);
-	lastPos = position;
-	pnode->SetType(MINION);
-	pnode->SetInverseMass(2.0f);
-
-	CollisionShape* pColshape = new SphereCollisionShape(size);
-	pnode->SetCollisionShape(pColshape);
-	pnode->SetInverseInertia(pColshape->BuildInverseInertia(2.0f));
-
-	pnode->SetOnCollisionCallback(
+	Physics()->SetOnCollisionCallback(
 		std::bind(&Minion::MinionCallbackFunction,
 			this,							//Any non-placeholder param will be passed into the function each time it is called
 			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
 			std::placeholders::_2
 		)
 	);
-
-	renderNode = rnode;
-	physicsNode = pnode;
-
-	RegisterPhysicsToRenderTransformCallback();
-	SetPhysics(physicsNode);
-	physicsNode->SetName(name);
-
-	dead = false;
-	
-	minLife = 10;
-	maxLife = 50;
-	life = maxLife;
 
 	detectionRadiusSQ = 15.0f * 15.0f;
 	pursueRadiusSQ = 17.5f * 17.5f;
@@ -65,17 +27,7 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 	behaviourWeight = 12;
 	behaviourXZMagnitude = 20;
 
-	colour = c;
-	this->RGBA = RGBA;
-
-
-	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
-	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-
-	isGrounded = false;
 	ChangeState(MinionStateWander::GetInstance());
-	physicsNode->SetFriction(0.0f);
-	physicsNode->SetElasticity(1.0f);
 
 	ComputeClosestEnemyPlayer();
 	ComputeClosestFriendlyPlayer();
@@ -208,17 +160,6 @@ void Minion::Update(float dt)
 	}
 }
 
-void Minion::ChangeLife(float l) {
-	life += l;
-	if (life < minLife) {
-		dead = true;
-		destroy = true;
-	}
-	if (life > maxLife) {
-		life = maxLife;
-	}
-}
-
 bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
 	if (collidingObject->GetType() == PLAYER) {
 		if (!dead) {
@@ -251,15 +192,6 @@ bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingO
 		return false;
 	}
 	return true;
-}
-
-void Minion::ChangeSize(float newSize) {
-	Render()->GetChild()->SetBoundingRadius(newSize);
-	Render()->SetBoundingRadius(newSize);
-	Physics()->SetBoundingRadius(newSize);
-	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
-
-	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
 }
 
 void Minion::ComputeNewWanderPosition() {

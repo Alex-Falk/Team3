@@ -77,6 +77,9 @@ public:
 	void ReceiveMapChange(string data);
 	void ReceiveRequestResponse(string data, PhysNodeType ptype);
 
+	void ReceiveMinionSpawn(string data);
+	void ReceiveMinionUpdate(string data);
+
 protected:
 	NetworkBase network;
 	ENetPeer* serverConnection;
