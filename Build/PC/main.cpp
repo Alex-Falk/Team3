@@ -100,11 +100,11 @@ void PrintStatusEntries()
 	if (!show_debug)
 		return;
 
-	//Print Engine Options
-	NCLDebug::AddStatusEntry(status_colour_header, "NCLTech Settings");
-	NCLDebug::AddStatusEntry(status_colour, "     Physics Engine: %s (Press P to toggle)", PhysicsEngine::Instance()->IsPaused() ? "Paused  " : "Enabled ");
-	NCLDebug::AddStatusEntry(status_colour, "     Monitor V-Sync: %s (Press V to toggle)", GraphicsPipeline::Instance()->GetVsyncEnabled() ? "Enabled " : "Disabled");
-	NCLDebug::AddStatusEntry(status_colour, "");
+	////Print Engine Options
+	//NCLDebug::AddStatusEntry(status_colour_header, "NCLTech Settings");
+	//NCLDebug::AddStatusEntry(status_colour, "     Physics Engine: %s (Press P to toggle)", PhysicsEngine::Instance()->IsPaused() ? "Paused  " : "Enabled ");
+	//NCLDebug::AddStatusEntry(status_colour, "     Monitor V-Sync: %s (Press V to toggle)", GraphicsPipeline::Instance()->GetVsyncEnabled() ? "Enabled " : "Disabled");
+	//NCLDebug::AddStatusEntry(status_colour, "");
 
 	////Print Current Scene Name
 	//NCLDebug::AddStatusEntry(status_colour_header, "[%d/%d]: %s",
@@ -120,21 +120,22 @@ void PrintStatusEntries()
 	NCLDebug::AddStatusEntry(status_colour, "     FPS: %5.2f  (Press 9 for %s info)", 1000.f / timer_total.GetAvg(), show_full_perf_metrics ? "less" : "more");
 	if (!show_full_perf_metrics) {
 		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
-		timer_update.PrintOutputToStatusEntry(status_colour,	"            Scene Update    :");
 		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
-		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    :");
-	//	timer_gameplay.PrintOutputToStatusEntry(status_colour,	"            Gameplay update :");
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Renderer Update :");
+		timer_update.PrintOutputToStatusEntry(status_colour,	"            Gameplay Update :");
+		Game::Instance()->PrintPerformanceTimers(status_colour);//           NetworkUpdate
 		timer_audio.PrintOutputToStatusEntry(status_colour,		"            Audio Update    :");
 	}
 	else 
 	{
 		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
-		timer_update.PrintOutputToStatusEntry(status_colour,	"            Scene Update    :");
 		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
 		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
 		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    :");
-	//	timer_gameplay.PrintOutputToStatusEntry(status_colour,	"            Gameplay update :");
-	//	Game::Instance()->PrintPerformanceTimers(status_colour);
+		GraphicsPipeline::Instance()->PrintPerformanceTimers(status_colour);
+		timer_update.PrintOutputToStatusEntry(status_colour,	"            Gameplay update :");
+		SceneManager::Instance()->GetCurrentScene()->PrintPerformanceTimers(status_colour);
+		Game::Instance()->PrintPerformanceTimers(status_colour);//           NetworkUpdate
 		timer_audio.PrintOutputToStatusEntry(status_colour,		"            Audio Update    :");
 	}
 
@@ -408,6 +409,7 @@ int main()
 		timer_update.UpdateRealElapsedTime(dt);
 		timer_render.UpdateRealElapsedTime(dt);
 		timer_audio.UpdateRealElapsedTime(dt);
+		timer_gameplay.UpdateRealElapsedTime(dt);
 
 		//Handle GUI mouseCursor
 		HandleGUIMouseCursor();
@@ -437,7 +439,11 @@ int main()
 		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
 		timer_update.EndTimingSection();
 
+
+
+		timer_gameplay.BeginTimingSection();
 		Game::Instance()->Update(dt);
+		timer_gameplay.EndTimingSection();
 
 		//Update Physics	
 		timer_physics.BeginTimingSection();

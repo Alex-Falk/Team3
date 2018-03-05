@@ -58,8 +58,9 @@ void SimpleGamePlay::AddObjects()
 //--------------------------------------------------------------------------------------------//
 void SimpleGamePlay::OnUpdateScene(float dt)
 {
+	perfMapObjects.UpdateRealElapsedTime(dt);
 	Map::OnUpdateScene(dt);
-
+	perfMapObjects.BeginTimingSection();
 	for (uint i = 0; i < npickup; ++i)
 	{
 		if (pickup[i])
@@ -70,6 +71,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 	//if (mc) {
 	//	mc->Update(dt);
 	//}
+	perfMapObjects.EndTimingSection();
 
 }
 

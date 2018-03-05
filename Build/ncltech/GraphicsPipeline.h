@@ -25,6 +25,7 @@
 #include <nclgl\Mouse.h>
 #include <PC\UserInterface.h>
 #include <PC\PostProcess.h>
+#include <nclgl\PerfTimer.h>
 
 //material
 #include <nclgl\Material.h>
@@ -201,6 +202,14 @@ public:
 	//Score
 	inline float GetScore(uint i) { return scores[i]; }
 
+	void PrintPerformanceTimers(const Vector4& color)
+	{
+		perfShadow.PrintOutputToStatusEntry(color,		"              Shadows        :");
+		perfObjects.PrintOutputToStatusEntry(color,		"              Objects        :");
+		perfPostProcess.PrintOutputToStatusEntry(color, "              PostProcess    :");
+		perfScoreandMap.PrintOutputToStatusEntry(color, "              Score & Map    :");
+	}
+
 protected:
 	GraphicsPipeline();
 	virtual ~GraphicsPipeline();
@@ -291,5 +300,13 @@ protected:
 	Vector2 VectorToMapCoord(Vector3 pos);
 	//GUI
 	bool isMainMenu = false;
+
+	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
+	// Performance Timers																				Date: 02/03/2018
+	//--------------------------------------------------------------------------------------------//	
+	PerfTimer perfShadow;
+	PerfTimer perfObjects;
+	PerfTimer perfPostProcess;
+	PerfTimer perfScoreandMap;
 };
 

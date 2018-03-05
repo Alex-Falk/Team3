@@ -22,11 +22,6 @@ protected:
 	Vector3 spawnPositions[4];
 	static int mapIndex; // Controls which map will be loaded
 
-	PerfTimer perfUpdate;
-	PerfTimer perfPlayer;
-	PerfTimer perfAI;
-	PerfTimer perfMapObjects;
-
 	CEGUI::ProgressBar* lifeBar;
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
@@ -91,7 +86,6 @@ public:
 	inline Pickup** GetPickups() { return pickup; }
 	inline uint GetNCapture() { return ncapture; }
 	inline CaptureArea** GetCaptureAreas() { return capture; }
-
 
 };
 

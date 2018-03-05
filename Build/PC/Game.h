@@ -90,9 +90,7 @@ public:
 	//--------------------------------------------------------------------------------------------//	
 	void PrintPerformanceTimers(const Vector4& color)
 	{
-		perfPlayer.PrintOutputToStatusEntry(color,		"              Player   :");
-		perfAI.PrintOutputToStatusEntry(color,			"              AI       :");
-		perfMapObjects.PrintOutputToStatusEntry(color,	"              Map Objs :");
+		perfNetwork.PrintOutputToStatusEntry(color, "            Network Update  :");
 	}
 
 
@@ -122,14 +120,11 @@ private:
 	Avatar* avatars[4];
 	User* user = nullptr;
 	bool gameRunning = false;
-
+	float updateTimestep = 1.0f / 60.f;
 	float gameTime = 0.0f;
 
 	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
 	// Performance Timers																				Date: 02/03/2018
 	//--------------------------------------------------------------------------------------------//	
-	PerfTimer perfUpdate;
-	PerfTimer perfPlayer;
-	PerfTimer perfAI;
-	PerfTimer perfMapObjects;
+	PerfTimer perfNetwork;
 };

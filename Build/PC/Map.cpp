@@ -149,16 +149,19 @@ void Map::OnCleanupScene()
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {
+	perfPlayer.UpdateRealElapsedTime(dt);
+
 	if(Game::Instance()->getUserID() == 0)
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;
 
-	//player->OnPlayerUpdate(dt);
+	perfPlayer.BeginTimingSection();
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
 		if (Game::Instance()->GetPlayer(i))
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
 	}
+	perfPlayer.EndTimingSection();
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
