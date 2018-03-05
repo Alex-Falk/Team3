@@ -119,8 +119,6 @@ public:
 	inline bool GetDrawMiniMap() { return drawMiniMap; }
 	inline void SetPlayerColour(Vector3 c) { playerColour = c; }
 
-	bool updateClientName = false;
-
 	//Getter Setter of isLoading boolean
 	inline LoadingScreenType GetCurrentLoadingScreen() { return currentLoadingScreen; }
 	inline void SetLoadingScreen(LoadingScreenType currentType) { currentLoadingScreen = currentType; }
@@ -129,9 +127,16 @@ public:
 	void DrawTransitionLoadingScreen();
 	void DrawStartLoadingScreen();
 	void SetUpLoadingScreen();
+	void UpdateFakeProgressBar();
 
+	//Loading Screen textrue translation
 	float translation = 0.01;
 	
+	//Temp text context holder
+	std::string userName;
+	std::string clientName;
+	bool sendInfo = false;
+
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -168,4 +173,5 @@ protected:
 	GLuint loadingScreenTexture[Num_of_loadingTex];
 	CEGUI::Titlebar* loadingMessage;
 	CEGUI::ProgressBar* loadingProgress;
+	float progressBarValue = 0;
 };

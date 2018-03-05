@@ -52,6 +52,25 @@ void MainMenu::OnInitializeScene()
 	Scene::OnInitializeScene();
 }
 
+//A simple helper function only exist in mainmenu - temp solution
+void MainMenu::TextInputHelper()
+{
+	if (GUIsystem::Instance()->GetIsTyping() == false) {
+		if (GUIsystem::Instance()->currentType == "UserName") {
+			Game::Instance()->GetUser()->SetName(userName.editbox->getText().c_str());
+			std::cout << Game::Instance()->GetUser()->GetName(0) << std::endl;
+		}
+		else if (GUIsystem::Instance()->currentType == "ClientName") {
+			//Game::Instance()->GetUser()->SetName(clientName.editbox->getText().c_str());
+		}
+		else {
+			//Currently ip input is handled in MainMenu.cpp
+			return;
+		}
+		GUIsystem::Instance()->sendInfo = false;
+	}
+}
+
 void MainMenu::OnUpdateScene(float dt)
 {
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
@@ -59,26 +78,33 @@ void MainMenu::OnUpdateScene(float dt)
 	GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 	Scene::OnUpdateScene(dt);
 
-	string temp[4];
-
-	for (int i = 0; i < 4; ++i) {
-		if (Game::Instance()->GetPlayer(i) != NULL) {
-			temp[i] = Game::Instance()->GetPlayer(i)->GetName();
-		}
+	//Send player name info
+	if (GUIsystem::Instance()->sendInfo == true) {
+		TextInputHelper();
 	}
+	
 
-	//Update Player Info
-	AllPlayerInfo->setText(playerText 
-		+ temp[0] + "\n\n"
-		+ temp[1] + "\n\n"
-		+ temp[2] + "\n\n"
-		+ temp[3] + "\n\n");
 
-	otherPlayersInfo->setText(otherPlayersText
-		+ temp[0] + "\n\n"
-		+ temp[1] + "\n\n"
-		+ temp[2] + "\n\n"
-		+ temp[3] + "\n\n");
+	//string temp[4] = {"", "", "", ""};
+
+	//for (int i = 0; i < 4; ++i) {
+	//	if (Game::Instance()->GetPlayer(i) != NULL) {
+	//		temp[i] = Game::Instance()->GetPlayer(i)->GetName();
+	//	}
+	//}
+
+	////Update Player Info
+	//AllPlayerInfo->setText(playerText 
+	//	+ temp[0] + "\n\n"
+	//	+ temp[1] + "\n\n"
+	//	+ temp[2] + "\n\n"
+	//	+ temp[3] + "\n\n");
+
+	//otherPlayersInfo->setText(otherPlayersText
+	//	+ temp[0] + "\n\n"
+	//	+ temp[1] + "\n\n"
+	//	+ temp[2] + "\n\n"
+	//	+ temp[3] + "\n\n");
 }
 
 //Setting UP GUI
@@ -316,22 +342,18 @@ void MainMenu::onLobbyMenuBackButtonClicked()
 	HideLobby();
 	ShowMainMenu();
 }
-
 void MainMenu::onMap1selected()
 {
 	nextMapID = 1;
 }
-
 void MainMenu::onMap2selected()
 {
 	nextMapID = 2;
 }
-
 void MainMenu::onMap3selected()
 {
 	nextMapID = 3;
 }
-
 void MainMenu::onMap4selected()
 {
 	nextMapID = 4;
@@ -436,6 +458,7 @@ void MainMenu::SetUpconnectionMenu()
 	clientName.editbox->setText("Dong Li");
 	clientName.type = "ClientName";
 	clientName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnClientNameClicked, this));
+	GUIsystem::Instance()->editboxes.push_back(clientName);
 
 	connectMenuBack = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
@@ -681,9 +704,9 @@ void MainMenu::onConnectButtonClicked()
 		if (!Game::Instance()->GetUser())
 		{
 			//TODO: Set User Name and Sent to the server
-			
-
 			Game::Instance()->setClient(ip);
+			//Game::Instance()->GetUser()->SetName(clientName.editbox->getText().c_str());
+			GUIsystem::Instance()->SetIsTyping(false);
 		}
 	}
 	HideConnectionMenu();

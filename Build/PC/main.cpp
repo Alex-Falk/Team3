@@ -68,10 +68,11 @@ void Initialize()
 	if (!Window::Initialise("Game Technologies", 1280, 800, false))
 		Quit(true, "Window failed to initialise!");
 
-
 	//Initialize Renderer
 	GraphicsPipeline::Instance();
-	GUIsystem::Instance();
+
+	//GUIsystem::Instance();
+
 	PostProcess::Instance();
 	
 	//Initialise the PhysicsEngine
@@ -87,7 +88,6 @@ void Initialize()
 	InitialiseAudioFiles();
 
 	GUIsystem::Instance()->SetUpLoadingScreen();
-	
 }
 
 // Print Debug Info
@@ -318,7 +318,6 @@ void HandleGUITextInput()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN)) {
 		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RETURN);
-		GUIsystem::Instance()->SetIsTyping(false);
 		return;
 	}
 	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE)) {

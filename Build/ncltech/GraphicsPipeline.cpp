@@ -48,6 +48,7 @@ GraphicsPipeline::GraphicsPipeline()
 	for (int i = 0; i < 2; ++i) {
 		screenTexColor[i] = NULL;
 	}
+	GUIsystem::Instance();
 	LoadShaders();
 	LoadMaterial();
 	NCLDebug::_LoadShaders();

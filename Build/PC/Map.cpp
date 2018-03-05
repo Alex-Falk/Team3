@@ -27,12 +27,10 @@ void Map::onConnectToScene()
 }
 
 void Map::OnInitializeScene() {
+	OnInitializeGUI();
 
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
-	
-
-	OnInitializeGUI();
 
 	SetSpawnLocations();
 
@@ -53,13 +51,9 @@ void Map::OnInitializeGUI()
 			Vector4(),
 			"lifeBar"
 		));
-
-	//if (Game::Instance()->GetUser())
-	//{
-	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
-	//}
-
+	
+	isLoading = true;
+	GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::TRANSITION);
 }
 
 void Map::BuildGround(Vector2 dimensions) {
@@ -168,6 +162,17 @@ void Map::OnUpdateScene(float dt)
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
+
+	if (isLoading == true) {
+		if (temp_fps > 1000) {
+			GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::NOT_LOADING);
+			isLoading = false;
+		}
+		else {
+			temp_fps++;
+		}
+	}
+
 }
 
 //--------------------------------------------------------------------------------------------//

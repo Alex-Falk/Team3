@@ -256,7 +256,7 @@ public:
 
 
 	//3. create game menu buttons
-	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); }
+	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); GUIsystem::Instance()->SetIsTyping(false); }
 	void onMap1selected();
 	void onMap2selected();
 	void onMap3selected();
@@ -293,4 +293,6 @@ public:
 		SceneManager::Instance()->SetExitButtonClicked(true);
 	}
 
+	//Text input helper function
+	void TextInputHelper();
 };

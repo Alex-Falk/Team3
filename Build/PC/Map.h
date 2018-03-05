@@ -84,5 +84,8 @@ public:
 	inline Pickup** GetPickups() { return pickup; }
 	inline uint GetNCapture() { return ncapture; }
 	inline CaptureArea** GetCaptureAreas() { return capture; }
+
+	float temp_fps = 0;
+	bool isLoading = false;
 };
 

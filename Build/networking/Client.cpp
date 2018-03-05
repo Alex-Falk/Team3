@@ -106,7 +106,8 @@ void Client::UpdateUser(float dt)
 
 void Client::Disconnect()
 {
-	enet_peer_disconnect_now(serverConnection, 0);
+	if (serverConnection)
+		enet_peer_disconnect_now(serverConnection, 0);
 
 }
 

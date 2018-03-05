@@ -68,12 +68,10 @@ void GUIsystem::Init(const std::string& resourceDirectory)
 
 	//Generate CEGUI context
 	m_context = &CEGUI::System::getSingleton().createGUIContext(m_renderer->getDefaultRenderTarget());
-	m_context_public = &CEGUI::System::getSingleton().createGUIContext(m_renderer->getDefaultRenderTarget());
 
 	//Create Root window
 	m_root = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "root");
-	m_loadingRoot = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "loadingRoot");
-	m_context_public->setRootWindow(m_loadingRoot);
+
 	m_context->setRootWindow(m_root);
 
 	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
@@ -276,19 +274,21 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		m_context->injectChar(0x20);
 		break;
 	case KEYBOARD_RETURN:
-		/*for (int i = 0; i < editboxes.size(); ++i) {
-			if (editboxes[i].type == currentType) {
-				if (currentType == "UserName") {
-					
-				}
-				else if (currentType == "ClientName") {
-					updateClientName = true;
-				}
-				break;
-			}
-			else {
-			}
-		}*/
+		isTyping = false;
+		//for (int i = 0; i < editboxes.size(); ++i) {
+		//	if (editboxes[i].type == currentType) {
+		//		if (currentType == "UserName") {
+		//			userName = editboxes[i].editbox->getText().c_str();
+		//		}
+		//		else if (currentType == "ClientName") {
+		//			clientName = editboxes[i].editbox->getText().c_str();
+		//		}
+		//		break;
+		//	}
+		//	else {
+		//	}
+		//}
+		sendInfo = true;
 		break;
 	default:
 		break;
@@ -355,7 +355,7 @@ void GUIsystem::SetFont(const std::string & fontFile)
 {
 	CEGUI::FontManager::getSingleton().createFromFile(fontFile + ".font");
 	m_context->setDefaultFont(fontFile);
-	m_context_public->setDefaultFont(fontFile);
+
 }
 
 CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name)
@@ -378,13 +378,42 @@ CEGUI::Window * GUIsystem::createWidgetForLoadingScreen(const std::string type, 
 
 void GUIsystem::DrawTransitionLoadingScreen()
 {
+	glUseProgram(loadingScreenShader->GetProgram());
+	float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
+	//Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 1));
+	Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 0));
+	Matrix4 textureMatrix;
+	//textureMatrix.ToIdentity();
+	//Matrix4 textureMatrix = Matrix4::Scale(Vector3(0.8,0.8,0))* Matrix4::Translation(Vector3(translation, 0, 0));
+	//Matrix4 textureMatrix = Matrix4::Scale(Vector3(0.9, 0.9, 0)) * Matrix4::Translation(Vector3(texRotation,0,0));
+	glUniformMatrix4fv(glGetUniformLocation(loadingScreenShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(loadingScreenShader->GetProgram(), "textureMatrix"), 1, GL_FALSE, (float*)&textureMatrix);
+	glUniform1f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uGammaCorrection"),
+		GraphicsPipeline::Instance()->GetGammaCorrection());
+	glUniform1f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uNumSuperSamples"), superSamples);
+	glUniform2f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(loadingScreenShader->GetProgram(), "DiffuseTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, loadingScreenTexture[START]);
+	loadingScreen->Draw();
 
+	glUseProgram(0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_renderer->beginRendering();
+	m_context_public->draw();
+	m_renderer->endRendering();
+	glDisable(GL_SCISSOR_TEST);
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(0);
+	UpdateFakeProgressBar();
 }
 
 void GUIsystem::DrawStartLoadingScreen()
 {
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glUseProgram(loadingScreenShader->GetProgram());
 	float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
 	//Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 1));
@@ -416,10 +445,26 @@ void GUIsystem::DrawStartLoadingScreen()
 	glEnable(GL_DEPTH_TEST);
 
 	glUseProgram(0);
+	UpdateFakeProgressBar();
+}
+
+void GUIsystem::UpdateFakeProgressBar()
+{
+	progressBarValue += 0.01;
+	if (progressBarValue > 1) {
+		progressBarValue = 0;
+	}
+	loadingProgress->setProgress(progressBarValue);
 }
 
 void GUIsystem::SetUpLoadingScreen()
 {
+	m_context_public = &CEGUI::System::getSingleton().createGUIContext(m_renderer->getDefaultRenderTarget());
+	m_loadingRoot = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "loadingRoot");
+	m_context_public->setRootWindow(m_loadingRoot);
+
+	m_context_public->setDefaultFont("DejaVuSans-10");
+
 	loadingScreen = Mesh::GenerateQuad();
 
 	//Loading Texture for background
