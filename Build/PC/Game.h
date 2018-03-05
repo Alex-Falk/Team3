@@ -92,6 +92,14 @@ public:
 	void ClaimPickup(Avatar * player, Pickup * pickup);
 	//bool ClaimArea(Avatar * player, CaptureArea *object);
 
+	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
+	// Performance Timers																				Date: 02/03/2018
+	//--------------------------------------------------------------------------------------------//	
+	void PrintPerformanceTimers(const Vector4& color)
+	{
+		perfNetwork.PrintOutputToStatusEntry(color, "            Network Update  :");
+	}
+
 
 private:
 	//private constructor
@@ -124,5 +132,11 @@ private:
 
 
 	bool gameRunning = false;
+	float updateTimestep = 1.0f / 60.f;
 	float gameTime = 0.0f;
+
+	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
+	// Performance Timers																				Date: 02/03/2018
+	//--------------------------------------------------------------------------------------------//	
+	PerfTimer perfNetwork;
 };

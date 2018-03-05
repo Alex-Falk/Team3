@@ -2,9 +2,14 @@
 #include <ncltech\SceneManager.h>
 void Game::Update(float dt)
 { 
+	perfNetwork.UpdateRealElapsedTime(updateTimestep);
+
+
 	if (user)
 	{
+		perfNetwork.BeginTimingSection();
 		user->UpdateUser(dt);
+		perfNetwork.EndTimingSection();
 	}
 
 	if (gameRunning)

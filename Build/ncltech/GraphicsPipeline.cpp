@@ -385,6 +385,11 @@ void GraphicsPipeline::UpdateScene(float dt)
 	//update all of the camera stuff
 	camera->UpdateCamara(dt);
 
+	// Update Timers
+	perfShadow.UpdateRealElapsedTime(dt);
+	perfObjects.UpdateRealElapsedTime(dt);
+	perfPostProcess.UpdateRealElapsedTime(dt);
+	perfScoreandMap.UpdateRealElapsedTime(dt);
 
 	viewMatrix = camera->BuildViewMatrix();
 	projViewMatrix = projMatrix * viewMatrix;
@@ -415,22 +420,30 @@ void GraphicsPipeline::RenderScene()
 	NCLDebug::_BuildRenderLists();
 
 	//Build shadowmaps
+	perfShadow.BeginTimingSection();
 	RenderShadow();
+	perfShadow.EndTimingSection();
 
 	//Render scene to screen fbo
+	perfObjects.BeginTimingSection();
 	RenderObject();
+	perfObjects.EndTimingSection();
 
 	//render the path to texture
 	RenderPath();
 
 	//post process and present
+	perfPostProcess.BeginTimingSection();
 	RenderPostprocessAndPresent();
+	perfPostProcess.EndTimingSection();
 
 	//draw the minimap on screen
+	perfScoreandMap.BeginTimingSection();
 	if (isMainMenu == false) {
 		CountScore();
 		DrawMiniMap();
 	}
+	perfScoreandMap.EndTimingSection();
 
 	//NCLDEBUG - Text Elements (aliased)
 	if (isMainMenu == false) {

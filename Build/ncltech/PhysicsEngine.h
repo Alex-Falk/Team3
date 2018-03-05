@@ -136,10 +136,10 @@ public:
 
 	void PrintPerformanceTimers(const Vector4& color)
 	{
-		perfUpdate.PrintOutputToStatusEntry(color,		"            Integration :");
-		perfBroadphase.PrintOutputToStatusEntry(color,	"            Broadphase  :");
-		perfNarrowphase.PrintOutputToStatusEntry(color,	"            Narrowphase :");
-		perfSolver.PrintOutputToStatusEntry(color,		"            Solver      :");
+		perfUpdate.PrintOutputToStatusEntry(color,		"              Integration    :");
+		perfBroadphase.PrintOutputToStatusEntry(color,	"              Broadphase     :");
+		perfNarrowphase.PrintOutputToStatusEntry(color,	"              Narrowphase    :");
+		perfSolver.PrintOutputToStatusEntry(color,		"              Solver         :");
 	}
 
 	//allow the camera access to all the physics nodes

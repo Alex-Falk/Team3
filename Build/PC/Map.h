@@ -32,8 +32,8 @@ protected:
 	// Map Size
 	//--------------------------------------------------------------------------------------------//
 	Vector2 dimensions;
-	inline void SetMapDimensions(Vector2 dimens)	{ dimensions = dimens; }
-	inline Vector2 GetMapDimensions()				{ return dimensions; }
+	inline void SetMapDimensions(Vector2 dimens) { dimensions = dimens; }
+	inline Vector2 GetMapDimensions() { return dimensions; }
 
 
 	//pickup stuff
@@ -42,6 +42,8 @@ protected:
 	//capture areas for minimap
 	uint ncapture;
 	CaptureArea** capture;
+
+
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
@@ -70,7 +72,7 @@ public:
 	virtual void SetSpawnLocations();
 
 	static int GetMapIndex() { return mapIndex; }
-	void SetMapIndex(int mapIndx); 
+	void SetMapIndex(int mapIndx);
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars
 	//--------------------------------------------------------------------------------------------//
@@ -84,5 +86,6 @@ public:
 	inline Pickup** GetPickups() { return pickup; }
 	inline uint GetNCapture() { return ncapture; }
 	inline CaptureArea** GetCaptureAreas() { return capture; }
+
 };
 

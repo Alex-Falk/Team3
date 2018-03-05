@@ -54,6 +54,7 @@ typedef std::unordered_map<void*, SceneUpdateCallback> SceneUpdateMap;
 class Scene
 {
 public:
+
 	Scene(const std::string& friendly_name)	//Called once at program start - all scene initialization should be done in 'OnInitializeScene'
 		: m_SceneName(friendly_name)
 	{}; 
@@ -98,6 +99,13 @@ public:
 		//}
 	}
 
+	//Timers For The Scenes
+	void PrintPerformanceTimers(const Vector4& color)
+	{
+		perfPlayer.PrintOutputToStatusEntry(color,		"              Player Update  :");
+		perfAI.PrintOutputToStatusEntry(color,			"              AI Update      :");
+		perfMapObjects.PrintOutputToStatusEntry(color,	"              Objects Update :");
+	}
 
 	// Should be the action fired by the main game loop when updating a scene
 	//   - This will call the above OnUpdateScene function along with any and all
@@ -238,4 +246,10 @@ protected:
 	std::string					m_SceneName;
 	std::vector<GameObject*>	m_vpObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
+
+	// Timing Variables
+	PerfTimer perfPlayer;
+	PerfTimer perfAI;
+	PerfTimer perfMapObjects;
+
 };
