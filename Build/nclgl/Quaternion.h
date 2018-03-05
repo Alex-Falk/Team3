@@ -71,6 +71,10 @@ public:
 
 	static Quaternion LookAt(const Vector3& from, const Vector3& to, const Vector3& up = Vector3(0, 1, 0));
 	static Quaternion GetRotation(const Vector3& from_dir, const Vector3& to_dir, const Vector3& up = Vector3(0, 1, 0));
+	static void GetAngles(const Quaternion& q, float& roll, float& pitch, float& yaw);
+	static float GetYaw(const Quaternion& q);
+	static float GetPitch(const Quaternion& q);
+	static float GetRoll(const Quaternion& q);
 
 	static float Dot(const Quaternion &a, const Quaternion &b);
 

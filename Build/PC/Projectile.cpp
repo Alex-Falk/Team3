@@ -16,7 +16,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	PhysicsNode * pnode = new PhysicsNode();
 
 
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), RGBA);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), "Projectile",RGBA);
 	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
@@ -66,7 +66,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Cube(), RGBA);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Cube(), "Projectile", RGBA);
 	dummy->SetTransform(Matrix4::Scale(size));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);

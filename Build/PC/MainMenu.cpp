@@ -228,7 +228,7 @@ void MainMenu::SetUpLobby()
 				Vector4(),
 				"AllPlayerInfo"
 			));
-	AllPlayerInfo->setAlpha(0.8);
+	AllPlayerInfo->setAlpha(0.8f);
 	AllPlayerInfo->disable();
 	AllPlayerInfo->setVisible(false);
 	AllPlayerInfo->setText(playerText
@@ -395,7 +395,7 @@ void MainMenu::SetUpconnectionMenu()
 			Vector4(),
 			"otherPlayersInfo"
 		));
-	otherPlayersInfo->setAlpha(0.8);
+	otherPlayersInfo->setAlpha(0.8f);
 	otherPlayersInfo->disable();
 	otherPlayersInfo->setVisible(false);
 	otherPlayersText = otherPlayersText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";

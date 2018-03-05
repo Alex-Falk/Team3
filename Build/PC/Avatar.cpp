@@ -81,44 +81,50 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	timeUntilInAir = 0.1f;
 
 	weapon = NUM_OF_WEAPONS;
-
+	string name;
 	switch (c)
 	{
 	case START_COLOUR:
 	{
 		colour = DEFAULT_COLOUR;
+		name = "DEFAULT_PLAYER";
 	}
 
 	case GREEN:
 	{
 		colour = GREEN_COLOUR;
+		name = "GREEN_PLAYER";
 	}
 	break;
 	case BLUE:
 	{
 		colour = BLUE_COLOUR;
+		name = "BLUE_PLAYER";
 	}
 	break;
 	case RED:
 	{
 		colour = RED_COLOUR;
+		name = "RED_PLAYER";
 	}
 	break;
 	case PINK:
 	{
 		colour = PINK_COLOUR;
+		name = "PINK_PLAYER";
 	}
 	break;
 	default:
 	{
 		colour = DEFAULT_COLOUR;
+		name = "DEFAULT_PLAYER";
 	}
 	break;
 	}
 
 	RenderNode* rnode = new RenderNode();
 	float radius = s;
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), colour);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), name, colour);
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
@@ -348,11 +354,11 @@ void Avatar::Spray()
 
 void Avatar::ShootRocket()
 {
-	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-
-	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+	
 	if (canJump && pitch < 0) {
-		pitch = 0;
+		pitch = 0.0f;
 	}
 
 	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;

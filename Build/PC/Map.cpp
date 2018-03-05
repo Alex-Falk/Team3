@@ -24,6 +24,8 @@ void Map::onConnectToScene()
 			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render()->GetChild());
 		}
 	}
+	
+	GraphicsPipeline::Instance()->ResetPath();
 }
 
 void Map::OnInitializeScene() {

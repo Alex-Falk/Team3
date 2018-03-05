@@ -187,6 +187,7 @@ public:
 	//GUI
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 	bool GetIsMainMenu() { return isMainMenu; }
+	void ResetPath();
 
 	inline GLuint GetScreenTexWidth() { return screenTexWidth; }
 	inline GLuint GetScreenTexHeight() { return screenTexHeight; }
@@ -274,10 +275,18 @@ protected:
 
 	//path
 	Vector2		groundSize;
+	Vector3		lastPath[4];
+
+	void SetPath(RenderNode* playerRenderNode, uint playerNumber);
+	void SetupPathSmoother();
+	
 	std::vector<RenderNode*>	playerRenderNodes;
 	std::vector<RenderNode*>	pathRenderNodes;
+	std::vector<RenderNode*>    pathSmoother;
+	
 	GLuint		pathFBO;
 	GLuint		pathTex;
+	
 
 	//Score - Alex 27/02/2018
 	GLuint		scoreFBO;
