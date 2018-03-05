@@ -34,7 +34,7 @@ Pickup::Pickup()
 	Vector3 halfdims(0.5f, 0.5f, 0.5f);
 	
 	RenderNode* rnode = new RenderNode();
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), "Pickup", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
@@ -93,7 +93,7 @@ Pickup::Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTi
 	friendlyName = unique_name;
 
 	RenderNode* rnode = new RenderNode();
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), "PickUp", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 

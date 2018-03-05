@@ -28,7 +28,7 @@ class Material;
 
 class RenderNode	{
 public:
-	 RenderNode(Mesh*m = NULL, Vector4 colour = Vector4(1,1,1,1));
+	 RenderNode(Mesh*m = NULL, string name = "RenderNode", Vector4 colour = Vector4(1,1,1,1));
 	virtual ~RenderNode(void);
 
 	virtual bool IsRenderable()
@@ -86,6 +86,8 @@ public:
 
 	RenderNode*		GetChildWithName(string s);
 
+	RenderNode* GetParent() { return parent; }
+
 	void			SetName(string s) { name = s; }
 	string			GetName() { return name; }
 
@@ -93,8 +95,8 @@ public:
 	void	Wake()		{awake = true;}
 	void	Sleep()		{awake = false;} 
 
-	std::vector<RenderNode*>::const_iterator GetChildIteratorStart()	{return children.begin();}
-	std::vector<RenderNode*>::const_iterator GetChildIteratorEnd()	{return children.end();}
+	std::vector<RenderNode*>::const_iterator GetChildIteratorStart() { return children.begin(); }
+	std::vector<RenderNode*>::const_iterator GetChildIteratorEnd()	{ return children.end(); }
 
 	static bool		CompareByCameraDistance(RenderNode*a,RenderNode*b) ;
 	static bool		CompareByZ(RenderNode*a,RenderNode*b) ;
