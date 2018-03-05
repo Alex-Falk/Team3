@@ -53,6 +53,8 @@ public:
 	void SetColour(Colour c) { colour = c;	}
 	Colour GetColour() { return colour; }
 
+	float GetMinLife() { return minLife; }
+
 	void SetRGBA(Vector4 r) { RGBA = r; }
 	Vector4 GetRGBA() { return RGBA; }
 

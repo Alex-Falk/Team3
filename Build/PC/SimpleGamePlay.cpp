@@ -91,7 +91,9 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 		}
 	}
 	if (mc) {
-		mc->Update(dt);
+		mc->Update(dt);	
+	}
+	if (mc2) {
 		mc2->Update(dt);
 	}
 }
