@@ -30,32 +30,32 @@ void TestMap::OnUpdateScene(float dt)
 {
 	Scene::OnUpdateScene(dt);
 
-	for (uint i = 0; i < npickup; ++i)
-	{
-		if (pickup[i])
-		{
-			pickup[i]->Update(dt);
-		}
-	}
+	//for (uint i = 0; i < npickup; ++i)
+	//{
+	//	if (pickup[i])
+	//	{
+	//		pickup[i]->Update(dt);
+	//	}
+	//}
 
-	NCLDebug::DrawTextWs(pickupTextOffset[0] + pickup[0]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "SPEED");
-	NCLDebug::DrawTextWs(pickupTextOffset[1] + pickup[1]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "JUMP");
-	NCLDebug::DrawTextWs(pickupTextOffset[2] + pickup[2]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "WEAPON");
+	//NCLDebug::DrawTextWs(pickupTextOffset[0] + pickup[0]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "SPEED");
+	//NCLDebug::DrawTextWs(pickupTextOffset[1] + pickup[1]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "JUMP");
+	//NCLDebug::DrawTextWs(pickupTextOffset[2] + pickup[2]->Physics()->GetPosition(), STATUS_TEXT_SIZE, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), "WEAPON");
 }
 
 void TestMap::AddObjects()
 {
-	pickup[0] = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST, "0");
-	this->AddGameObject(pickup[0]);
-	pickupTextOffset[0] = Vector3(0, 2, 0);
+	//pickup[0] = new Pickup(Vector3(5, 3, 4.5), SPEED_BOOST, "0");
+	//this->AddGameObject(pickup[0]);
+	//pickupTextOffset[0] = Vector3(0, 2, 0);
 
-	pickup[1] = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST, "1");
-	this->AddGameObject(pickup[1]);
-	pickupTextOffset[1] = Vector3(0, 2, 0);
+	//pickup[1] = new Pickup(Vector3(-7, 3, -1), JUMP_BOOST, "1");
+	//this->AddGameObject(pickup[1]);
+	//pickupTextOffset[1] = Vector3(0, 2, 0);
 
-	pickup[2] = new Pickup(Vector3(1, 3, -5.5), WEAPON, "2");
-	this->AddGameObject(pickup[2]);
-	pickupTextOffset[2] = Vector3(0, 2, 0);
+	//pickup[2] = new Pickup(Vector3(1, 3, -5.5), WEAPON, "2");
+	//this->AddGameObject(pickup[2]);
+	//pickupTextOffset[2] = Vector3(0, 2, 0);
 
 	CreateEnvironment();
 	GameplayTesting();

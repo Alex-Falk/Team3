@@ -172,12 +172,9 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 			if (Game::Instance()->getUserID() == 0)
 			{
 				PickUpBuffActivated(activePickUp);
-				p->SetActive(false);
 			}
-			else
-			{
-				Game::Instance()->ClaimPickup(this, p);
-			}
+
+			Game::Instance()->ClaimPickup(p);
 
 		}
 

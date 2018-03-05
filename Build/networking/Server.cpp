@@ -209,6 +209,11 @@ void Server::UpdateUser(float dt)
 					ReceiveRequest(data,PICKUP);
 					break;
 				}
+				case MAP_OBJECT_REQUEST:
+				{
+					ReceiveRequest(data, PAINTABLE_OBJECT);
+					break;
+				}
 				}
 				break;
 			}
@@ -273,31 +278,41 @@ void Server::HandleRequests()
 	{
 		UserCaptureRequest r = requests.front();
 
-		data = to_string(MAP_PICKUP_REQUEST) + ":" +
-			to_string(r.userID) + ";" +
-			to_string(r.objectID) + ",";
+
 
 		Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
 
 		if (r.type == PICKUP)
 		{
-			if (m->GetPickups()[r.objectID]->GetActive())
+			data = to_string(MAP_PICKUP_REQUEST) + ":" +
+				to_string(r.userID) + ";" +
+				to_string(r.objectID) + ",";
+
+			if (m->GetPickup(r.objectID)->GetActive())
 			{
 				data = data + "0";
-				m->GetPickups()[r.objectID]->SetActive(false);
+				if(userID == 0)
+
+				m->GetPickup(r.objectID)->SetActive(false);
 			}
 			else
 			{
 				data = data + "1";
-				
 			}
 
 			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 			enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
 		}
-		else // It shouldn't really get here
+		else if (r.type = PAINTABLE_OBJECT)
 		{
-			data = data + "0";
+			data = to_string(MAP_OBJECT_REQUEST) + ":" +
+				to_string(r.userID) + ";" +
+				to_string(r.objectID);
+
+			m->GetCaptureArea(r.objectID)->SetColour(Colour(r.userID));
+
+			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+			enet_host_broadcast(server->m_pNetwork, 0, packet);
 		}
 
 		requests.pop();
@@ -398,6 +413,27 @@ void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVe
 
 }
 
+void Server::SendMinionSpawn()
+{
+
+}
+
+void Server::SendMinionUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc)
+{
+	string data;
+
+	data = to_string(MINION_UPDATE) + ":" +
+		to_string(ID) + ";" +
+		Vector3ToString(pos) + "," +
+		Vector3ToString(linVel) + "," +
+		Vector3ToString(angVel) + "," +
+		Vector3ToString(acc);
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+
+}
+
 void Server::SendSize(uint ID)
 {
 	string data;
@@ -446,4 +482,23 @@ void Server::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::RequestPickup(uint ID, string uniqueName)
+{
+	UserCaptureRequest r;
+	r.userID = ID;
+	r.objectID = stoi(uniqueName);
+	r.type = PICKUP;
+
+	requests.push(r);
+}
+void Server::RequestCaptureArea(uint ID, string uniqueName)
+{
+	UserCaptureRequest r;
+	r.userID = ID;
+	r.objectID = stoi(uniqueName);
+	r.type = PAINTABLE_OBJECT;
+
+	requests.push(r);
 }

@@ -46,6 +46,9 @@ enum PacketType {
 	MAP_INDEX,				// Server->Client: Boradcast Map to load
 	MAP_PICKUP_REQUEST,
 	MAP_OBJECT_REQUEST,
+	MINION_SPAWN,
+	MINION_UPDATE,
+	MINION_DEATH,
 	TEXT_PACKET,
 	GAME_END				// Server->Client: Informs clients game has ended
 };

@@ -184,7 +184,12 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		case MAP_PICKUP_REQUEST:
 		{
-			ReceiveRequestResponse(data);
+			ReceiveRequestResponse(data,PICKUP);
+			break;
+		}
+		case MAP_OBJECT_REQUEST:
+		{
+			ReceiveRequestResponse(data,PAINTABLE_OBJECT);
 			break;
 		}
 		case PLAYER_WEAPON:
@@ -261,24 +266,38 @@ void Client::ReceiveMapChange(string data)
 	//Game::Instance()->LoadLevel(mapIndex);
 }
 
-void Client::ReceiveRequestResponse(string data)
+void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
 {
+	Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
+
 	uint colonIdx = (uint)(data.find_first_of(':'));
 	uint semicolonIdx = (uint)(data.find_first_of(';'));
-	uint commaIdx = (uint)(data.find_first_of(','));
 
 	uint playerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 	uint objectID = stoi(data.substr(semicolonIdx + 1));
-	
-	bool active = stoi(data.substr(commaIdx + 1));
 
-	Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
-
-	if (!active)
+	if (ptype == PICKUP)
 	{
-		m->GetPickups()[objectID]->SetActive(false);
-		Game::Instance()->GetCurrentAvatar()->PickUpBuffActivated();
+		uint commaIdx = (uint)(data.find_first_of(','));
+
+		bool active = stoi(data.substr(commaIdx + 1));
+
+		if (!active)
+		{
+			m->GetPickup(objectID)->SetActive(false);
+			Game::Instance()->GetCurrentAvatar()->PickUpBuffActivated();
+		}
 	}
+	else if (ptype == PAINTABLE_OBJECT)
+	{
+		m->GetCaptureArea(objectID)->SetColour(Colour(playerID));
+	}
+	
+	
+
+	
+
+
 
 }
 
@@ -351,6 +370,19 @@ void Client::RequestPickup(uint ID, string uniqueName)
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(serverConnection, 0, packet);
 }
+
+void Client::RequestCaptureArea(uint ID, string uniqueName)
+{
+	string data;
+
+	data = to_string(MAP_OBJECT_REQUEST) + ":" +
+		to_string(ID) + ";" +
+		uniqueName;
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_peer_send(serverConnection, 0, packet);
+}
+
 //--------------------------------------------------------------------------------------------//
 // Utility
 //--------------------------------------------------------------------------------------------//

@@ -29,9 +29,6 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	TestMap(const std::string& friendly_name)
 		: Map(friendly_name) {
-		npickup = 3;
-		pickup = new Pickup*[npickup];
-		pickupTextOffset = new Vector3[npickup];
 	}
 
 	~TestMap()

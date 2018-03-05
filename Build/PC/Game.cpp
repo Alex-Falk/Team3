@@ -49,7 +49,12 @@ void Game::ResetGame()
 	time = 0.0f;
 }
 
-void Game::ClaimPickup(Avatar * player, Pickup * pickup)
+void Game::ClaimPickup(Pickup * pickup)
 {
-	((Client*)user)->RequestPickup(getUserID(), pickup->GetName());
+	user->RequestPickup(getUserID(), pickup->GetName());
+}
+
+void Game::ClaimArea(CaptureArea * object)
+{
+	user->RequestCaptureArea(getUserID(), object->GetName());
 }

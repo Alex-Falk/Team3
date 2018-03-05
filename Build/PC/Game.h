@@ -93,8 +93,8 @@ public:
 	void ResetGame();
 	void DetermineWinner() {};
 
-	void ClaimPickup(Avatar * player, Pickup * pickup);
-	//bool ClaimArea(Avatar * player, CaptureArea *object);
+	void ClaimPickup(Pickup * pickup);
+	void ClaimArea(CaptureArea *object);
 
 	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
 	// Performance Timers																				Date: 02/03/2018

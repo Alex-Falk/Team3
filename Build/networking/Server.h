@@ -86,6 +86,8 @@ public:
 	void SendGameStart(uint mapID);
 
 	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir);
+	void SendMinionSpawn();
+	void SendMinionUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc);
 	void SendSize(uint ID);
 	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
 
@@ -117,6 +119,9 @@ public:
 
 		return out;
 	}
+
+	virtual void RequestPickup(uint ID, string uniqueName);
+	virtual void RequestCaptureArea(uint ID, string uniqueName);
 
 	//--------------------------------------------------------------------------------------------//
 	// Stored Variables

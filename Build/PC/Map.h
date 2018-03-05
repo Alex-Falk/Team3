@@ -20,14 +20,14 @@ class Map : public Scene
 protected:
 	float m_AccumTime = 0;
 	Vector3 spawnPositions[4];
-	vector<CaptureArea*> captureAreas; //TODO move this to wherever is best, used in minion class (ClosestCaptureArea)
+	
 	static int mapIndex; // Controls which map will be loaded
 
-	CEGUI::ProgressBar* lifeBar;
+	
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
 	//--------------------------------------------------------------------------------------------//
-	//CEGUI::ProgressBar* energyBar;
+	CEGUI::ProgressBar* lifeBar;
 
 	//--------------------------------------------------------------------------------------------//
 	// Map Size
@@ -39,10 +39,10 @@ protected:
 
 	//pickup stuff
 	uint npickup;
-	Pickup** pickup;
+	vector<Pickup*> pickups;
 	//capture areas for minimap
 	uint ncapture;
-	CaptureArea** capture;
+	vector<CaptureArea*> captureAreas; //TODO move this to wherever is best, used in minion class (ClosestCaptureArea)
 
 
 public:
@@ -52,13 +52,18 @@ public:
 	Map(const std::string& friendly_name) : Scene(friendly_name) {}
 	virtual ~Map() {
 		TextureManager::Instance()->RemoveAllTexture();
-		//delete the array of pickups
-		if (pickup) {
-			delete[] pickup;
+		for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
+		{
+			delete (*itr);
 		}
-		if (capture) {
-			delete[] capture;
+		pickups.clear();
+
+		for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
+		{
+			delete (*itr);
 		}
+		captureAreas.clear();
+
 	};
 
 	virtual void OnCleanupScene();
@@ -72,9 +77,18 @@ public:
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
 
+	void AddPickup(Pickup * p) {
+		pickups.push_back(p);
+	}
+
+	Pickup * GetPickup(int i) { return pickups[i]; }
+	vector<Pickup*> GetPickups() { return pickups; }
+
+
 	void AddCaptureArea(CaptureArea * ca) {
 		captureAreas.push_back(ca);
 	}
+
 	CaptureArea * GetCaptureArea(int i) { return captureAreas[i]; }
 	vector<CaptureArea*> GetCaptureAreaVector() { return captureAreas; }
 
@@ -89,10 +103,6 @@ public:
 	inline int GetXDimension() { return dimensions.x; }
 	inline int GetYDimension() { return dimensions.y; }
 
-	inline uint GetNPickup() { return npickup; }
-	inline Pickup** GetPickups() { return pickup; }
-	inline uint GetNCapture() { return ncapture; }
-	inline CaptureArea** GetCaptureAreas() { return capture; }
 
 };
 
