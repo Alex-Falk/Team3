@@ -14,7 +14,7 @@ void Game::Update(float dt)
 
 	if (gameRunning)
 	{
-		gameTime += dt;
+		time += dt;
 
 		if (getUserID() == 0)
 		{
@@ -24,11 +24,13 @@ void Game::Update(float dt)
 			}
 		}
 		//NCLDebug::Log(to_string(gameTime));
-	
-	if (time > gameLength) {
-		DetermineWinner();
-		//StopGame();
-		time = 0.0f;
+
+
+		if (time > gameLength) {
+			DetermineWinner();
+			//StopGame();
+			time = 0.0f;
+		}
 	}
 }
 

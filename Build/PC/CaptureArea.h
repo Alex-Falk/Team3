@@ -68,5 +68,6 @@ protected:
 	float lifeReq;
 	int scoreValue;
 	Colour colour;
+	int life;
 };
 

@@ -17,7 +17,7 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
-	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), "Minion", RGBA);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), "Minion", RGBA);
 	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
