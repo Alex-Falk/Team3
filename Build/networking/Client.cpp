@@ -106,7 +106,8 @@ void Client::UpdateUser(float dt)
 
 void Client::Disconnect()
 {
-	enet_peer_disconnect_now(serverConnection, 0);
+	if (serverConnection)
+		enet_peer_disconnect_now(serverConnection, 0);
 
 }
 
@@ -151,6 +152,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		case PLAYER_NAME:
 		{
 			ReceiveUserNames(data);
+			break;
 		}
 		case AVATAR_UPDATE:
 		{

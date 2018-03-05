@@ -207,6 +207,7 @@ void Server::UpdateUser(float dt)
 				case MAP_PICKUP_REQUEST:
 				{
 					ReceiveRequest(data,PICKUP);
+					break;
 				}
 				}
 				break;
