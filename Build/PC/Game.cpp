@@ -24,9 +24,12 @@ void Game::Update(float dt)
 			}
 		}
 		//NCLDebug::Log(to_string(gameTime));
+	
+	if (time > gameLength) {
+		DetermineWinner();
+		//StopGame();
+		time = 0.0f;
 	}
-
-
 }
 
 void Game::ResetGame()
@@ -41,7 +44,7 @@ void Game::ResetGame()
 	user = nullptr;
 	enet_deinitialize();
 	gameRunning = false;
-	gameTime = 0;
+	time = 0.0f;
 }
 
 void Game::ClaimPickup(Avatar * player, Pickup * pickup)

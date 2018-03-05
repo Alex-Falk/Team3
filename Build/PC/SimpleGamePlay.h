@@ -10,6 +10,13 @@ private:
 	Vector2 dimensions;
 	Map* map;
 
+
+	//--------------------------------------------------------------------------------------------//
+	// Special objects in the map
+	//--------------------------------------------------------------------------------------------//
+	MinionCamp * mc;
+	MinionCamp * mc2;
+
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
@@ -24,6 +31,9 @@ public:
 	}
 
 	~SimpleGamePlay() {
+		delete[] pickup;
+		delete mc;
+		delete mc2;
 	}
 
 	virtual void OnInitializeScene() override;

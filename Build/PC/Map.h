@@ -20,6 +20,7 @@ class Map : public Scene
 protected:
 	float m_AccumTime = 0;
 	Vector3 spawnPositions[4];
+	vector<CaptureArea*> captureAreas; //TODO move this to wherever is best, used in minion class (ClosestCaptureArea)
 	static int mapIndex; // Controls which map will be loaded
 
 	CEGUI::ProgressBar* lifeBar;
@@ -70,6 +71,12 @@ public:
 	virtual void LoadTextures();
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
+
+	void AddCaptureArea(CaptureArea * ca) {
+		captureAreas.push_back(ca);
+	}
+	CaptureArea * GetCaptureArea(int i) { return captureAreas[i]; }
+	vector<CaptureArea*> GetCaptureAreaVector() { return captureAreas; }
 
 	static int GetMapIndex() { return mapIndex; }
 	void SetMapIndex(int mapIndx);

@@ -19,7 +19,7 @@
 																  `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 																	  `^Y888bo.,            ,.od888P^'
 																		   "`^^Y888888888888P^^*/ 
-#include "MinionStateHealFriendlyPlayer.h"
+#include "MinionStates.h"
 
 MinionStateHealFriendlyPlayer* MinionStateHealFriendlyPlayer::instance;
 
@@ -40,7 +40,7 @@ MinionStateHealFriendlyPlayer* MinionStateHealFriendlyPlayer::GetInstance()
 
 void MinionStateHealFriendlyPlayer::Enter(Minion* pMinion)
 {
-	pMinion->GetMinionBlackBoard()->SetGoToNearestCaptureZone(true);
+	pMinion->GetMinionBlackBoard()->SetGoToClosestAlly(true);
 }
 
 std::string MinionStateHealFriendlyPlayer::GetState()
@@ -55,38 +55,31 @@ void MinionStateHealFriendlyPlayer::Exit(Minion* pMinion)
 
 void MinionStateHealFriendlyPlayer::Execute(Minion* pMinion)
 {
-	//if (pBot->IsAlive())
-	//{
-	//	if (pBot->GetAmmo() == 0)
-	//	{
-	//		pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}
-
-	//	/*else if(pBot->GetAmmo() < 5 && pBot->NoEnemyWithin(500.0f))
-	//	{
-	//	pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}*/
-
-	//	else if (FuzzyLogic::GetAmmoQuery(pBot->GetAmmo(), pBot->GetClosestEnemyDistance()))
-	//	{
-	//		pBot->ChangeState(StateGoToSupplyPoint::GetInstance());
-	//	}
-
-	//	// Else path has been completed or the domination point has been taken by enemy team.
-	//	else if (pBot->GetPathComplete() || DynamicObjects::GetInstance()->GetDominationPoint(pBot->GetTargetDominationPoint()).m_OwnerTeamNumber != pBot->GetTeamNumber())
-	//	{
-	//		pBot->ChangeState(StateTumbleweed::GetInstance());
-	//	}
-
-	//	else if (pBot->BotCanSeeEnemy())
-	//	{
-	//		pBot->ChangeState(StateAim::GetInstance());
-	//	}
-	//}
-	//else
-	//{
-	//	pBot->ChangeState(StateStart::GetInstance());
-	//}
+	if (pMinion->IsAlive())
+	{
+		if (pMinion->IncomingProjectile())
+		{
+			pMinion->ChangeState(MinionStateEscapeRocket::GetInstance());
+		}
+		else if (pMinion->DistanceToClosestFriendlySQ() >= pMinion->GetPursueRadiusSQ() || pMinion->HealthOfClosestFriendly() > pMinion->GetAllyHealPursueLimit())
+		{
+			if (pMinion->DistanceToClosestEnemySQ() <= pMinion->GetDetectionRadiusSQ() && 
+			   pMinion->DistanceToClosestEnemySQ() < pMinion->DistanceToEnemyZoneSQ())
+				//&& pMinion->DistanceToEnemyZone() != NO_ENEMY_ZONES_FLAG) || pMinion->DistanceToEnemyZone() == NO_ENEMY_ZONES_FLAG) Always equals true
+			{
+				pMinion->ChangeState(MinionStateChaseEnemyPlayer::GetInstance());
+			}
+			else if (pMinion->DistanceToEnemyZoneSQ() != NO_ENEMY_ZONES_FLAG)
+			//else if (pMinion->DistanceToEnemyZoneSQ() != NO_ENEMY_ZONES_FLAG && pMinion->DistanceToEnemyZoneSQ() <= pMinion->GetDetectionRadiusSQ())
+			{
+				pMinion->ChangeState(MinionStateCaptureZone::GetInstance());
+			}
+			else
+			{
+				pMinion->ChangeState(MinionStateWander::GetInstance());
+			}
+		}
+	}
 }
 
 void MinionStateHealFriendlyPlayer::Release()
@@ -94,7 +87,7 @@ void MinionStateHealFriendlyPlayer::Release()
 	if (instance)
 	{
 		delete instance;
-		instance = NULL;
+		instance = nullptr;
 	}
 }
 

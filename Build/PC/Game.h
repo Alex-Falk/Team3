@@ -46,6 +46,7 @@ public:
 	inline void SetLinearVelocity(uint id, Vector3 v)	{ avatars[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
 	inline void SetAngularVelocity(uint id, Vector3 v)	{ avatars[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }
 	inline void SetPosition(uint id, Vector3 p)			{ avatars[id]->GetGameObject()->Physics()->SetPosition(p); }
+	inline void SetGameLength(float f)					{ gameLength = f; }
 
 	inline void SetServer() {
 		if (user) { SAFE_DELETE(user) }; 
@@ -65,6 +66,8 @@ public:
 	inline uint GetPlayerNumber()			{ return playerNumber; }
 	inline uint GetMapIndex()				{ return mapIdx; }
 	inline uint getUserID()					{ return user->GetUserID(); }
+	inline float GetGameLength()			{ return gameLength; }
+	inline float GetTimeLeft()				{ return gameLength - time; }
 
 	inline Avatar * GetPlayer(uint id)		{ return avatars[id]; }
 	inline Avatar * GetCurrentAvatar()		{ return avatars[user->GetUserID()]; }
@@ -74,7 +77,7 @@ public:
 	inline string GetName(uint id)			{ return userNames[id]; }
 
 	inline float GetScore(uint id)			{ return teamScores[id]; }
-	inline float GetTime()					{ return gameTime; }
+
 
 	inline void StartGame(uint mapID = 0)	{ gameRunning = true; mapIdx = mapID; user->StartGame(mapID); }
 	inline void StopGame()					{ gameRunning = false; }
@@ -88,6 +91,7 @@ public:
 
 	void Update(float dt);
 	void ResetGame();
+	void DetermineWinner();
 
 	void ClaimPickup(Avatar * player, Pickup * pickup);
 	//bool ClaimArea(Avatar * player, CaptureArea *object);
@@ -133,10 +137,11 @@ private:
 
 	bool gameRunning = false;
 	float updateTimestep = 1.0f / 60.f;
-	float gameTime = 0.0f;
 
 	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
 	// Performance Timers																				Date: 02/03/2018
 	//--------------------------------------------------------------------------------------------//	
 	PerfTimer perfNetwork;
+	float time = 0.0f;
+	float gameLength = 30.0f;
 };
