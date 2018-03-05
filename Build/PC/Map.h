@@ -19,6 +19,7 @@ class Map : public Scene
 {
 protected:
 	float m_AccumTime = 0;
+	float updatePerSecond = 0;
 	Vector3 spawnPositions[4];
 	static int mapIndex; // Controls which map will be loaded
 
@@ -35,13 +36,18 @@ protected:
 	inline void SetMapDimensions(Vector2 dimens)	{ dimensions = dimens; }
 	inline Vector2 GetMapDimensions()				{ return dimensions; }
 
+	//Scoring
+	void UpdateCaptureAreas();			
 
 	//pickup stuff
+	void SetNumOfPickups(uint x) { npickup = x; }
 	uint npickup;
 	Pickup** pickup;
 	//capture areas for minimap
+	void SetNumOfCaptureAreas(uint x) { ncapture = x; }
 	uint ncapture;
 	CaptureArea** capture;
+
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization

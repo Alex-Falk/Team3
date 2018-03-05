@@ -17,9 +17,9 @@ public:
 	SimpleGamePlay(const std::string& friendly_name) :
 		Map(friendly_name)
 	{
-		npickup = 5;
+		SetNumOfPickups(5);
 		pickup = new Pickup*[npickup];
-		ncapture = 1;
+		SetNumOfCaptureAreas(2);
 		capture = new CaptureArea*[ncapture];
 	}
 

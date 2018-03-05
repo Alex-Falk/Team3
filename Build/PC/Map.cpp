@@ -45,6 +45,38 @@ void Map::OnInitializeScene() {
 	Scene::OnInitializeScene();
 }
 
+//--------------------------------------------------------------------------------------------//
+// Updating CaptureAreas Score
+//--------------------------------------------------------------------------------------------//
+void Map::UpdateCaptureAreas() {
+	
+	int captAreaTeamScore[4] = { (0,0,0,0) };
+	for (uint i = 0;i < ncapture;i++)
+	{
+		switch (capture[i]->GetColour())
+		{
+		case RED:
+			captAreaTeamScore[0] += capture[i]->GetScoreValue();
+			break;
+		case GREEN:
+			captAreaTeamScore[1] += capture[i]->GetScoreValue();
+			break;
+		case BLUE:
+			captAreaTeamScore[2] += capture[i]->GetScoreValue();
+			break;
+		case PINK:
+			captAreaTeamScore[3] += capture[i]->GetScoreValue();
+			break;
+		default:
+			break;
+		}
+	}
+	Game::Instance()->SetAreaScores(0, captAreaTeamScore[0]);
+	Game::Instance()->SetAreaScores(1, captAreaTeamScore[1]);
+	Game::Instance()->SetAreaScores(2, captAreaTeamScore[2]);
+	Game::Instance()->SetAreaScores(3, captAreaTeamScore[3]);
+}
+
 void Map::OnInitializeGUI()
 {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
@@ -155,6 +187,7 @@ void Map::OnUpdateScene(float dt)
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;
+	updatePerSecond += dt;
 
 	//player->OnPlayerUpdate(dt);
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
@@ -168,6 +201,12 @@ void Map::OnUpdateScene(float dt)
 	{
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+	}
+
+	//update only once a second
+	if (updatePerSecond >= 1.0f) {
+		UpdateCaptureAreas();
+		updatePerSecond = 0.0f;
 	}
 }
 

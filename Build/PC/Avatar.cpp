@@ -497,13 +497,13 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	// Setting Angular Velocity
 	int basicSpinSpeed = 55; //Change this number to change the spin speed
 	if (moveTimer > 2.f) { rollSpeed -= 1; }
+	if (rollSpeed < 0) { rollSpeed = 0; }
 
 	if (curMove != previousMove)
 	{
 		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * basicSpinSpeed);
 		previousMove = curMove;
 		moveTimer = 0;
-		rollSpeed = 0;
 	}
 	else if (curMove == inputDir && inputDir !=MOVE_JUMP ){
 		rollSpeed += 1;

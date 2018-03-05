@@ -15,7 +15,7 @@ void Game::Update(float dt)
 		{
 			for (uint i = 0; i < playerNumber; ++i)
 			{
-				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i);
+				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i) + teamAreaScores[i];
 			}
 		}
 		//NCLDebug::Log(to_string(gameTime));
