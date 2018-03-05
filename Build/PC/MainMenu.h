@@ -203,8 +203,7 @@ private:
 	//3.3 Lobby Player List
 	CEGUI::Titlebar* AllPlayerInfo;
 	//CEGUI::Titlebar* addedPlayerInfo;
-	string playerText = "Player List: \n\n";
-	string addedPlayerText = "Added Player List: \n\n";
+	string playerText = "Connected Player List: \n\n";
 	//3.4 Back Button
 	CEGUI::PushButton* lobbyMenuBack;
 
@@ -214,7 +213,6 @@ private:
 	inputBox clientName;
 	CEGUI::PushButton* disconnectToHost;
 	CEGUI::Titlebar* otherPlayersInfo;
-	string otherPlayersText = "Other players in lobby: \n\n";
 
 	//User chosen map
 	int nextMapID = 1;

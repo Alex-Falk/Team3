@@ -1,5 +1,7 @@
 #include "MainMenu.h"
 
+string temp[4] = { "", "", "", "" };
+
 MainMenu::~MainMenu()
 {
 	enet_deinitialize();
@@ -57,11 +59,12 @@ void MainMenu::TextInputHelper()
 {
 	if (GUIsystem::Instance()->GetIsTyping() == false) {
 		if (GUIsystem::Instance()->currentType == "UserName") {
-			Game::Instance()->GetUser()->SetName(userName.editbox->getText().c_str());
-			std::cout << Game::Instance()->GetUser()->GetName(0) << std::endl;
+			Game::Instance()->SetName(userName.editbox->getText().c_str());
+			GUIsystem::Instance()->SetIsTyping(false);
 		}
 		else if (GUIsystem::Instance()->currentType == "ClientName") {
-			//Game::Instance()->GetUser()->SetName(clientName.editbox->getText().c_str());
+			Game::Instance()->SetName(clientName.editbox->getText().c_str());
+			GUIsystem::Instance()->SetIsTyping(false);
 		}
 		else {
 			//Currently ip input is handled in MainMenu.cpp
@@ -83,28 +86,22 @@ void MainMenu::OnUpdateScene(float dt)
 		TextInputHelper();
 	}
 	
+	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); ++i) {
+		temp[i] = Game::Instance()->GetName(i);
+	}
 
+	//Update Player Info
+	AllPlayerInfo->setText(playerText 
+		+ temp[0] + "\n\n"
+		+ temp[1] + "\n\n"
+		+ temp[2] + "\n\n"
+		+ temp[3] + "\n\n");
 
-	//string temp[4] = {"", "", "", ""};
-
-	//for (int i = 0; i < 4; ++i) {
-	//	if (Game::Instance()->GetPlayer(i) != NULL) {
-	//		temp[i] = Game::Instance()->GetPlayer(i)->GetName();
-	//	}
-	//}
-
-	////Update Player Info
-	//AllPlayerInfo->setText(playerText 
-	//	+ temp[0] + "\n\n"
-	//	+ temp[1] + "\n\n"
-	//	+ temp[2] + "\n\n"
-	//	+ temp[3] + "\n\n");
-
-	//otherPlayersInfo->setText(otherPlayersText
-	//	+ temp[0] + "\n\n"
-	//	+ temp[1] + "\n\n"
-	//	+ temp[2] + "\n\n"
-	//	+ temp[3] + "\n\n");
+	otherPlayersInfo->setText(playerText
+		+ temp[0] + "\n\n"
+		+ temp[1] + "\n\n"
+		+ temp[2] + "\n\n"
+		+ temp[3] + "\n\n");
 }
 
 //Setting UP GUI
@@ -445,13 +442,11 @@ void MainMenu::SetUpconnectionMenu()
 	otherPlayersInfo->setAlpha(0.8f);
 	otherPlayersInfo->disable();
 	otherPlayersInfo->setVisible(false);
-	otherPlayersText = otherPlayersText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
-	otherPlayersInfo->setText(otherPlayersText);
 
 	//Inputting userName
 	clientName.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
-			Vector4(0.40f, 0.15f, 0.2f, 0.1f),
+			Vector4(0.40f, 0.55f, 0.2f, 0.1f),
 			Vector4(),
 			"Client Name"
 		));
@@ -705,30 +700,10 @@ void MainMenu::onConnectButtonClicked()
 		{
 			//TODO: Set User Name and Sent to the server
 			Game::Instance()->setClient(ip);
-			//Game::Instance()->GetUser()->SetName(clientName.editbox->getText().c_str());
-			GUIsystem::Instance()->SetIsTyping(false);
 		}
 	}
 	HideConnectionMenu();
 	ShowWaitingInfo();
-}
-
-void MainMenu::ShowWaitingInfo()
-{
-	disconnectToHost->enable();
-	disconnectToHost->setVisible(true);
-
-	otherPlayersInfo->enable();
-	otherPlayersInfo->setVisible(true);
-}
-
-void MainMenu::HideWaitingInfo()
-{
-	disconnectToHost->disable();
-	disconnectToHost->setVisible(false);
-
-	otherPlayersInfo->disable();
-	otherPlayersInfo->setVisible(false);
 }
 
 void MainMenu::OndisconnectButtonClicked()
@@ -757,14 +732,47 @@ void MainMenu::ShowConnectionMenu()
 	connectToHostButton->enable();
 	connectToHostButton->setVisible(true);
 
+	connectMenuBack->enable();
+	connectMenuBack->setVisible(true);
+
 	IpInputBox.editbox->enable();
 	IpInputBox.editbox->setVisible(true);
+}
+
+void MainMenu::HideConnectionMenu()
+{
+	connectToHostButton->setVisible(false);
+	connectToHostButton->disable();
+
+	IpInputBox.editbox->setVisible(false);
+	IpInputBox.editbox->disable();
+
+	connectMenuBack->disable();
+	connectMenuBack->setVisible(false);
+}
+
+void MainMenu::ShowWaitingInfo()
+{
+	disconnectToHost->enable();
+	disconnectToHost->setVisible(true);
+
+	otherPlayersInfo->enable();
+	otherPlayersInfo->setVisible(true);
 
 	clientName.editbox->enable();
 	clientName.editbox->setVisible(true);
+}
 
-	connectMenuBack->enable();
-	connectMenuBack->setVisible(true);
+void MainMenu::HideWaitingInfo()
+{
+	disconnectToHost->disable();
+	disconnectToHost->setVisible(false);
+
+	otherPlayersInfo->disable();
+	otherPlayersInfo->setVisible(false);
+
+	clientName.editbox->disable();
+	clientName.editbox->setVisible(false);
 }
 
 void MainMenu::HideOptionMenu()
@@ -819,21 +827,6 @@ void MainMenu::HideMainMenu()
 	optionButton->disable();
 	joinButton->setVisible(false);
 	joinButton->disable();
-}
-
-void MainMenu::HideConnectionMenu()
-{
-	connectToHostButton->setVisible(false);
-	connectToHostButton->disable();
-
-	IpInputBox.editbox->setVisible(false);
-	IpInputBox.editbox->disable();
-
-	clientName.editbox->disable();
-	clientName.editbox->setVisible(false);
-
-	connectMenuBack->disable();
-	connectMenuBack->setVisible(false);
 }
 
 void MainMenu::ShowOptionMenu1()

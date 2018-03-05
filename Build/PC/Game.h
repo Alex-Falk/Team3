@@ -38,6 +38,7 @@ public:
 
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
 
+	inline void SetName(string name)					{ userNames[getUserID()] = name; user->UpdateName(); }
 	inline void SetPlayerName(uint id, string name)		{ userNames[id] = name; }
 
 	inline void SetSize(uint id, float size)			{ avatars[id]->SetLife(size); }
@@ -51,6 +52,7 @@ public:
 		if (user) { SAFE_DELETE(user) }; 
 		user = new Server();
 	}
+
 	inline void setClient(IP ip) { 
 		if (user) { SAFE_DELETE(user) }; 
 		user = new Client(ip); 

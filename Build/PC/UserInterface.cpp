@@ -450,7 +450,7 @@ void GUIsystem::DrawStartLoadingScreen()
 
 void GUIsystem::UpdateFakeProgressBar()
 {
-	progressBarValue += 0.01;
+	progressBarValue += 0.04;
 	if (progressBarValue > 1) {
 		progressBarValue = 0;
 	}
@@ -503,7 +503,6 @@ void GUIsystem::SetUpLoadingScreen()
 			"loadingProgress"
 		));
 	
-
 }
 
 void GUIsystem::DrawWeaponIcon(){

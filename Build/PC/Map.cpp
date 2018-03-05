@@ -166,7 +166,7 @@ void Map::OnUpdateScene(float dt)
 	}
 
 	if (isLoading == true) {
-		if (temp_fps > 1000) {
+		if (temp_fps > 25) {
 			GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::NOT_LOADING);
 			isLoading = false;
 		}
