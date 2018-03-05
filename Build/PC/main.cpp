@@ -153,12 +153,12 @@ void PrintStatusEntries()
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (draw_debug)
 	{
-		//NCLDebug::AddStatusEntry(status_color_debug, "Constraints       : %s [Z] ", (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT) ? "Enabled " : "Disabled");
-		//NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
-		//NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
-		//NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] ", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Constraints       : %s [Z] ", (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] ", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "World Partition   : %s [B] ", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
-		//NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
 
 		NCLDebug::AddStatusEntry(status_color_debug, "");
 	}
@@ -229,23 +229,23 @@ void HandleKeyboardInputs()
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
-	//	drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
+		drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
 
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
-	//	drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
+		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
 
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
-	//	drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
 
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
-	//	drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
 		drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
 
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
-		//drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
+		drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
 	{
@@ -397,7 +397,7 @@ int main()
 	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
-	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false) 
+	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false && !(Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE)))
 	{
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
 																			//Update Performance Timers (Show results every second)
