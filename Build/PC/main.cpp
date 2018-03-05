@@ -397,7 +397,7 @@ int main()
 	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
-	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false && !(Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE)))
+	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false)
 	{
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
 																			//Update Performance Timers (Show results every second)
