@@ -186,6 +186,9 @@
     <ClInclude Include="MultiPaintPool.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="Stage4.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -286,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="MultiPaintPool.cpp">
       <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage4.cpp">
+      <Filter>Maps\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

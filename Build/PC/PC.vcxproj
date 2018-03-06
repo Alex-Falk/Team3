@@ -179,6 +179,7 @@
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="PaintableGameObject.h" />
+    <ClInclude Include="Stage4.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="MinionStateEscapeRocket.h" />
     <ClInclude Include="MinionStateHealFriendlyPlayer.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="MinionStateEscapeRocket.cpp" />
     <ClCompile Include="MinionStateHealFriendlyPlayer.cpp" />
     <ClCompile Include="MinionStateWander.cpp" />
+    <ClCompile Include="Stage4.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="WeaponPickup.cpp" />

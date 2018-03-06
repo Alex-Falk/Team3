@@ -174,28 +174,12 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 		collisionTimerActive = true;
 		collisionTimer = timeUntilInAir;
 		inAir = false;
-		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-	}
-	/*else if (collidingObject->GetType() == PICKUP)
-	{
-		Pickup * p = (Pickup*)(collidingObject->GetParent());
-		if (p->GetActive())
-		{
-			activePickUp = p->GetPickupType();
-			if (activePickUp == WEAPON)
-			{
-				weapon = ((WeaponPickup*)p)->GetWeaponType();
-			}
-			
-			if (Game::Instance()->ClaimPickup(this, p))
-			{
-				PickUpBuffActivated(activePickUp);
-			}
-			
+
+		if (collidingObject->GetType() == BIG_NODE) {
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 		}
 
-		return false;
-	}*/
+	}
 	return true;
 }
 
