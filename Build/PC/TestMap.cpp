@@ -59,6 +59,8 @@ void TestMap::AddObjects()
 
 	CreateEnvironment();
 	GameplayTesting();
+
+	PhysicsEngine::Instance()->ResetWorldPartition();
 }
 
 

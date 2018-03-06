@@ -105,4 +105,6 @@ void Arena::CreateEnvironment()
 		Vector4(0.2f, 0.5f, 1.0f, 1.0f));	// Colour
 
 	this->AddGameObject(RightWall);
+
+	PhysicsEngine::Instance()->ResetWorldPartition();
 }

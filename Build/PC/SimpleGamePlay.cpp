@@ -59,6 +59,8 @@ void SimpleGamePlay::AddObjects()
 	capture[0] = new CaptureArea(Vector3(15, 0.6, -15), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
 	this->AddGameObject(capture[0]);
 	AddCaptureArea(capture[0]);
+
+	PhysicsEngine::Instance()->ResetWorldPartition();
 }
 
 //--------------------------------------------------------------------------------------------//
