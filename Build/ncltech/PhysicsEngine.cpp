@@ -36,6 +36,11 @@ void PhysicsEngine::AddPhysicsObject(PhysicsNode* obj)
 {
 	physicsNodes.push_back(obj);
 
+	if (obj->GetType() == PROJECTILE)
+	{
+		projectileNodes.push_back(obj);
+	}
+
 	if (worldPartitioning)
 	{
 		worldPartitioning->AddObject(obj);
@@ -81,12 +86,23 @@ void PhysicsEngine::RemovePhysicsObject(PhysicsNode* obj)
 	if (obj)
 	{
 		//Lookup the object in question
-		auto found_loc = std::find(physicsNodes.begin(), physicsNodes.end(), obj);
-
+		auto found_obj = std::find(physicsNodes.begin(), physicsNodes.end(), obj);
+		
 		//If found, remove it from the list
-		if (found_loc != physicsNodes.end())
+		if (found_obj != physicsNodes.end())
 		{
-			physicsNodes.erase(found_loc);
+			physicsNodes.erase(found_obj);
+		}
+
+		if (obj->GetType() == PROJECTILE)
+		{
+			auto found_proj = std::find(projectileNodes.begin(), projectileNodes.end(), obj);
+
+			//If found, remove it from the list
+			if (found_proj != projectileNodes.end())
+			{
+				projectileNodes.erase(found_proj);
+			}
 		}
 
 		if (worldPartitioning)

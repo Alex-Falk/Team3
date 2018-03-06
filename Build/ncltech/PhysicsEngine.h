@@ -175,6 +175,7 @@ protected:
 	std::vector<CollisionPair>  broadphaseColPairs;
 
 	std::vector<PhysicsNode*>	physicsNodes;
+	std::vector<PhysicsNode*>	projectileNodes;
 
 	std::vector<Constraint*>	constraints;		// Misc constraints applying to one or more physics objects e.g our DistanceConstraint
 	std::vector<Manifold*>		manifolds;			// Contact constraints between pairs of objects
