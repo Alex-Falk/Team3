@@ -550,7 +550,7 @@ void GUIsystem::DrawWinLostText()
 			ResultText->setText("WINNER WINNER\n DONGLI DINNER");
 			break;
 		case LOST:
-			ResultText->setText("418 - I AM A TEAPOT");
+			ResultText->setText("Advertising spaces\n for rent");
 			break;
 		case NONE:
 			break;
@@ -583,7 +583,7 @@ void GUIsystem::SetUpResultText()
 {
 	ResultText = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/Label",
-			Vector4(0.20f, 0.2f, 0.60f, 0.60f),
+			Vector4(0.20f, 0.00f, 0.60f, 0.60f),
 			Vector4(),
 			"ResultText"
 		));
