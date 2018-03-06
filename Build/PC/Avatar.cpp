@@ -53,7 +53,9 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	speed = standardSpeed;
 	boostedSpeed = standardSpeed * 2;
 
-	maxForce = 30;
+	maxRotationSpeed = 20;
+
+	maxVel = 20.0f;
 
 	minLife = 20;
 	maxLife = 100;
@@ -209,6 +211,7 @@ void Avatar::ChangeSize(float newSize)
 	standardSpeed = 25.0f*newSize;
 	boostedSpeed = 50.0f*newSize;
 	standarSpinSpeed = 40 * newSize;
+
 	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
 	
 	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
@@ -488,9 +491,6 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 		}
 		break;
 	}
-	default: {
-		break;
-	}
 	}
 	force.y = 0;
 
@@ -508,14 +508,13 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	else if (curMove == inputDir && inputDir !=MOVE_JUMP ){
 		rollSpeed += 1;
 		if (inAir) {
-			if (rollSpeed > 35) { rollSpeed = 35; }
+			if (rollSpeed > maxRotationSpeed) { rollSpeed = maxRotationSpeed; }
 		}
 		else {
 			if (rollSpeed > 20) { rollSpeed = 20; }
 		}
 		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * (basicSpinSpeed + rollSpeed));
 	}
-
 
 	// Setting MoveMent
 	if (inAir) 
@@ -524,4 +523,9 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	}
 
 	Physics()->SetForce(force);	
+
+	if (Physics()->GetLinearVelocity().Length() > maxVel)
+	{
+		Physics()->SetLinearVelocity(Vector3(Physics()->GetLinearVelocity()).Normalise() * maxVel);
+	}
 }

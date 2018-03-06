@@ -62,8 +62,10 @@ protected:
 	float speed;			    // movement speed
 	float boostedSpeed;
 	float standardSpeed;
-	float maxForce;			// Sets Maximum applied Force 
+	float maxRotationSpeed;			// Sets Maximum applied Force 
 	float shootCooldown;
+
+	float maxVel;
 
 	bool collisionTimerActive;
 	float collisionTimer;
