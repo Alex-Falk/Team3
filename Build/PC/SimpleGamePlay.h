@@ -26,7 +26,7 @@ public:
 	{
 		SetNumOfPickups(5);
 		pickup = new Pickup*[npickup];
-		SetNumOfCaptureAreas(2);
+		SetNumOfCaptureAreas(1);
 		capture = new CaptureArea*[ncapture];
 	}
 
