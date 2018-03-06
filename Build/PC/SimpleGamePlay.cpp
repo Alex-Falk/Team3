@@ -65,6 +65,7 @@ void SimpleGamePlay::AddObjects()
 	//add multi capture pool
 	
 
+	PhysicsEngine::Instance()->ResetWorldPartition();
 }
 
 //--------------------------------------------------------------------------------------------//
