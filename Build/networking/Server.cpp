@@ -300,8 +300,12 @@ void Server::HandleRequests()
 				data = data + "1";
 			}
 
-			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-			enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
+			if (r.userID != userID)
+			{
+				ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+				enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
+			}
+
 		}
 		else if (r.type = PAINTABLE_OBJECT)
 		{
@@ -311,8 +315,11 @@ void Server::HandleRequests()
 
 			m->GetCaptureArea(r.objectID)->SetColour(Colour(r.userID));
 
-			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-			enet_host_broadcast(server->m_pNetwork, 0, packet);
+			if (r.userID != userID)
+			{
+				ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+				enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
+			}
 		}
 
 		requests.pop();

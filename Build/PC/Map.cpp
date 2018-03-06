@@ -34,6 +34,17 @@ void Map::OnInitializeScene() {
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
 	
 
+	if (pickups.size() > 0)
+	{
+		pickups.clear();
+	}
+
+	if (captureAreas.size() > 0)
+	{
+		captureAreas.clear();
+	}
+
+
 	OnInitializeGUI();
 
 	SetSpawnLocations();
