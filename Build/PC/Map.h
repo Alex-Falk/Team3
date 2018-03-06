@@ -14,6 +14,7 @@
 #include "GamePlay.h"
 #include "WeaponPickup.h"
 #include "CaptureArea.h"
+#include "MultiPaintPool.h"
 
 class Map : public Scene
 {

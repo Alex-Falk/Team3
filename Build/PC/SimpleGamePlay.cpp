@@ -2,13 +2,14 @@
 #include "SimpleGamePlay.h"
 #include "PaintPool.h"
 #include "Game.h"
+#include "MultiPaintPool.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
 //--------------------------------------------------------------------------------------------//
 void SimpleGamePlay::OnInitializeScene()
 {
-	dimensions = Vector2(35, 50);
+	dimensions = Vector2(50, 50);
 
 	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();
@@ -29,7 +30,7 @@ void SimpleGamePlay::AddObjects()
 
 	BuildGround(dimensions);
 
-	pickup[0] = new PaintPool(Vector3(0, 0.6f, 0), RED,"0");
+	pickup[0] = new PaintPool(Vector3(0, 0.6f, 0), START_COLOUR, "0");
 	this->AddGameObject(pickup[0]);
 
 	pickup[1] = new WeaponPickup(Vector3(20, 1.5, 20), PAINT_SPRAY, "1", 5.0f);
@@ -56,10 +57,14 @@ void SimpleGamePlay::AddObjects()
 	this->AddGameObject(pickup[4]);
 
 	//add capture area
-	capture[0] = new CaptureArea(Vector3(-25, 0.6, 25), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
-	capture[0]->SetScoreValue(100000);
+	capture[0] = new MultiPaintPool(Vector3(15, 0.6, -15), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
 	this->AddGameObject(capture[0]);
-	AddCaptureArea(capture[0]);
+	//Add paint pool to capture area
+	static_cast<MultiPaintPool*>(capture[0])->AddPool(static_cast<PaintPool*>(pickup[0]));
+
+	//add multi capture pool
+	
+
 }
 
 //--------------------------------------------------------------------------------------------//
@@ -77,13 +82,9 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 			pickup[i]->Update(dt);
 		}
 	}
-	if (mc) {
-		mc->Update(dt);	
-	}
-	if (mc2) {
-		mc2->Update(dt);
-	}
-	perfMapObjects.EndTimingSection();
+	//if (mc) {
+	//	mc->Update(dt);
+	//}
 }
 
 //--------------------------------------------------------------------------------------------//

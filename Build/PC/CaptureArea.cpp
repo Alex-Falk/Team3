@@ -31,8 +31,9 @@ CaptureArea::CaptureArea()
 	CaptureArea({ 0,0,0 },"CAPTUREAREA");
 }
 
-CaptureArea::CaptureArea(Vector3 pos, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
+CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
 {
+	Vector3 pos = Vector3(posit.x + 0.0f, posit.y + 2.0f, posit.z + 0.0f);
 	friendlyName = unique_name;
 	Vector4 paintColour;
 
