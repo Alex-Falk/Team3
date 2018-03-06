@@ -144,6 +144,8 @@ void GUIsystem::Draw()
 			}
 		}
 	}
+
+	DrawWinLostText();
 }
 
 void GUIsystem::SetMouseCursor(const std::string & imageFile)
@@ -160,7 +162,6 @@ void GUIsystem::HideMouseCursor()
 {
 	m_context->getMouseCursor().hide();
 }
-
 
 void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 {
@@ -357,7 +358,12 @@ void GUIsystem::SetFont(const std::string & fontFile)
 {
 	CEGUI::FontManager::getSingleton().createFromFile(fontFile + ".font");
 	m_context->setDefaultFont(fontFile);
+}
 
+void GUIsystem::SetFont2(const std::string& fontFile)
+{
+	CEGUI::FontManager::getSingleton().createFromFile(fontFile + ".font");
+	m_context_public->setDefaultFont(fontFile);
 }
 
 CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name)
@@ -380,6 +386,11 @@ CEGUI::Window * GUIsystem::createWidgetForLoadingScreen(const std::string type, 
 
 void GUIsystem::DrawTransitionLoadingScreen()
 {
+	loadingMessage->enable();
+	loadingMessage->setVisible(true);
+
+	loadingProgress->disable();
+	loadingProgress->setVisible(true);
 	glUseProgram(loadingScreenShader->GetProgram());
 	float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
 	//Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 1));
@@ -465,9 +476,8 @@ void GUIsystem::SetUpLoadingScreen()
 	m_loadingRoot = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "loadingRoot");
 	m_context_public->setRootWindow(m_loadingRoot);
 
-	m_context_public->setDefaultFont("DejaVuSans-10");
-
 	loadingScreen = Mesh::GenerateQuad();
+	SetFont2("Junicode-13");
 
 	//Loading Texture for background
 	loadingScreenTexture[START] = SOIL_load_OGL_texture(TEXTUREDIR"LoadingScreen/Van-Gogh-Starry-Night.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
@@ -491,12 +501,12 @@ void GUIsystem::SetUpLoadingScreen()
 	}
 
 	loadingMessage = static_cast<CEGUI::Titlebar*>(
-		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/Title",
-			Vector4(0.40f, 0.6f, 0.20f, 0.05f),
+		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/Label",
+			Vector4(0.20f, 0.2f, 0.60f, 0.60f),
 			Vector4(),
 			"loadingMessage"
 		));
-	loadingMessage->setText("Advertising spaces for rent");
+	loadingMessage->setText("Loading.....");
 	//loadingMessage->setFont(titleFont);
 
 	loadingProgress = static_cast<CEGUI::ProgressBar*>(
@@ -505,6 +515,13 @@ void GUIsystem::SetUpLoadingScreen()
 			Vector4(),
 			"loadingProgress"
 		));
+
+	loadingMessage->disable();
+	loadingMessage->setVisible(false);
+
+	loadingProgress->disable();
+	loadingProgress->setVisible(false);
+	SetUpResultText();
 }
 
 void GUIsystem::DrawWeaponIcon(){
@@ -518,4 +535,58 @@ void GUIsystem::DrawWeaponIcon(){
 		weaponIcon->Draw();
 		glUseProgram(0);
 	}
+}
+
+void GUIsystem::DrawWinLostText()
+{
+	loadingMessage->disable();
+	loadingMessage->setVisible(false);
+
+	loadingProgress->disable();
+	loadingProgress->setVisible(false);
+	if (drawResult == true) {
+		switch (result) {
+		case WIN:
+			ResultText->setText("WINNER WINNER\n DONGLI DINNER");
+			break;
+		case LOST:
+			ResultText->setText("418 - I AM A TEAPOT");
+			break;
+		case NONE:
+			break;
+		default:
+			break;
+		}
+		ResultText->enable();
+		ResultText->setVisible(true);
+	}
+	else {
+		ResultText->disable();
+		ResultText->setVisible(false);
+	}
+
+	glUseProgram(0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_renderer->beginRendering();
+	m_context_public->draw();
+	m_renderer->endRendering();
+	glDisable(GL_SCISSOR_TEST);
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(0);
+}
+
+void GUIsystem::SetUpResultText()
+{
+	ResultText = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/Label",
+			Vector4(0.20f, 0.2f, 0.60f, 0.60f),
+			Vector4(),
+			"ResultText"
+		));
+	ResultText->disable();
+	ResultText->setVisible(false);
 }

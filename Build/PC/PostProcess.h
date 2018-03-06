@@ -9,6 +9,7 @@
 #include <nclgl/NCLDebug.h>
 #include <nclgl/Mesh.h>
 
+
 enum PostProcessType{
 	NORMAL				= 0,
 	BLUR				= 1,

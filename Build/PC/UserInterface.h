@@ -42,6 +42,12 @@
 
 const int Num_of_loadingTex = 2;
 
+enum RESULT {
+	WIN = 0,
+	LOST = 1,
+	NONE
+};
+
 enum LoadingScreenType
 {
 	START		= 0,
@@ -91,6 +97,7 @@ public:
 	void LoadScheme(const std::string& schemeFile);
 
 	void SetFont(const std::string& fontFile);
+	void SetFont2(const std::string& fontFile);
 
 	//GUI create helper function
 	CEGUI::Window* createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name = "");
@@ -119,8 +126,6 @@ public:
 	inline void SetHasWeapon(bool b) { hasWeapon = b; }
 	inline bool GetDrawMiniMap() { return drawMiniMap; }
 	inline void SetPlayerColour(Vector3 c) { playerColour = c; }
-	inline bool GetIsWinner() { return isWinner; }
-	inline void SetIsWinner(bool a) { isWinner = a; }
 
 	//Getter Setter of isLoading boolean
 	inline LoadingScreenType GetCurrentLoadingScreen() { return currentLoadingScreen; }
@@ -149,6 +154,15 @@ public:
 		Vector3(0,0,0)
 	};
 	float time;
+	bool drawPlayerName = false;
+
+	//Result
+	inline void SetResult(RESULT result) { this->result = result; }
+	inline RESULT GetResult() { return result; }
+	inline void SetDrawResult(bool drawResult) { this->drawResult = drawResult; }
+	inline bool GetDrawResult() { return this->drawResult; }
+	void SetUpResultText();
+	void DrawWinLostText();
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -188,6 +202,8 @@ protected:
 	CEGUI::ProgressBar* loadingProgress;
 	float progressBarValue = 0;
 
-	//Win Screen
-	bool isWinner;
+	//Result 
+	RESULT result;
+	bool drawResult = false;
+	CEGUI::Titlebar* ResultText;
 };

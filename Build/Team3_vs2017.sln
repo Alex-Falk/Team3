@@ -108,11 +108,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Post Process", "Post Proces
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Font", "Font", "{1F801B21-045D-407C-8484-6B61494141CE}"
 	ProjectSection(SolutionItems) = preProject
+		..\Data\GUIResource\fonts\.font = ..\Data\GUIResource\fonts\.font
 		..\Data\GUIResource\fonts\Batang-18.font = ..\Data\GUIResource\fonts\Batang-18.font
 		..\Data\GUIResource\fonts\DejaVuSans-10.font = ..\Data\GUIResource\fonts\DejaVuSans-10.font
 		..\Data\GUIResource\fonts\DejaVuSans-12.font = ..\Data\GUIResource\fonts\DejaVuSans-12.font
 		..\Data\GUIResource\fonts\DejaVuSans-14.font = ..\Data\GUIResource\fonts\DejaVuSans-14.font
-		..\Data\GUIResource\fonts\FairChar-30.font = ..\Data\GUIResource\fonts\FairChar-30.font
 		..\Data\GUIResource\fonts\GreatVibes-16.font = ..\Data\GUIResource\fonts\GreatVibes-16.font
 		..\Data\GUIResource\fonts\GreatVibes-22.font = ..\Data\GUIResource\fonts\GreatVibes-22.font
 		..\Data\GUIResource\fonts\Junicode-13.font = ..\Data\GUIResource\fonts\Junicode-13.font

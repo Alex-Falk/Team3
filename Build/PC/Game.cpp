@@ -50,6 +50,7 @@ void Game::ResetGame()
 	time = 0.0f;
 	GUIsystem::Instance()->SetResult(RESULT::NONE);
 	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
+	GUIsystem::Instance()->SetDrawResult(false);
 	//PhysicsEngine::Instance()->SetPaused(false);
 }
 
@@ -85,6 +86,7 @@ void Game::DetermineWinner() {
 	*/
 
 	//Determine whether the winner is this user
+	GUIsystem::Instance()->SetDrawResult(true);
 	if (currentWinner == getUserID()) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
 		GUIsystem::Instance()->SetResult(RESULT::WIN);
