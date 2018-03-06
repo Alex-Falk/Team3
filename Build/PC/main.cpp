@@ -14,6 +14,7 @@
 #include "Game.h"
 #include "PostProcess.h"
 #include "MinionStates.h"
+#include "Stage4.h"
 
 
 bool draw_debug = true;
@@ -93,7 +94,7 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new StageFourth("Fourth Stage - The Best Game Ever"));
 
 	AudioSystem::Instance();
 	InitialiseAudioFiles();

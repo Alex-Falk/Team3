@@ -156,7 +156,9 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 		collisionTimerActive = true;
 		collisionTimer = timeUntilInAir;
 		inAir = false;
-		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		if (collidingObject->GetType() == BIG_NODE) {
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		}
 	}
 	else if (collidingObject->GetType() == PICKUP)
 	{

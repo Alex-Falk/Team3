@@ -42,6 +42,8 @@ void Map::OnInitializeScene() {
 
 	AddObjects();
 
+	PhysicsEngine::Instance()->ResetWorldPartition();
+
 	Scene::OnInitializeScene();
 }
 
