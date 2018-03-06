@@ -1,20 +1,11 @@
 #pragma once
-#include <nclgl\NCLDebug.h>
-#include <ncltech\Scene.h>
 #include <ncltech\SceneManager.h>
-#include <ncltech\PhysicsEngine.h>
-#include <ncltech\DistanceConstraint.h>
-#include <ncltech\CommonUtils.h>
 #include <ncltech\TextureManager.h> 
 #include "GamePlay.h"
 #include "Pickup.h"
 #include "Avatar.h"
-#include "ControllableAvatar.h"
 #include "Game.h"
-#include "GamePlay.h"
-#include "WeaponPickup.h"
 #include "CaptureArea.h"
-#include "MultiPaintPool.h"
 
 class Map : public Scene
 {
@@ -98,8 +89,8 @@ public:
 	void UpdateGUI(float dt);
 
 	//phil 21/02/2018 for minimap
-	inline int GetXDimension() { return dimensions.x; }
-	inline int GetYDimension() { return dimensions.y; }
+	inline float GetXDimension() { return dimensions.x; }
+	inline float GetYDimension() { return dimensions.y; }
 
 	inline uint GetNPickup() { return npickup; }
 	inline Pickup** GetPickups() { return pickup; }

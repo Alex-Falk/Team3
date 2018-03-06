@@ -3,6 +3,7 @@
 #include "PaintPool.h"
 #include "Game.h"
 #include "MultiPaintPool.h"
+#include "MinionCamp.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup

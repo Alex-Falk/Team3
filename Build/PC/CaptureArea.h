@@ -21,10 +21,8 @@
 //                   "`^^Y888888888888P^^'"  
 #pragma once
 
-#include <ncltech\GameObject.h>
-#include <ncltech\CommonUtils.h>
-#include <nclgl\NCLDebug.h>
 #include "GamePlay.h"
+#include <ncltech\GameObject.h>
 
 class CaptureArea : public GameObject
 {

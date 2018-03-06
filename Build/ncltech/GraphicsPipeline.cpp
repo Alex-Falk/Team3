@@ -1026,7 +1026,7 @@ void GraphicsPipeline::DrawMiniMap() {
 
 	//these numbers are hardcoded at the moment but will be variables in the end
 	float aspect = (float)width / height;
-	float sx = 0.2;
+	float sx = 0.2f;
 	float sy = sx * aspect;
 
 	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "modelMatrix"), 1, GL_FALSE,
@@ -1070,7 +1070,7 @@ void GraphicsPipeline::DrawMiniMap() {
 	int pickupColours[20];
 	//reset count
 	count = 0;
-	for (int i = 0; i < map->GetNPickup(); i++) {
+	for (uint i = 0; i < map->GetNPickup(); i++) {
 		Pickup* p = map->GetPickups()[i];
 		if (p->GetActive()) {
 			pickupTypes[count] = p->GetPickupType();
@@ -1084,7 +1084,7 @@ void GraphicsPipeline::DrawMiniMap() {
 		}
 	}
 	//capturable object
-	for (int i = 0; i < map->GetNCapture(); i++) {
+	for (uint i = 0; i < map->GetNCapture(); i++) {
 		//four is one more than the highest number
 		pickupTypes[count] = 4;
 		pickupColours[count] = map->GetCaptureAreas()[i]->GetColour();
@@ -1102,8 +1102,8 @@ void GraphicsPipeline::DrawMiniMap() {
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
 	//opacity of minimap, this will be a variable eventually
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 1.0);
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), (GLfloat)1);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), (GLfloat)0.7);
 	//time
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "time"), time);
 

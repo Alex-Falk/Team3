@@ -75,9 +75,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PaintableGameObject.h">
-      <Filter>Gameplay\Header</Filter>
-    </ClInclude>
     <ClInclude Include="Pickup.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
@@ -100,9 +97,6 @@
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SimpleGamePlay.h">
-      <Filter>Maps\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Arena.h">
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
@@ -194,9 +188,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PaintableGameObject.cpp">
-      <Filter>Gameplay\Source</Filter>
-    </ClCompile>
     <ClCompile Include="Pickup.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
@@ -211,9 +202,6 @@
     </ClCompile>
     <ClCompile Include="Projectile.cpp">
       <Filter>Gameplay\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Arena.cpp">
-      <Filter>Maps\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimpleGamePlay.cpp">
       <Filter>Maps\Source Files</Filter>
