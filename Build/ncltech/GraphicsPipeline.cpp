@@ -775,8 +775,6 @@ void GraphicsPipeline::SetPath(RenderNode* playerRenderNode, uint playerNumber)
 
 		pathSmoother[playerNumber]->SetChildBaseColor(playerRenderNode->GetBaseColor());
 		playerRenderNodes.push_back(pathSmoother[playerNumber]);
-		
-		lastPath[playerNumber] = playerRenderNode->GetParent()->GetWorldTransform().GetPositionVector();
 	}
 }
 
@@ -810,7 +808,8 @@ void GraphicsPipeline::RenderPath()
 				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
 				{ 
 					SetPath(playerRenderNodes[i], 0);
-				}				
+				}		
+				lastPath[0] = playerRenderNodes[i]->GetParent()->GetWorldTransform().GetPositionVector();
 			}
 			else if (playerRenderNodes[i]->GetName() == "GREEN_PLAYER")
 			{
@@ -818,6 +817,7 @@ void GraphicsPipeline::RenderPath()
 				{
 					SetPath(playerRenderNodes[i], 1);
 				}
+				lastPath[1] = playerRenderNodes[i]->GetParent()->GetWorldTransform().GetPositionVector();
 			}
 			else if (playerRenderNodes[i]->GetName() == "BLUE_PLAYER")
 			{
@@ -825,6 +825,7 @@ void GraphicsPipeline::RenderPath()
 				{
 					SetPath(playerRenderNodes[i], 2);
 				}
+				lastPath[2] = playerRenderNodes[i]->GetParent()->GetWorldTransform().GetPositionVector();
 			}
 			else if (playerRenderNodes[i]->GetName() == "PINK_PLAYER")
 			{
@@ -832,6 +833,7 @@ void GraphicsPipeline::RenderPath()
 				{
 					SetPath(playerRenderNodes[i], 3);
 				}
+				lastPath[3] = playerRenderNodes[i]->GetParent()->GetWorldTransform().GetPositionVector();
 			}
 	}
 
