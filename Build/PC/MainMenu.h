@@ -181,13 +181,15 @@ private:
 	CEGUI::RadioButton* enableVsync;
 	CEGUI::RadioButton* disableVsync;
 	CEGUI::Titlebar* background;
-	//2.4 Debug Control
-	CEGUI::PushButton* DebugButton;
+	//2.4 Bloom Control
+	CEGUI::PushButton* enableBloomButton;
+	CEGUI::PushButton* disableBloomButton;
 
 	//3. Create Game Menu
 	CEGUI::Titlebar* ipText;
 	inputBox IpInputBox;
 	inputBox userName;
+	CEGUI::PushButton* ComfirmHostName;
 	//3.1 Map text
 	CEGUI::Titlebar* Map1Text;
 	CEGUI::Titlebar* Map2Text;
@@ -201,8 +203,7 @@ private:
 	//3.3 Lobby Player List
 	CEGUI::Titlebar* AllPlayerInfo;
 	//CEGUI::Titlebar* addedPlayerInfo;
-	string playerText = "Player List: \n\n";
-	string addedPlayerText = "Added Player List: \n\n";
+	string playerText = "Connected Player List: \n\n";
 	//3.4 Back Button
 	CEGUI::PushButton* lobbyMenuBack;
 
@@ -212,8 +213,7 @@ private:
 	inputBox clientName;
 	CEGUI::PushButton* disconnectToHost;
 	CEGUI::Titlebar* otherPlayersInfo;
-	string otherPlayersText = "Other players in lobby: \n\n";
-	
+
 	//User chosen map
 	int nextMapID = 1;
 public:
@@ -244,19 +244,22 @@ public:
 	void OnOptionMenuBackClicked() { ShowMainMenu(); HideOptionMenu(); }
 	void OnEnableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(true); }
 	void OnDisableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(false); }
-	void OnDebugRenderClicked() { GraphicsPipeline::Instance()->SetIsMainMenu(!GraphicsPipeline::Instance()->GetIsMainMenu()); }
 	//Slider function
 	void onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
 	void onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
 	void onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
 	void onCameraSensitivityChanged();
+	void onEnableBloomButtonClicked();
+	void onDisableBloomButtonClicked();
+
 
 	//3. create game menu buttons
-	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); }
+	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); GUIsystem::Instance()->SetIsTyping(false); }
 	void onMap1selected();
 	void onMap2selected();
 	void onMap3selected();
 	void onMap4selected();
+	void onHostNameConfirmed();
 	void OnUserNameClicked() {
 		userName.editbox->setText("");
 		GUIsystem::Instance()->SetIsTyping(true);
@@ -288,4 +291,6 @@ public:
 		SceneManager::Instance()->SetExitButtonClicked(true);
 	}
 
+	//Text input helper function
+	void TextInputHelper();
 };

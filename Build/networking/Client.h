@@ -65,6 +65,8 @@ public:
 	void SendUsername();
 	void RequestPickup(uint ID, string uniqueName);
 
+	virtual void UpdateName() { SendUsername(); };
+
 	//--------------------------------------------------------------------------------------------//
 	// Recieving
 	//--------------------------------------------------------------------------------------------//

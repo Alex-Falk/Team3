@@ -1,5 +1,7 @@
 #include "MainMenu.h"
 
+string temp[4] = { "", "", "", "" };
+
 MainMenu::~MainMenu()
 {
 	enet_deinitialize();
@@ -18,6 +20,7 @@ void MainMenu::OnInitializeScene()
 {
 	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GUIsystem::Instance()->SetDrawScoreBar(false);
+	GUIsystem::Instance()->SetDrawMiniMap(false);
 
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
@@ -51,6 +54,26 @@ void MainMenu::OnInitializeScene()
 	Scene::OnInitializeScene();
 }
 
+//A simple helper function only exist in mainmenu - temp solution
+void MainMenu::TextInputHelper()
+{
+	if (GUIsystem::Instance()->GetIsTyping() == false) {
+		if (GUIsystem::Instance()->currentType == "UserName") {
+			Game::Instance()->SetName(userName.editbox->getText().c_str());
+			GUIsystem::Instance()->SetIsTyping(false);
+		}
+		else if (GUIsystem::Instance()->currentType == "ClientName") {
+			Game::Instance()->SetName(clientName.editbox->getText().c_str());
+			GUIsystem::Instance()->SetIsTyping(false);
+		}
+		else {
+			//Currently ip input is handled in MainMenu.cpp
+			return;
+		}
+		GUIsystem::Instance()->sendInfo = false;
+	}
+}
+
 void MainMenu::OnUpdateScene(float dt)
 {
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
@@ -58,18 +81,27 @@ void MainMenu::OnUpdateScene(float dt)
 	GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 	Scene::OnUpdateScene(dt);
 
+	//Send player name info
+	if (GUIsystem::Instance()->sendInfo == true) {
+		TextInputHelper();
+	}
+	
+	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); ++i) {
+		temp[i] = Game::Instance()->GetName(i);
+	}
+
 	//Update Player Info
 	AllPlayerInfo->setText(playerText 
-		+  GUIsystem::Instance()->player1name + "\n\n"
-		+  GUIsystem::Instance()->player2name + "\n\n"
-		+  GUIsystem::Instance()->player3name + "\n\n"
-		+  GUIsystem::Instance()->player4name + "\n\n");
+		+ temp[0] + "\n\n"
+		+ temp[1] + "\n\n"
+		+ temp[2] + "\n\n"
+		+ temp[3] + "\n\n");
 
-	otherPlayersInfo->setText(otherPlayersText
-		+ GUIsystem::Instance()->player1name + "\n\n"
-		+ GUIsystem::Instance()->player2name + "\n\n"
-		+ GUIsystem::Instance()->player3name + "\n\n"
-		+ GUIsystem::Instance()->player4name + "\n\n");
+	otherPlayersInfo->setText(playerText
+		+ temp[0] + "\n\n"
+		+ temp[1] + "\n\n"
+		+ temp[2] + "\n\n"
+		+ temp[3] + "\n\n");
 }
 
 //Setting UP GUI
@@ -185,7 +217,7 @@ void MainMenu::SetUpLobby()
 			"userName"
 		));
 	userName.type = "UserName";
-	userName.editbox->setText("Please type your name here");
+	userName.editbox->setText("Dong Li");
 	userName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnUserNameClicked, this));
 	GUIsystem::Instance()->editboxes.push_back(userName);
 
@@ -231,11 +263,6 @@ void MainMenu::SetUpLobby()
 	AllPlayerInfo->setAlpha(0.8f);
 	AllPlayerInfo->disable();
 	AllPlayerInfo->setVisible(false);
-	AllPlayerInfo->setText(playerText
-		+  GUIsystem::Instance()->player1name + "\n\n"
-		+  GUIsystem::Instance()->player2name + "\n\n"
-		+  GUIsystem::Instance()->player3name + "\n\n"
-		+  GUIsystem::Instance()->player4name + "\n\n");
 
 	lobbyMenuBack = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
@@ -245,6 +272,21 @@ void MainMenu::SetUpLobby()
 		));
 	lobbyMenuBack->setText("BACK");
 	lobbyMenuBack->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::onLobbyMenuBackButtonClicked, this));
+
+	ComfirmHostName = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.15f, 0.70f, 0.2f, 0.1f),
+			Vector4(),
+			"ComfirmHostName"
+		));
+	ComfirmHostName->setText("CONFIRM");
+	ComfirmHostName->subscribeEvent(CEGUI::PushButton::EventMouseButtonDown, CEGUI::Event::Subscriber(&MainMenu::onHostNameConfirmed, this));
+}
+
+void MainMenu::onHostNameConfirmed()
+{
+	//TODO: Set Host Name
+	
 }
 
 void MainMenu::HideLobby()
@@ -287,6 +329,9 @@ void MainMenu::HideLobby()
 
 	lobbyMenuBack->disable();
 	lobbyMenuBack->setVisible(false);
+
+	ComfirmHostName->disable();
+	ComfirmHostName->setVisible(false);
 }
 
 void MainMenu::onLobbyMenuBackButtonClicked()
@@ -294,22 +339,18 @@ void MainMenu::onLobbyMenuBackButtonClicked()
 	HideLobby();
 	ShowMainMenu();
 }
-
 void MainMenu::onMap1selected()
 {
 	nextMapID = 1;
 }
-
 void MainMenu::onMap2selected()
 {
 	nextMapID = 2;
 }
-
 void MainMenu::onMap3selected()
 {
 	nextMapID = 3;
 }
-
 void MainMenu::onMap4selected()
 {
 	nextMapID = 4;
@@ -355,6 +396,9 @@ void MainMenu::ShowLobbyMenuServer()
 
 	lobbyMenuBack->enable();
 	lobbyMenuBack->setVisible(true);
+
+	ComfirmHostName->enable();
+	ComfirmHostName->setVisible(true);
 }
 
 void MainMenu::SetUpconnectionMenu()
@@ -398,19 +442,18 @@ void MainMenu::SetUpconnectionMenu()
 	otherPlayersInfo->setAlpha(0.8f);
 	otherPlayersInfo->disable();
 	otherPlayersInfo->setVisible(false);
-	otherPlayersText = otherPlayersText + "\n\n" + "\n\n" + "\n\n" + "\n\n" + "\n\n";
-	otherPlayersInfo->setText(otherPlayersText);
 
 	//Inputting userName
 	clientName.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
-			Vector4(0.40f, 0.15f, 0.2f, 0.1f),
+			Vector4(0.40f, 0.55f, 0.2f, 0.1f),
 			Vector4(),
 			"Client Name"
 		));
-	clientName.editbox->setText("Your name");
+	clientName.editbox->setText("Dong Li");
 	clientName.type = "ClientName";
 	clientName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnClientNameClicked, this));
+	GUIsystem::Instance()->editboxes.push_back(clientName);
 
 	connectMenuBack = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
@@ -540,11 +583,11 @@ void MainMenu::SetUpOptionMenu()
 
 	background = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.40f, 0.485f, 0.24f, 0.07f),
+			Vector4(0.40f, 0.485f, 0.30f, 0.30f),
 			Vector4(),
 			"VsyncBackground"
 		));
-	background->setText("Enable                   Disable");
+	background->setText("");
 	background->disable();
 	background->setVisible(false);
 
@@ -554,39 +597,60 @@ void MainMenu::SetUpOptionMenu()
 			Vector4(),
 			"VsyncText"
 		));
-	VsyncText->setText("Vsync Setting");
+	VsyncText->setText("Other Settings");
 	VsyncText->disable();
 
 	enableVsync = static_cast<CEGUI::RadioButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
-			Vector4(0.45f, 0.495f, 0.08f, 0.05f),
+			Vector4(0.42f, 0.495f, 0.11f, 0.05f),
 			Vector4(),
 			"EnableVsync"
 		));
+	enableVsync->setText("EnableVsync");
 	enableVsync->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnEnableVsyncClicked, this));
 	enableVsync->setSelected(true);
 
 	disableVsync = static_cast<CEGUI::RadioButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/RadioButton",
-			Vector4(0.55f, 0.495f, 0.08f, 0.05f),
+			Vector4(0.55f, 0.495f, 0.11f, 0.05f),
 			Vector4(),
 			"DisableVsync"
 		));
+	disableVsync->setText("DisableVsync");
 	disableVsync->subscribeEvent(CEGUI::Slider::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDisableVsyncClicked, this));
-
-	DebugButton = static_cast<CEGUI::PushButton*>(
+	
+	enableBloomButton = static_cast<CEGUI::PushButton*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Button",
-			Vector4(0.20f, 0.60f, 0.2f, 0.1f),
+			Vector4(0.42f, 0.55f, 0.11f, 0.05f),
 			Vector4(),
-			"debugButton"
+			"bloomButton"
 		));
-	DebugButton->setText("Debug Rendering");
-	DebugButton->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnDebugRenderClicked, this));
+	enableBloomButton->setText("ENABLE BLOOM");
+	enableBloomButton->subscribeEvent(CEGUI::Slider::EventMouseButtonDown, CEGUI::Event::Subscriber(&MainMenu::onEnableBloomButtonClicked, this));
+
+	disableBloomButton = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.55f, 0.55f, 0.11f, 0.05f),
+			Vector4(),
+			"disableBloomButton"
+		));
+	disableBloomButton->setText("DISABLE BLOOM");
+	disableBloomButton->subscribeEvent(CEGUI::Slider::EventMouseButtonDown, CEGUI::Event::Subscriber(&MainMenu::onDisableBloomButtonClicked, this));
 }
 
 void MainMenu::onCameraSensitivityChanged()
 {
+	float temp = CameraSensitivity->getCurrentValue(); 
+}
 
+void MainMenu::onEnableBloomButtonClicked()
+{
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
+}
+
+void MainMenu::onDisableBloomButtonClicked()
+{
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::BASIC);
 }
 
 void MainMenu::onCreateGameClicked()
@@ -606,6 +670,7 @@ void MainMenu::onConnectButtonClicked()
 {
 	IP ip;
 	string IPstring(IpInputBox.editbox->getText().c_str());
+	string clientNameString(clientName.editbox->getText().c_str());
 
 	if (IPstring.find_first_of('.') != string::npos)
 	{
@@ -633,29 +698,12 @@ void MainMenu::onConnectButtonClicked()
 
 		if (!Game::Instance()->GetUser())
 		{
+			//TODO: Set User Name and Sent to the server
 			Game::Instance()->setClient(ip);
 		}
 	}
 	HideConnectionMenu();
 	ShowWaitingInfo();
-}
-
-void MainMenu::ShowWaitingInfo()
-{
-	disconnectToHost->enable();
-	disconnectToHost->setVisible(true);
-
-	otherPlayersInfo->enable();
-	otherPlayersInfo->setVisible(true);
-}
-
-void MainMenu::HideWaitingInfo()
-{
-	disconnectToHost->disable();
-	disconnectToHost->setVisible(false);
-
-	otherPlayersInfo->disable();
-	otherPlayersInfo->setVisible(false);
 }
 
 void MainMenu::OndisconnectButtonClicked()
@@ -684,14 +732,47 @@ void MainMenu::ShowConnectionMenu()
 	connectToHostButton->enable();
 	connectToHostButton->setVisible(true);
 
+	connectMenuBack->enable();
+	connectMenuBack->setVisible(true);
+
 	IpInputBox.editbox->enable();
 	IpInputBox.editbox->setVisible(true);
+}
+
+void MainMenu::HideConnectionMenu()
+{
+	connectToHostButton->setVisible(false);
+	connectToHostButton->disable();
+
+	IpInputBox.editbox->setVisible(false);
+	IpInputBox.editbox->disable();
+
+	connectMenuBack->disable();
+	connectMenuBack->setVisible(false);
+}
+
+void MainMenu::ShowWaitingInfo()
+{
+	disconnectToHost->enable();
+	disconnectToHost->setVisible(true);
+
+	otherPlayersInfo->enable();
+	otherPlayersInfo->setVisible(true);
 
 	clientName.editbox->enable();
 	clientName.editbox->setVisible(true);
+}
 
-	connectMenuBack->enable();
-	connectMenuBack->setVisible(true);
+void MainMenu::HideWaitingInfo()
+{
+	disconnectToHost->disable();
+	disconnectToHost->setVisible(false);
+
+	otherPlayersInfo->disable();
+	otherPlayersInfo->setVisible(false);
+
+	clientName.editbox->disable();
+	clientName.editbox->setVisible(false);
 }
 
 void MainMenu::HideOptionMenu()
@@ -726,8 +807,11 @@ void MainMenu::HideOptionMenu()
 	disableVsync->setVisible(false);
 	background->setVisible(false);
 
-	DebugButton->disable();
-	DebugButton->setVisible(false);
+	enableBloomButton->disable();
+	enableBloomButton->setVisible(false);
+
+	disableBloomButton->disable();
+	disableBloomButton->setVisible(false);
 }
 
 void MainMenu::HideMainMenu()
@@ -743,21 +827,6 @@ void MainMenu::HideMainMenu()
 	optionButton->disable();
 	joinButton->setVisible(false);
 	joinButton->disable();
-}
-
-void MainMenu::HideConnectionMenu()
-{
-	connectToHostButton->setVisible(false);
-	connectToHostButton->disable();
-
-	IpInputBox.editbox->setVisible(false);
-	IpInputBox.editbox->disable();
-
-	clientName.editbox->disable();
-	clientName.editbox->setVisible(false);
-
-	connectMenuBack->disable();
-	connectMenuBack->setVisible(false);
 }
 
 void MainMenu::ShowOptionMenu1()
@@ -792,7 +861,10 @@ void MainMenu::ShowOptionMenu1()
 	disableVsync->setVisible(true);
 	background->setVisible(true);
 
-	DebugButton->enable();
-	DebugButton->setVisible(true);
+	enableBloomButton->enable();
+	enableBloomButton->setVisible(true);
+
+	disableBloomButton->enable();
+	disableBloomButton->setVisible(true);
 }
 

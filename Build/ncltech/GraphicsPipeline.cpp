@@ -49,6 +49,7 @@ GraphicsPipeline::GraphicsPipeline()
 	for (int i = 0; i < 2; ++i) {
 		screenTexColor[i] = NULL;
 	}
+	GUIsystem::Instance();
 	LoadShaders();
 	LoadMaterial();
 	NCLDebug::_LoadShaders();
@@ -413,48 +414,58 @@ void GraphicsPipeline::RenderScene()
 	for (RenderNode* node : allNodes)
 		node->Update(0.0f); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
 
-	//Build Transparent/Opaque Renderlists
+							//Build Transparent/Opaque Renderlists
 	BuildAndSortRenderLists();
 
 	//NCLDebug - Build render lists
 	NCLDebug::_BuildRenderLists();
 
-	//Build shadowmaps
-	perfShadow.BeginTimingSection();
-	RenderShadow();
-	perfShadow.EndTimingSection();
+	//Jianfei - 2018/03/02
+	switch (GUIsystem::Instance()->GetCurrentLoadingScreen())
+	{
+	case NOT_LOADING:
 
-	//Render scene to screen fbo
-	perfObjects.BeginTimingSection();
-	RenderObject();
-	perfObjects.EndTimingSection();
+		//Build shadowmaps
+		RenderShadow();
 
-	//render the path to texture
-	RenderPath();
+		//Render scene to screen fbo
+		RenderObject();
 
-	//post process and present
-	perfPostProcess.BeginTimingSection();
-	RenderPostprocessAndPresent();
-	perfPostProcess.EndTimingSection();
+		//render the path to texture
+		RenderPath();
 
-	//draw the minimap on screen
-	perfScoreandMap.BeginTimingSection();
-	if (isMainMenu == false) {
-		CountScore();
-		DrawMiniMap();
+		//post process and present
+		RenderPostprocessAndPresent();
+
+		//draw the minimap on screen
+		if (isMainMenu == false) {
+			CountScore();
+		}
+
+		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
+			DrawMiniMap();
+		}
+
+		//NCLDEBUG - Text Elements (aliased)
+		if (isMainMenu == false) {
+			NCLDebug::_RenderDebugClipSpace();
+		}
+		NCLDebug::_ClearDebugLists();
+
+		//RenderUI
+		RenderUI();
+		//GUIsystem::Instance()->DrawStartLoadingScreen();
+		break;
+	case START:
+		GUIsystem::Instance()->DrawStartLoadingScreen();
+		break;
+	case TRANSITION:
+		GUIsystem::Instance()->DrawTransitionLoadingScreen();
+		break;
+	default:
+		NCLERROR("Fatal Error: Unknown loading screen type!");
+		break;
 	}
-	perfScoreandMap.EndTimingSection();
-
-	//NCLDEBUG - Text Elements (aliased)
-	if (isMainMenu == false) {
-		NCLDebug::_RenderDebugClipSpace();
-	}
-	NCLDebug::_ClearDebugLists();
-	
-	//RenderUI
-	RenderUI();
-
-
 	OGLRenderer::SwapBuffers();
 }
 

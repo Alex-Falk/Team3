@@ -103,7 +103,6 @@ public:
 	// Utility
 	//--------------------------------------------------------------------------------------------//
 
-
 	virtual void StartGame(uint mapID = 0);
 	void Disconnect();
 	void HandleRequests();

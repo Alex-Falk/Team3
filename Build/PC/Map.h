@@ -25,11 +25,12 @@ protected:
 	vector<CaptureArea*> captureAreas; //TODO move this to wherever is best, used in minion class (ClosestCaptureArea)
 	static int mapIndex; // Controls which map will be loaded
 
-	CEGUI::ProgressBar* lifeBar;
+
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
+	CEGUI::ProgressBar* lifeBar;
+	CEGUI::Titlebar* timer;
 	//--------------------------------------------------------------------------------------------//
-	//CEGUI::ProgressBar* energyBar;
 
 	//--------------------------------------------------------------------------------------------//
 	// Map Size
@@ -90,6 +91,12 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 
+	//Jeffery 06/03/2018 for timer GUI
+	void TransferAndUpdateTimer();
+
+	//Jeffery 06/03/2018 for updating playername and position for GUI rendering
+	void UpdateGUI(float dt);
+
 	//phil 21/02/2018 for minimap
 	inline int GetXDimension() { return dimensions.x; }
 	inline int GetYDimension() { return dimensions.y; }
@@ -99,5 +106,7 @@ public:
 	inline uint GetNCapture() { return ncapture; }
 	inline CaptureArea** GetCaptureAreas() { return capture; }
 
+	float temp_fps = 0;
+	bool isLoading = false;
 };
 

@@ -9,6 +9,7 @@
 #include <nclgl/NCLDebug.h>
 #include <nclgl/Mesh.h>
 
+
 enum PostProcessType{
 	NORMAL				= 0,
 	BLUR				= 1,
@@ -19,7 +20,7 @@ enum PostProcessType{
 	HDR_BLOOM			= 6,
 	BASIC				= 7,
 	PERFORMANCE_BLUR	= 8,
-	SOBEL				= 9,
+	_WIN				= 9,
 	NUMBER_OF_SHADER
 };
 

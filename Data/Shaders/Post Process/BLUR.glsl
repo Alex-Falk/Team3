@@ -6,7 +6,7 @@ uniform vec2 	uSinglepixel;
 uniform float	uGammaCorrection;
 uniform float	uNumSuperSamples;
 
-const float offset = 1.0 / 300.0;
+const float offset = 2.0 / 300.0;
 
 in Vertex{
 	vec2 texCoord;

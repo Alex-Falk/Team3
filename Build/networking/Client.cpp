@@ -121,8 +121,6 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		if (evnt.peer == serverConnection)
 		{
 			NCLDebug::Log(status_color3, "Network: Successfully connected to server!");
-
-			SendUsername();
 		}
 		break;
 	}
@@ -147,6 +145,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		{
 			userID = stoi(data.substr(data.find_first_of(':') + 1));
 			NCLDebug::Log("Connection ID recieved");
+			SendUsername();
 			break;
 		}
 		case PLAYER_NAME:
@@ -290,7 +289,7 @@ void Client::SendUsername()
 {
 	string data = to_string(PLAYER_NAME) + ":" +
 		to_string(userID) + ";" +
-		userName;
+		Game::Instance()->GetName(userID);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(serverConnection, 0, packet);

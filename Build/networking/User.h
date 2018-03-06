@@ -59,8 +59,7 @@ public:
 	inline uint GetUserID() { return userID; }
 	inline string GetIP() { return ip; }
 
-	inline string GetName(uint ID) { return userName; }
-	inline void SetName(string name) { userName = name; }
+	inline virtual void UpdateName() {};
 
 	inline void SetIP(string _ip) { ip = _ip; }
 
