@@ -129,7 +129,6 @@ void GUIsystem::Draw()
 	//draw weapon icon
 	DrawWeaponIcon();
 
-	
 	if (GraphicsPipeline::Instance()->GetIsMainMenu() == false) {
 		//Draw player names
 		for (int i = 0; i < 4; i++) {
@@ -144,9 +143,6 @@ void GUIsystem::Draw()
 				//TODO: test for multi-players
 			}
 		}
-
-		//DrawTimer
-		
 	}
 }
 

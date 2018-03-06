@@ -150,7 +150,7 @@ void Map::OnCleanupScene()
 
 void Map::TransferAndUpdateTimer()
 {
-	float t_time = Game::Instance()->GetTime();
+	float t_time = Game::Instance()->GetTimeLeft();
 	//string t_string = std::to_string(t_time);
 	float t_min = floor(t_time / 60);
 	string t_string_min = std::to_string(t_min);

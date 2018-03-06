@@ -23,6 +23,6 @@ void main(void) {
 	bloomColor = pow(bloomColor, vec3(invGammaCorrection));
 
 	vec4 finalColor = vec4(hdrColor + bloomColor * reduceFactor, 1.0);
-	finalColor *= 0.75;
+	finalColor *= 0.70;
 	OutFrag = finalColor;
 }

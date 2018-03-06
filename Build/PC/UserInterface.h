@@ -46,7 +46,6 @@ enum LoadingScreenType
 {
 	START		= 0,
 	TRANSITION	= 1,
-	WIN			= 2,
 	NOT_LOADING
 };
 
@@ -120,6 +119,8 @@ public:
 	inline void SetHasWeapon(bool b) { hasWeapon = b; }
 	inline bool GetDrawMiniMap() { return drawMiniMap; }
 	inline void SetPlayerColour(Vector3 c) { playerColour = c; }
+	inline bool GetIsWinner() { return isWinner; }
+	inline void SetIsWinner(bool a) { isWinner = a; }
 
 	//Getter Setter of isLoading boolean
 	inline LoadingScreenType GetCurrentLoadingScreen() { return currentLoadingScreen; }
@@ -186,4 +187,7 @@ protected:
 	CEGUI::Titlebar* loadingMessage;
 	CEGUI::ProgressBar* loadingProgress;
 	float progressBarValue = 0;
+
+	//Win Screen
+	bool isWinner;
 };

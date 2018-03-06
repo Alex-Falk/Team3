@@ -70,6 +70,7 @@ public:
 	inline uint getUserID()					{ return user->GetUserID(); }
 	inline float GetGameLength()			{ return gameLength; }
 	inline float GetTimeLeft()				{ return gameLength - time; }
+	inline float GetTime()					{ return time; }
 
 	inline Avatar * GetPlayer(uint id)		{ return avatars[id]; }
 	inline Avatar * GetCurrentAvatar()		{ return avatars[user->GetUserID()]; }

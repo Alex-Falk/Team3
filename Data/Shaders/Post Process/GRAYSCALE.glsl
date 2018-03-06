@@ -33,6 +33,6 @@ void main(void)	{
 	
 	//Inverse Gamma Ramp
 	color = pow(color, vec3(invGammaCorrection));
-	float average = (color.r + color.g + color.b) / 3.0;
+	float average = (color.r + color.g + color.b) / 2.0;
 	OutFrag = vec4(average, average, average, 1.0f);
 }
