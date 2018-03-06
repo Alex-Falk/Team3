@@ -2,14 +2,19 @@
 #include <ncltech\SceneManager.h>
 void Game::Update(float dt)
 { 
+	perfNetwork.UpdateRealElapsedTime(updateTimestep);
+
+
 	if (user)
 	{
+		perfNetwork.BeginTimingSection();
 		user->UpdateUser(dt);
+		perfNetwork.EndTimingSection();
 	}
 
 	if (gameRunning)
 	{
-		gameTime += dt;
+		time += dt;
 
 		if (getUserID() == 0)
 		{
@@ -19,9 +24,14 @@ void Game::Update(float dt)
 			}
 		}
 		//NCLDebug::Log(to_string(gameTime));
+
+
+		if (time > gameLength) {
+			DetermineWinner();
+			//StopGame();
+			time = 0.0f;
+		}
 	}
-
-
 }
 
 void Game::ResetGame()
@@ -36,7 +46,7 @@ void Game::ResetGame()
 	user = nullptr;
 	enet_deinitialize();
 	gameRunning = false;
-	gameTime = 0;
+	time = 0.0f;
 }
 
 void Game::ClaimPickup(Avatar * player, Pickup * pickup)

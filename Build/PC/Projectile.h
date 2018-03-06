@@ -32,6 +32,8 @@ public:
 		predictedCollisionPosition = pcp;
 	}
 
+	float GetProjectileWorth() { return projectileWorth; }
+
 	void predictCollisionPosition(Vector3 pos, Vector3 vel);
 	
 	virtual ~Projectile();

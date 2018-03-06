@@ -114,6 +114,9 @@ public:
 	float GetMaxLife() { return maxLife; }
 	void SetMaxLife(float x) { maxLife = x; }
 
+	float GetMinLife() { return minLife; }
+	void SetMinLife(float l) { minLife = l; }
+
 	Colour GetColour() { return col; }
 	void SetColour(Colour c) { col = c; }
 

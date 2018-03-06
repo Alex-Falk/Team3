@@ -386,6 +386,11 @@ void GraphicsPipeline::UpdateScene(float dt)
 	//update all of the camera stuff
 	camera->UpdateCamara(dt);
 
+	// Update Timers
+	perfShadow.UpdateRealElapsedTime(dt);
+	perfObjects.UpdateRealElapsedTime(dt);
+	perfPostProcess.UpdateRealElapsedTime(dt);
+	perfScoreandMap.UpdateRealElapsedTime(dt);
 
 	viewMatrix = camera->BuildViewMatrix();
 	projViewMatrix = projMatrix * viewMatrix;

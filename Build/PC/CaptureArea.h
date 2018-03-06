@@ -40,14 +40,34 @@ public:
 
 	virtual void SetColour(Colour c);
 	void SetScoreValue(int i) { scoreValue = i; }
+
+	void SetLifeReq(float l) { lifeReq = l; }
+	float GetLifeReq() { return lifeReq; }
 	
 	~CaptureArea();
 
 	virtual void Update(float dt) {}
 
+	bool CheckPlayerCollision(PhysicsNode * p, int index);
+	bool CheckProjectileCollision(PhysicsNode * p, int index);
+	bool CheckMinionCollision(PhysicsNode * p, int index);
+	
+	//useful for GUI capture bar
+	float GetPercentageCaptured() { return percentageCaptured; } //value between 0 and 1, fill bar this amount
+	Colour GetCurrentlyCapturing() { return currentlyCapturing; } //the colour of whoever is capturing, colour the bar this colour
+
+	void UpdatePercentage();
+
+
 protected:
 
+	Colour currentlyCapturing;
+	float percentageCaptured;
+
+	float playerScores[4];
+	float lifeReq;
 	int scoreValue;
 	Colour colour;
+	int life;
 };
 

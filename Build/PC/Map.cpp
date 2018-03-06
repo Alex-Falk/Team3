@@ -145,6 +145,7 @@ void Map::OnCleanupScene()
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();
 	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
+	captureAreas.clear();
 };
 
 void Map::TransferAndUpdateTimer()
@@ -177,6 +178,7 @@ void Map::UpdateGUI(float dt)
 			GUIsystem::Instance()->playersPosition[i] = Game::Instance()->GetPlayer(i)->GetPosition();
 		}
 	}
+	perfPlayer.EndTimingSection();
 
 	//Loading screen
 	if (isLoading == true) {
