@@ -24,6 +24,7 @@
 #include <networking\Server.h>
 #include "Pickup.h"
 #include "CaptureArea.h"
+#include "Map.h"
 
 class Game: public TSingleton<Game>
 {
@@ -35,6 +36,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 
 	inline void SetScore(uint id, int score)			{ teamScores[id] = (float)score; }
+	inline void SetAreaScores(uint id, int score)		{ teamAreaScores[id] = (float)score; }
 
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
 
@@ -129,6 +131,7 @@ private:
 	uint mapIdx;
 
 	float teamScores[4];
+	float teamAreaScores[4];
 	Avatar* avatars[4];
 	string userNames[4] = { "Player 1","Player 2","Player 3","Player 4" };
 

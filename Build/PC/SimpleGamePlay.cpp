@@ -56,7 +56,8 @@ void SimpleGamePlay::AddObjects()
 	this->AddGameObject(pickup[4]);
 
 	//add capture area
-	capture[0] = new CaptureArea(Vector3(15, 0.6, -15), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
+	capture[0] = new CaptureArea(Vector3(-25, 0.6, 25), "0", Vector3(3.0f, 0.5f, 3.0f), 10);
+	capture[0]->SetScoreValue(100000);
 	this->AddGameObject(capture[0]);
 	AddCaptureArea(capture[0]);
 }
