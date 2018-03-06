@@ -4,7 +4,7 @@
 
 //constructor, initialises all variables automatically
 AudioSystem::AudioSystem() {
-	myfile.open("../AudioFiles/AudioLog.txt");
+	myfile.open(SOUNDSDIR"AudioLog.txt");
 
 	result = FMOD::System_Create(&audioSystem);
 	myfile << "System created: " << result << std::endl;
@@ -16,18 +16,19 @@ AudioSystem::AudioSystem() {
 		//TODO some kind of ui information letting the user know they don't have appropriate drivers
 		std::cout << "No Audio Driver Detected!" << std::endl;
 	}
-
+	
+	
 	listenerPos = { 0.0f, 0.0f, 0.0f };
 	listenerLastPos = { 0.0f, 0.0f, 0.0f };
 	listenerForward = { 0.0f, 0.0f, 1.0f };
 	listenerUp = { 0.0f, 1.0f, 0.0f };
 	listenerVelocity = { 0.0f, 0.0f, 0.0f };
 
-	masterVolume = 1.0f;
+	masterVolume = 0.5f;
 	gameSoundsVolume = 1.0f;
 	musicVolume = 1.0f;
 
-	result = audioSystem->init(32, FMOD_INIT_3D_RIGHTHANDED, NULL);
+	result = audioSystem->init(numChannels, FMOD_INIT_3D_RIGHTHANDED, NULL);
 	myfile << "Audio System initialised: " << result << std::endl;
 	result = audioSystem->set3DSettings(1.0f, 1.0f, 1.0f);
 	myfile << "3D settings: " << result << std::endl;
@@ -40,8 +41,11 @@ AudioSystem::AudioSystem() {
 	result = audioSystem->getMasterChannelGroup(&masterGroup);
 	myfile << "Created Master channel group: " << result << std::endl;
 	result = masterGroup->addGroup(gameSoundsGroup);
-	myfile << "Released Audio System: " << result << std::endl;
-	myfile.close();
+	result = masterGroup->addGroup(musicGroup);
+	myfile << "Added Music group to master group: " << result << std::endl;
+
+	SetMusicVolume(masterVolume * musicVolume);
+	SetGameSoundsVolume(gameSoundsVolume * masterVolume);
 }
 
 //destructor
@@ -73,7 +77,6 @@ void AudioSystem::Create2DSound(int index, const char* pFile) {
 //3D sounds, attenuation is controlled with minDist and maxDist.
 void AudioSystem::Create3DSound(int index, const char * pFile, float minDist, float maxDist) {
 	if (sounds[index] == NULL) {
-		//TODO look into attenuation a bit more and the 3D sound types
 		result = audioSystem->createSound(pFile, FMOD_3D_LINEARROLLOFF, 0, &sounds[index]);
 		sounds[index]->set3DMinMaxDistance(minDist, maxDist);
 	}
@@ -112,7 +115,7 @@ void AudioSystem::Create3DStream(int index, const char* pFile, float minDist, fl
 }
 
 //plays a certain sound, works for both sounds and streams
-void AudioSystem::PlayASound(int index, bool loop, Vector3 position, Vector3 velocity) {
+void AudioSystem::PlayASound(int index, bool loop, Vector3 position, Vector3 velocity, GameObject * go) {
 	if (!loop)
 		sounds[index]->setMode(FMOD_LOOP_OFF);
 	else
@@ -123,17 +126,34 @@ void AudioSystem::PlayASound(int index, bool loop, Vector3 position, Vector3 vel
 
 	FMOD_VECTOR fPosition = toFMODVector(position);
 	FMOD_VECTOR fVelocity = toFMODVector(velocity);
+	
+	int channelIndex = -1;
+	for (int i = 0; i < numChannels; i++) {
+		if (freeSounds[i].isChannelPlaying) {
 
-	result = audioSystem->playSound(sounds[index], 0, false, &channels[index]);
-	if (index <= GAME_MUSIC) {
-		channels[index]->setChannelGroup(musicGroup);
-		channels[index]->set3DAttributes(&fPosition, &fVelocity);
+		}
+		else {
+			channelIndex = i;
+			break;
+		}
 	}
-	else {
-		channels[index]->setChannelGroup(gameSoundsGroup);
-		channels[index]->set3DAttributes(&fPosition, &fVelocity);
+
+	//TODO test to see if it actually works properly
+	if (channelIndex != -1) {
+		result = audioSystem->playSound(sounds[index], 0, false, &channels[channelIndex]);
+		if (index <= GAME_MUSIC) {
+			channels[channelIndex]->setChannelGroup(musicGroup);
+			channels[channelIndex]->set3DAttributes(&fPosition, &fVelocity);
+			freeSounds[channelIndex].isChannelPlaying = true;
+			freeSounds[channelIndex].object = go;
+		}
+		else {
+			channels[channelIndex]->setChannelGroup(gameSoundsGroup);
+			channels[channelIndex]->set3DAttributes(&fPosition, &fVelocity);
+			freeSounds[channelIndex].isChannelPlaying = true;
+			freeSounds[channelIndex].object = go;
+		}
 	}
-	myfile << "Played sound at index(" << index << "): " << result << std::endl;
 }
 
 //memory management, will delete the sound
@@ -144,6 +164,8 @@ void AudioSystem::ReleaseSound(int index) {
 
 //call each frame to update the audiosystem and pass in camera parameters
 void AudioSystem::Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 cameraUp, float dt) {
+	StopAllFinishedSounds();
+
 	listenerLastPos = listenerPos;
 	listenerPos = toFMODVector(cameraPos);
 	listenerForward = toFMODVector(cameraForward);
@@ -155,10 +177,10 @@ void AudioSystem::Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 camer
 
 	audioSystem->set3DListenerAttributes(0, &listenerPos, &listenerVelocity, &listenerForward, &listenerUp);
 	audioSystem->update();
+
 }
 
 //stop a specific sound, not pause
-//TODO add rest of debug messages
 void AudioSystem::StopSound(int index) {
 	result = channels[index]->stop();
 	myfile << "Stop sound at index(" << index << "): " << result << std::endl;
@@ -168,6 +190,35 @@ void AudioSystem::StopSound(int index) {
 void AudioSystem::StopAllSounds() {
 	result = masterGroup->stop();
 	myfile << "Stopped mastergroup sounds: " << result << std::endl;
+}
+
+void AudioSystem::StopAllFinishedSounds() {
+	bool channelPlaying;
+	for (int i = 0; i < numChannels; i++) {
+		if (freeSounds[i].object) {
+			if (freeSounds[i].object->GetDestroy() == 0) {
+				FMOD_VECTOR soundPos = toFMODVector(freeSounds[i].object->Physics()->GetPosition());
+				FMOD_VECTOR velocityPos = toFMODVector(freeSounds[i].object->Physics()->GetLinearVelocity());
+				channels[i]->set3DAttributes(&soundPos, &velocityPos);
+			}
+			else {
+				//TODO stop the sound after fade out (DONE, just test)
+				freeSounds[i].object = NULL;
+				unsigned long long parentclock;
+				result = channels[i]->getDSPClock(NULL, &parentclock);
+				channels[i]->addFadePoint(parentclock, 1.0f);
+				channels[i]->addFadePoint(parentclock + 10000, 0.0f);
+				channels[i]->setDelay(0, parentclock + 10000, true);
+			}
+		}
+		channels[i]->isPlaying(&channelPlaying);
+		if (!channelPlaying) {
+			freeSounds[i].isChannelPlaying = false;
+		}
+	}
+
+	channels[0]->isPlaying(&channelPlaying);
+	cout << channelPlaying << endl;
 }
 
 //sets the master volume

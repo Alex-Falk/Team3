@@ -3,6 +3,7 @@
 #include "Projectile.h"
 #include "Avatar.h"
 #include "Explosion.h"
+#include "AudioSystem.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;
@@ -145,6 +146,7 @@ void Projectile::Explode() {
 	explosion->UnregisterPhysicsToRenderTransformCallback();
 	explosion->Render()->SetTransform(Matrix4::Translation(Vector3{ 1000.f,1000.f,1000.f }));
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(explosion);
+	AudioSystem::Instance()->PlayASound(EXPLOSION_SOUND, false, Physics()->GetPosition(), { 0,0,0 });
 	
 	//move above the arena so we don't see the sphere for the frame it exists
 	Physics()->SetPosition(Physics()->GetPosition() + Vector3{ 0,200,0 }); 

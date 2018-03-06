@@ -30,6 +30,7 @@
 #include "Projectile.h"
 #include "Pickup.h"
 #include "WeaponPickup.h"
+#include "AudioSystem.h"
 
 Avatar::Avatar()
 {
@@ -389,6 +390,7 @@ void Avatar::Spray(Vector3 pos, Vector3 dir)
 {
 	Projectile * spray = new Projectile(col, colour, pos, dir, 0.15f, 5.0f, SPRAY, 1, "Spray");
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+	AudioSystem::Instance()->PlayASound(PROJECTILE_LAUNCH_SOUND, false, physicsNode->GetPosition(), physicsNode->GetLinearVelocity(), this);
 }
 
 void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
@@ -396,12 +398,14 @@ void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
 	Projectile* projectile = new Projectile(col, colour, pos, dir, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
 	projectile->Physics()->SetOrientation(Quaternion(dir, 0));
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	AudioSystem::Instance()->PlayASound(ROCKET_FLYING_SOUND, false, physicsNode->GetPosition(), physicsNode->GetLinearVelocity(), projectile);
 }
 
 void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	AudioSystem::Instance()->PlayASound(PROJECTILE_LAUNCH_SOUND, false, physicsNode->GetPosition(), physicsNode->GetLinearVelocity(), this);
 }
 
 void Avatar::ManageWeapons() 

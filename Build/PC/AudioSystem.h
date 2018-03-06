@@ -6,8 +6,15 @@
 #include "GamePlay.h"
 #include "../nclgl/Vector3.h"
 #include "../nclgl/TSingleton.h"
+#include "../nclgl/common.h"
+#include "../ncltech/GameObject.h"
 
 //Michael Davis - 07/02/2018
+
+struct CustomSound {
+	GameObject * object = NULL;
+	bool isChannelPlaying = false;
+};
 
 class AudioSystem : public TSingleton<AudioSystem> {
 	friend class TSingleton<AudioSystem>;
@@ -20,13 +27,13 @@ public:
 	void Create2DSound(int index, const char* pFile);
 	void Create3DSound(int index, const char* pFile, float minDist, float maxDist); //minDist is when attenuation starts, maxDist is when sound is inaudible 
 
-																					//makes the sound a stream. For larger files that may take a while to load
-																					//can't have multiple streams in 1 channel, mainly for music
+	//makes the sound a stream. For larger files that may take a while to load
+	//can't have multiple streams in 1 channel, mainly for music
 	void Create2DStream(int index, const char* pFile);
 	void Create3DStream(int index, const char* pFile, float minDist, float maxDist);
 
 	//plays a certain sound, works for both sounds and streams
-	void PlayASound(int index, bool loop = false, Vector3 position = { 0.f, 0.f, 0.f }, Vector3 velocity = { 0.f, 0.f, 0.f });
+	void PlayASound(int index, bool loop = false, Vector3 position = { 0.f, 0.f, 0.f }, Vector3 velocity = { 0.f, 0.f, 0.f }, GameObject * go = NULL);
 
 	//memory management, will delete the sound
 	void ReleaseSound(int index);
@@ -41,6 +48,7 @@ public:
 
 	//stops all sounds, not pauses
 	void StopAllSounds();
+	void StopAllFinishedSounds();
 	void StopSound(int index);
 
 	//sounds continue to play but muted
@@ -65,7 +73,8 @@ public:
 
 private:
 	//amount of sounds in the game
-	const static int numSounds = 2;
+	const static int numSounds = 12;
+	const static int numChannels = 32;
 
 	//system that handles sounds and channels
 	FMOD::System * audioSystem;
@@ -74,7 +83,9 @@ private:
 	FMOD::Sound * sounds[numSounds];
 
 	//channel the sound plays from
-	FMOD::Channel * channels[numSounds];
+	FMOD::Channel * channels[numChannels];
+
+	CustomSound freeSounds[numChannels];
 
 	//camera variables for 3d sounds
 	FMOD_VECTOR listenerPos;
