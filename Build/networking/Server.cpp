@@ -30,9 +30,7 @@
 */
 
 #include "Server.h"
-#include <ncltech\SceneManager.h>
 #include <PC/Game.h>
-#include <PC/Map.h>
 
 string Win32_PrintAllAdapterIPAddresses()
 {

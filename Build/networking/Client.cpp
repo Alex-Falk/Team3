@@ -30,9 +30,7 @@
 */
 
 #include "Client.h"
-#include <ncltech\SceneManager.h>
 #include <PC/Game.h>
-#include <PC/Map.h>
 const Vector3 status_color3 = Vector3(1.0f, 0.6f, 0.6f);
 
 Client::Client() : serverConnection(NULL)
@@ -299,23 +297,38 @@ void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
 	}
 }
 
-// PACKET_TYPE:SPAWNER_ID;POSX POSY POSZ,SIZE
+// PACKET_TYPE:SPAWNER_ID
 void Client::ReceiveMinionSpawn(string data)
 {
 	Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
 
 	uint colonIdx = (uint)(data.find_first_of(':'));
-	uint semicolonIdx = (uint)(data.find_first_of(';'));
-	uint commaIdx = (uint)(data.find_first_of(','));
 
-	uint objectID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+	uint objectID = stoi(data.substr(colonIdx + 1));
+
+	((MinionCaptureArea*)(m->GetCaptureArea(objectID)))->SpawnMinion();
 }
 
-// PACKET_TYPE:posx posy posz, linvx linvy linvz, angvx angvy angvz, accx accy accz
-//void Client::ReceiveMinionSpawn(string data)
-//{
-//
-//}
+// PACKET_TYPE:SPAWNER_ID;MINION_ID,posx posy posz,linvx linvy linvz,angvx angvy angvz,accx accy accz
+void Client::ReceiveMinionUpdate(string data)
+{
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
+
+	uint spawnerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+	data = data.substr(semicolonIdx + 1);
+
+	vector<string> splitData = split_string(data, ',');
+
+	uint minionID = stoi(splitData[0]);
+	Vector3 pos = InterpretStringVector(splitData[1]);
+	Vector3 linv = InterpretStringVector(splitData[2]);
+	Vector3 angv = InterpretStringVector(splitData[3]);
+	Vector3 acc = InterpretStringVector(splitData[4]);
+
+	((MinionCaptureArea*)Game::Instance()->GetMap()->GetCaptureArea(spawnerID))->GetMinion(minionID);
+}
 
 
 //--------------------------------------------------------------------------------------------//

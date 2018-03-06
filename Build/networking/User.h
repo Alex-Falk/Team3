@@ -6,6 +6,7 @@
 #include <ncltech\NetworkBase.h>
 #include "NetworkCommon.h"
 #include <ncltech\SceneManager.h>
+#include <PC\MinionCaptureArea.h>
 #include <ctime>
 
 struct TempData {

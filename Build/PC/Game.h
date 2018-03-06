@@ -22,6 +22,7 @@
 #include "GamePlay.h"
 #include <networking\Client.h>
 #include <networking\Server.h>
+#include "Map.h"
 #include "Pickup.h"
 #include "CaptureArea.h"
 
@@ -73,6 +74,8 @@ public:
 	inline Avatar * GetCurrentAvatar()		{ return avatars[user->GetUserID()]; }
 
 	inline User * GetUser()					{ return user; }
+
+	inline Map * GetMap()					{ return (Map*)SceneManager::Instance()->GetCurrentScene(); }
 
 	inline string GetName(uint id)			{ return userNames[id]; }
 
