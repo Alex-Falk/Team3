@@ -102,6 +102,18 @@ void GUIsystem::Reset()
 
 void GUIsystem::Draw()
 {
+	//Render score bar
+	if (drawScorebar == true) {
+		glUseProgram(scorebarShader->GetProgram());
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.88, 0)) * Matrix4::Scale(Vector3(0.4, 0.03, 0));
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
+		scorebar->Draw();
+		glUseProgram(0);
+	}
 	//Render normal UI
 	glUseProgram(0);
 	glActiveTexture(GL_TEXTURE0);
@@ -114,21 +126,28 @@ void GUIsystem::Draw()
 	glDisable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
 
-	//Render score bar
-	if (drawScorebar == true) {
-		glUseProgram(scorebarShader->GetProgram());
-		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.9, 0)) * Matrix4::Scale(Vector3(0.4, 0.03, 0));
-		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
-		scorebar->Draw();
-		glUseProgram(0);
-	}
-
 	//draw weapon icon
 	DrawWeaponIcon();
+
+	
+	if (GraphicsPipeline::Instance()->GetIsMainMenu() == false) {
+		//Draw player names
+		for (int i = 0; i < 4; i++) {
+			if (playerNames[i] != "") {
+				//draw
+				playersPosition[i].y += 0.7;
+				NCLDebug::DrawTextWs(playersPosition[i], 25.0f, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), playerNames[i]);
+			}
+			else {
+				//Cuz there will be no player afterwards
+				break;
+				//TODO: test for multi-players
+			}
+		}
+
+		//DrawTimer
+		
+	}
 }
 
 void GUIsystem::SetMouseCursor(const std::string & imageFile)
@@ -275,19 +294,6 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		break;
 	case KEYBOARD_RETURN:
 		isTyping = false;
-		//for (int i = 0; i < editboxes.size(); ++i) {
-		//	if (editboxes[i].type == currentType) {
-		//		if (currentType == "UserName") {
-		//			userName = editboxes[i].editbox->getText().c_str();
-		//		}
-		//		else if (currentType == "ClientName") {
-		//			clientName = editboxes[i].editbox->getText().c_str();
-		//		}
-		//		break;
-		//	}
-		//	else {
-		//	}
-		//}
 		sendInfo = true;
 		break;
 	default:
@@ -495,6 +501,7 @@ void GUIsystem::SetUpLoadingScreen()
 			"loadingMessage"
 		));
 	loadingMessage->setText("Advertising spaces for rent");
+	//loadingMessage->setFont(titleFont);
 
 	loadingProgress = static_cast<CEGUI::ProgressBar*>(
 		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/ProgressBar",
@@ -502,7 +509,6 @@ void GUIsystem::SetUpLoadingScreen()
 			Vector4(),
 			"loadingProgress"
 		));
-	
 }
 
 void GUIsystem::DrawWeaponIcon(){

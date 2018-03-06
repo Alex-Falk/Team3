@@ -26,6 +26,7 @@
 
 #pragma once
 #include <nclgl\Vector4.h>
+#include <nclgl\Vector3.h>
 #include <CEGUI\CEGUI.h>
 #include <CEGUI\RendererModules\OpenGL\GL3Renderer.h>
 #include <nclgl\Mouse.h>
@@ -43,8 +44,9 @@ const int Num_of_loadingTex = 2;
 
 enum LoadingScreenType
 {
-	START = 0,
-	TRANSITION = 1,
+	START		= 0,
+	TRANSITION	= 1,
+	WIN			= 2,
 	NOT_LOADING
 };
 
@@ -137,6 +139,15 @@ public:
 	std::string clientName;
 	bool sendInfo = false;
 
+	//playerNames
+	std::string playerNames[4] = {"", "", "", ""};
+	Vector3 playersPosition[4] = {
+		Vector3(0,0,0),
+		Vector3(0,0,0),
+		Vector3(0,0,0),
+		Vector3(0,0,0)
+	};
+	float time;
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -144,6 +155,7 @@ protected:
 	CEGUI::Window* m_root = NULL;
 	CEGUI::Window* m_loadingRoot = NULL;
 	CEGUI::RenderTarget* target;
+	CEGUI::Font* titleFont;
 
 	Vector2 realMousePos;
 	float mouseSensitivity;
