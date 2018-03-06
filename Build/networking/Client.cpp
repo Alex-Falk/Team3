@@ -302,20 +302,6 @@ void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
 	}
 }
 
-// PACKET_TYPE:SPAWNER_ID;MINION_ID
-//void Client::ReceiveMinionSpawn(string data)
-//{
-//	Map * m = (Map*)Game::Instance()->GetMap();
-//
-//	uint colonIdx = (uint)(data.find_first_of(':'));
-//	size_t semicolonIdx = data.find_first_of(';');
-//
-//	uint objectID = stoi(data.substr(colonIdx + 1));
-//	uint minionID = stoi(data.substr(semicolonIdx + 1));
-//
-//	((MinionCaptureArea*)(m->GetCaptureArea(objectID)))->SpawnMinion(minionID);
-//}
-
 // PACKET_TYPE:MINION_ID;COLOUR,posx posy posz,linvx linvy linvz,angvx angvy angvz,accx accy accz,life
 void Client::ReceiveMinionUpdate(string data)
 {
@@ -337,8 +323,9 @@ void Client::ReceiveMinionUpdate(string data)
 	Vector3 acc = InterpretStringVector(splitData[4]);
 	float life = stof(splitData[5]);
 
+	MinionBase * minion;
 	int nMinions = m->GetMinions().size();
-	if (minionID == nMinions)
+	if (minionID >= nMinions)
 	{
 		Vector4 ColourRGB  = DEFAULT_COLOUR;
 		switch (col)
@@ -358,18 +345,21 @@ void Client::ReceiveMinionUpdate(string data)
 		}
 
 
-		MinionBase * minion = new MinionBase(col,ColourRGB,pos);
+		minion = new MinionBase(col,ColourRGB,pos);
+		m->AddMinion(minion);
 	} 
-	else if (minionID < nMinions)
+	else
 	{
-		MinionBase * minion = m->GetMinion(minionID);
+		minion = m->GetMinion(minionID);
 
-		minion->Physics()->SetPosition(pos);
-		minion->Physics()->SetLinearVelocity(linv);
-		minion->Physics()->SetAngularVelocity(angv);
-		minion->Physics()->SetAcceleration(acc);
-		minion->SetLife(life);
 	}
+
+	minion->Physics()->SetPosition(pos);
+	minion->Physics()->SetLinearVelocity(linv);
+	minion->Physics()->SetAngularVelocity(angv);
+	minion->Physics()->SetAcceleration(acc);
+	minion->SetLife(life);
+
 }
 
 // PACKET_TYPE:MINION_ID
@@ -381,7 +371,8 @@ void Client::ReceiveMinionDeath(string data)
 
 	uint minionID = stoi(data.substr(colonIdx + 1));
 
-	m->RemoveMinion(m->GetMinion(minionID));
+	m->GetMinion(minionID)->SetDead(true);
+
 }
 
 

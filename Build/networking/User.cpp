@@ -38,7 +38,7 @@ void User::ReceiveAvatarUpdate(string data)
 	}
 
 	int inAir = stoi(data);
-
+	Game::Instance()->GetPlayer(playerID)->SetInAir(inAir);
 	temps.positions[playerID] = vecs[0];
 	temps.linVelocities[playerID] = vecs[1];
 	temps.angVelocities[playerID] = vecs[2];
