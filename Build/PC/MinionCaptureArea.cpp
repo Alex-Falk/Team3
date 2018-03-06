@@ -1,27 +1,27 @@
 //Michael Davis 16/02/2018
-#include "MinionCamp.h"
+#include "MinionCaptureArea.h"
 
-MinionCamp::MinionCamp() : CaptureArea() {
+MinionCaptureArea::MinionCaptureArea() : CaptureArea() {
 	spawnTimer = 5.0f;
 	currentSpawnTimer = 0.0f;
 	maxMinions = 2;
 	colour = START_COLOUR;
 }
 
-MinionCamp::MinionCamp(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue) : CaptureArea(pos,unique_name,halfdims,scoreValue, col) {
+MinionCaptureArea::MinionCaptureArea(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue) : CaptureArea(pos,unique_name,halfdims,scoreValue, col) {
 	spawnTimer = 5.0f;
 	currentSpawnTimer = 0.0f;
 	maxMinions = 2;
 	colour = col;
 }
 
-MinionCamp::~MinionCamp() {
+MinionCaptureArea::~MinionCaptureArea() {
 	for (vector<Minion*>::iterator itr = minions.begin(); itr != minions.end();) {
 			itr = minions.erase(itr);			
 	}
 }
 
-void MinionCamp::Update(float dt) {
+void MinionCaptureArea::Update(float dt) {
 	currentSpawnTimer += dt;
 
 	//if the spawntimer is over 5 seconds and there is less than 5 active minions from this spawner, spawn minion

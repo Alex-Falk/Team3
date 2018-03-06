@@ -90,59 +90,49 @@ void Minion::Update(float dt)
 		dead = true;
 		destroy = true;
 	}
-	else {
-		if (minionBlackboard.GetGoToNearestCaptureZone()) {
-			if (GetIsGrounded()) {
-				if (GetClosestCaptureArea()) {
-					physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
-					physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-					physicsNode->SetAcceleration(Behaviours::Seek(closestCaptureArea->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
-					isGrounded = false;
-				}
-			}
-			else {
-				physicsNode->SetAcceleration({ 0, 0, 0 });
-			}
-		}
-		else if (minionBlackboard.GetWander()) {
-			if (GetIsGrounded()) {
+	else if (GetIsGrounded()) 
+	{
+		if (minionBlackboard.GetGoToNearestCaptureZone()) 
+		{
+			if (GetClosestCaptureArea()) 
+			{
 				physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
 				physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetAcceleration(Behaviours::Seek(wanderPosition, physicsNode->GetPosition(), physicsNode->GetLinearVelocity(), isGrounded, behaviourWeight, behaviourXZMagnitude));
+				physicsNode->SetAcceleration(Behaviours::Seek(closestCaptureArea->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
 				isGrounded = false;
 			}
-			else {
-				physicsNode->SetAcceleration({ 0, 0, 0 });
-			}
+			
 		}
-
+		else if (minionBlackboard.GetWander()) 
+		{
+			physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetAcceleration(Behaviours::Seek(wanderPosition, physicsNode->GetPosition(), physicsNode->GetLinearVelocity(), isGrounded, behaviourWeight, behaviourXZMagnitude));
+			isGrounded = false;
+		}
 		else if (minionBlackboard.GetFleeTarget()) {
 
 		}
-
-		else if (minionBlackboard.GetGoToClosestAlly()) {
-			if (isGrounded) {
-				physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetAcceleration(Behaviours::Pursue(closestFriendlyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
-				isGrounded = false;
-			}
-			else {
-				physicsNode->SetAcceleration({ 0, 0, 0 });
-			}
+		else if (minionBlackboard.GetGoToClosestAlly()) 
+		{
+			physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetAcceleration(Behaviours::Pursue(closestFriendlyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
+			isGrounded = false;
 		}
-		else if (minionBlackboard.GetGoToNearestEnemy()) {
-			if (GetIsGrounded()) {
-				physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetAcceleration(Behaviours::Pursue(closestEnemyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
-				isGrounded = false;
-			}
-			else {
-				physicsNode->SetAcceleration({ 0, 0, 0 });
-			}
+		else if (minionBlackboard.GetGoToNearestEnemy()) 
+		{
+			physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetAcceleration(Behaviours::Pursue(closestEnemyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
+			isGrounded = false;
 		}
 	}
+	else 
+	{
+		physicsNode->SetAcceleration({ 0, 0, 0 });
+	}
+
 
 	wanderTimer += dt;
 	closestPlayerTimer += dt;

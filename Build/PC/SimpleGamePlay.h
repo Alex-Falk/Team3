@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Map.h"
-#include "MinionCamp.h"
+#include "MinionCaptureArea.h"
 
 class SimpleGamePlay : public Map
 {

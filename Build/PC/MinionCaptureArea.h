@@ -6,7 +6,7 @@
 #include "Minion.h"
 #include "CaptureArea.h"
 
-class MinionCamp : public CaptureArea {
+class MinionCaptureArea : public CaptureArea {
 protected:
 	float spawnTimer; //time that a minion will spawn at
 	float currentSpawnTimer; //current time since last spawn
@@ -14,8 +14,8 @@ protected:
 	int maxMinions; //amount of minions that can be spawned in at once by this spawner
 
 public:
-	MinionCamp();
-	MinionCamp(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue);
+	MinionCaptureArea();
+	MinionCaptureArea(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue);
 	
 	void SetMaxMinions(int mm) {maxMinions = mm;}
 	int GetMaxMinions() { return maxMinions; }
@@ -25,5 +25,5 @@ public:
 
 	virtual void Update(float dt);
 	
-	~MinionCamp();
+	~MinionCaptureArea();
 };

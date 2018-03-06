@@ -22,6 +22,8 @@
 #include "Behaviours.h"
 using namespace Behaviours;
 
+#define RANDOM_MOVEMENT (float)(((rand() % 100) / 10.0f)-5.0f)
+
 Vector3 Behaviours::Seek(Vector3 targetPos, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxXZMagnitude)
 {
 	// Applies wall avoid accelleration
@@ -34,7 +36,7 @@ Vector3 Behaviours::Seek(Vector3 targetPos, Vector3 currentPos, Vector3 currentV
 		// Create a vector to the target point 
 		Vector3 desiredDirection = (targetPos - currentPos).Normalise();
 
-		behaviourAccn = (desiredDirection * maxXZMagnitude) + Vector3(0.0f,14.0f,0.0f);
+		behaviourAccn = (desiredDirection * maxXZMagnitude) + Vector3(RANDOM_MOVEMENT, 14.0f, RANDOM_MOVEMENT);
 	}
 
 	return behaviourAccn * weight;

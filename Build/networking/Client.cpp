@@ -312,10 +312,10 @@ void Client::ReceiveMinionSpawn(string data)
 }
 
 // PACKET_TYPE:posx posy posz, linvx linvy linvz, angvx angvy angvz, accx accy accz
-void Client::ReceiveMinionSpawn(string data)
-{
-
-}
+//void Client::ReceiveMinionSpawn(string data)
+//{
+//
+//}
 
 
 //--------------------------------------------------------------------------------------------//

@@ -42,8 +42,8 @@ void SimpleGamePlay::AddObjects()
 	}
 
 	// CAPTUREAREAS
-	AddCaptureArea(new MinionCamp(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
-	AddCaptureArea(new MinionCamp(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
+	AddCaptureArea(new MinionCaptureArea(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
+	AddCaptureArea(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
 	AddCaptureArea(new CaptureArea(Vector3(15, 0.6, -15), "2", Vector3(3.0f, 0.5f, 3.0f), 10));
 
 	for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
