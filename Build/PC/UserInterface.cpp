@@ -129,7 +129,7 @@ void GUIsystem::Draw()
 	//draw weapon icon
 	DrawWeaponIcon();
 
-	if (GraphicsPipeline::Instance()->GetIsMainMenu() == false) {
+	if (drawPlayerName == true) {
 		//Draw player names
 		for (int i = 0; i < 4; i++) {
 			if (playerNames[i] != "") {

@@ -94,7 +94,7 @@ public:
 
 	void Update(float dt);
 	void ResetGame();
-	void DetermineWinner() {};
+	void DetermineWinner();
 
 	void ClaimPickup(Avatar * player, Pickup * pickup);
 	//bool ClaimArea(Avatar * player, CaptureArea *object);

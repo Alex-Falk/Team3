@@ -79,10 +79,10 @@ PostProcess::PostProcess()
 		NCLERROR("Could not link shader: Post Process Shader/BLUR");
 	}
 
-	postProcessShaders[PostProcessType::SOBEL] = new Shader(
+	postProcessShaders[PostProcessType::_WIN] = new Shader(
 		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
-		SHADERDIR"Post Process/SOBEL.glsl");
-	if (!postProcessShaders[PostProcessType::SOBEL]->LinkProgram())
+		SHADERDIR"Post Process/WIN.glsl");
+	if (!postProcessShaders[PostProcessType::_WIN]->LinkProgram())
 	{
 		NCLERROR("Could not link shader: Post Process Shader/SOBEL");
 	}
