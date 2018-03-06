@@ -3,6 +3,8 @@
 #include "Projectile.h"
 #include "Avatar.h"
 #include "Explosion.h"
+#include <ncltech\SphereCollisionShape.h>
+#include "Minion.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;

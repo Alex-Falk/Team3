@@ -7,7 +7,6 @@
 //Made some changes to how the paintpool worked 
 
 #include "MultiPaintPool.h"
-#include "Avatar.h"
 
 MultiPaintPool::MultiPaintPool() : CaptureArea()
 {

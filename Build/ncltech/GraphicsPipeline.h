@@ -201,7 +201,7 @@ public:
 	inline int GetHeight() { return height; }
 	inline Mesh* GetScreenQuad() { return fullscreenQuad; }
 	//Score
-	inline float GetScore(uint i) { return scores[i]; }
+	inline float GetScore(uint i) { return (float)scores[i]; }
 
 	void PrintPerformanceTimers(const Vector4& color)
 	{

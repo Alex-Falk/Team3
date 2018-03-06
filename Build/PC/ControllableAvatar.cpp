@@ -25,10 +25,7 @@
 #include <string.h>
 #include "GameInput.h"
 #include "Game.h"
-#include <ncltech\CommonMeshes.h> 
-#include <nclgl\PlayerRenderNode.h> 
-#include <nclgl\common.h> 
-#include "Projectile.h"
+#include <nclgl\PlayerRenderNode.h>
 #include "Pickup.h"
 #include "WeaponPickup.h"
 

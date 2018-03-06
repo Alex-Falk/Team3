@@ -23,9 +23,6 @@
 #pragma once
 #include "GamePlay.h"
 #include <ncltech\GameObject.h>
-#include <ncltech\CommonUtils.h>
-#include <ncltech\CommonMeshes.h>
-#include <nclgl\PlayerRenderNode.h>
 
 enum Movement {
 	NO_MOVE,
@@ -40,8 +37,6 @@ enum Movement {
 class Avatar : public GameObject
 {
 protected:
-
-	//GameObject* playerGameObject;		//Pointer to the Player's Gameobject
 
 	Colour col;				    // Colour - Team
 	Vector4 colour;				// The actual colour of the player;
@@ -104,10 +99,6 @@ protected:
 public:
 	Avatar();
 	Avatar(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
-
-	//Movement mov;
-	//float controllYaw = 0;
-	//float t = 0;
 
 	virtual void OnAvatarUpdate(float dt);
 

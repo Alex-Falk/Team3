@@ -265,7 +265,7 @@ void Server::Disconnect()
 
 void Server::HandleRequests()
 {
-	int numRequests = requests.size();
+	uint numRequests = (uint)requests.size();
 	string data;
 
 

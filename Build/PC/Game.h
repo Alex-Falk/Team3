@@ -18,12 +18,12 @@
 //Extra functionality about score added by Nikos Fragkas 15/02/2018
 
 #pragma once
-#include "ControllableAvatar.h"
+#include "Avatar.h"
 #include "GamePlay.h"
 #include <networking\Client.h>
 #include <networking\Server.h>
 #include "Pickup.h"
-#include "CaptureArea.h"
+//#include "CaptureArea.h"
 #include "Map.h"
 
 class Game: public TSingleton<Game>

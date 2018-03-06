@@ -22,11 +22,6 @@
 
 #pragma once
 #include "Avatar.h"
-#include "GamePlay.h"
-#include <ncltech\GameObject.h>
-#include <ncltech\CommonUtils.h>
-
-
 
 class ControllableAvatar : public Avatar
 {

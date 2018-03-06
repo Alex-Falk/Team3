@@ -1,5 +1,5 @@
 #include "Explosion.h"
-
+#include "Minion.h"
 //Michael Davis 26/02/2018
 
 Explosion::Explosion() : Projectile() {

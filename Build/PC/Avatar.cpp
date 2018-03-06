@@ -22,14 +22,12 @@
 // Nikos Fragkas 05/02/2018
 
 #include "Avatar.h"
-#include <ncltech\SphereCollisionShape.h>
-#include <string.h>
-#include "GameInput.h"
+
 #include <ncltech\CommonMeshes.h>
 #include <nclgl\PlayerRenderNode.h>
+#include <ncltech\SphereCollisionShape.h>
+#include <string.h>
 #include "Projectile.h"
-#include "Pickup.h"
-#include "WeaponPickup.h"
 
 Avatar::Avatar()
 {
@@ -178,26 +176,7 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 		inAir = false;
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 	}
-	/*else if (collidingObject->GetType() == PICKUP)
-	{
-		Pickup * p = (Pickup*)(collidingObject->GetParent());
-		if (p->GetActive())
-		{
-			activePickUp = p->GetPickupType();
-			if (activePickUp == WEAPON)
-			{
-				weapon = ((WeaponPickup*)p)->GetWeaponType();
-			}
-			
-			if (Game::Instance()->ClaimPickup(this, p))
-			{
-				PickUpBuffActivated(activePickUp);
-			}
-			
-		}
-
-		return false;
-	}*/
+	
 	return true;
 }
 
@@ -501,7 +480,7 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 
 	if (curMove != previousMove)
 	{
-		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * basicSpinSpeed);
+		Physics()->SetAngularVelocity(((dirRotation * 3.0f) / (2.0f * life * PI)) * (float)basicSpinSpeed);
 		previousMove = curMove;
 		moveTimer = 0;
 	}
