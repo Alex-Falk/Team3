@@ -75,7 +75,7 @@ public:
 
 	inline User * GetUser()					{ return user; }
 
-	inline Map * GetMap()					{ return (Map*)SceneManager::Instance()->GetCurrentScene(); }
+	Scene * GetMap();
 
 	inline string GetName(uint id)			{ return userNames[id]; }
 
@@ -98,6 +98,8 @@ public:
 
 	void ClaimPickup(Pickup * pickup);
 	void ClaimArea(CaptureArea *object);
+
+	void KillMinion(MinionBase * minion);
 
 	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
 	// Performance Timers																				Date: 02/03/2018

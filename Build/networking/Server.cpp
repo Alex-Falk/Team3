@@ -251,11 +251,29 @@ void Server::UpdateUser(float dt)
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration(),
 						Game::Instance()->GetPlayer(i)->IsPlayerInAir()
 					);
-
 					SendSize(i);
-					SendScores();
 				}
 			}
+
+			Map * m = static_cast<Map*>(Game::Instance()->GetMap());
+
+			vector<MinionBase*> minions = m->GetMinions();
+			for (auto itr = minions.begin(); itr != minions.end(); ++itr)
+			{
+				SendMinionUpdate(
+					itr - minions.begin(),
+					(*itr)->GetColour(),
+					(*itr)->Physics()->GetPosition(),
+					(*itr)->Physics()->GetLinearVelocity(),
+					(*itr)->Physics()->GetAngularVelocity(),
+					(*itr)->Physics()->GetAcceleration(),
+					(*itr)->GetLife()
+				);
+			}
+
+
+
+			SendScores();
 		}
 	}
 
@@ -313,11 +331,8 @@ void Server::HandleRequests()
 
 			m->GetCaptureArea(r.objectID)->SetColour(Colour(r.userID));
 
-			if (r.userID != userID)
-			{
-				ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-				enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
-			}
+			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+			enet_host_broadcast(server->m_pNetwork, 0, packet);
 		}
 
 		requests.pop();
@@ -413,30 +428,50 @@ void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVe
 		Vector3ToString(acc) + "," +
 		to_string(inAir);
 
-	ENetPacket* packet = CreatePacket(data);
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 
 }
 
-void Server::SendMinionSpawn()
-{
+//void Server::SendMinionSpawn(uint spawnerID,uint minionID)
+//{
+//	string data;
+//
+//	data = to_string(MINION_SPAWN) + ":" +
+//		to_string(spawnerID) + ";" +
+//		to_string(minionID);
+//
+//	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+//	enet_host_broadcast(server->m_pNetwork, 0, packet);
+//}
 
-}
-
-void Server::SendMinionUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc)
+void Server::SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life)
 {
 	string data;
 
 	data = to_string(MINION_UPDATE) + ":" +
-		to_string(ID) + ";" +
+		to_string(minionID) + ";" +
+		to_string(c) + "," + 
 		Vector3ToString(pos) + "," +
 		Vector3ToString(linVel) + "," +
 		Vector3ToString(angVel) + "," +
-		Vector3ToString(acc);
+		Vector3ToString(acc) + "," +
+		to_string(life);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 
+}
+
+void Server::SendMinionDeath(uint minionID)
+{
+	string data;
+
+	data = to_string(MINION_DEATH) + ":" +
+		to_string(minionID);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
 void Server::SendSize(uint ID)

@@ -11,15 +11,6 @@ Minion::Minion() : MinionBase() {
 
 Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : MinionBase(c, RGBA, position, name) {
 
-
-	Physics()->SetOnCollisionCallback(
-		std::bind(&Minion::MinionCallbackFunction,
-			this,							//Any non-placeholder param will be passed into the function each time it is called
-			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
-			std::placeholders::_2
-		)
-	);
-
 	detectionRadiusSQ = 15.0f * 15.0f;
 	pursueRadiusSQ = 17.5f * 17.5f;
 	allyHealPursueLimit = 50.0f; 
@@ -75,6 +66,7 @@ void Minion::Update(float dt)
 	//float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
 	//life -= lifeLoss / (dt * 10);
 
+
 	lastPos = Physics()->GetPosition();
 
 
@@ -85,10 +77,9 @@ void Minion::Update(float dt)
 	if (currentState){
 		currentState->Execute(this);
 	}
-
-	if (life < minLife) {
+	if (life < minLife || dead) {
 		dead = true;
-		destroy = true;
+		//destroy = true;
 	}
 	else if (GetIsGrounded()) 
 	{
@@ -150,39 +141,6 @@ void Minion::Update(float dt)
 	}
 }
 
-bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
-	if (collidingObject->GetType() == PLAYER) {
-		if (!dead) {
-			if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				((Avatar*)collidingObject->GetParent())->ChangeLife(-(life / 5));
-			}
-			else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);
-			dead = true;
-			destroy = true;
-		}
-		return false;
-	}
-	else if (collidingObject->GetType() == MINION) {
-		if (!dead && ((Minion*)(collidingObject->GetParent()))->IsAlive()) {
-			if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				float tempLife = life;
-				ChangeLife(-((Minion*)collidingObject->GetParent())->GetLife());
-				((Minion*)(collidingObject->GetParent()))->ChangeLife(-(tempLife));
-				return false;
-			}
-		}
-		return true;
-	}
-	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
-		isGrounded = true;
-		ChangeLife(-1);
-		return true;
-	}
-	if (collidingObject->GetType() == PICKUP) {
-		return false;
-	}
-	return true;
-}
 
 void Minion::ComputeNewWanderPosition() {
 	wanderTimer = 0.0f;

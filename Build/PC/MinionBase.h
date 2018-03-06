@@ -26,6 +26,8 @@ public:
 	MinionBase();
 	MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string name = "");
 
+	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
+
 	void SetColour(Colour c) { colour = c; }
 	Colour GetColour() { return colour; }
 
@@ -40,6 +42,7 @@ public:
 	bool GetIsGrounded() { return isGrounded; }
 
 	void ChangeLife(float l);
+	void SetLife(float l);
 	float GetLife() { return life; }
 
 

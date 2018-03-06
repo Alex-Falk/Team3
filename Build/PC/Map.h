@@ -38,11 +38,11 @@ protected:
 
 
 	//pickup stuff
-	uint npickup;
 	vector<Pickup*> pickups;
-	//capture areas for minimap
-	uint ncapture;
-	vector<CaptureArea*> captureAreas; //TODO move this to wherever is best, used in minion class (ClosestCaptureArea)
+	//capture areas
+	vector<CaptureArea*> captureAreas;
+	
+	vector<MinionBase*> minions;
 
 
 public:
@@ -79,6 +79,7 @@ public:
 
 	void AddPickup(Pickup * p) {
 		pickups.push_back(p);
+		AddGameObject(p);
 	}
 
 	Pickup * GetPickup(int i) { return pickups[i]; }
@@ -87,10 +88,24 @@ public:
 
 	void AddCaptureArea(CaptureArea * ca) {
 		captureAreas.push_back(ca);
+		AddGameObject(ca);
 	}
 
 	CaptureArea * GetCaptureArea(int i) { return captureAreas[i]; }
 	vector<CaptureArea*> GetCaptureAreaVector() { return captureAreas; }
+
+	void AddMinion(MinionBase * m) {
+		minions.push_back(m);
+		AddGameObject(m);
+	}
+
+	void RemoveMinion(MinionBase * m) {
+		minions.erase(std::remove(minions.begin(), minions.end(), m), minions.end());
+	}
+
+	MinionBase * GetMinion(int i) { return minions[i]; }
+	uint GetMinionID(MinionBase * m) { return (uint)(find(minions.begin(), minions.end(), m) - minions.begin()); }
+	vector<MinionBase *> GetMinions() { return minions; }
 
 	static int GetMapIndex() { return mapIndex; }
 	void SetMapIndex(int mapIndx);

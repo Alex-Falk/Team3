@@ -58,3 +58,21 @@ void Game::ClaimArea(CaptureArea * object)
 {
 	user->RequestCaptureArea(getUserID(), object->GetName());
 }
+
+void Game::KillMinion(MinionBase * minion)
+{
+	Map * m = static_cast<Map*>(GetMap());
+
+	uint minionID = m->GetMinionID(minion);
+	m->RemoveMinion(minion);
+
+	if (getUserID() == 0)
+	{
+		((Server*)user)->SendMinionDeath(minionID);
+	}
+}
+
+Scene * Game::GetMap()
+{
+	return (SceneManager::Instance()->GetCurrentScene());
+}

@@ -1,5 +1,6 @@
 //Michael Davis 16/02/2018
 #include "MinionCaptureArea.h"
+#include "Game.h"
 
 MinionCaptureArea::MinionCaptureArea() : CaptureArea() {
 	spawnTimer = 5.0f;
@@ -11,43 +12,28 @@ MinionCaptureArea::MinionCaptureArea() : CaptureArea() {
 MinionCaptureArea::MinionCaptureArea(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue) : CaptureArea(pos,unique_name,halfdims,scoreValue, col) {
 	spawnTimer = 5.0f;
 	currentSpawnTimer = 0.0f;
-	maxMinions = 2;
+	maxMinions = 10;
 	colour = col;
 }
 
 MinionCaptureArea::~MinionCaptureArea() {
-	for (vector<MinionBase*>::iterator itr = minions.begin(); itr != minions.end();) {
-			itr = minions.erase(itr);			
-	}
 }
 
 void MinionCaptureArea::Update(float dt) {
-	currentSpawnTimer += dt;
+	Map * m = static_cast<Map*>(Game::Instance()->GetMap());
 
-	//if the spawntimer is over 5 seconds and there is less than 5 active minions from this spawner, spawn minion
-	if (colour != START_COLOUR && currentSpawnTimer > spawnTimer && minions.size() < maxMinions) {
-		MinionBase * m = new Minion(colour, Render()->GetchildBaseColor(), Physics()->GetPosition() + Vector3{ 0,Render()->GetBoundingRadius() * 1.2f,0 }, "Minion");
-		minions.push_back(m);
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(m);
-		currentSpawnTimer = 0.0f;
-	}
+	if (Game::Instance()->getUserID() == 0)
+	{
+		if (colour != START_COLOUR)
+			currentSpawnTimer += dt;
 
-	//iterate through vector deleting dead minions and updating alive ones
-	for (vector<MinionBase*>::iterator itr = minions.begin(); itr != minions.end(); ) {
-		if (!((*itr)->IsAlive())) {		
-			itr = minions.erase(itr);
-		}
-		else {
-			(*itr)->Update(dt);
-			++itr;
+		//if the spawntimer is over 5 seconds and there is less than 5 active minions from this spawner, spawn minion
+		if (colour != START_COLOUR && currentSpawnTimer > spawnTimer && m->GetMinions().size() < maxMinions) {
+			Minion * m = new Minion(colour, Render()->GetchildBaseColor(), Physics()->GetPosition() + Vector3{ 0,Render()->GetBoundingRadius() * 1.2f,0 });
+			((Map*)SceneManager::Instance()->GetCurrentScene())->AddMinion(m);
+			currentSpawnTimer = 0.0f;
 		}
 	}
 }
 
 
-void MinionCaptureArea::SpawnMinion()
-{
-	MinionBase * m = new MinionBase(colour, Render()->GetchildBaseColor(), Physics()->GetPosition() + Vector3{ 0,Render()->GetBoundingRadius() * 1.2f,0 }, "Minion");
-	minions.push_back(m);
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(m);
-}

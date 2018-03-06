@@ -195,9 +195,14 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveRequestResponse(data,PAINTABLE_OBJECT);
 			break;
 		}
-		case MINION_SPAWN:
+		case MINION_UPDATE:
 		{
-			ReceiveMinionSpawn(data);
+			ReceiveMinionUpdate(data);
+			break;
+		}
+		case MINION_DEATH:
+		{
+			ReceiveMinionDeath(data);
 			break;
 		}
 		case GAME_END:
@@ -271,7 +276,7 @@ void Client::ReceiveMapChange(string data)
 
 void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
 {
-	Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
+	Map * m = (Map*)Game::Instance()->GetMap();
 
 	uint colonIdx = (uint)(data.find_first_of(':'));
 	uint semicolonIdx = (uint)(data.find_first_of(';'));
@@ -297,37 +302,86 @@ void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
 	}
 }
 
-// PACKET_TYPE:SPAWNER_ID
-void Client::ReceiveMinionSpawn(string data)
-{
-	Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
+// PACKET_TYPE:SPAWNER_ID;MINION_ID
+//void Client::ReceiveMinionSpawn(string data)
+//{
+//	Map * m = (Map*)Game::Instance()->GetMap();
+//
+//	uint colonIdx = (uint)(data.find_first_of(':'));
+//	size_t semicolonIdx = data.find_first_of(';');
+//
+//	uint objectID = stoi(data.substr(colonIdx + 1));
+//	uint minionID = stoi(data.substr(semicolonIdx + 1));
+//
+//	((MinionCaptureArea*)(m->GetCaptureArea(objectID)))->SpawnMinion(minionID);
+//}
 
-	uint colonIdx = (uint)(data.find_first_of(':'));
-
-	uint objectID = stoi(data.substr(colonIdx + 1));
-
-	((MinionCaptureArea*)(m->GetCaptureArea(objectID)))->SpawnMinion();
-}
-
-// PACKET_TYPE:SPAWNER_ID;MINION_ID,posx posy posz,linvx linvy linvz,angvx angvy angvz,accx accy accz
+// PACKET_TYPE:MINION_ID;COLOUR,posx posy posz,linvx linvy linvz,angvx angvy angvz,accx accy accz,life
 void Client::ReceiveMinionUpdate(string data)
 {
+	Map * m = (Map*)Game::Instance()->GetMap();
+
 	size_t colonIdx = data.find_first_of(':');
 	size_t semicolonIdx = data.find_first_of(';');
 
-	uint spawnerID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+	uint minionID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 
 	data = data.substr(semicolonIdx + 1);
 
 	vector<string> splitData = split_string(data, ',');
 
-	uint minionID = stoi(splitData[0]);
+	Colour col = Colour(stoi(splitData[0]));
 	Vector3 pos = InterpretStringVector(splitData[1]);
 	Vector3 linv = InterpretStringVector(splitData[2]);
 	Vector3 angv = InterpretStringVector(splitData[3]);
 	Vector3 acc = InterpretStringVector(splitData[4]);
+	float life = stof(splitData[5]);
 
-	((MinionCaptureArea*)Game::Instance()->GetMap()->GetCaptureArea(spawnerID))->GetMinion(minionID);
+	int nMinions = m->GetMinions().size();
+	if (minionID == nMinions)
+	{
+		Vector4 ColourRGB  = DEFAULT_COLOUR;
+		switch (col)
+		{
+		case RED:
+			ColourRGB = RED_COLOUR;
+			break;
+		case BLUE:
+			ColourRGB = BLUE_COLOUR;
+			break;
+		case GREEN:
+			ColourRGB = GREEN_COLOUR;
+			break;
+		case PINK:
+			ColourRGB = PINK_COLOUR;
+			break;
+		}
+
+
+		MinionBase * minion = new MinionBase(col,ColourRGB,pos);
+	} 
+	else if (minionID < nMinions)
+	{
+		MinionBase * minion = m->GetMinion(minionID);
+
+		minion->Physics()->SetPosition(pos);
+		minion->Physics()->SetLinearVelocity(linv);
+		minion->Physics()->SetAngularVelocity(angv);
+		minion->Physics()->SetAcceleration(acc);
+		minion->SetLife(life);
+	}
+}
+
+// PACKET_TYPE:MINION_ID
+void Client::ReceiveMinionDeath(string data)
+{
+	Map * m = (Map*)Game::Instance()->GetMap();
+
+	uint colonIdx = (uint)(data.find_first_of(':'));
+
+	uint minionID = stoi(data.substr(colonIdx + 1));
+
+	m->RemoveMinion(m->GetMinion(minionID));
 }
 
 

@@ -45,8 +45,6 @@ public:
 
 	virtual void Update(float dt);
 
-	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
-
 	Avatar * GetClosestEnemyPlayer() { return closestEnemyPlayer; }
 	Avatar * GetClosestFriendlyPlayer() { return closestFriendlyPlayer; }
 	CaptureArea * GetClosestCaptureArea() { return closestCaptureArea; }

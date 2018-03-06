@@ -86,8 +86,9 @@ public:
 	void SendGameStart(uint mapID);
 
 	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir);
-	void SendMinionSpawn();
-	void SendMinionUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc);
+	//void SendMinionSpawn(uint spawnerID, uint minionID);
+	void SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life);
+	void SendMinionDeath(uint minionID);
 	void SendSize(uint ID);
 	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
 

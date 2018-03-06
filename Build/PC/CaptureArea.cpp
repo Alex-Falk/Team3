@@ -56,6 +56,7 @@ CaptureArea::CaptureArea(Vector3 pos, string unique_name, Vector3 halfdims, int 
 	pnode->SetPosition(pos);
 	pnode->SetInverseMass(0.0f);
 	pnode->SetName(unique_name);
+	pnode->SetType(PAINTABLE_OBJECT);
 
 	float x = halfdims.x*2.0f;
 	float y = halfdims.y*2.0f;

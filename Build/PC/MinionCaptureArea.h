@@ -2,7 +2,6 @@
 #pragma once
 
 #include "../ncltech/GameObject.h"
-#include "../ncltech/SceneManager.h"
 #include "Minion.h"
 #include "CaptureArea.h"
 
@@ -10,7 +9,6 @@ class MinionCaptureArea : public CaptureArea {
 protected:
 	float spawnTimer; //time that a minion will spawn at
 	float currentSpawnTimer; //current time since last spawn
-	std::vector<MinionBase*> minions; 
 	int maxMinions; //amount of minions that can be spawned in at once by this spawner
 
 public:
@@ -22,9 +20,6 @@ public:
 
 	void SetSpawnTimer(float f) { spawnTimer = f;}
 	float GetSpawnTimer() { return spawnTimer; }
-
-	void SpawnMinion();
-	MinionBase * GetMinion(uint i) { return minions[i]; }
 
 	virtual void Update(float dt);
 	

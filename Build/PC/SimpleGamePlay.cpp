@@ -36,20 +36,12 @@ void SimpleGamePlay::AddObjects()
 	AddPickup(new Pickup(Vector3(2, 1.5, -7), PickupType::JUMP_BOOST, "3"));
 	AddPickup(new PaintPool(Vector3(-15.0f, 0.6f, -15.0f), GREEN, "4"));
 
-	for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
-	{
-		this->AddGameObject((*itr));
-	}
 
 	// CAPTUREAREAS
 	AddCaptureArea(new MinionCaptureArea(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
 	AddCaptureArea(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
 	AddCaptureArea(new CaptureArea(Vector3(15, 0.6, -15), "2", Vector3(3.0f, 0.5f, 3.0f), 10));
 
-	for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
-	{
-		this->AddGameObject((*itr));
-	}
 
 }
 
@@ -60,21 +52,7 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 {
 	perfMapObjects.UpdateRealElapsedTime(dt);
 	Map::OnUpdateScene(dt);
-	perfMapObjects.BeginTimingSection();
-
-	for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
-	{
-		(*itr)->Update(dt);
-	}
-
-	for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
-	{
-		if (Game::Instance()->getUserID() == 0)
-			(*itr)->Update(dt);
-	}
-
-
-	perfMapObjects.EndTimingSection();
+	
 }
 
 //--------------------------------------------------------------------------------------------//

@@ -184,6 +184,38 @@ void Map::OnUpdateScene(float dt)
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
+
+	perfMapObjects.BeginTimingSection();
+	for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
+	{
+		(*itr)->Update(dt);
+	}
+
+	for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
+	{
+		if (Game::Instance()->getUserID() == 0)
+			(*itr)->Update(dt);
+	}
+
+	for (auto itr = minions.begin(); itr != minions.end();)
+	{
+		if (!(*itr)->IsAlive())
+		{
+			(*itr)->SetToDestroy();
+			Game::Instance()->KillMinion(*itr);
+			//itr = minions.erase(itr);
+			
+		}
+		else
+		{
+			(*itr)->Update(dt);
+			++itr;
+		}
+		
+	}
+
+	perfMapObjects.EndTimingSection();
+
 }
 
 //--------------------------------------------------------------------------------------------//
