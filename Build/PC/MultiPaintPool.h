@@ -7,10 +7,13 @@
 //Made some changes to how the paintpool worked 
 
 #pragma once
-#include "Paintpool.h"
 #include "CaptureArea.h"
+
+
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
+
+class Paintpool;
 
 class MultiPaintPool : public CaptureArea
 {

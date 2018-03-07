@@ -70,21 +70,6 @@ void Game::DetermineWinner() {
 		}
 	}
 
-	/*
-	if (currentWinner == RED) {
-		cout << "Red Wins!" << endl;
-	}
-	else if (currentWinner == BLUE) {
-		cout << "Blue Wins!" << endl;
-	}
-	else if (currentWinner == GREEN) {
-		cout << "Green Wins!" << endl;
-	}
-	else if (currentWinner == PINK) {
-		cout << "Pink Wins!" << endl;
-	}
-	*/
-
 	//Determine whether the winner is this user
 	GUIsystem::Instance()->SetDrawResult(true);
 	if (currentWinner == getUserID()) {

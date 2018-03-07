@@ -1,10 +1,12 @@
 //Michael Davis 14/02/2018
 
-#include "Projectile.h"
+
 #include "Avatar.h"
 #include "Explosion.h"
 #include <ncltech\SphereCollisionShape.h>
 #include "Minion.h"
+#include <ncltech/SceneManager.h>
+#include "Projectile.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;

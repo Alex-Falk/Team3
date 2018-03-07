@@ -2,11 +2,13 @@
 #include <ncltech\SceneManager.h>
 #include <ncltech\TextureManager.h> 
 #include "GamePlay.h"
-#include "Pickup.h"
+
 #include "Avatar.h"
 #include "Game.h"
-#include "CaptureArea.h"
 
+
+class Pickup;
+class CaptureArea;
 class Map : public Scene
 {
 protected:

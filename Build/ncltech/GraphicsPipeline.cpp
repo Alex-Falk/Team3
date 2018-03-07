@@ -29,6 +29,7 @@
 #include <PC\Game.h>
 #include <PC\Map.h>
 #include <PC\PaintPool.h>
+#include<PC\CaptureArea.h>
 
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())

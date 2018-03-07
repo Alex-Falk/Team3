@@ -1,3 +1,6 @@
+#include <ncltech\CommonUtils.h>
+#include "Pickup.h"
+#include "CaptureArea.h"
 #include "Map.h"
 #include "ControllableAvatar.h"
 

@@ -20,13 +20,15 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"     
 
-#include "CaptureArea.h"
+
 #include <ncltech\CuboidCollisionShape.h>
 #include <string.h>
+#include <nclgl\NCLDebug.h>
+#include "Game.h"
 #include "Avatar.h"
 #include "Projectile.h"
-#include <nclgl\NCLDebug.h>
 #include "Minion.h"
+#include "CaptureArea.h"
 
 CaptureArea::CaptureArea()
 {

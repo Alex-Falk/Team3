@@ -4,9 +4,10 @@
 #include <nclgl\Vector3.h>
 #include <nclgl\common.h>
 #include <ncltech\NetworkBase.h>
-#include "NetworkCommon.h"
+
 #include <ncltech\SceneManager.h>
 #include <ctime>
+#include "NetworkCommon.h"
 
 struct TempData {
 	Vector3 positions[4];

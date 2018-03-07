@@ -1,19 +1,17 @@
+
 #include <enet\enet.h>
-#include <ncltech\PhysicsEngine.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
 #include "UserInterface.h"
 #include "AudioSystem.h"
-#include "SimpleGamePlay.h"
-#include "MainMenu.h"
-//#include "Arena.h"
-#include "TestMap.h"
 #include "GameInput.h"
-#include "Game.h"
-#include "PostProcess.h"
 #include "MinionStates.h"
+
+//Scenes
+#include "MainMenu.h"
+#include "SimpleGamePlay.h"
 #include "Stage4.h"
 
 
@@ -214,35 +212,6 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
 		show_debug = !show_debug;
 
-	//audio test functionality
-	//TODO remove this when finished testing
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
-		AudioSystem::Instance()->PlayASound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
-		AudioSystem::Instance()->StopAllSounds();
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
-		AudioSystem::Instance()->UnmuteAllSounds();
-	}
-
-
-
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
 		drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
@@ -261,27 +230,6 @@ void HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
 		drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
-	{
-		GameObject* spawnSphere = CommonUtils::BuildSphereObject("spawned_sphere",
-			GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f,
-			0.5f,									//Radius
-			true,									//Has Physics Object
-			1.0f / 4.0f,							//Inverse Mass
-			true,									//Has Collision Shape
-			true,									//Dragable by the user
-			DEFAULT_PHYSICS,
-			CommonUtils::GenColor(0.1f, 0.8f));		//Color
-
-
-		spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
-
-		spawnSphere->Physics()->SetOnCollisionCallback(&ScoreCallbackFunction);
-
-
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
-	}
 
 	//toggle the camera
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {

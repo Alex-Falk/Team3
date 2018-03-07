@@ -3,8 +3,7 @@
 
 #include <ncltech/GameObject.h>
 #include "Gameplay.h"
-#include <ncltech/SceneManager.h>
-#include "Game.h"
+//#include "Game.h"
 
 
 class Projectile : public GameObject {

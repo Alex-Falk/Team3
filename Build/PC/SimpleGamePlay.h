@@ -29,11 +29,7 @@ public:
 		capture = new CaptureArea*[ncapture];
 	}
 
-	~SimpleGamePlay() {
-		delete[] pickup;
-		delete mc;
-		delete mc2;
-	}
+	~SimpleGamePlay();
 
 	virtual void OnInitializeScene() override;
 	virtual void SetSpawnLocations() override;

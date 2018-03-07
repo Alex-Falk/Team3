@@ -7,7 +7,7 @@
 #include "MinionBlackboard.h"
 #include "State.h"
 
-
+class CaptureArea;
 class Minion : public GameObject {
 protected:
 	Colour colour;

@@ -26,6 +26,8 @@
 //#include "CaptureArea.h"
 #include "Map.h"
 
+
+
 class Game: public TSingleton<Game>
 {
 	friend class TSingleton <Game>;
@@ -88,7 +90,6 @@ public:
 	inline void StopGame()					{ gameRunning = false; }
 
 	inline bool IsRunning()					{ return gameRunning; }
-
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility
