@@ -60,6 +60,7 @@
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="InputDevice.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Lexer.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix3.h" />

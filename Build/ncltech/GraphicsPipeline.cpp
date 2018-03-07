@@ -1070,7 +1070,7 @@ void GraphicsPipeline::DrawMiniMap() {
 	int pickupColours[20];
 	//reset count
 	count = 0;
-	for (uint i = 0; i < map->GetNPickup(); i++) {
+	for (uint i = 0; i < map->GetPickups().size(); i++) {
 		Pickup* p = map->GetPickups()[i];
 		if (p->GetActive()) {
 			pickupTypes[count] = p->GetPickupType();
@@ -1084,11 +1084,11 @@ void GraphicsPipeline::DrawMiniMap() {
 		}
 	}
 	//capturable object
-	for (uint i = 0; i < map->GetNCapture(); i++) {
+	for (uint i = 0; i < map->GetCaptureAreaVector().size(); i++) {
 		//four is one more than the highest number
 		pickupTypes[count] = 4;
-		pickupColours[count] = map->GetCaptureAreas()[i]->GetColour();
-		Vector2 v = VectorToMapCoord(map->GetCaptureAreas()[i]->Physics()->GetPosition());
+		pickupColours[count] = map->GetCaptureAreaColour(i);
+		Vector2 v = VectorToMapCoord(map->GetCaptureAreaVector()[i]->Physics()->GetPosition());
 		pickupPositions[count * 2] = v.x;
 		pickupPositions[(count * 2) + 1] = v.y;
 		count++;

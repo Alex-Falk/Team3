@@ -28,14 +28,9 @@ public:
 	StageFourth(const std::string& friendly_name) :
 		Map(friendly_name)
 	{
-		SetNumOfPickups(10);
-		pickup = new Pickup*[npickup];
-		SetNumOfCaptureAreas(10);
-		capture = new CaptureArea*[ncapture];
 	}
 
 	~StageFourth() {
-		delete[] pickup;
 		delete mc;
 		delete mc2;
 	}

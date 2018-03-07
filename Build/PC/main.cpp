@@ -15,6 +15,7 @@
 #include "PostProcess.h"
 #include "MinionStates.h"
 #include "Stage4.h"
+#include "DataDrivenMap.h"
 
 
 bool draw_debug = true;
@@ -91,9 +92,9 @@ void Initialize()
 	PhysicsEngine::Instance();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - Dongli's Angels"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new StageFourth("Fourth Stage - The Best Game Ever"));
 
 	AudioSystem::Instance();
