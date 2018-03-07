@@ -25,6 +25,7 @@
 #include <nclgl\NCLDebug.h>
 #include <algorithm>
 #include <ncltech\TextureManager.h>
+
 //used by minimap
 #include <PC\Game.h>
 #include <PC\Map.h>
@@ -786,7 +787,7 @@ void GraphicsPipeline::SetPath(RenderNode* playerRenderNode, uint playerNumber)
 		pathSmoother[playerNumber]->Update(0);
 
 		pathSmoother[playerNumber]->SetChildBaseColor(playerRenderNode->GetBaseColor());
-		playerRenderNodes.push_back(pathSmoother[playerNumber]);
+		pathRenderNodes.push_back(pathSmoother[playerNumber]);
 	}
 }
 
