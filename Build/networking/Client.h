@@ -59,7 +59,7 @@ public:
 	// Sending
 	//--------------------------------------------------------------------------------------------//
 
-	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir);
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life);
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
 	void SendSize(uint ID);
 	void SendUsername();

@@ -97,7 +97,7 @@ void Client::UpdateUser(float dt)
 			p->Physics()->GetLinearVelocity(),
 			p->Physics()->GetAngularVelocity(),
 			p->Physics()->GetAcceleration(),
-			p->IsPlayerInAir()
+			p->GetLife()
 		);
 	}
 }
@@ -390,7 +390,7 @@ void Client::SendUsername()
 	enet_peer_send(serverConnection, 0, packet);
 }
 
-void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir)
+void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life)
 {
 	string data;
 
@@ -400,7 +400,7 @@ void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angV
 		Vector3ToString(linVel) + "," +
 		Vector3ToString(angVel) + "," +
 		Vector3ToString(acc) + "," +
-		to_string(inAir);
+		to_string(life);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);
@@ -420,17 +420,6 @@ void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 		+ Vector3ToString(dir);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
-	enet_peer_send(serverConnection, 0, packet);
-}
-
-void Client::SendSize(uint ID)
-{
-	string data;
-
-	data = to_string(PLAYER_SIZES) + ":" +
-		to_string(ID) + ";" + to_string(Game::Instance()->GetPlayer(ID)->GetLife());
-
-	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);
 }
 

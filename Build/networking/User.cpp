@@ -11,7 +11,7 @@ User::~User()
 	Disconnect();
 }
 
-// packetType:ID;posx posy posz, linvx linvy linvz, angvx angvy angvz, accx accy accz
+// packetType:ID;posx posy posz, linvx linvy linvz, angvx angvy angvz, accx accy accz,life
 void User::ReceiveAvatarUpdate(string data)
 {
 	size_t colonIdx = data.find_first_of(':');
@@ -37,8 +37,12 @@ void User::ReceiveAvatarUpdate(string data)
 		data = data.substr(commaIdx + 1);
 	}
 
-	int inAir = stoi(data);
-	Game::Instance()->GetPlayer(playerID)->SetInAir(inAir);
+	float life = stoi(data);
+	if (playerID != userID)
+	{
+		Game::Instance()->GetPlayer(playerID)->SetLife(life);
+	}
+	
 	temps.positions[playerID] = vecs[0];
 	temps.linVelocities[playerID] = vecs[1];
 	temps.angVelocities[playerID] = vecs[2];

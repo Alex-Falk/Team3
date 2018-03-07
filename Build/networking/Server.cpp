@@ -242,16 +242,16 @@ void Server::UpdateUser(float dt)
 			{
 				if (Game::Instance()->GetPlayer(i))
 				{
-
+					//SendSize(i);
 					SendAvatarUpdate(
 						i,
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition(),
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity(),
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity(),
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration(),
-						Game::Instance()->GetPlayer(i)->IsPlayerInAir()
+						Game::Instance()->GetPlayer(i)->GetLife()
 					);
-					SendSize(i);
+					
 				}
 			}
 
@@ -416,7 +416,7 @@ void Server::SendGameStart(uint mapID)
 
 }
 
-void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir)
+void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life)
 {
 	string data;
 	
@@ -426,24 +426,12 @@ void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVe
 		Vector3ToString(linVel) + "," +
 		Vector3ToString(angVel) + "," +
 		Vector3ToString(acc) + "," +
-		to_string(inAir);
+		to_string(life);
 
-	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 
 }
-
-//void Server::SendMinionSpawn(uint spawnerID,uint minionID)
-//{
-//	string data;
-//
-//	data = to_string(MINION_SPAWN) + ":" +
-//		to_string(spawnerID) + ";" +
-//		to_string(minionID);
-//
-//	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-//	enet_host_broadcast(server->m_pNetwork, 0, packet);
-//}
 
 void Server::SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life)
 {
@@ -471,17 +459,6 @@ void Server::SendMinionDeath(uint minionID)
 		to_string(minionID);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-	enet_host_broadcast(server->m_pNetwork, 0, packet);
-}
-
-void Server::SendSize(uint ID)
-{
-	string data;
-	
-	data = to_string(PLAYER_SIZES) + ":" +
-		to_string(ID) + ";" + to_string(Game::Instance()->GetPlayer(ID)->GetLife());
-
-	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
