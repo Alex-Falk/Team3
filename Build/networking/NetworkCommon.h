@@ -33,13 +33,15 @@
 #pragma once
 #include <nclgl\common.h>
 #include <PC\Avatar.h>
+//--------------------------------------------------------------------------------------------//
+// Networking Enums
+//--------------------------------------------------------------------------------------------//
 
 enum PacketType {
 	GAME_START,				// Informs clients the game has started
 	CONNECTION_ID,
 	NUMBER_USERS,
 	AVATAR_UPDATE,
-	PLAYER_SIZES,			// Server->Client: Broadcast player sizes	
 	PLAYER_WEAPON,			// Server->Client: Broadcast pos/dir		Client->Server:	Inform of spawn pos/dir
 	PLAYER_SCORES,			// Server->Client: Broadcast Scores
 	PLAYER_NAME,			// Client->Server: Send Username
@@ -48,10 +50,12 @@ enum PacketType {
 	MAP_OBJECT_REQUEST,
 	MINION_SPAWN,
 	MINION_UPDATE,
-	MINION_DEATH,
-	TEXT_PACKET,
-	GAME_END				// Server->Client: Informs clients game has ended
+	MINION_DEATH
 };
+
+//--------------------------------------------------------------------------------------------//
+// Useful Structs
+//--------------------------------------------------------------------------------------------//
 
 struct IP {
 	int a;

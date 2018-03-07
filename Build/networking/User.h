@@ -1,12 +1,8 @@
 #pragma once
 #include <enet\enet.h>
-#include <nclgl\GameTimer.h>
-#include <nclgl\Vector3.h>
 #include <nclgl\common.h>
 #include <ncltech\NetworkBase.h>
 #include "NetworkCommon.h"
-#include <ncltech\SceneManager.h>
-#include <PC\MinionCaptureArea.h>
 #include <ctime>
 
 struct TempData {

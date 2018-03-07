@@ -55,6 +55,7 @@ public:
 	float GetPursueRadiusSQ() { return pursueRadiusSQ; }
 
 	float DistanceToClosestFriendlySQ() {
+		ComputeClosestFriendlyPlayer();
 		if (closestFriendlyPlayer) return (physicsNode->GetPosition() - closestFriendlyPlayer->Physics()->GetPosition()).LengthSQ();
 		else return detectionRadiusSQ + 1;
 	}
@@ -62,6 +63,7 @@ public:
 	float GetAllyHealPursueLimit() { return allyHealPursueLimit; }
 
 	float DistanceToClosestEnemySQ() { 
+		ComputeClosestEnemyPlayer();
 		if (closestEnemyPlayer) return (physicsNode->GetPosition() - closestEnemyPlayer->Physics()->GetPosition()).LengthSQ();
 		else return detectionRadiusSQ + 1;
 	}

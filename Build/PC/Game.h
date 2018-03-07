@@ -20,11 +20,13 @@
 #pragma once
 #include "ControllableAvatar.h"
 #include "GamePlay.h"
-#include <networking\Client.h>
-#include <networking\Server.h>
+#include <networking\NetworkCommon.h>
 #include "Map.h"
-#include "Pickup.h"
-#include "CaptureArea.h"
+#include <networking\User.h>
+
+class Pickup;
+class CaptureArea;
+class MinionBase;
 
 class Game: public TSingleton<Game>
 {
@@ -49,14 +51,8 @@ public:
 	inline void SetPosition(uint id, Vector3 p)			{ avatars[id]->GetGameObject()->Physics()->SetPosition(p); }
 	inline void SetGameLength(float f)					{ gameLength = f; }
 
-	inline void SetServer() {
-		if (user) { SAFE_DELETE(user) }; 
-		user = new Server();
-	}
-	inline void setClient(IP ip) { 
-		if (user) { SAFE_DELETE(user) }; 
-		user = new Client(ip); 
-	}
+	void SetServer();
+	void SetClient(IP ip);
 
 	inline void SetAvatar(uint id, Avatar * p)			{ avatars[id] = p; }
 
@@ -99,11 +95,12 @@ public:
 	void ClaimPickup(Pickup * pickup);
 	void ClaimArea(CaptureArea *object);
 
+	void SpawnMinion(MinionBase * minion);
 	void KillMinion(MinionBase * minion);
 
 	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
 	// Performance Timers																				Date: 02/03/2018
-	//--------------------------------------------------------------------------------------------//	
+	//--------------------------------------------------------------------------------------------//0
 	void PrintPerformanceTimers(const Vector4& color)
 	{
 		perfNetwork.PrintOutputToStatusEntry(color, "            Network Update  :");

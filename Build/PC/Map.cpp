@@ -1,4 +1,30 @@
 #include "Map.h"
+#include "Pickup.h"
+#include "CaptureArea.h"
+#include "MinionBase.h"
+
+Map::~Map() 
+{
+	TextureManager::Instance()->RemoveAllTexture();
+	for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
+	{
+		(*itr)->SetToDestroy();
+	}
+	pickups.clear();
+
+	for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
+	{
+		(*itr)->SetToDestroy();
+	}
+	captureAreas.clear();
+
+	for (int i = 0; i < maxMinions; ++i)
+	{
+		minions[i]->SetToDestroy();
+		minions[i] = nullptr;
+	}
+	captureAreas.clear();
+};
 
 //--------------------------------------------------------------------------------------------//
 // Initialization
@@ -150,12 +176,71 @@ void Map::SetSpawnLocations()
 
 void Map::OnCleanupScene()
 {
-	//SAFE_DELETE(energyBar);
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();
 	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
 	captureAreas.clear();
 };
+
+void Map::AddPickup(Pickup * p) {
+	pickups.push_back(p);
+	AddGameObject(p);
+}
+
+void Map::AddCaptureArea(CaptureArea * ca) {
+	captureAreas.push_back(ca);
+	AddGameObject(ca);
+}
+
+void Map::AddMinion(MinionBase * m)
+{
+	for (int i = 0; i < maxMinions; ++i)
+	{
+		if (!minions[i])
+		{
+			minions[i] = m;
+			AddGameObject(m);
+			break;
+		}
+	}	
+}
+
+void Map::AddMinion(MinionBase * m, int location)
+{
+	if (minions[location])
+	{
+		minions[location]->SetToDestroy();
+	}
+
+	minions[location] = m;
+	AddGameObject(m);
+}
+
+void Map::RemoveMinion(MinionBase * m)
+{
+	for (int i = 0; i < maxMinions; ++i)
+	{
+		if (minions[i] == m)
+		{
+			m->SetToDestroy();
+			minions[i] = nullptr;
+			break;
+		}
+	}
+}
+
+uint Map::GetMinionID(MinionBase * m)
+{
+	for (int i = 0; i < maxMinions; ++i)
+	{
+		if (minions[i] == m)
+		{
+			return (uint)i;
+			break;
+		}
+	}
+}
+
 
 
 //--------------------------------------------------------------------------------------------//
@@ -197,21 +282,19 @@ void Map::OnUpdateScene(float dt)
 			(*itr)->Update(dt);
 	}
 
-	for (auto itr = minions.begin(); itr != minions.end();)
+	for (int i = 0; i < maxMinions; ++i)
 	{
-		if (!(*itr)->IsAlive())
+		if (minions[i])
 		{
-			(*itr)->SetToDestroy();
-			Game::Instance()->KillMinion(*itr);
-			//itr = minions.erase(itr);
-			
-		}
-		else
-		{
-			(*itr)->Update(dt);
-			++itr;
-		}
-		
+			if (!minions[i]->IsAlive())
+			{
+				RemoveMinion(minions[i]);
+			}
+			else
+			{
+				(minions[i])->Update(dt);
+			}
+		}	
 	}
 
 	perfMapObjects.EndTimingSection();

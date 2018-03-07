@@ -68,49 +68,19 @@ public:
 		exit(0);
 	};
 
-	void UpdateUser(float dt);
-
-	NetworkBase * getBase() { return server; }
-
-	//--------------------------------------------------------------------------------------------//
-	// Sending / Broadcasting
-	//--------------------------------------------------------------------------------------------//
-
-	// need to send:
-	// player info - positions/velocities/accelerations + Sizes
-	// Player Scores
-	// full map info - on connect -> use map index
-	// changes to map
-	void SendNumberUsers(uint n);
-	void SendConnectionID(uint ID);
-	void SendGameStart(uint mapID);
-
-	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life);
-	//void SendMinionSpawn(uint spawnerID, uint minionID);
-	void SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life);
-	void SendMinionDeath(uint minionID);
-	void SendSize(uint ID);
-	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
-
-	void SendScores();
-	void SendMap();
-	void SendPlayerNames();
-
-	//--------------------------------------------------------------------------------------------//
-	// Receiving
-	//--------------------------------------------------------------------------------------------//
-
-	void ReceiveRequest(string data, PhysNodeType physType);
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility
 	//--------------------------------------------------------------------------------------------//
 
+	NetworkBase * getBase() { return server; }
 
 	virtual void StartGame(uint mapID = 0);
+	void UpdateUser(float dt);
 	void Disconnect();
+	virtual void RequestPickup(uint ID, string uniqueName);
+	virtual void RequestCaptureArea(uint ID, string uniqueName);
 	void HandleRequests();
-
 	std::string GetPacketData(const ENetEvent & evnt)
 	{
 		std::string out;
@@ -121,13 +91,32 @@ public:
 		return out;
 	}
 
-	virtual void RequestPickup(uint ID, string uniqueName);
-	virtual void RequestCaptureArea(uint ID, string uniqueName);
+	//--------------------------------------------------------------------------------------------//
+	// Receiving
+	//--------------------------------------------------------------------------------------------//
 
+	void ReceiveRequest(string data, PhysNodeType physType);
+
+	//--------------------------------------------------------------------------------------------//
+	// Sending / Broadcasting
+	//--------------------------------------------------------------------------------------------//
+
+	void SendNumberUsers(uint n);
+	void SendConnectionID(uint ID);
+	void SendPlayerNames();
+	void SendGameStart(uint mapID);
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life);
+	void SendMinionSpawn(uint minionID, Colour c, Vector3 pos);
+	void SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life);
+	void SendMinionDeath(uint minionID);
+	void SendScores();
+	void SendMap();
+	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
+
+protected:
 	//--------------------------------------------------------------------------------------------//
 	// Stored Variables
 	//--------------------------------------------------------------------------------------------//
-
 	std::queue<UserCaptureRequest> requests;
 };
 

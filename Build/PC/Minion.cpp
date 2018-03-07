@@ -78,8 +78,7 @@ void Minion::Update(float dt)
 		currentState->Execute(this);
 	}
 	if (life < minLife || dead) {
-		dead = true;
-		//destroy = true;
+		Game::Instance()->KillMinion(this);
 	}
 	else if (GetIsGrounded()) 
 	{

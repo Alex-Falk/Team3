@@ -633,7 +633,7 @@ void MainMenu::onConnectButtonClicked()
 
 		if (!Game::Instance()->GetUser())
 		{
-			Game::Instance()->setClient(ip);
+			Game::Instance()->SetClient(ip);
 		}
 	}
 	HideConnectionMenu();

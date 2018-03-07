@@ -1074,8 +1074,8 @@ void GraphicsPipeline::DrawMiniMap() {
 	for (int i = 0; i < map->GetCaptureAreaVector().size(); i++) {
 		//four is one more than the highest number
 		pickupTypes[count] = 4;
-		pickupColours[count] = map->GetCaptureArea(i)->GetColour();
-		Vector2 v = VectorToMapCoord(map->GetCaptureArea(i)->Physics()->GetPosition());
+		pickupColours[count] = map->GetCaptureAreaColour(i);
+		Vector2 v = VectorToMapCoord(map->GetCaptureAreaPos(i));
 		pickupPositions[count * 2] = v.x;
 		pickupPositions[(count * 2) + 1] = v.y;
 		count++;

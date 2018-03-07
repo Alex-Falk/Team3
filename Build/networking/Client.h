@@ -33,7 +33,6 @@
 #pragma once
 
 #include "User.h"
-#define CLIENT_ID serverConnection->outgoingPeerID
 
 using namespace std;
 
@@ -43,8 +42,6 @@ public:
 	Client();
 	Client(IP ip);
 	~Client();
-
-	
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility
@@ -59,10 +56,9 @@ public:
 	// Sending
 	//--------------------------------------------------------------------------------------------//
 
+	void SendUsername();
 	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life);
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
-	void SendSize(uint ID);
-	void SendUsername();
 	void RequestPickup(uint ID, string uniqueName);
 	void RequestCaptureArea(uint ID, string uniqueName);
 
@@ -76,11 +72,14 @@ public:
 	void ReceiveMapIndex(string data);
 	void ReceiveMapChange(string data);
 	void ReceiveRequestResponse(string data, PhysNodeType ptype);
-
+	void ReceiveMinionSpawn(string data);
 	void ReceiveMinionUpdate(string data);
 	void ReceiveMinionDeath(string data);
 
 protected:
+	//--------------------------------------------------------------------------------------------//
+	// Stored Variables
+	//--------------------------------------------------------------------------------------------//
 	NetworkBase network;
 	ENetPeer* serverConnection;
 

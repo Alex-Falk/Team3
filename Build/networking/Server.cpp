@@ -31,6 +31,7 @@
 
 #include "Server.h"
 #include <PC/Game.h>
+#include <PC/MinionBase.h>
 
 string Win32_PrintAllAdapterIPAddresses()
 {
@@ -181,12 +182,6 @@ void Server::UpdateUser(float dt)
 					DeadReckon(playerID,dt);
 					break;
 				}
-				case PLAYER_SIZES:
-				{
-					PlayerFloat pfloat = ReceiveSizes(data);
-					Game::Instance()->SetSize(pfloat.ID, pfloat.f);
-					break;
-				}
 				case PLAYER_NAME:
 				{
 					PlayerName pName = ReceiveUserName(data);
@@ -257,21 +252,22 @@ void Server::UpdateUser(float dt)
 
 			Map * m = static_cast<Map*>(Game::Instance()->GetMap());
 
-			vector<MinionBase*> minions = m->GetMinions();
-			for (auto itr = minions.begin(); itr != minions.end(); ++itr)
+			MinionBase ** minions = m->GetMinions();
+			for (int i = 0; i < m->GetMaxMinions(); ++i)
 			{
-				SendMinionUpdate(
-					itr - minions.begin(),
-					(*itr)->GetColour(),
-					(*itr)->Physics()->GetPosition(),
-					(*itr)->Physics()->GetLinearVelocity(),
-					(*itr)->Physics()->GetAngularVelocity(),
-					(*itr)->Physics()->GetAcceleration(),
-					(*itr)->GetLife()
-				);
+				if (minions[i])
+				{
+					SendMinionUpdate(
+						i,
+						minions[i]->GetColour(),
+						minions[i]->Physics()->GetPosition(),
+						minions[i]->Physics()->GetLinearVelocity(),
+						minions[i]->Physics()->GetAngularVelocity(),
+						minions[i]->Physics()->GetAcceleration(),
+						minions[i]->GetLife()
+					);
+				}
 			}
-
-
 
 			SendScores();
 		}
@@ -282,6 +278,26 @@ void Server::UpdateUser(float dt)
 void Server::Disconnect()
 {
 	server->Release();
+}
+
+void Server::RequestPickup(uint ID, string uniqueName)
+{
+	UserCaptureRequest r;
+	r.userID = ID;
+	r.objectID = stoi(uniqueName);
+	r.type = PICKUP;
+
+	requests.push(r);
+}
+
+void Server::RequestCaptureArea(uint ID, string uniqueName)
+{
+	UserCaptureRequest r;
+	r.userID = ID;
+	r.objectID = stoi(uniqueName);
+	r.type = PAINTABLE_OBJECT;
+
+	requests.push(r);
 }
 
 void Server::HandleRequests()
@@ -433,6 +449,19 @@ void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVe
 
 }
 
+void Server::SendMinionSpawn(uint minionID, Colour c, Vector3 pos)
+{
+	string data;
+
+	data = to_string(MINION_SPAWN) + ":" +
+		to_string(minionID) + ";" +
+		to_string(c) + "," +
+		Vector3ToString(pos);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
 void Server::SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life)
 {
 	string data;
@@ -501,21 +530,4 @@ void Server::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
-void Server::RequestPickup(uint ID, string uniqueName)
-{
-	UserCaptureRequest r;
-	r.userID = ID;
-	r.objectID = stoi(uniqueName);
-	r.type = PICKUP;
 
-	requests.push(r);
-}
-void Server::RequestCaptureArea(uint ID, string uniqueName)
-{
-	UserCaptureRequest r;
-	r.userID = ID;
-	r.objectID = stoi(uniqueName);
-	r.type = PAINTABLE_OBJECT;
-
-	requests.push(r);
-}

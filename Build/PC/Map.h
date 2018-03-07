@@ -1,19 +1,14 @@
 #pragma once
-#include <nclgl\NCLDebug.h>
-#include <ncltech\Scene.h>
-#include <ncltech\SceneManager.h>
-#include <ncltech\PhysicsEngine.h>
-#include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
 #include <ncltech\TextureManager.h> 
-#include "GamePlay.h"
-#include "Pickup.h"
-#include "Avatar.h"
-#include "ControllableAvatar.h"
-#include "Game.h"
-#include "GamePlay.h"
-#include "WeaponPickup.h"
+#include <ncltech\SceneManager.h>
 #include "CaptureArea.h"
+#include "Pickup.h"
+#include "GamePlay.h"
+#include "Game.h"
+
+class MinionBase;
+
 
 class Map : public Scene
 {
@@ -42,7 +37,8 @@ protected:
 	//capture areas
 	vector<CaptureArea*> captureAreas;
 	
-	vector<MinionBase*> minions;
+	static const int maxMinions = 20;
+	MinionBase * minions[maxMinions];
 
 
 public:
@@ -50,21 +46,7 @@ public:
 	// Initialization
 	//--------------------------------------------------------------------------------------------//
 	Map(const std::string& friendly_name) : Scene(friendly_name) {}
-	virtual ~Map() {
-		TextureManager::Instance()->RemoveAllTexture();
-		for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
-		{
-			delete (*itr);
-		}
-		pickups.clear();
-
-		for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
-		{
-			delete (*itr);
-		}
-		captureAreas.clear();
-
-	};
+	virtual ~Map();
 
 	virtual void OnCleanupScene();
 
@@ -77,46 +59,53 @@ public:
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
 
-	void AddPickup(Pickup * p) {
-		pickups.push_back(p);
-		AddGameObject(p);
-	}
 
-	Pickup * GetPickup(int i) { return pickups[i]; }
-	vector<Pickup*> GetPickups() { return pickups; }
-
-
-	void AddCaptureArea(CaptureArea * ca) {
-		captureAreas.push_back(ca);
-		AddGameObject(ca);
-	}
-
-	CaptureArea * GetCaptureArea(int i) { return captureAreas[i]; }
-	vector<CaptureArea*> GetCaptureAreaVector() { return captureAreas; }
-
-	void AddMinion(MinionBase * m) {
-		minions.push_back(m);
-		AddGameObject(m);
-	}
-
-	void RemoveMinion(MinionBase * m) {
-		minions.erase(std::remove(minions.begin(), minions.end(), m), minions.end());
-	}
-
-	MinionBase * GetMinion(int i) { return minions[i]; }
-	uint GetMinionID(MinionBase * m) { return (uint)(find(minions.begin(), minions.end(), m) - minions.begin()); }
-	vector<MinionBase *> GetMinions() { return minions; }
-
+	//--------------------------------------------------------------------------------------------//
+	// Utility
+	//--------------------------------------------------------------------------------------------//
 	static int GetMapIndex() { return mapIndex; }
 	void SetMapIndex(int mapIndx);
+
+	//phil 21/02/2018 for minimap
+	inline int GetXDimension() { return dimensions.x; }
+	inline int GetYDimension() { return dimensions.y; }
+
+
+	//--------------------------------------------------------------------------------------------//
+	// Special Objects
+	//--------------------------------------------------------------------------------------------//
+
+	//-PICKUPS-//
+	void AddPickup(Pickup * p);
+
+	Pickup * GetPickup(int i)					{ return pickups[i]; }
+	vector<Pickup*> GetPickups()				{ return pickups; }
+
+	//-CAPTURE AREAS-//
+	void AddCaptureArea(CaptureArea * ca);
+	CaptureArea * GetCaptureArea(int i)				{ return captureAreas[i]; }
+	Colour GetCaptureAreaColour(uint i)				{ return captureAreas[i]->GetColour(); }
+	Vector3 GetCaptureAreaPos(uint i)				{ return captureAreas[i]->Physics()->GetPosition(); }
+	vector<CaptureArea*> GetCaptureAreaVector()		{ return captureAreas; }
+
+	//-MINIONS-//
+	void AddMinion(MinionBase * m);
+	void AddMinion(MinionBase * m,int location);
+	void RemoveMinion(MinionBase * m);
+	MinionBase * GetMinion(int i) { return minions[i]; }
+	uint GetMinionID(MinionBase * m);
+	MinionBase ** GetMinions() { return minions; }
+
+	int GetMaxMinions() { return maxMinions; }
+	
+
+
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 
-	//phil 21/02/2018 for minimap
-	inline int GetXDimension() { return dimensions.x; }
-	inline int GetYDimension() { return dimensions.y; }
+
 
 
 };

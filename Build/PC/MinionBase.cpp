@@ -74,8 +74,7 @@ bool MinionBase::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collid
 				((Avatar*)collidingObject->GetParent())->ChangeLife(-(life / 5));
 			}
 			else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);
-			dead = true;
-			//destroy = true;
+			Game::Instance()->KillMinion(this);
 		}
 		return false;
 	}
@@ -105,8 +104,7 @@ bool MinionBase::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collid
 void MinionBase::ChangeLife(float l) {
 	life += l;
 	if (life < minLife) {
-		dead = true;
-		//destroy = true;
+		Game::Instance()->KillMinion(this);
 	}
 	if (life > maxLife) {
 		life = maxLife;
@@ -117,8 +115,7 @@ void MinionBase::SetLife(float l)
 {
 	life = l;
 	if (life < minLife) {
-		dead = true;
-		//destroy = true;
+		Game::Instance()->KillMinion(this);
 	}
 	if (life > maxLife) {
 		life = maxLife;
@@ -145,7 +142,6 @@ void MinionBase::Update(float dt)
 	ChangeSize(size);
 
 	if (life < minLife || dead) {
-		dead = true;
-		//destroy = true;
+		Game::Instance()->KillMinion(this);
 	}
 }
