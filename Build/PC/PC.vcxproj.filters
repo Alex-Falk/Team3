@@ -186,6 +186,9 @@
     <ClInclude Include="Stage4.h">
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MapOne.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -285,6 +288,9 @@
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="Stage4.cpp">
+      <Filter>Maps\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapOne.cpp">
       <Filter>Maps\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

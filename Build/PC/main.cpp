@@ -13,6 +13,7 @@
 #include "MainMenu.h"
 #include "SimpleGamePlay.h"
 #include "Stage4.h"
+#include "MapOne.h"
 
 
 bool draw_debug = true;
@@ -89,10 +90,10 @@ void Initialize()
 	PhysicsEngine::Instance();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - Dongli's Angels"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("MapOne - Dongli's Angels"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("Fourth Stage - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
@@ -355,7 +356,7 @@ int main()
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
-	Window::GetWindow().LockMouseToWindow(false);
+	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false)

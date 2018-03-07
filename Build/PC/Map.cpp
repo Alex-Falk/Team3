@@ -76,10 +76,10 @@ void Map::OnInitializeScene() {
 	LoadTextures();
 
 	AddObjects();
-
+	Scene::OnInitializeScene();
 	PhysicsEngine::Instance()->ResetWorldPartition();
 
-	Scene::OnInitializeScene();
+	
 }
 
 //--------------------------------------------------------------------------------------------//
