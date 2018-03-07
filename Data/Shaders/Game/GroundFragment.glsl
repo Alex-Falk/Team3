@@ -146,7 +146,7 @@ void main(void)	{
 		FinalColor = finalLightColor;
 	OutFrag = FinalColor;
 	float brightness = dot(FinalColor.rgb, vec3(0.2126, 0.7152, 0.0722));
-	if (brightness >= 0.2) {
+	if (brightness >= 0.20) {
 		//BrightColor = FinalColor;
 	}
 }

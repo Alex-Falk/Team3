@@ -22,14 +22,12 @@
 // Nikos Fragkas 05/02/2018
 
 #include "Avatar.h"
-#include <ncltech\SphereCollisionShape.h>
-#include <string.h>
-#include "GameInput.h"
+
 #include <ncltech\CommonMeshes.h>
 #include <nclgl\PlayerRenderNode.h>
+#include <ncltech\SphereCollisionShape.h>
+#include <string.h>
 #include "Projectile.h"
-#include "Pickup.h"
-#include "WeaponPickup.h"
 
 Avatar::Avatar()
 {
@@ -53,7 +51,9 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	speed = standardSpeed;
 	boostedSpeed = standardSpeed * 2;
 
-	maxForce = 30;
+	maxRotationSpeed = 20;
+
+	maxVel = 20.0f;
 
 	minLife = 20;
 	maxLife = 100;
@@ -193,6 +193,7 @@ void Avatar::ChangeSize(float newSize)
 	standardSpeed = 25.0f*newSize;
 	boostedSpeed = 50.0f*newSize;
 	standarSpinSpeed = 40 * newSize;
+
 	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
 	
 	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
@@ -472,9 +473,6 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 		}
 		break;
 	}
-	default: {
-		break;
-	}
 	}
 	force.y = 0;
 
@@ -485,21 +483,20 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 
 	if (curMove != previousMove)
 	{
-		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * basicSpinSpeed);
+		Physics()->SetAngularVelocity(((dirRotation * 3.0f) / (2.0f * life * PI)) * (float)basicSpinSpeed);
 		previousMove = curMove;
 		moveTimer = 0;
 	}
 	else if (curMove == inputDir && inputDir !=MOVE_JUMP ){
 		rollSpeed += 1;
 		if (inAir) {
-			if (rollSpeed > 35) { rollSpeed = 35; }
+			if (rollSpeed > maxRotationSpeed) { rollSpeed = maxRotationSpeed; }
 		}
 		else {
 			if (rollSpeed > 20) { rollSpeed = 20; }
 		}
 		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * (basicSpinSpeed + rollSpeed));
 	}
-
 
 	// Setting MoveMent
 	if (inAir) 
@@ -508,4 +505,9 @@ void Avatar::MovementState(Movement inputDir, float yaw, float dt)
 	}
 
 	Physics()->SetForce(force);	
+
+	if (Physics()->GetLinearVelocity().Length() > maxVel)
+	{
+		Physics()->SetLinearVelocity(Vector3(Physics()->GetLinearVelocity()).Normalise() * maxVel);
+	}
 }

@@ -18,12 +18,12 @@
 //Extra functionality about score added by Nikos Fragkas 15/02/2018
 
 #pragma once
-#include "ControllableAvatar.h"
+#include "Avatar.h"
 #include "GamePlay.h"
 #include <networking\Client.h>
 #include <networking\Server.h>
 #include "Pickup.h"
-#include "CaptureArea.h"
+//#include "CaptureArea.h"
 #include "Map.h"
 
 class Game: public TSingleton<Game>
@@ -40,6 +40,7 @@ public:
 
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
 
+	inline void SetName(string name)					{ userNames[getUserID()] = name; user->UpdateName(); }
 	inline void SetPlayerName(uint id, string name)		{ userNames[id] = name; }
 
 	inline void SetSize(uint id, float size)			{ avatars[id]->SetLife(size); }
@@ -54,6 +55,7 @@ public:
 		if (user) { SAFE_DELETE(user) }; 
 		user = new Server();
 	}
+
 	inline void setClient(IP ip) { 
 		if (user) { SAFE_DELETE(user) }; 
 		user = new Client(ip); 
@@ -70,6 +72,7 @@ public:
 	inline uint getUserID()					{ return user->GetUserID(); }
 	inline float GetGameLength()			{ return gameLength; }
 	inline float GetTimeLeft()				{ return gameLength - time; }
+	inline float GetTime()					{ return time; }
 
 	inline Avatar * GetPlayer(uint id)		{ return avatars[id]; }
 	inline Avatar * GetCurrentAvatar()		{ return avatars[user->GetUserID()]; }
@@ -93,7 +96,7 @@ public:
 
 	void Update(float dt);
 	void ResetGame();
-	void DetermineWinner() {};
+	void DetermineWinner();
 
 	void ClaimPickup(Avatar * player, Pickup * pickup);
 	//bool ClaimArea(Avatar * player, CaptureArea *object);

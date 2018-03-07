@@ -154,7 +154,6 @@
     <ClInclude Include="..\networking\NetworkCommon.h" />
     <ClInclude Include="..\networking\Server.h" />
     <ClInclude Include="..\networking\User.h" />
-    <ClInclude Include="Arena.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Avatar.h" />
     <ClInclude Include="Behaviours.h" />
@@ -178,7 +177,6 @@
     <ClInclude Include="SimpleGamePlay.h" />
     <ClInclude Include="GamePlay.h" />
     <ClInclude Include="Pickup.h" />
-    <ClInclude Include="PaintableGameObject.h" />
     <ClInclude Include="Stage4.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="MinionStateEscapeRocket.h" />
@@ -193,7 +191,6 @@
     <ClCompile Include="..\networking\NetworkCommon.cpp" />
     <ClCompile Include="..\networking\Server.cpp" />
     <ClCompile Include="..\networking\User.cpp" />
-    <ClCompile Include="Arena.cpp" />
     <ClCompile Include="AudioSystem.cpp" />
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="Behaviours.cpp" />
@@ -211,7 +208,6 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Pickup.cpp" />
-    <ClCompile Include="PaintableGameObject.cpp" />
     <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />

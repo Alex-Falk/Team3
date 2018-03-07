@@ -4,6 +4,8 @@
 #include "Game.h" 
 #include "Map.h"
 #include "Behaviours.h"
+#include "../ncltech/SphereCollisionShape.h"
+#include "../ncltech/SceneManager.h"
 
 Minion::Minion() : GameObject() {
 	colour = START_COLOUR;

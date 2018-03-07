@@ -8,7 +8,7 @@
 #include "AudioSystem.h"
 #include "SimpleGamePlay.h"
 #include "MainMenu.h"
-#include "Arena.h"
+//#include "Arena.h"
 #include "TestMap.h"
 #include "GameInput.h"
 #include "Game.h"
@@ -30,7 +30,7 @@ PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio, t
 uint shadowCycleKey = 4;
 
 //Prevent multiple clicking from happening
-int fpsCounter = 6;
+int fpsCounter = 0;
 
 void ReleaseAIStates()
 {
@@ -80,24 +80,26 @@ void Initialize()
 	if (!Window::Initialise("Game Technologies", 1280, 800, false))
 		Quit(true, "Window failed to initialise!");
 
-
 	//Initialize Renderer
 	GraphicsPipeline::Instance();
 
-	GUIsystem::Instance();
+	//GUIsystem::Instance();
 
 	PostProcess::Instance();
+	
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
 
-	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - Dongli's Angels"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new StageFourth("Fourth Stage - The Best Game Ever"));
 
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
+
+	GUIsystem::Instance()->SetUpLoadingScreen();
 }
 
 // Print Debug Info
@@ -330,7 +332,7 @@ void HandleGUIMouseButton()
 	}
 
 	fpsCounter++;
-	if (fpsCounter > 5) {
+	if (fpsCounter > 40) {
 		if (Window::GetMouse()->ButtonDown(MOUSE_LEFT))
 		{
 			GUIsystem::Instance()->onMouseButtonPressed(MOUSE_LEFT);
@@ -349,7 +351,6 @@ void HandleGUITextInput()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN)) {
 		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RETURN);
-		GUIsystem::Instance()->SetIsTyping(false);
 		return;
 	}
 	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE)) {
@@ -371,28 +372,27 @@ void HandleGUITextInput()
 void TestPostProcess()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F1)) {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F2)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::INVERSION);
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F3)) {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F2)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::GRAYSCALE);
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F4)) {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F3)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::SHARPEN);
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F5)) {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::BLUR);
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F6)) {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F4)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::EDGE_DETECTION);
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F7)) {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::BASIC);
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F8)) {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F5)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
+	}
+
+	//Test loading Screen
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F6)) {
+		GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::START);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F7)) {
+		GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::NOT_LOADING);
 	}
 }
 
@@ -407,7 +407,7 @@ int main()
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
-	Window::GetWindow().LockMouseToWindow(true);
+	Window::GetWindow().LockMouseToWindow(false);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false)

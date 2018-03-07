@@ -25,6 +25,8 @@
 #include <string.h>
 #include "Avatar.h"
 #include "Projectile.h"
+#include <nclgl\NCLDebug.h>
+#include "Minion.h"
 
 CaptureArea::CaptureArea()
 {

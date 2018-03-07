@@ -49,6 +49,7 @@ GraphicsPipeline::GraphicsPipeline()
 	for (int i = 0; i < 2; ++i) {
 		screenTexColor[i] = NULL;
 	}
+	GUIsystem::Instance();
 	LoadShaders();
 	LoadMaterial();
 	NCLDebug::_LoadShaders();
@@ -413,48 +414,58 @@ void GraphicsPipeline::RenderScene()
 	for (RenderNode* node : allNodes)
 		node->Update(0.0f); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
 
-	//Build Transparent/Opaque Renderlists
+							//Build Transparent/Opaque Renderlists
 	BuildAndSortRenderLists();
 
 	//NCLDebug - Build render lists
 	NCLDebug::_BuildRenderLists();
 
-	//Build shadowmaps
-	perfShadow.BeginTimingSection();
-	RenderShadow();
-	perfShadow.EndTimingSection();
+	//Jianfei - 2018/03/02
+	switch (GUIsystem::Instance()->GetCurrentLoadingScreen())
+	{
+	case NOT_LOADING:
 
-	//Render scene to screen fbo
-	perfObjects.BeginTimingSection();
-	RenderObject();
-	perfObjects.EndTimingSection();
+		//Build shadowmaps
+		RenderShadow();
 
-	//render the path to texture
-	RenderPath();
+		//Render scene to screen fbo
+		RenderObject();
 
-	//post process and present
-	perfPostProcess.BeginTimingSection();
-	RenderPostprocessAndPresent();
-	perfPostProcess.EndTimingSection();
+		//render the path to texture
+		RenderPath();
 
-	//draw the minimap on screen
-	perfScoreandMap.BeginTimingSection();
-	if (isMainMenu == false) {
-		CountScore();
-		DrawMiniMap();
+		//post process and present
+		RenderPostprocessAndPresent();
+
+		//draw the minimap on screen
+		if (isMainMenu == false) {
+			CountScore();
+		}
+
+		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
+			DrawMiniMap();
+		}
+
+		//NCLDEBUG - Text Elements (aliased)
+		if (isMainMenu == false) {
+			NCLDebug::_RenderDebugClipSpace();
+		}
+		NCLDebug::_ClearDebugLists();
+
+		//RenderUI
+		RenderUI();
+		//GUIsystem::Instance()->DrawStartLoadingScreen();
+		break;
+	case START:
+		GUIsystem::Instance()->DrawStartLoadingScreen();
+		break;
+	case TRANSITION:
+		GUIsystem::Instance()->DrawTransitionLoadingScreen();
+		break;
+	default:
+		NCLERROR("Fatal Error: Unknown loading screen type!");
+		break;
 	}
-	perfScoreandMap.EndTimingSection();
-
-	//NCLDEBUG - Text Elements (aliased)
-	if (isMainMenu == false) {
-		NCLDebug::_RenderDebugClipSpace();
-	}
-	NCLDebug::_ClearDebugLists();
-	
-	//RenderUI
-	RenderUI();
-
-
 	OGLRenderer::SwapBuffers();
 }
 
@@ -1015,7 +1026,7 @@ void GraphicsPipeline::DrawMiniMap() {
 
 	//these numbers are hardcoded at the moment but will be variables in the end
 	float aspect = (float)width / height;
-	float sx = 0.2;
+	float sx = 0.2f;
 	float sy = sx * aspect;
 
 	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "modelMatrix"), 1, GL_FALSE,
@@ -1059,7 +1070,7 @@ void GraphicsPipeline::DrawMiniMap() {
 	int pickupColours[20];
 	//reset count
 	count = 0;
-	for (int i = 0; i < map->GetNPickup(); i++) {
+	for (uint i = 0; i < map->GetNPickup(); i++) {
 		Pickup* p = map->GetPickups()[i];
 		if (p->GetActive()) {
 			pickupTypes[count] = p->GetPickupType();
@@ -1073,7 +1084,7 @@ void GraphicsPipeline::DrawMiniMap() {
 		}
 	}
 	//capturable object
-	for (int i = 0; i < map->GetNCapture(); i++) {
+	for (uint i = 0; i < map->GetNCapture(); i++) {
 		//four is one more than the highest number
 		pickupTypes[count] = 4;
 		pickupColours[count] = map->GetCaptureAreas()[i]->GetColour();
@@ -1091,8 +1102,8 @@ void GraphicsPipeline::DrawMiniMap() {
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
 	//opacity of minimap, this will be a variable eventually
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 1.0);
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), (GLfloat)1);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), (GLfloat)0.7);
 	//time
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "time"), time);
 

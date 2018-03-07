@@ -4,16 +4,13 @@
 #include <ncltech/GameObject.h>
 #include "Gameplay.h"
 #include <ncltech/SceneManager.h>
-#include <ncltech\SphereCollisionShape.h>
-#include <ncltech\CuboidCollisionShape.h>
 #include "Game.h"
-#include "Minion.h"
 
 
 class Projectile : public GameObject {
 protected:
 	Colour colour;
-	int projectileWorth; //can be used to determine score increase on collision or life loss on player collision
+	float projectileWorth; //can be used to determine score increase on collision or life loss on player collision
 	float siz; //Nikos Fragkas, 16/02, Needed for score 
 	bool exploded; //prevent double explosion at lower framerates
 

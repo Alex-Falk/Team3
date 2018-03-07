@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "ControllableAvatar.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialization
@@ -29,12 +30,9 @@ void Map::onConnectToScene()
 }
 
 void Map::OnInitializeScene() {
-
-	GraphicsPipeline::Instance()->SetIsMainMenu(false);
-	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
-	
-
 	OnInitializeGUI();
+
+	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
 
 	SetSpawnLocations();
 
@@ -82,19 +80,25 @@ void Map::UpdateCaptureAreas() {
 void Map::OnInitializeGUI()
 {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
+	GUIsystem::Instance()->drawPlayerName = true;
+	GUIsystem::Instance()->SetDrawMiniMap(true);
 	lifeBar = static_cast<CEGUI::ProgressBar*>(
 		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
 			Vector4(0.40f, 0.9f, 0.25f, 0.03f),
 			Vector4(),
 			"lifeBar"
 		));
+	
+	timer = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Titlebar",
+			Vector4(0.45f, 0.00f, 0.10f, 0.05f),
+			Vector4(),
+			"Timer"
+		));
+	timer->setText("00:00");
 
-	//if (Game::Instance()->GetUser())
-	//{
-	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
-	//}
-
+	isLoading = true;
+	GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::TRANSITION);
 }
 
 void Map::BuildGround(Vector2 dimensions) {
@@ -180,28 +184,48 @@ void Map::OnCleanupScene()
 	captureAreas.clear();
 };
 
-
-//--------------------------------------------------------------------------------------------//
-// Updating Avatars
-//--------------------------------------------------------------------------------------------//
-void Map::OnUpdateScene(float dt)
+void Map::TransferAndUpdateTimer()
 {
-	perfPlayer.UpdateRealElapsedTime(dt);
+	float t_time = Game::Instance()->GetTimeLeft();
+	//string t_string = std::to_string(t_time);
+	float t_min = floor(t_time / 60);
+	string t_string_min = std::to_string(t_min);
+	t_string_min.assign(t_string_min, 0, 1);
+	float t_second = t_time - t_min * 60;
+	string t_string_second = std::to_string(t_second);
+	if (t_second > 10) {
+		t_string_second.assign(t_string_second, 0, 2);
+		timer->setText("0" + t_string_min + ":" + t_string_second);
+	}
+	else {
+		t_string_second.assign(t_string_second, 0, 1);
+		timer->setText("0" + t_string_min + ":0" + t_string_second);
+	}
+}
 
-	if(Game::Instance()->getUserID() == 0)
-	Scene::OnUpdateScene(dt);
-
-	m_AccumTime += dt;
-	updatePerSecond += dt;
-
-	perfPlayer.BeginTimingSection();
+void Map::UpdateGUI(float dt)
+{
+	//player->OnPlayerUpdate(dt);
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
-		if (Game::Instance()->GetPlayer(i))
+		if (Game::Instance()->GetPlayer(i)) {
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
+			//Update position for each players for GUI
+			GUIsystem::Instance()->playerNames[i] = Game::Instance()->GetName(i);
+			GUIsystem::Instance()->playersPosition[i] = Game::Instance()->GetPlayer(i)->GetPosition();
+		}
 	}
 	perfPlayer.EndTimingSection();
 
-	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+	//Loading screen
+	if (isLoading == true) {
+		if (temp_fps > 25) {
+			GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::NOT_LOADING);
+			isLoading = false;
+		}
+		else {
+			temp_fps++;
+		}
+	}
 
 	if (Game::Instance()->GetUser())
 	{
@@ -214,6 +238,22 @@ void Map::OnUpdateScene(float dt)
 		UpdateCaptureAreas();
 		updatePerSecond = 0.0f;
 	}
+}
+//--------------------------------------------------------------------------------------------//
+// Updating Avatars
+//--------------------------------------------------------------------------------------------//
+void Map::OnUpdateScene(float dt)
+{
+	if(Game::Instance()->getUserID() == 0)
+	Scene::OnUpdateScene(dt);
+
+	m_AccumTime += dt;
+
+	TransferAndUpdateTimer();
+
+	UpdateGUI(dt);
+
+	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }
 
 //--------------------------------------------------------------------------------------------//

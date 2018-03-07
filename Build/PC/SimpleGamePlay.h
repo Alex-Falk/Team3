@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Map.h"
-#include "MinionCamp.h"
 
 class SimpleGamePlay : public Map
 {
@@ -14,8 +13,8 @@ private:
 	//--------------------------------------------------------------------------------------------//
 	// Special objects in the map
 	//--------------------------------------------------------------------------------------------//
-	MinionCamp * mc;
-	MinionCamp * mc2;
+	CaptureArea * mc;
+	CaptureArea * mc2;
 
 public:
 	//--------------------------------------------------------------------------------------------//

@@ -25,10 +25,7 @@
 #include <string.h>
 #include "GameInput.h"
 #include "Game.h"
-#include <ncltech\CommonMeshes.h> 
-#include <nclgl\PlayerRenderNode.h> 
-#include <nclgl\common.h> 
-#include "Projectile.h"
+#include <nclgl\PlayerRenderNode.h>
 #include "Pickup.h"
 #include "WeaponPickup.h"
 
@@ -174,7 +171,9 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 			if (Game::Instance()->getUserID() == 0)
 			{
 				PickUpBuffActivated(activePickUp);
-				p->SetActive(false);
+				//phil 06/03/2018 so the paint pools don't dissapear on minimap
+				if(p->GetPickupType() != PickupType::PAINTPOOL)
+					p->SetActive(false);
 			}
 			else
 			{

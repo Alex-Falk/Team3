@@ -1,12 +1,9 @@
 //Michael Davis 16/02/2018
 #pragma once
 
-#include "GamePlay.h"
 #include "../ncltech/GameObject.h"
-#include "../ncltech/SphereCollisionShape.h"
 #include "CaptureArea.h" 
 #include "Avatar.h"
-#include "../ncltech/SceneManager.h"
 #include "MinionBlackboard.h"
 #include "State.h"
 
