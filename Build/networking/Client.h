@@ -57,7 +57,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 
 	void SendUsername();
-	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life);
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life, int inAir);
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
 	void RequestPickup(uint ID, string uniqueName);
 	void RequestCaptureArea(uint ID, string uniqueName);

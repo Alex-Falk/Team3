@@ -59,7 +59,7 @@ public:
 		if (closestFriendlyPlayer) return (physicsNode->GetPosition() - closestFriendlyPlayer->Physics()->GetPosition()).LengthSQ();
 		else return detectionRadiusSQ + 1;
 	}
-	float HealthOfClosestFriendly() {  return closestFriendlyPlayer->GetLife(); }
+	float HealthOfClosestFriendly() { if (closestFriendlyPlayer) return closestFriendlyPlayer->GetLife(); }
 	float GetAllyHealPursueLimit() { return allyHealPursueLimit; }
 
 	float DistanceToClosestEnemySQ() { 

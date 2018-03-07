@@ -24,29 +24,37 @@ void User::ReceiveAvatarUpdate(string data)
 	Vector3 vecs[4];
 	string temp;
 
-	for (uint i = 0; i < 4; ++i)
-	{
-		size_t commaIdx = data.find_first_of(',');
-		if (commaIdx != string::npos)
-			temp = data.substr(0, commaIdx);
-		else
-			temp = data;
+	//for (uint i = 0; i < 4; ++i)
+	//{
+	//	size_t commaIdx = data.find_first_of(',');
+	//	if (commaIdx != string::npos)
+	//		temp = data.substr(0, commaIdx);
+	//	else
+	//		temp = data;
 
-		vecs[i] = InterpretStringVector(temp);
+	//	vecs[i] = InterpretStringVector(temp);
 
-		data = data.substr(commaIdx + 1);
-	}
+	//	data = data.substr(commaIdx + 1);
+	//}
 
-	float life = stoi(data);
+	vector<string> splitData = split_string(data, ',');
+	
+	temps.positions[playerID] = InterpretStringVector(splitData[0]);
+	temps.linVelocities[playerID] = InterpretStringVector(splitData[1]);
+	temps.angVelocities[playerID] = InterpretStringVector(splitData[2]);
+	temps.accelerations[playerID] = InterpretStringVector(splitData[3]);
+
+	float life = stoi(splitData[4]);
+	bool inAir = stoi(splitData[5]);
 	if (playerID != userID)
 	{
 		Game::Instance()->GetPlayer(playerID)->SetLife(life);
+		Game::Instance()->GetPlayer(playerID)->SetInAir(inAir);
 	}
+
 	
-	temps.positions[playerID] = vecs[0];
-	temps.linVelocities[playerID] = vecs[1];
-	temps.angVelocities[playerID] = vecs[2];
-	temps.accelerations[playerID] = vecs[3];
+
+
 }
 
 PlayerVector User::ReceiveVector(string data)

@@ -104,7 +104,8 @@ void Client::UpdateUser(float dt)
 			p->Physics()->GetLinearVelocity(),
 			p->Physics()->GetAngularVelocity(),
 			p->Physics()->GetAcceleration(),
-			p->GetLife()
+			p->GetLife(),
+			p->IsPlayerInAir()
 		);
 	}
 }
@@ -236,7 +237,7 @@ void Client::SendUsername()
 	enet_peer_send(serverConnection, 0, packet);
 }
 
-void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life)
+void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life, int inAir)
 {
 	string data;
 
@@ -246,7 +247,8 @@ void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angV
 		Vector3ToString(linVel) + "," +
 		Vector3ToString(angVel) + "," +
 		Vector3ToString(acc) + "," +
-		to_string(life);
+		to_string(life) + "," +
+		to_string(inAir);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);

@@ -103,7 +103,6 @@ void Game::KillMinion(MinionBase * minion)
 	Map * m = static_cast<Map*>(GetMap());
 
 	uint minionID = m->GetMinionID(minion);
-	m->RemoveMinion(minion);
 
 	if (getUserID() == 0)
 	{

@@ -74,7 +74,7 @@ bool MinionBase::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collid
 				((Avatar*)collidingObject->GetParent())->ChangeLife(-(life / 5));
 			}
 			else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);
-			Game::Instance()->KillMinion(this);
+			dead = true;
 		}
 		return false;
 	}
@@ -89,10 +89,19 @@ bool MinionBase::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collid
 		}
 		return true;
 	}
-	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == PAINTABLE_OBJECT) {
+	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
 		isGrounded = true;
 		ChangeLife(-1);
 		return true;
+	}
+	if (collidingObject->GetType() == PAINTABLE_OBJECT)
+	{
+		if (((CaptureArea*)(collidingObject->GetParent()))->GetColour() != this->colour)
+		{
+			dead = true;
+		}
+		isGrounded = true;
+		
 	}
 	if (collidingObject->GetType() == PICKUP) {
 		return false;
@@ -104,7 +113,7 @@ bool MinionBase::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collid
 void MinionBase::ChangeLife(float l) {
 	life += l;
 	if (life < minLife) {
-		Game::Instance()->KillMinion(this);
+		dead = true;
 	}
 	if (life > maxLife) {
 		life = maxLife;
@@ -115,7 +124,7 @@ void MinionBase::SetLife(float l)
 {
 	life = l;
 	if (life < minLife) {
-		Game::Instance()->KillMinion(this);
+		dead = true;
 	}
 	if (life > maxLife) {
 		life = maxLife;
@@ -137,11 +146,6 @@ void MinionBase::ChangeSize(float newSize) {
 void MinionBase::Update(float dt)
 {
 	//lastPos = Physics()->GetPosition();
-
 	size = 0.3f * (life / 50);
 	ChangeSize(size);
-
-	if (life < minLife || dead) {
-		Game::Instance()->KillMinion(this);
-	}
 }

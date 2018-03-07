@@ -236,9 +236,9 @@ uint Map::GetMinionID(MinionBase * m)
 		if (minions[i] == m)
 		{
 			return (uint)i;
-			break;
 		}
 	}
+	return 0;
 }
 
 
@@ -288,6 +288,7 @@ void Map::OnUpdateScene(float dt)
 		{
 			if (!minions[i]->IsAlive())
 			{
+				Game::Instance()->KillMinion(minions[i]);
 				RemoveMinion(minions[i]);
 			}
 			else

@@ -244,7 +244,8 @@ void Server::UpdateUser(float dt)
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity(),
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity(),
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration(),
-						Game::Instance()->GetPlayer(i)->GetLife()
+						Game::Instance()->GetPlayer(i)->GetLife(),
+						Game::Instance()->GetPlayer(i)->IsPlayerInAir()
 					);
 					
 				}
@@ -432,7 +433,7 @@ void Server::SendGameStart(uint mapID)
 
 }
 
-void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life)
+void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life, int inAir)
 {
 	string data;
 	
@@ -442,7 +443,8 @@ void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVe
 		Vector3ToString(linVel) + "," +
 		Vector3ToString(angVel) + "," +
 		Vector3ToString(acc) + "," +
-		to_string(life);
+		to_string(life) + "," +
+		to_string(inAir);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);

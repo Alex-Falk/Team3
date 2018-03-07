@@ -105,7 +105,7 @@ public:
 	void SendConnectionID(uint ID);
 	void SendPlayerNames();
 	void SendGameStart(uint mapID);
-	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life);
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life, int inAir);
 	void SendMinionSpawn(uint minionID, Colour c, Vector3 pos);
 	void SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life);
 	void SendMinionDeath(uint minionID);

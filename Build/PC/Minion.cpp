@@ -65,7 +65,9 @@ void Minion::Update(float dt)
 {
 	//float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
 	//life -= lifeLoss / (dt * 10);
-
+	if (life < minLife) {
+		dead = true;
+	}
 
 	lastPos = Physics()->GetPosition();
 
@@ -77,10 +79,7 @@ void Minion::Update(float dt)
 	if (currentState){
 		currentState->Execute(this);
 	}
-	if (life < minLife || dead) {
-		Game::Instance()->KillMinion(this);
-	}
-	else if (GetIsGrounded()) 
+	if (GetIsGrounded()) 
 	{
 		if (minionBlackboard.GetGoToNearestCaptureZone()) 
 		{
@@ -149,6 +148,7 @@ void Minion::ComputeNewWanderPosition() {
 }
 
 void Minion::ComputeClosestEnemyPlayer() {
+	closestEnemyPlayer = nullptr;
 	closestPlayerTimer = 0.0f;
 	float minDist = 10000.0f;
 	for (int i = 0; i < 4; i++) {
@@ -163,6 +163,7 @@ void Minion::ComputeClosestEnemyPlayer() {
 }
 
 void Minion::ComputeClosestFriendlyPlayer() {
+	closestFriendlyPlayer = nullptr;
 	closestPlayerTimer = 0.0f;
 	float minDist = 10000.0f;
 	for (int i = 0; i < 4; i++) {
