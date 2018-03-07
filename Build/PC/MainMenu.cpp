@@ -16,6 +16,10 @@ void MainMenu::OnCleanupScene()
 
 void MainMenu::OnInitializeScene()
 {
+	AudioSystem::Instance()->StopAllSounds();
+	AudioSystem::Instance()->Update();
+	AudioSystem::Instance()->PlayASound(MENU_MUSIC, true);
+
 	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GUIsystem::Instance()->SetDrawScoreBar(false);
 

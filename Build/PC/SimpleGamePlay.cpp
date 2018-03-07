@@ -2,12 +2,17 @@
 #include "SimpleGamePlay.h"
 #include "PaintPool.h"
 #include "Game.h"
+#include "AudioSystem.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
 //--------------------------------------------------------------------------------------------//
 void SimpleGamePlay::OnInitializeScene()
 {
+	AudioSystem::Instance()->StopAllSounds();
+	AudioSystem::Instance()->Update();
+	AudioSystem::Instance()->PlayASound(GAME_MUSIC, true);
+
 	dimensions = Vector2(35, 50);
 
 	Map::SetMapDimensions(dimensions);

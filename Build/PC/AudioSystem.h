@@ -49,7 +49,7 @@ public:
 	//stops all sounds, not pauses
 	void StopAllSounds();
 	void StopAllFinishedSounds();
-	void StopSound(int index);
+	void StopSound(int index, int delay);
 
 	//sounds continue to play but muted
 	void MuteAllSounds();
@@ -67,6 +67,7 @@ public:
 
 	//call each frame to update the audiosystem and pass in camera parameters
 	void Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 cameraUp, float dt);
+	void Update();
 
 	//destructor
 	~AudioSystem();
@@ -85,7 +86,7 @@ private:
 	//channel the sound plays from
 	FMOD::Channel * channels[numChannels];
 
-	CustomSound freeSounds[numChannels];
+	CustomSound freeChannels[numChannels];
 
 	//camera variables for 3d sounds
 	FMOD_VECTOR listenerPos;

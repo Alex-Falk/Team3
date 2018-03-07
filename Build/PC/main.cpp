@@ -59,15 +59,15 @@ void Quit(bool error = false, const std::string &reason = "") {
 void InitialiseAudioFiles() {
 	//TODO get actual audio files
 	//TODO place the remaining sounds
-	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, SOUNDSDIR"singing.wav", 0.5f, 80.0f);//need placement, save till last for testing
-	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, SOUNDSDIR"wave.mp3");//need placement
+	AudioSystem::Instance()->Create2DStream(MENU_MUSIC, SOUNDSDIR"menuMusic.mp3");
+	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, SOUNDSDIR"gameMusic.mp3");
 	AudioSystem::Instance()->Create3DSound(JUMP_SOUND, SOUNDSDIR"jumpSound.mp3", 5.0f, 80.0f);//need placement
 	AudioSystem::Instance()->Create3DSound(ROCKET_FLYING_SOUND, SOUNDSDIR"singing.wav",10.0f, 80.0f);
 	AudioSystem::Instance()->Create3DSound(EXPLOSION_SOUND, SOUNDSDIR"explosionSound.mp3", 5.0f, 80.0f);	
 	AudioSystem::Instance()->Create3DSound(PROJECTILE_LAUNCH_SOUND, SOUNDSDIR"projectileLaunchSound.mp3", 10.0f, 80.0f);
 	AudioSystem::Instance()->Create2DSound(MENU_CHOICE_SOUND, SOUNDSDIR"menuChoiceSound.mp3");//need placement
 	AudioSystem::Instance()->Create3DSound(ROLLING_SOUND, SOUNDSDIR"rollingSound.mp3", 5.0f, 80.0f);//need placement
-	AudioSystem::Instance()->Create3DSound(PICKUP_COLLECTED_SOUND, SOUNDSDIR"pickupCollectedSound.mp3", 5.0f, 80.0f);//need placement
+	AudioSystem::Instance()->Create3DSound(PICKUP_COLLECTED_SOUND, SOUNDSDIR"pickupCollectedSound.mp3", 5.0f, 80.0f);
 	AudioSystem::Instance()->Create2DSound(TIMER_RUNOUT_SOUND, SOUNDSDIR"timerRunoutSound.mp3");//need placement
 	AudioSystem::Instance()->Create2DSound(VICTORY_SOUND, SOUNDSDIR"victorySound.mp3");//need placement
 	AudioSystem::Instance()->Create3DSound(CAPTURE_AREA_SOUND, SOUNDSDIR"captureAreaSound.mp3", 5.0f, 80.0f);//need placement
@@ -91,6 +91,8 @@ void Initialize()
 	PostProcess::Instance();
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
+	AudioSystem::Instance();
+	InitialiseAudioFiles();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
@@ -98,8 +100,8 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 
-	AudioSystem::Instance();
-	InitialiseAudioFiles();
+	
+
 }
 
 // Print Debug Info

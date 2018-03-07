@@ -25,8 +25,8 @@ AudioSystem::AudioSystem() {
 	listenerVelocity = { 0.0f, 0.0f, 0.0f };
 
 	masterVolume = 0.5f;
-	gameSoundsVolume = 1.0f;
-	musicVolume = 1.0f;
+	gameSoundsVolume = 0.5f;
+	musicVolume = 0.5f;
 
 	result = audioSystem->init(numChannels, FMOD_INIT_3D_RIGHTHANDED, NULL);
 	myfile << "Audio System initialised: " << result << std::endl;
@@ -41,15 +41,18 @@ AudioSystem::AudioSystem() {
 	result = audioSystem->getMasterChannelGroup(&masterGroup);
 	myfile << "Created Master channel group: " << result << std::endl;
 	result = masterGroup->addGroup(gameSoundsGroup);
+	myfile << "Added GameSounds group to master group: " << result << std::endl;
 	result = masterGroup->addGroup(musicGroup);
 	myfile << "Added Music group to master group: " << result << std::endl;
 
-	SetMusicVolume(masterVolume * musicVolume);
-	SetGameSoundsVolume(gameSoundsVolume * masterVolume);
+	SetMasterVolume(masterVolume);
+	SetMusicVolume(musicVolume);
+	SetGameSoundsVolume(gameSoundsVolume);
 }
 
 //destructor
 AudioSystem::~AudioSystem() {
+	StopAllSounds();
 	for (int i = 0; i < numSounds; i++) {
 		result = sounds[i]->release();
 		myfile << "Released sound at index(" << i << "): " << result << std::endl;
@@ -129,7 +132,7 @@ void AudioSystem::PlayASound(int index, bool loop, Vector3 position, Vector3 vel
 	
 	int channelIndex = -1;
 	for (int i = 0; i < numChannels; i++) {
-		if (freeSounds[i].isChannelPlaying) {
+		if (freeChannels[i].isChannelPlaying) {
 
 		}
 		else {
@@ -138,20 +141,19 @@ void AudioSystem::PlayASound(int index, bool loop, Vector3 position, Vector3 vel
 		}
 	}
 
-	//TODO test to see if it actually works properly
 	if (channelIndex != -1) {
 		result = audioSystem->playSound(sounds[index], 0, false, &channels[channelIndex]);
 		if (index <= GAME_MUSIC) {
 			channels[channelIndex]->setChannelGroup(musicGroup);
 			channels[channelIndex]->set3DAttributes(&fPosition, &fVelocity);
-			freeSounds[channelIndex].isChannelPlaying = true;
-			freeSounds[channelIndex].object = go;
+			freeChannels[channelIndex].isChannelPlaying = true;
+			freeChannels[channelIndex].object = go;
 		}
 		else {
 			channels[channelIndex]->setChannelGroup(gameSoundsGroup);
 			channels[channelIndex]->set3DAttributes(&fPosition, &fVelocity);
-			freeSounds[channelIndex].isChannelPlaying = true;
-			freeSounds[channelIndex].object = go;
+			freeChannels[channelIndex].isChannelPlaying = true;
+			freeChannels[channelIndex].object = go;
 		}
 	}
 }
@@ -177,48 +179,46 @@ void AudioSystem::Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 camer
 
 	audioSystem->set3DListenerAttributes(0, &listenerPos, &listenerVelocity, &listenerForward, &listenerUp);
 	audioSystem->update();
+}
 
+void AudioSystem::Update() {
+	audioSystem->update();
 }
 
 //stop a specific sound, not pause
-void AudioSystem::StopSound(int index) {
-	result = channels[index]->stop();
-	myfile << "Stop sound at index(" << index << "): " << result << std::endl;
+void AudioSystem::StopSound(int index, int delay) {
+	freeChannels[index].object = NULL;
+	unsigned long long parentClock;
+	channels[index]->getDSPClock(NULL, &parentClock);
+	channels[index]->addFadePoint(parentClock, 1.0f);
+	channels[index]->addFadePoint(parentClock + delay, 0.0f);
+	channels[index]->setDelay(0, parentClock + delay, true);
 }
 
 //stop all sounds, not pause
 void AudioSystem::StopAllSounds() {
 	result = masterGroup->stop();
-	myfile << "Stopped mastergroup sounds: " << result << std::endl;
 }
 
 void AudioSystem::StopAllFinishedSounds() {
 	bool channelPlaying;
 	for (int i = 0; i < numChannels; i++) {
-		if (freeSounds[i].object) {
-			if (freeSounds[i].object->GetDestroy() == 0) {
-				FMOD_VECTOR soundPos = toFMODVector(freeSounds[i].object->Physics()->GetPosition());
-				FMOD_VECTOR velocityPos = toFMODVector(freeSounds[i].object->Physics()->GetLinearVelocity());
-				channels[i]->set3DAttributes(&soundPos, &velocityPos);
+		if (freeChannels[i].object) {
+			if (freeChannels[i].object->GetDestroy() == 0) {
+				FMOD_VECTOR soundPos = toFMODVector(freeChannels[i].object->Physics()->GetPosition());
+				FMOD_VECTOR soundVel = toFMODVector(freeChannels[i].object->Physics()->GetLinearVelocity());
+				channels[i]->set3DAttributes(&soundPos, &soundVel);
 			}
 			else {
-				//TODO stop the sound after fade out (DONE, just test)
-				freeSounds[i].object = NULL;
-				unsigned long long parentclock;
-				result = channels[i]->getDSPClock(NULL, &parentclock);
-				channels[i]->addFadePoint(parentclock, 1.0f);
-				channels[i]->addFadePoint(parentclock + 10000, 0.0f);
-				channels[i]->setDelay(0, parentclock + 10000, true);
+				StopSound(i, 10000);
 			}
 		}
 		channels[i]->isPlaying(&channelPlaying);
 		if (!channelPlaying) {
-			freeSounds[i].isChannelPlaying = false;
+			freeChannels[i].object = NULL;
+			freeChannels[i].isChannelPlaying = false;
 		}
 	}
-
-	channels[0]->isPlaying(&channelPlaying);
-	cout << channelPlaying << endl;
 }
 
 //sets the master volume
