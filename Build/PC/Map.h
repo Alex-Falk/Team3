@@ -32,7 +32,7 @@ protected:
 	inline Vector2 GetMapDimensions() { return dimensions; }
 
 	//Scoring
-	void UpdateCaptureAreas();			
+	//void UpdateCaptureAreas();			
 
 	//pickup stuff
 	vector<Pickup*> pickups;
@@ -68,8 +68,8 @@ public:
 	void SetMapIndex(int mapIndx);
 
 	//phil 21/02/2018 for minimap
-	inline int GetXDimension() { return dimensions.x; }
-	inline int GetYDimension() { return dimensions.y; }
+	inline float GetXDimension() { return dimensions.x; }
+	inline float GetYDimension() { return dimensions.y; }
 
 
 	//--------------------------------------------------------------------------------------------//
@@ -111,11 +111,6 @@ public:
 
 	//Jeffery 06/03/2018 for updating playername and position for GUI rendering
 	void UpdateGUI(float dt);
-
-	//phil 21/02/2018 for minimap
-	inline float GetXDimension() { return dimensions.x; }
-	inline float GetYDimension() { return dimensions.y; }
-
 
 	float temp_fps = 0;
 	bool isLoading = false;

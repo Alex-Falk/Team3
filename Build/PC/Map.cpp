@@ -3,6 +3,7 @@
 #include "CaptureArea.h"
 #include "Map.h"
 #include "MinionBase.h"
+#include "ControllableAvatar.h"
 
 Map::~Map() 
 {
@@ -70,9 +71,6 @@ void Map::OnInitializeScene() {
 		captureAreas.clear();
 	}
 
-
-	OnInitializeGUI();
-
 	SetSpawnLocations();
 
 	LoadTextures();
@@ -87,34 +85,34 @@ void Map::OnInitializeScene() {
 //--------------------------------------------------------------------------------------------//
 // Updating CaptureAreas Score
 //--------------------------------------------------------------------------------------------//
-void Map::UpdateCaptureAreas() {
-	
-	int captAreaTeamScore[4] = { (0,0,0,0) };
-	for (uint i = 0;i < ncapture;i++)
-	{
-		switch (capture[i]->GetColour())
-		{
-		case RED:
-			captAreaTeamScore[0] += capture[i]->GetScoreValue();
-			break;
-		case GREEN:
-			captAreaTeamScore[1] += capture[i]->GetScoreValue();
-			break;
-		case BLUE:
-			captAreaTeamScore[2] += capture[i]->GetScoreValue();
-			break;
-		case PINK:
-			captAreaTeamScore[3] += capture[i]->GetScoreValue();
-			break;
-		default:
-			break;
-		}
-	}
-	Game::Instance()->SetAreaScores(0, captAreaTeamScore[0]);
-	Game::Instance()->SetAreaScores(1, captAreaTeamScore[1]);
-	Game::Instance()->SetAreaScores(2, captAreaTeamScore[2]);
-	Game::Instance()->SetAreaScores(3, captAreaTeamScore[3]);
-}
+//void Map::UpdateCaptureAreas() {
+//	
+//	int captAreaTeamScore[4] = { (0,0,0,0) };
+//	for (uint i = 0;i < ncapture;i++)
+//	{
+//		switch (capture[i]->GetColour())
+//		{
+//		case RED:
+//			captAreaTeamScore[0] += capture[i]->GetScoreValue();
+//			break;
+//		case GREEN:
+//			captAreaTeamScore[1] += capture[i]->GetScoreValue();
+//			break;
+//		case BLUE:
+//			captAreaTeamScore[2] += capture[i]->GetScoreValue();
+//			break;
+//		case PINK:
+//			captAreaTeamScore[3] += capture[i]->GetScoreValue();
+//			break;
+//		default:
+//			break;
+//		}
+//	}
+//	Game::Instance()->SetAreaScores(0, captAreaTeamScore[0]);
+//	Game::Instance()->SetAreaScores(1, captAreaTeamScore[1]);
+//	Game::Instance()->SetAreaScores(2, captAreaTeamScore[2]);
+//	Game::Instance()->SetAreaScores(3, captAreaTeamScore[3]);
+//}
 
 void Map::OnInitializeGUI()
 {
@@ -333,6 +331,20 @@ void Map::UpdateGUI(float dt)
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
+}
+//--------------------------------------------------------------------------------------------//
+// Updating Avatars
+//--------------------------------------------------------------------------------------------//
+void Map::OnUpdateScene(float dt)
+{
+	if(Game::Instance()->getUserID() == 0)
+	Scene::OnUpdateScene(dt);
+
+	m_AccumTime += dt;
+
+	TransferAndUpdateTimer();
+
+	UpdateGUI(dt);
 
 	perfMapObjects.BeginTimingSection();
 	for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
@@ -359,31 +371,18 @@ void Map::UpdateGUI(float dt)
 			{
 				(minions[i])->Update(dt);
 			}
-		}	
+		}
 	}
 
 	perfMapObjects.EndTimingSection();
 
 
 	//update only once a second
-	if (updatePerSecond >= 1.0f) {
-		UpdateCaptureAreas();
-		updatePerSecond = 0.0f;
-	}
-}
-//--------------------------------------------------------------------------------------------//
-// Updating Avatars
-//--------------------------------------------------------------------------------------------//
-void Map::OnUpdateScene(float dt)
-{
-	if(Game::Instance()->getUserID() == 0)
-	Scene::OnUpdateScene(dt);
+	//if (updatePerSecond >= 1.0f) {
+	//	UpdateCaptureAreas();
+	//	updatePerSecond = 0.0f;
+	//}
 
-	m_AccumTime += dt;
-
-	TransferAndUpdateTimer();
-
-	UpdateGUI(dt);
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }

@@ -3,7 +3,6 @@
 #include "PaintPool.h"
 #include "Game.h"
 #include "MultiPaintPool.h"
-#include "MinionCamp.h"
 #include "CaptureArea.h"
 
 //--------------------------------------------------------------------------------------------//
@@ -64,11 +63,4 @@ void SimpleGamePlay::OnUpdateScene(float dt)
 void SimpleGamePlay::onButtonClicked()
 {
 	SceneManager::Instance()->JumpToScene();
-}
-
-SimpleGamePlay::~SimpleGamePlay()
-{
-	delete[] pickup;
-	delete mc;
-	delete mc2;
 }
