@@ -157,6 +157,7 @@
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Avatar.h" />
     <ClInclude Include="Behaviours.h" />
+    <ClInclude Include="MinionBase.h" />
     <ClInclude Include="CaptureArea.h" />
     <ClInclude Include="ControllableAvatar.h" />
     <ClInclude Include="MinionStateCaptureZone.h" />
@@ -171,7 +172,7 @@
     <ClInclude Include="PaintPool.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Minion.h" />
-    <ClInclude Include="MinionCamp.h" />
+    <ClInclude Include="MinionCaptureArea.h" />
     <ClInclude Include="PostProcess.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="SimpleGamePlay.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="Behaviours.cpp" />
     <ClCompile Include="CaptureArea.cpp" />
+    <ClCompile Include="MinionBase.cpp" />
     <ClCompile Include="MinionStateCaptureZone.cpp" />
     <ClCompile Include="MinionStateChaseEnemyPlayer.cpp" />
     <ClCompile Include="ControllableAvatar.cpp" />
@@ -202,7 +204,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Minion.cpp" />
-    <ClCompile Include="MinionCamp.cpp" />
+    <ClCompile Include="MinionCaptureArea.cpp" />
     <ClCompile Include="MultiPaintPool.cpp" />
     <ClCompile Include="PaintPool.cpp" />
     <ClCompile Include="MainMenu.cpp" />

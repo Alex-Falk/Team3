@@ -123,11 +123,15 @@ public:
 	//float GetSize() { return size; }
 	//void SetSize(float s) { size = s; }
 
-	void ChangeLife(float x) { life += x; if (life < minLife) { life = minLife; } else if (life > maxLife) { life = maxLife; }	}
+	void ChangeLife(float x) { 
+		life += x; if (life < minLife) { life = minLife; } else if (life > maxLife) { life = maxLife; }	
+	}
 
 	void RestoreLife() { life = maxLife/2; }
 	float GetLife() { return life; }
-	void SetLife(float l) { life = l; }
+	void SetLife(float l) { life = l; if (life < minLife) { life = minLife; }
+	else if (life > maxLife) { life = maxLife; }
+	}
 
 	virtual void PickUpBuffActivated();
 	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is picked up			Nikos 13.20

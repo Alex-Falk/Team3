@@ -138,9 +138,6 @@
     <ClInclude Include="Minion.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="MinionCamp.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
     <ClInclude Include="UserInterface.h">
       <Filter>GUI/Post process</Filter>
     </ClInclude>
@@ -176,6 +173,12 @@
     </ClInclude>
     <ClInclude Include="PostProcess.h">
       <Filter>GUI/Post process</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionBase.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionCaptureArea.h">
+      <Filter>GamePlay\Header</Filter>
     </ClInclude>
     <ClInclude Include="MultiPaintPool.h">
       <Filter>Gameplay\Header</Filter>
@@ -239,9 +242,6 @@
     <ClCompile Include="Minion.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
-    <ClCompile Include="MinionCamp.cpp">
-      <Filter>GamePlay\Source</Filter>
-    </ClCompile>
     <ClCompile Include="CaptureArea.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
@@ -274,6 +274,12 @@
     </ClCompile>
     <ClCompile Include="PostProcess.cpp">
       <Filter>GUI/Post process</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionBase.cpp">
+      <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionCaptureArea.cpp">
+      <Filter>GamePlay\Source</Filter>
     </ClCompile>
     <ClCompile Include="MultiPaintPool.cpp">
       <Filter>Gameplay\Source</Filter>

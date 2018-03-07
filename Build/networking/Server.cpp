@@ -30,9 +30,8 @@
 */
 
 #include "Server.h"
-#include <ncltech\SceneManager.h>
 #include <PC/Game.h>
-#include <PC/Map.h>
+#include <PC/MinionBase.h>
 
 string Win32_PrintAllAdapterIPAddresses()
 {
@@ -183,12 +182,6 @@ void Server::UpdateUser(float dt)
 					DeadReckon(playerID,dt);
 					break;
 				}
-				case PLAYER_SIZES:
-				{
-					PlayerFloat pfloat = ReceiveSizes(data);
-					Game::Instance()->SetSize(pfloat.ID, pfloat.f);
-					break;
-				}
 				case PLAYER_NAME:
 				{
 					PlayerName pName = ReceiveUserName(data);
@@ -207,6 +200,11 @@ void Server::UpdateUser(float dt)
 				case MAP_PICKUP_REQUEST:
 				{
 					ReceiveRequest(data,PICKUP);
+					break;
+				}
+				case MAP_OBJECT_REQUEST:
+				{
+					ReceiveRequest(data, PAINTABLE_OBJECT);
 					break;
 				}
 				}
@@ -239,20 +237,40 @@ void Server::UpdateUser(float dt)
 			{
 				if (Game::Instance()->GetPlayer(i))
 				{
-
+					//SendSize(i);
 					SendAvatarUpdate(
 						i,
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition(),
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity(),
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity(),
 						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration(),
+						Game::Instance()->GetPlayer(i)->GetLife(),
 						Game::Instance()->GetPlayer(i)->IsPlayerInAir()
 					);
-
-					SendSize(i);
-					SendScores();
+					
 				}
 			}
+
+			Map * m = static_cast<Map*>(Game::Instance()->GetMap());
+
+			MinionBase ** minions = m->GetMinions();
+			for (int i = 0; i < m->GetMaxMinions(); ++i)
+			{
+				if (minions[i])
+				{
+					SendMinionUpdate(
+						i,
+						minions[i]->GetColour(),
+						minions[i]->Physics()->GetPosition(),
+						minions[i]->Physics()->GetLinearVelocity(),
+						minions[i]->Physics()->GetAngularVelocity(),
+						minions[i]->Physics()->GetAcceleration(),
+						minions[i]->GetLife()
+					);
+				}
+			}
+
+			SendScores();
 		}
 	}
 
@@ -261,6 +279,26 @@ void Server::UpdateUser(float dt)
 void Server::Disconnect()
 {
 	server->Release();
+}
+
+void Server::RequestPickup(uint ID, string uniqueName)
+{
+	UserCaptureRequest r;
+	r.userID = ID;
+	r.objectID = stoi(uniqueName);
+	r.type = PICKUP;
+
+	requests.push(r);
+}
+
+void Server::RequestCaptureArea(uint ID, string uniqueName)
+{
+	UserCaptureRequest r;
+	r.userID = ID;
+	r.objectID = stoi(uniqueName);
+	r.type = PAINTABLE_OBJECT;
+
+	requests.push(r);
 }
 
 void Server::HandleRequests()
@@ -273,31 +311,45 @@ void Server::HandleRequests()
 	{
 		UserCaptureRequest r = requests.front();
 
-		data = to_string(MAP_PICKUP_REQUEST) + ":" +
-			to_string(r.userID) + ";" +
-			to_string(r.objectID) + ",";
+
 
 		Map * m = (Map*)(SceneManager::Instance()->GetCurrentScene());
 
 		if (r.type == PICKUP)
 		{
-			if (m->GetPickups()[r.objectID]->GetActive())
+			data = to_string(MAP_PICKUP_REQUEST) + ":" +
+				to_string(r.userID) + ";" +
+				to_string(r.objectID) + ",";
+
+			if (m->GetPickup(r.objectID)->GetActive())
 			{
 				data = data + "0";
-				m->GetPickups()[r.objectID]->SetActive(false);
+				if(userID == 0)
+
+				m->GetPickup(r.objectID)->SetActive(false);
 			}
 			else
 			{
 				data = data + "1";
-				
 			}
 
-			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-			enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
+			if (r.userID != userID)
+			{
+				ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+				enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
+			}
+
 		}
-		else // It shouldn't really get here
+		else if (r.type = PAINTABLE_OBJECT)
 		{
-			data = data + "0";
+			data = to_string(MAP_OBJECT_REQUEST) + ":" +
+				to_string(r.userID) + ";" +
+				to_string(r.objectID);
+
+			m->GetCaptureArea(r.objectID)->SetColour(Colour(r.userID));
+
+			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+			enet_host_broadcast(server->m_pNetwork, 0, packet);
 		}
 
 		requests.pop();
@@ -381,7 +433,7 @@ void Server::SendGameStart(uint mapID)
 
 }
 
-void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,int inAir)
+void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life, int inAir)
 {
 	string data;
 	
@@ -391,21 +443,53 @@ void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVe
 		Vector3ToString(linVel) + "," +
 		Vector3ToString(angVel) + "," +
 		Vector3ToString(acc) + "," +
+		to_string(life) + "," +
 		to_string(inAir);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), 0);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+
+}
+
+void Server::SendMinionSpawn(uint minionID, Colour c, Vector3 pos)
+{
+	string data;
+
+	data = to_string(MINION_SPAWN) + ":" +
+		to_string(minionID) + ";" +
+		to_string(c) + "," +
+		Vector3ToString(pos);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
+void Server::SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life)
+{
+	string data;
+
+	data = to_string(MINION_UPDATE) + ":" +
+		to_string(minionID) + ";" +
+		to_string(c) + "," + 
+		Vector3ToString(pos) + "," +
+		Vector3ToString(linVel) + "," +
+		Vector3ToString(angVel) + "," +
+		Vector3ToString(acc) + "," +
+		to_string(life);
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 
 }
 
-void Server::SendSize(uint ID)
+void Server::SendMinionDeath(uint minionID)
 {
 	string data;
-	
-	data = to_string(PLAYER_SIZES) + ":" +
-		to_string(ID) + ";" + to_string(Game::Instance()->GetPlayer(ID)->GetLife());
 
-	ENetPacket* packet = CreatePacket(data);
+	data = to_string(MINION_DEATH) + ":" +
+		to_string(minionID);
+
+	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
@@ -447,3 +531,5 @@ void Server::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 	ENetPacket* packet = CreatePacket(data);
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
+
+

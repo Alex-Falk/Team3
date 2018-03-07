@@ -1,5 +1,33 @@
 #include "Game.h"
 #include <ncltech\SceneManager.h>
+#include <networking\Client.h>
+#include <networking\Server.h>
+#include "Minion.h"
+//--------------------------------------------------------------------------------------------//
+// Setters
+//--------------------------------------------------------------------------------------------//
+
+void Game::SetServer()
+{
+	if (user) { SAFE_DELETE(user) };
+	user = new Server();
+}
+
+void Game::SetClient(IP ip)
+{
+	if (user) { SAFE_DELETE(user) };
+	user = new Client(ip);
+}
+
+Scene * Game::GetMap()
+{
+	return (SceneManager::Instance()->GetCurrentScene());
+}
+
+//--------------------------------------------------------------------------------------------//
+// Utility
+//--------------------------------------------------------------------------------------------//
+
 void Game::Update(float dt)
 { 
 	perfNetwork.UpdateRealElapsedTime(updateTimestep);
@@ -54,10 +82,40 @@ void Game::ResetGame()
 	//PhysicsEngine::Instance()->SetPaused(false);
 }
 
-void Game::ClaimPickup(Avatar * player, Pickup * pickup)
+void Game::ClaimPickup(Pickup * pickup)
 {
-	((Client*)user)->RequestPickup(getUserID(), pickup->GetName());
+	user->RequestPickup(getUserID(), pickup->GetName());
 }
+
+void Game::ClaimArea(CaptureArea * object)
+{
+	user->RequestCaptureArea(getUserID(), object->GetName());
+}
+
+void Game::SpawnMinion(MinionBase * minion)
+{
+	Map * m = static_cast<Map*>(GetMap());
+
+	m->AddMinion(minion);
+
+	if (getUserID() == 0)
+		((Server*)user)->SendMinionSpawn(m->GetMinionID(minion), minion->GetColour(), minion->Physics()->GetPosition());
+
+}
+
+void Game::KillMinion(MinionBase * minion)
+{
+	Map * m = static_cast<Map*>(GetMap());
+
+	uint minionID = m->GetMinionID(minion);
+
+	if (getUserID() == 0)
+	{
+		((Server*)user)->SendMinionDeath(minionID);
+	}
+}
+
+
 
 void Game::DetermineWinner() {
 	int currentWinner = 0;

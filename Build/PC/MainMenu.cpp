@@ -709,8 +709,7 @@ void MainMenu::onConnectButtonClicked()
 
 		if (!Game::Instance()->GetUser())
 		{
-			//TODO: Set User Name and Sent to the server
-			Game::Instance()->setClient(ip);
+			Game::Instance()->SetClient(ip);
 		}
 	}
 	HideConnectionMenu();
