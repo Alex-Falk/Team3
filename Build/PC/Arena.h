@@ -6,7 +6,7 @@
 
 
 
-class level : public Map
+class Arena : public Map
 {
 private:
 
@@ -32,10 +32,10 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
-	level(const std::string& friendly_name)
+	Arena(const std::string& friendly_name)
 		: Map(friendly_name) {}
 
-	~level()
+	~Arena()
 	{
 		delete pickupJumpBoost;
 		delete pickupSpeedBoost;

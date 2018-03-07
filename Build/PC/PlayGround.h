@@ -4,7 +4,7 @@
 
 #include "Map.h"
 
-class Mountains : public Map
+class PlayGround : public Map
 {
 private:
 
@@ -27,10 +27,10 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
-	Mountains(const std::string& friendly_name)
+	PlayGround(const std::string& friendly_name)
 		: Map(friendly_name) {}
 
-	~Mountains()
+	~PlayGround()
 	{
 		delete pickupJumpBoost;
 		delete pickupSpeedBoost;

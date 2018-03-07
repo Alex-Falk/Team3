@@ -144,6 +144,9 @@
     <ClInclude Include="Mountains.h">
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PlayGround.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -222,6 +225,9 @@
       <Filter>Maps\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Mountains.cpp">
+      <Filter>Maps\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayGround.cpp">
       <Filter>Maps\Source Files</Filter>
     </ClCompile>
   </ItemGroup>

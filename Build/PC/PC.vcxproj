@@ -168,6 +168,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Minion.h" />
     <ClInclude Include="MinionCamp.h" />
+    <ClInclude Include="PlayGround.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="Score.h" />
     <ClInclude Include="SimpleGamePlay.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PaintableGameObject.cpp" />
+    <ClCompile Include="PlayGround.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="SimpleGamePlay.cpp" />

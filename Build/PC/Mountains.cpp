@@ -7,7 +7,7 @@
 // Initialisation and Cleanup
 //--------------------------------------------------------------------------------------------//
 
-void level2::OnInitializeScene()
+void Mountains::OnInitializeScene()
 {
 	// Loading Textures -----------------------------------------------------------------------------------------------------------
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
@@ -43,7 +43,7 @@ void level2::OnInitializeScene()
 	Map::OnInitializeScene();
 }
 
-void level2::SetSpawnLocations()
+void Mountains::SetSpawnLocations()
 {
 	spawnPositions[0] = Vector3(25, 5, 25);
 	spawnPositions[1] = Vector3(25, 5, -25);
@@ -51,7 +51,7 @@ void level2::SetSpawnLocations()
 	spawnPositions[3] = Vector3(-25, 5, -25);
 }
 
-void level2::OnUpdateScene(float dt)
+void Mountains::OnUpdateScene(float dt)
 {
 	Scene::OnUpdateScene(dt);
 
@@ -92,7 +92,7 @@ void level2::OnUpdateScene(float dt)
 	}
 }
 
-void level2::CreateEnvironment()
+void Mountains::CreateEnvironment()
 {
 	GameObject* ground = CommonUtils::BuildCuboidObject(
 		"Ground",

@@ -12,6 +12,9 @@
 #include "TestMap.h"
 #include "GameInput.h"
 #include "Game.h"
+#include "Arena.h"
+#include "Mountains.h"
+#include "PlayGround.h"
 
 
 bool draw_debug = true;
@@ -73,8 +76,11 @@ void Initialize()
 	PhysicsEngine::Instance();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
+	SceneManager::Instance()->EnqueueScene(new PlayGround("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new Arena("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new Mountains("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	//SceneManager::Instance()->EnqueueScene(new Arena("Arena - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new TestMap("SimpleGamePlay - The Best Game Ever"));
 
 	AudioSystem::Instance();
 	InitialiseAudioFiles();

@@ -7,7 +7,7 @@
 // Initialisation and Cleanup
 //--------------------------------------------------------------------------------------------//
 
-void level::OnInitializeScene()
+void Arena::OnInitializeScene()
 {
 	spawnPositions[0] = Vector3(25, 5, 25);
 	spawnPositions[1] = Vector3(25, 5, -25);
@@ -42,7 +42,7 @@ void level::OnInitializeScene()
 	Map::OnInitializeScene();
 }
 
-void level::SetSpawnLocations()
+void Arena::SetSpawnLocations()
 {
 	//spawnPositions[0] = Vector3(25, 5, 25);
 	//spawnPositions[1] = Vector3(25, 5, -25);
@@ -50,7 +50,7 @@ void level::SetSpawnLocations()
 	//spawnPositions[3] = Vector3(-25, 5, -25);
 }
 
-void level::OnUpdateScene(float dt)
+void Arena::OnUpdateScene(float dt)
 {
 	Scene::OnUpdateScene(dt);
 
@@ -105,7 +105,7 @@ void level::OnUpdateScene(float dt)
 	}
 }
 
-void level::CreateEnvironment()
+void Arena::CreateEnvironment()
 {
 	GameObject* ground = CommonUtils::BuildCuboidObject(
 		"Ground",
