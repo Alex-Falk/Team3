@@ -14,8 +14,8 @@ void PhysicsEngine::SetDefaults()
 	updateRealTimeAccum = 0.0f;
 	gravity = Vector3(0.0f, -9.81f, 0.0f);
 	dampingFactor = 0.998f;
-	limits.minVals = Vector3(-90, -10, -90);
-	limits.maxVals = Vector3(90, 60, 90);
+	limits.minVals = Vector3(-150, -10, -150);
+	limits.maxVals = Vector3(150, 65, 150);
 }
 
 PhysicsEngine::PhysicsEngine()

@@ -42,7 +42,7 @@ void Map::OnInitializeScene() {
 
 	AddObjects();
 
-	PhysicsEngine::Instance()->ResetWorldPartition();
+
 
 	Scene::OnInitializeScene();
 }
@@ -113,7 +113,7 @@ void Map::BuildGround(Vector2 dimensions) {
 
 	GameObject* upWall = CommonUtils::InvisibleWall(
 		"UpWall",
-		Vector3(-1.0f, 80, -1.0f),
+		Vector3(-1.0f, 60, -1.0f),
 		Vector3(dimensions.x+2, 2.0f, dimensions.y+2));
 	this->AddGameObject(upWall);
 

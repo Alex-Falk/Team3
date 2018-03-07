@@ -1,8 +1,8 @@
 #pragma once
 
 // Level dimensions
-#define DIMENSION_X (80.0f)
-#define DIMENSION_Y (80.0f)
+//#define DIMENSION_X (80.0f)
+//#define DIMENSION_Y (80.0f)
 
 #define DEFAULT_COLOUR Vector4(0.5f, 0.5f, 0.5f, 1.0f)
 #define GREEN_COLOUR Vector4(0.0f, 1.0f, 0.0f, 1.0f)

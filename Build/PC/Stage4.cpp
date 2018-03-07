@@ -30,13 +30,13 @@ void StageFourth::AddObjects()
 
 	BuildGround(dimensions);
 
-	pickup[0] = new PaintPool(Vector3(75, 1.f, 75), RED, "0");
+	pickup[0] = new PaintPool(Vector3(135, 1.f, 135), RED, "0");
 	this->AddGameObject(pickup[0]);
-	pickup[1] = new PaintPool(Vector3(-75, 1.f, -75), GREEN, "1");
+	pickup[1] = new PaintPool(Vector3(-135, 1.f, -135), GREEN, "1");
 	this->AddGameObject(pickup[1]);
-	pickup[2] = new PaintPool(Vector3(75, 1.f, -75), BLUE, "2");
+	pickup[2] = new PaintPool(Vector3(135, 1.f, -135), BLUE, "2");
 	this->AddGameObject(pickup[2]);
-	pickup[3] = new PaintPool(Vector3(-75, 1.f, 75), PINK, "3");
+	pickup[3] = new PaintPool(Vector3(-135, 1.f, 135), PINK, "3");
 	this->AddGameObject(pickup[3]);
 
 
@@ -90,10 +90,6 @@ void StageFourth::AddObjects()
 
 	//Add paint pool to capture area
 	static_cast<MultiPaintPool*>(capture[0])->AddPool(static_cast<PaintPool*>(pickup[9]));
-
-	//add multi capture pool
-
-
 
 }
 
