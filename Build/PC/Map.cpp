@@ -1,7 +1,8 @@
 #include "Map.h"
 #include "Pickup.h"
 #include "CaptureArea.h"
-//#include "MinionBase.h"
+#include "ControllableAvatar.h"
+
 
 Map::~Map() 
 {
@@ -55,6 +56,8 @@ void Map::onConnectToScene()
 
 void Map::OnInitializeScene() {
 
+	Scene::OnInitializeScene();
+
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
 	
@@ -78,7 +81,7 @@ void Map::OnInitializeScene() {
 
 	AddObjects();
 
-	Scene::OnInitializeScene();
+	PhysicsEngine::Instance()->ResetWorldPartition();
 
 }
 

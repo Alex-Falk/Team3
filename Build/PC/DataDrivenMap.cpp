@@ -12,7 +12,7 @@ void DataDrivenMap::OnInitializeScene()
 {
 	ReadFile();
 
-	BuildGround();
+	Buildmap();
 
 	for (uint i = 1; i < 5; i++) {
 		vector<string>line = GetObjects(lines[i]);
@@ -61,15 +61,14 @@ void DataDrivenMap::ReadFile() {
 	cout << "file ok";
 }
 
-void DataDrivenMap::BuildGround() {
-	vector<string>object = GetObjects(lines[0]);
-	BuildObject(object);
+void DataDrivenMap::Buildmap() {
+	BuildObject(GetObjects(lines[0]));
 }
 
 void DataDrivenMap::BuildObjects() {
 
 	int i = 5;
-	while (i < lines.size())
+	while (i < lines.size() - numemptyline)
 	{
 		vector<string>object = GetObjects(lines[i]);
 		BuildObject(object);
@@ -85,6 +84,7 @@ void DataDrivenMap::BuildObject(vector<std::string> object) {
 	else if (object[0] == "PAINT_POOL")		AddPaintPools(object);
 	else if (object[0] == "MULTI_POOL")		AddMultiPaintPools(object);
 	else if (object[0] == "MINION_AREA")		AddMinionAreas(object);
+	else if (object[0] == "GROUND")		AddGround(object);
 }
 
 vector<string> DataDrivenMap::GetLines(std::string file) {
@@ -96,11 +96,15 @@ vector<string> DataDrivenMap::GetLines(std::string file) {
 vector<string> DataDrivenMap::GetObjects(std::string line) {
 	vector<string> object;
 	object = split(line, ' ');
+	//if (object[0] == "\n" && object[0] == "//")
+	//	numemptyline++;
+	//else
 	return object;
 }
 
 void DataDrivenMap::AddGround(vector<std::string> object) {
 	Map::SetMapDimensions(Vector2(stof(object[1]), stof(object[2])));
+	BuildGround(Vector2(stof(object[1]), stof(object[2])));
 }
 
 void DataDrivenMap::SetSpawnLocation(vector<std::string> object) {
@@ -121,14 +125,14 @@ void DataDrivenMap::AddPaintPools(vector<std::string> object) {
 	if (object[4] == "GREEN")	team = GREEN;
 	if (object[4] == "BLUE")	team = BLUE;
 	if (object[4] == "PINK")	team = PINK;
-	pickups.push_back(PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, object[5]));
+	AddPickup(new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, object[5]));
 }
 
 void DataDrivenMap::AddPickups(vector<std::string> object) {
 
 	if (object[4] == "SPEED_BOOST")		type = SPEED_BOOST;
 	if (object[4] == "JUMP_BOOST")		type = JUMP_BOOST;
-	pickups.push_back(Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, object[5]));
+	AddPickup(new Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, object[5]));
 }
 
 void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
@@ -137,19 +141,19 @@ void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
 	if (object[4] == "PAINT_PISTOL")		weapType = PAINT_PISTOL;
 	if (object[4] == "AUTO_PAINT_LAUNCHER")	weapType = AUTO_PAINT_LAUNCHER;
 	if (object[4] == "PAINT_ROCKET")		weapType = PAINT_ROCKET;
-	pickups.push_back(WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, object[5], stof(object[6])));
+	AddPickup(new WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, object[5], stof(object[6])));
 }
 
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
-
-	captAreas.push_back(CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8])));
+	AddCaptureArea(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8])));
 }
 
 void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 
 	Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, "0");
+	AddPickup(pool);
 	CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[4]), stof(object[5]), stof(object[6])), object[7], Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
-
+	AddCaptureArea(capt);
 	static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
 }
 

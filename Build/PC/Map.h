@@ -6,7 +6,7 @@
 #include "Pickup.h"
 #include "GamePlay.h"
 #include "Game.h"
-#include "ControllableAvatar.h"
+
 
 class MinionBase;
 
@@ -38,7 +38,7 @@ protected:
 	//capture areas
 	vector<CaptureArea*> captureAreas;
 	
-	MinionBase * minions[20];
+	//vector<MinionBase*> minions;
 
 
 public:
@@ -93,7 +93,6 @@ public:
 	//void RemoveMinion(MinionBase * m);
 	//MinionBase * GetMinion(int i) { return minions[i]; }
 	//uint GetMinionID(MinionBase * m);
-	
 
 
 	//--------------------------------------------------------------------------------------------//

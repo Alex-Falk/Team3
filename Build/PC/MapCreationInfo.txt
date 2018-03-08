@@ -1,0 +1,9 @@
+// How to add pool: PAINT_POOL x y z colour name
+// colours: RED, GREEN, BLUE, PINK
+// How to add multi-pool: MULTI_POOL x y z (for the pool)
+// x y z (pos) name dx dy dz (half dimensions) 
+// How to add pickup: PICKUP x y z type(SPEED_BOOST, JUMP_BOOST) 
+// name
+// How to add weapon: WEAPON_PICKUP x y z type name respawnTime
+// types: PAINT_SPRAY, PAINT_PISTOL, AUTO_PAINT_LAUNCHER, PAINT_ROCKET
+// how add minion area: MINION_AREA 

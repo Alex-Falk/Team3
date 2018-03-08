@@ -330,6 +330,7 @@ void HandleGUIMouseButton()
 		GUIsystem::Instance()->SetCurrentWeapon(p->GetWeapon());
 		//only needs setting once
 		GUIsystem::Instance()->SetPlayerColour(p->GetColourRGBA().ToVector3());
+		GUIsystem::Instance()->SetWeaponTimer(p->GetPercentageWeaponTimer());
 	}
 
 	fpsCounter++;
@@ -408,7 +409,7 @@ int main()
 	Window::GetWindow().GetTimer()->GetTimedMS();
 
 	//lock mouse so moving around the screen is nicer
-	Window::GetWindow().LockMouseToWindow(false);
+	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false)

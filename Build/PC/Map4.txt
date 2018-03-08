@@ -1,0 +1,9 @@
+GROUND 150 150  //Ground Dimensions
+SPAWN_LOC 1 75 1 75 		//Spawn Position 1 x y z
+SPAWN_LOC 2 -75 1 -75 	//Spawn Position 2 x y z
+SPAWN_LOC 3 75 1 -75 		//Spawn Position 3 x y z
+SPAWN_LOC 4 -75 0 75 		//Spawn Position 4 x y z
+PICKUP 40 1 0 SPEED_BOOST speedboost
+WEAPON_PICKUP 0 1 -70 PAINT_PISTOL Pistol 10
+PAINT_POOL 135 1 135 RED redpool
+MULTI_POOL 0 1 0 0 5 0 Multipool 2 2 2 

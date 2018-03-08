@@ -126,6 +126,7 @@ public:
 	inline void SetHasWeapon(bool b) { hasWeapon = b; }
 	inline bool GetDrawMiniMap() { return drawMiniMap; }
 	inline void SetPlayerColour(Vector3 c) { playerColour = c; }
+	inline void SetWeaponTimer(float t) { weaponTimer = t; }
 
 	//Getter Setter of isLoading boolean
 	inline LoadingScreenType GetCurrentLoadingScreen() { return currentLoadingScreen; }
@@ -190,6 +191,7 @@ protected:
 	bool hasWeapon;
 	Vector3 playerColour;
 	void DrawWeaponIcon();
+	float weaponTimer;
 
 	float p1, p2, p3, p4;
 

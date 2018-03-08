@@ -10,6 +10,7 @@ class DataDrivenMap :public Map
 {
 private:
 	float m_AccumTime = 0;
+	int numemptyline = 0;
 	Map* map;
 	string fileName = "Map4.txt";
 	vector<string> lines;
@@ -26,7 +27,7 @@ private:
 	vector<string> GetObjects(std::string line);
 
 	void ReadFile();
-	void BuildGround();
+	void Buildmap();
 	void BuildObjects();
 	void BuildObject(vector<std::string> object);
 	void AddGround(vector<std::string> object);

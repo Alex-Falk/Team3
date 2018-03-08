@@ -2,6 +2,7 @@
 
 uniform sampler2D diffuseTex;
 uniform vec3 playerColour;
+uniform float timer
 
 in Vertex	{
 	vec2 texCoord;
@@ -15,7 +16,10 @@ void main(void){
     discard;
   }
   else if(tex.rgb == vec3(1.0f,0.0f,1.0f)){
-    gl_FragColor = vec4(playerColour, 1.0f);
+	  if (timer > texCoord.y)
+		  gl_FragColor = mix(vec4(playerColour, 1.0f);
+	  else
+		  gl_FragColor = vec4(0.0f,0.0f,0.0f,1.0f);
   }
   else{
     gl_FragColor = texture(diffuseTex, IN.texCoord);
