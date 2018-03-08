@@ -6,5 +6,4 @@ SPAWN_LOC 3 -75 0 75 		//Spawn Position 4 x y z
 PICKUP 40 1 0 SPEED_BOOST speedboost
 WEAPON_PICKUP 0 1 -70 PAINT_PISTOL Pistol 10
 PAINT_POOL 135 1 135 RED redpool
-MULTI_POOL 0 1 0 0 5 0 Multipool 2 2 2 
 CUBE 15.1 5 14.7 wall 5 2 5 0

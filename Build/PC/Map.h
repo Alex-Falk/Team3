@@ -41,6 +41,7 @@ protected:
 	static const int maxMinions = 20;
 	MinionBase * minions[maxMinions];
 
+	vector<GameObject*> cuboid;
 
 public:
 	//--------------------------------------------------------------------------------------------//

@@ -253,7 +253,7 @@ void Server::UpdateUser(float dt)
 
 			Map * m = static_cast<Map*>(Game::Instance()->GetMap());
 
-			MinionBase ** minions = m->GetMinions();
+			/*MinionBase ** minions = m->GetMinions();
 			for (int i = 0; i < m->GetMaxMinions(); ++i)
 			{
 				if (minions[i])
@@ -268,7 +268,7 @@ void Server::UpdateUser(float dt)
 						minions[i]->GetLife()
 					);
 				}
-			}
+			}*/
 
 			SendScores();
 		}

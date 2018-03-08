@@ -405,11 +405,11 @@ void Client::ReceiveMinionSpawn(string data)
 	}
 
 	MinionBase * minion = new MinionBase(col, ColourRGB, pos);
-	if (m->GetMinions()[minionID])
-	{
-		m->GetMinions()[minionID]->SetToDestroy();
-	}
-	m->AddMinion(minion, minionID);
+	//if (m->GetMinions()[minionID])
+	//{
+	//	m->GetMinions()[minionID]->SetToDestroy();
+	//}
+	//m->AddMinion(minion, minionID);
 }
 
 // PACKET_TYPE:MINION_ID;COLOUR,posx posy posz,linvx linvy linvz,angvx angvy angvz,accx accy accz,life
@@ -434,17 +434,17 @@ void Client::ReceiveMinionUpdate(string data)
 	float life = stof(splitData[5]);
 
 
-	MinionBase * minion = m->GetMinion(minionID);
+	//MinionBase * minion = m->GetMinion(minionID);
 
-	if (minion)
-	{
-		minion = m->GetMinion(minionID);
-		minion->Physics()->SetPosition(pos);
-		minion->Physics()->SetLinearVelocity(linv);
-		minion->Physics()->SetAngularVelocity(angv);
-		minion->Physics()->SetAcceleration(acc);
-		minion->SetLife(life);
-	}
+	//if (minion)
+	//{
+	//	minion = m->GetMinion(minionID);
+	//	minion->Physics()->SetPosition(pos);
+	//	minion->Physics()->SetLinearVelocity(linv);
+	//	minion->Physics()->SetAngularVelocity(angv);
+	//	minion->Physics()->SetAcceleration(acc);
+	//	minion->SetLife(life);
+	//}
 }
 
 // PACKET_TYPE:MINION_ID
@@ -456,10 +456,10 @@ void Client::ReceiveMinionDeath(string data)
 
 	uint minionID = stoi(data.substr(colonIdx + 1));
 
-	if (m->GetMinion(minionID))
-	{
-		m->RemoveMinion(m->GetMinion(minionID));
-	}
+	//if (m->GetMinion(minionID))
+	//{
+	//	m->RemoveMinion(m->GetMinion(minionID));
+	//}
 
 }
 

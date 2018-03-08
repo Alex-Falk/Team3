@@ -46,8 +46,8 @@ public:
 
 protected:
 
-	int maxNumber = 3;
-	float minSize = 2.0f;
+	int maxNumber = 8;
+	float minSize = 5.0f;
 
 
 	std::vector<PhysicsNode*> * physicsNodes;
