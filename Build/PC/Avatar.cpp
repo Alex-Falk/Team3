@@ -240,7 +240,7 @@ void Avatar::UpdatePickUp(float dt)
 		jumpBoostTimer -= dt;
 		if (jumpBoostTimer <= 0)
 		{
-			jumpImpulse = standardSpeed;
+			jumpImpulse = standardJumpImpulse;
 			jumpBoost = false;
 		}
 	}
