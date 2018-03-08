@@ -35,9 +35,6 @@ protected:
 
 	inline Vector2 GetMapDimensions() { return dimensions; }
 
-	//Scoring
-	//void UpdateCaptureAreas();			
-
 	//pickup stuff
 	vector<Pickup*> pickups;
 	//capture areas
