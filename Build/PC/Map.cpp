@@ -57,9 +57,9 @@ void Map::onConnectToScene()
 }
 
 void Map::OnInitializeScene() {
-	SetMapDimensions(dimensions);
-	PhysicsEngine::Instance()->SetLimits(Vector3(-dimensions.x, -20, -dimensions.y), Vector3(dimensions.x, 50, dimensions.y));
 
+	SetMapDimensions(dimensions);
+	
 	OnInitializeGUI();
 
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));

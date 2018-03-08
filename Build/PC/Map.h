@@ -28,7 +28,11 @@ protected:
 	// Map Size
 	//--------------------------------------------------------------------------------------------//
 	Vector2 dimensions;
-	inline void SetMapDimensions(Vector2 dimens) { dimensions = dimens; }
+	inline void SetMapDimensions(Vector2 dimens) 
+	{
+		dimensions = dimens; PhysicsEngine::Instance()->SetLimits(Vector3(-dimensions.x, -20, -dimensions.y), Vector3(dimensions.x, 50, dimensions.y));
+	}
+
 	inline Vector2 GetMapDimensions() { return dimensions; }
 
 	//Scoring
