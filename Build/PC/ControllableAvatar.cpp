@@ -106,7 +106,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 
 
 // Updates everything on player
-void ControllableAvatar::OnAvatarUpdate(float dt) {
+void ControllableAvatar::Update(float dt) {
 
 	shooting = false;
 

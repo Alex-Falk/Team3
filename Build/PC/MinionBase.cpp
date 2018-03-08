@@ -145,7 +145,15 @@ void MinionBase::ChangeSize(float newSize) {
 
 void MinionBase::Update(float dt)
 {
-	//lastPos = Physics()->GetPosition();
+	
+	if (dead)
+	{
+		this->SetToDestroy();
+		Game::Instance()->KillMinion(this);
+		((Map*)Game::Instance()->GetMap())->RemoveMinion(this);
+		return;
+	}
+
 	size = 0.3f * (life / 50);
 	ChangeSize(size);
 }

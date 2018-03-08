@@ -10,5 +10,5 @@ protected:
 public:
 	Particle(Colour col, Vector3 pos, Vector3 vel, float size, string name = "");
 
-	virtual void Update(float dt);
+	virtual void Update(float dt) {};
 };

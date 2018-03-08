@@ -287,7 +287,6 @@ void Map::RemoveMinion(MinionBase * m)
 	{
 		if (minions[i] == m)
 		{
-			m->SetToDestroy();
 			minions[i] = nullptr;
 			break;
 		}
@@ -316,7 +315,7 @@ void Map::UpdateGUI(float dt)
 	//player->OnPlayerUpdate(dt);
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
 		if (Game::Instance()->GetPlayer(i)) {
-			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
+			Game::Instance()->GetPlayer(i)->Update(dt);
 			//Update position for each players for GUI
 			GUIsystem::Instance()->playerNames[i] = Game::Instance()->GetName(i);
 			GUIsystem::Instance()->playersPosition[i] = Game::Instance()->GetPlayer(i)->GetPosition();
@@ -355,35 +354,22 @@ void Map::OnUpdateScene(float dt)
 
 	UpdateGUI(dt);
 
-	perfMapObjects.BeginTimingSection();
-	for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
+	if (m_AccumTime > 1 / 60.0f)
 	{
-		(*itr)->Update(dt);
-	}
+		perfMapObjects.BeginTimingSection();
 
-	for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
-	{
-		if (Game::Instance()->getUserID() == 0)
-			(*itr)->Update(dt);
-	}
-
-	for (int i = 0; i < maxMinions; ++i)
-	{
-		if (minions[i])
+		for (int i = 0; i < this->m_vpObjects.size(); ++i)
 		{
-			if (!minions[i]->IsAlive())
+			if (m_vpObjects[i])
 			{
-				Game::Instance()->KillMinion(minions[i]);
-				RemoveMinion(minions[i]);
+				m_vpObjects[i]->Update(dt);
 			}
-			else
-			{
-				(minions[i])->Update(dt);
-			}
+
 		}
+
+		perfMapObjects.EndTimingSection();
 	}
 
-	perfMapObjects.EndTimingSection();
 
 
 	//update only once a second

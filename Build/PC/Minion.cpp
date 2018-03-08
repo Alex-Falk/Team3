@@ -71,6 +71,14 @@ void Minion::Update(float dt)
 		dead = true;
 	}
 
+	if (dead)
+	{
+		this->SetToDestroy();
+		Game::Instance()->KillMinion(this);
+		((Map*)Game::Instance()->GetMap())->RemoveMinion(this);
+		return;
+	}
+
 	lastPos = Physics()->GetPosition();
 
 
