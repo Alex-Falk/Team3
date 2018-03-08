@@ -148,13 +148,13 @@ void Projectile::Explode() {
 
 	int randPitch;
 	int randYaw;
-	for (uint i = 0; i < 40; ++i)
+	for (uint i = 0; i < 60; ++i)
 	{
-		randPitch = rand() % 90;
+		randPitch = rand() % 180;
 		randYaw = rand() % 360;
 
 		Vector3 direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
-		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.5f, 0.1f);
+		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, 0.05f);
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle);
 	

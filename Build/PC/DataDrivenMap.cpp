@@ -12,8 +12,6 @@
 //--------------------------------------------------------------------------------------------//
 void DataDrivenMap::OnInitializeScene()
 {
-	OnInitializeGUI();
-
 	ReadFile();
 
 	Buildmap();

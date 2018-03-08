@@ -20,7 +20,7 @@ void main(void)
   }
   else if(tex.rgb == vec3(1.0f,0.0f,1.0f))
   {
-	  if (timer < IN.texCoord.y)
+	  if (timer > IN.texCoord.y)
 	  {
 		  gl_FragColor = vec4(playerColour, 1.0f);
 	  }
