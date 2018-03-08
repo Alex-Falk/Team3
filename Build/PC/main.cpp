@@ -232,11 +232,6 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
 		drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
 
-	//toggle the camera
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {
-		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
-	}
-
 	Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
 	Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
 	Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
