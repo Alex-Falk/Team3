@@ -90,7 +90,7 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 		)
 	);
 
-	lifeReq = life;
+	lifeReq = 10;
 	this->scoreValue = scoreValue;
 	SetColour(colour);
 	UpdatePercentage();

@@ -1074,7 +1074,7 @@ void GraphicsPipeline::DrawMiniMap() {
 	count = 0;
 	for (int i = 0; i < map->GetPickups().size(); ++i) {
 		Pickup* p = map->GetPickup(i);
-		if (p->GetActive()) {
+		if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
 			pickupTypes[count] = p->GetPickupType();
 			if (pickupTypes[count] == PickupType::PAINTPOOL) {
 				pickupColours[count] = ((PaintPool*)map->GetPickups()[i])->GetColour();

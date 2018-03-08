@@ -38,11 +38,26 @@ void SimpleGamePlay::AddObjects()
 	AddPickup(new Pickup(Vector3(2, 1.5, -7), PickupType::JUMP_BOOST, "3"));
 	AddPickup(new PaintPool(Vector3(-15.0f, 0.6f, -15.0f), GREEN, "4"));
 
+	PaintPool* cpp1 = new PaintPool(Vector3(10.0f, 0.7f, -10.0f), START_COLOUR, "5");
+	PaintPool* cpp2 = new PaintPool(Vector3(10.0f, 0.7f, -20.0f), START_COLOUR, "6");
+	PaintPool* cpp3 = new PaintPool(Vector3(20.0f, 0.7f, -10.0f), START_COLOUR, "7");
+	PaintPool* cpp4 = new PaintPool(Vector3(20.0f, 0.7f, -20.0f), START_COLOUR, "8");
+	
+	AddPickup(cpp1);
+	AddPickup(cpp2);
+	AddPickup(cpp3);
+	AddPickup(cpp4);
 
 	// CAPTUREAREAS
 	AddCaptureArea(new MinionCaptureArea(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
 	AddCaptureArea(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
-	AddCaptureArea(new CaptureArea(Vector3(15, 0.6, -15), "2", Vector3(3.0f, 0.5f, 3.0f), 10));
+	
+	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15, 0.6, -15), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
+	AddCaptureArea(mpp);
+	mpp->AddPool(cpp1);
+	mpp->AddPool(cpp2);
+	mpp->AddPool(cpp3);
+	mpp->AddPool(cpp4);
 
 
 }

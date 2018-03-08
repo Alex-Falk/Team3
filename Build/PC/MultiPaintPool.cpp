@@ -12,12 +12,10 @@
 
 MultiPaintPool::MultiPaintPool() : CaptureArea()
 {
-	this->SetName("PAINTPOOLCAPTUREAREA");
 }
 
 MultiPaintPool::MultiPaintPool(Vector3 pos, string unique_name, Vector3 halfdims, int scoreValue, Colour colour) : CaptureArea(pos, unique_name, halfdims, scoreValue, colour)
 {
-	this->SetName("PAINTPOOLCAPTUREAREA");
 }
 
 void MultiPaintPool::SetColour(Colour c)
