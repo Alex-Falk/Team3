@@ -173,11 +173,13 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 
 	if (collidingObject->GetType() == MINION) {
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-		if (projectileWorth >= 5 && !exploded) Explode(); 
-		else {
-			if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));
-			}
+		if (projectileWorth >= 5 && !exploded)
+		{
+			Explode();
+		}
+		else if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) 
+		{
+			((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));
 		}
 		destroy = true;
 		return false;

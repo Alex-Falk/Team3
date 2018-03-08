@@ -45,8 +45,12 @@ bool Explosion::ExplosionCallbackFunction(PhysicsNode * self, PhysicsNode * coll
 		return false;
 	}
 
-	if (collidingObject->GetType() == MINION) {
-		((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth * (length * 2)));
+	if (collidingObject->GetType() == MINION) 
+	{
+		if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour)
+		{
+			((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth * (length * 2)));
+		}
 		collidingObject->SetLinearVelocity((collidingObject->GetLinearVelocity() / 2) + direction * forceMultiplier);
 		destroy = true;
 		return false;
