@@ -24,19 +24,6 @@ void User::ReceiveAvatarUpdate(string data)
 	Vector3 vecs[4];
 	string temp;
 
-	//for (uint i = 0; i < 4; ++i)
-	//{
-	//	size_t commaIdx = data.find_first_of(',');
-	//	if (commaIdx != string::npos)
-	//		temp = data.substr(0, commaIdx);
-	//	else
-	//		temp = data;
-
-	//	vecs[i] = InterpretStringVector(temp);
-
-	//	data = data.substr(commaIdx + 1);
-	//}
-
 	vector<string> splitData = split_string(data, ',');
 	
 	temps.positions[playerID] = InterpretStringVector(splitData[0]);
@@ -51,10 +38,6 @@ void User::ReceiveAvatarUpdate(string data)
 		Game::Instance()->GetPlayer(playerID)->SetLife(life);
 		Game::Instance()->GetPlayer(playerID)->SetInAir(inAir);
 	}
-
-	
-
-
 }
 
 PlayerVector User::ReceiveVector(string data)

@@ -71,6 +71,15 @@ void Map::OnInitializeScene() {
 		captureAreas.clear();
 	}
 
+	for (int i = 0; i < maxMinions; ++i)
+	{
+		if (minions[i])
+		{
+			minions[i]->SetToDestroy();
+		}
+		minions[i] = nullptr;
+	}
+
 	SetSpawnLocations();
 
 	LoadTextures();
