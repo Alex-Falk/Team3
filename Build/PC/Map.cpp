@@ -263,8 +263,11 @@ void Map::OnUpdateScene(float dt)
 
 	if (Game::Instance()->GetUser())
 	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
-			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+		if (minions[i] == m)
+		{
+			minions[i] = nullptr;
+			break;
+		}
 	}
 
 	perfMapObjects.BeginTimingSection();
@@ -312,6 +315,40 @@ void Map::UpdateGUI(float dt)
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
+}
+
+	m_AccumTime += dt;
+
+	TransferAndUpdateTimer();
+
+	UpdateGUI(dt);
+
+	if (m_AccumTime > 1 / 60.0f)
+	{
+		perfMapObjects.BeginTimingSection();
+
+		for (int i = 0; i < this->m_vpObjects.size(); ++i)
+		{
+			if (m_vpObjects[i])
+			{
+				m_vpObjects[i]->Update(dt);
+			}
+
+		}
+
+		perfMapObjects.EndTimingSection();
+	}
+
+
+
+	//update only once a second
+	//if (updatePerSecond >= 1.0f) {
+	//	UpdateCaptureAreas();
+	//	updatePerSecond = 0.0f;
+	//}
+
+
+	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }
 
 //--------------------------------------------------------------------------------------------//

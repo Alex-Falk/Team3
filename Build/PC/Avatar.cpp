@@ -173,7 +173,7 @@ void Avatar::ChangeSize(float newSize)
 }
 
 // Updates everything on player
-void Avatar::OnAvatarUpdate(float dt) {
+void Avatar::Update(float dt) {
 
 	shooting = false;
 	
@@ -274,12 +274,7 @@ void Avatar::Spray()
 	{
 		randPitch = rand() % 90;
 		randYaw = rand() % 360;
-		
-		float a = (float)(rand() % 10);
-		float b = (float)(rand() % 10);
-		float c = (float)(rand() % 10);
-		
-		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
+
 		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
 		
 		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");

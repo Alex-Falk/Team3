@@ -89,7 +89,7 @@ public:
 	Avatar();
 	Avatar(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
 
-	virtual void OnAvatarUpdate(float dt);
+	virtual void Update(float dt);
 
 	Vector3 GetPosition() { return Physics()->GetPosition(); }
 

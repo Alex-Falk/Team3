@@ -7,6 +7,7 @@
 #include "Minion.h"
 #include <ncltech/SceneManager.h>
 #include "Projectile.h"
+#include "Particle.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;
@@ -144,6 +145,21 @@ void Projectile::Explode() {
 	//turn into sphere for spherical paint splat
 	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(2.0f, 2.0f, 2.0f))));
 	Render()->GetChild()->SetMesh(CommonMeshes::Sphere());
+
+	int randPitch;
+	int randYaw;
+	for (uint i = 0; i < 40; ++i)
+	{
+		randPitch = rand() % 90;
+		randYaw = rand() % 360;
+
+		Vector3 direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
+		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.5f, 0.1f);
+
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle);
+	
+	}
+
 
 	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 2.0f, 5.0f, SPRAY, 4, "Spray");
 	explosion->UnregisterPhysicsToRenderTransformCallback();

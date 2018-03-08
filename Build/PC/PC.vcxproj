@@ -176,6 +176,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Minion.h" />
     <ClInclude Include="MinionCaptureArea.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="PostProcess.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="SimpleGamePlay.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="PaintPool.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="Projectile.cpp" />
