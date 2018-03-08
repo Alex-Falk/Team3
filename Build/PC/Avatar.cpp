@@ -240,7 +240,7 @@ void Avatar::UpdatePickUp(float dt)
 		jumpBoostTimer -= dt;
 		if (jumpBoostTimer <= 0)
 		{
-			jumpImpulse = standardSpeed;
+			jumpImpulse = standardJumpImpulse;
 			jumpBoost = false;
 		}
 	}
@@ -266,61 +266,73 @@ void Avatar::UpdatePickUp(float dt)
 
 void Avatar::Spray()
 {
-	int randPitch;
-	int randYaw;
-	Vector3 direction;
-		
-	for (int i = 0; i < 10; ++i)
+	if (life > minLife + 5.0f)
 	{
-		randPitch = rand() % 90;
-		randYaw = rand() % 360;
-		
-		float a = (float)(rand() % 10);
-		float b = (float)(rand() % 10);
-		float c = (float)(rand() % 10);
-		
-		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
-		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
-		
-		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+		life -= 5.0f;
 
-		// Send over network
-		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
+		int randPitch;
+		int randYaw;
+		Vector3 direction;
+
+		for (int i = 0; i < 10; ++i)
+		{
+			randPitch = rand() % 90;
+			randYaw = rand() % 360;
+
+			float a = (float)(rand() % 10);
+			float b = (float)(rand() % 10);
+			float c = (float)(rand() % 10);
+
+			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
+			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
+
+			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
+			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+
+			// Send over network
+			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
+		}
 	}
 }
 
 void Avatar::ShootRocket()
 {
-	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
-	
-	if (canJump && pitch < 0) {
-		pitch = 0.0f;
+	if (life > minLife + 15.0f)
+	{
+		life -= 15.0f;
+		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+		float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+
+		if (canJump && pitch < 0) {
+			pitch = 0.0f;
+		}
+
+		Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
+		Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.18f,0.18f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
+		projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0.0f));
+
+		ShootRocket(Physics()->GetPosition(), direction);
+
+		// Send over network
+		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 	}
-
-	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
-	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.18f,0.18f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0.0f));
-
-	ShootRocket(Physics()->GetPosition(),direction);
-
-	// Send over network
-	Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 }
 
 void Avatar::ShootProjectile()
 {
-	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	if (life > minLife + 5.0f)
+	{
+		life -= 5.0f;
+		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
-	float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
-	if (canJump && pitch < 0) {
-		pitch = 0;
+		float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+		if (canJump && pitch < 0) {
+			pitch = 0;
+		}
+
+		Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
+		ShootProjectile(Physics()->GetPosition(), direction);
 	}
-
-	Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
-	ShootProjectile(Physics()->GetPosition(), direction);
-
 }
 
 void Avatar::Spray(Vector3 pos, Vector3 dir)

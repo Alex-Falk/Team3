@@ -188,8 +188,8 @@ static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObje
 //    cycling through scenes.
 void HandleKeyboardInputs()
 {
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
-		PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
+	//	PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
 		GraphicsPipeline::Instance()->SetVsyncEnabled(!GraphicsPipeline::Instance()->GetVsyncEnabled());
@@ -232,17 +232,12 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
 		drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
 
-	//toggle the camera
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {
-		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
-	}
-
 	Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
 	Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
 	Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
 	Input::Instance()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
 	Input::Instance()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
-	Input::Instance()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
+	//Input::Instance()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
 	Input::Instance()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
 	//possibly temporary
 	Input::Instance()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
