@@ -99,6 +99,9 @@
     <ClInclude Include="SimpleGamePlay.h">
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Arena.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Map.h">
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
@@ -184,6 +187,9 @@
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
     <ClInclude Include="Stage4.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataDrivenMap.h">
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MapOne.h">
@@ -288,6 +294,9 @@
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="Stage4.cpp">
+      <Filter>Maps\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataDrivenMap.cpp">
       <Filter>Maps\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MapOne.cpp">

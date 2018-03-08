@@ -2,8 +2,10 @@
 #include "Pickup.h"
 #include "CaptureArea.h"
 #include "Map.h"
-#include "MinionBase.h"
+#include "Pickup.h"
+#include "CaptureArea.h"
 #include "ControllableAvatar.h"
+
 
 Map::~Map() 
 {
@@ -20,11 +22,10 @@ Map::~Map()
 	}
 	captureAreas.clear();
 
-	for (int i = 0; i < maxMinions; ++i)
-	{
-		minions[i]->SetToDestroy();
-		minions[i] = nullptr;
-	}
+	//for (auto itr = minions.begin(); itr != minions.end(); ++itr)
+	//{
+	//	(*itr)->SetToDestroy();
+	//}
 	captureAreas.clear();
 };
 
@@ -57,9 +58,12 @@ void Map::onConnectToScene()
 }
 
 void Map::OnInitializeScene() {
-	OnInitializeGUI();
 
+	Scene::OnInitializeScene();
+
+	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
+	
 
 	if (pickups.size() > 0)
 	{
@@ -71,14 +75,8 @@ void Map::OnInitializeScene() {
 		captureAreas.clear();
 	}
 
-	for (int i = 0; i < maxMinions; ++i)
-	{
-		if (minions[i])
-		{
-			minions[i]->SetToDestroy();
-		}
-		minions[i] = nullptr;
-	}
+
+	OnInitializeGUI();
 
 	SetSpawnLocations();
 
@@ -88,63 +86,24 @@ void Map::OnInitializeScene() {
 	Scene::OnInitializeScene();
 	PhysicsEngine::Instance()->ResetWorldPartition();
 
-	
 }
-
-//--------------------------------------------------------------------------------------------//
-// Updating CaptureAreas Score
-//--------------------------------------------------------------------------------------------//
-//void Map::UpdateCaptureAreas() {
-//	
-//	int captAreaTeamScore[4] = { (0,0,0,0) };
-//	for (uint i = 0;i < ncapture;i++)
-//	{
-//		switch (capture[i]->GetColour())
-//		{
-//		case RED:
-//			captAreaTeamScore[0] += capture[i]->GetScoreValue();
-//			break;
-//		case GREEN:
-//			captAreaTeamScore[1] += capture[i]->GetScoreValue();
-//			break;
-//		case BLUE:
-//			captAreaTeamScore[2] += capture[i]->GetScoreValue();
-//			break;
-//		case PINK:
-//			captAreaTeamScore[3] += capture[i]->GetScoreValue();
-//			break;
-//		default:
-//			break;
-//		}
-//	}
-//	Game::Instance()->SetAreaScores(0, captAreaTeamScore[0]);
-//	Game::Instance()->SetAreaScores(1, captAreaTeamScore[1]);
-//	Game::Instance()->SetAreaScores(2, captAreaTeamScore[2]);
-//	Game::Instance()->SetAreaScores(3, captAreaTeamScore[3]);
-//}
 
 void Map::OnInitializeGUI()
 {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
-	GUIsystem::Instance()->drawPlayerName = true;
-	GUIsystem::Instance()->SetDrawMiniMap(true);
 	lifeBar = static_cast<CEGUI::ProgressBar*>(
 		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
 			Vector4(0.40f, 0.9f, 0.25f, 0.03f),
 			Vector4(),
 			"lifeBar"
 		));
-	
-	timer = static_cast<CEGUI::Titlebar*>(
-		GUIsystem::Instance()->createWidget("OgreTray/Titlebar",
-			Vector4(0.45f, 0.00f, 0.10f, 0.05f),
-			Vector4(),
-			"Timer"
-		));
-	timer->setText("00:00");
 
-	isLoading = true;
-	GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::TRANSITION);
+	//if (Game::Instance()->GetUser())
+	//{
+	//	if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+	//		energyBar->setProgress(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetLife() / 100.0f);
+	//}
+
 }
 
 void Map::BuildGround(Vector2 dimensions) {
@@ -229,9 +188,6 @@ void Map::OnCleanupScene()
 	captureAreas.clear();
 };
 
-void Map::AddPickup(Pickup * p) {
-	pickups.push_back(p);
-	AddGameObject(p);
 }
 void Map::TransferAndUpdateTimer()
 {
@@ -250,6 +206,9 @@ void Map::TransferAndUpdateTimer()
 		t_string_second.assign(t_string_second, 0, 1);
 		timer->setText("0" + t_string_min + ":0" + t_string_second);
 	}
+void Map::AddPickup(Pickup * p) {
+	pickups.push_back(p);
+	AddGameObject(p);
 }
 
 void Map::AddCaptureArea(CaptureArea * ca) {
@@ -257,53 +216,15 @@ void Map::AddCaptureArea(CaptureArea * ca) {
 	AddGameObject(ca);
 }
 
-void Map::AddMinion(MinionBase * m)
-{
-	for (int i = 0; i < maxMinions; ++i)
-	{
-		if (!minions[i])
-		{
-			minions[i] = m;
-			AddGameObject(m);
-			break;
-		}
-	}	
-}
+//void Map::AddMinion(MinionBase * m)
+//{
+//	minions.push_back(m);
+//	AddGameObject(m);
+//}
 
-void Map::AddMinion(MinionBase * m, int location)
-{
-	if (minions[location])
-	{
-		minions[location]->SetToDestroy();
-	}
-
-	minions[location] = m;
-	AddGameObject(m);
-}
-
-void Map::RemoveMinion(MinionBase * m)
-{
-	for (int i = 0; i < maxMinions; ++i)
-	{
-		if (minions[i] == m)
-		{
-			m->SetToDestroy();
-			minions[i] = nullptr;
-			break;
-		}
-	}
-}
-
-uint Map::GetMinionID(MinionBase * m)
-{
-	for (int i = 0; i < maxMinions; ++i)
-	{
-		if (minions[i] == m)
-		{
-			return (uint)i;
-		}
-	}
-	return 0;
+void Map::Addcuboid(GameObject * cube) {
+	cuboid.push_back(cube);
+	AddGameObject(cube);
 }
 
 
@@ -311,49 +232,29 @@ uint Map::GetMinionID(MinionBase * m)
 //--------------------------------------------------------------------------------------------//
 // Updating Avatars
 //--------------------------------------------------------------------------------------------//
-void Map::UpdateGUI(float dt)
+void Map::OnUpdateScene(float dt)
 {
-	//player->OnPlayerUpdate(dt);
+	perfPlayer.UpdateRealElapsedTime(dt);
+
+	if(Game::Instance()->getUserID() == 0)
+	Scene::OnUpdateScene(dt);
+
+	m_AccumTime += dt;
+
+	perfPlayer.BeginTimingSection();
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
-		if (Game::Instance()->GetPlayer(i)) {
+		if (Game::Instance()->GetPlayer(i))
 			Game::Instance()->GetPlayer(i)->OnAvatarUpdate(dt);
-			//Update position for each players for GUI
-			GUIsystem::Instance()->playerNames[i] = Game::Instance()->GetName(i);
-			GUIsystem::Instance()->playersPosition[i] = Game::Instance()->GetPlayer(i)->GetPosition();
-		}
 	}
 	perfPlayer.EndTimingSection();
 
-	//Loading screen
-	if (isLoading == true) {
-		if (temp_fps > 25) {
-			GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::NOT_LOADING);
-			isLoading = false;
-		}
-		else {
-			temp_fps++;
-		}
-	}
+	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 
 	if (Game::Instance()->GetUser())
 	{
 		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
 			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
-}
-//--------------------------------------------------------------------------------------------//
-// Updating Avatars
-//--------------------------------------------------------------------------------------------//
-void Map::OnUpdateScene(float dt)
-{
-	if(Game::Instance()->getUserID() == 0)
-	Scene::OnUpdateScene(dt);
-
-	m_AccumTime += dt;
-
-	TransferAndUpdateTimer();
-
-	UpdateGUI(dt);
 
 	perfMapObjects.BeginTimingSection();
 	for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
@@ -367,33 +268,25 @@ void Map::OnUpdateScene(float dt)
 			(*itr)->Update(dt);
 	}
 
-	for (int i = 0; i < maxMinions; ++i)
-	{
-		if (minions[i])
-		{
-			if (!minions[i]->IsAlive())
-			{
-				Game::Instance()->KillMinion(minions[i]);
-				RemoveMinion(minions[i]);
-			}
-			else
-			{
-				(minions[i])->Update(dt);
-			}
-		}
-	}
+	//for (auto itr = minions.begin(); itr != minions.end();)
+	//{
+	//	if (!(*itr)->IsAlive())
+	//	{
+	//		(*itr)->SetToDestroy();
+	//		Game::Instance()->KillMinion(*itr);
+	//		//itr = minions.erase(itr);
+	//		
+	//	}
+	//	else
+	//	{
+	//		(*itr)->Update(dt);
+	//		++itr;
+	//	}
+	//	
+	//}
 
 	perfMapObjects.EndTimingSection();
 
-
-	//update only once a second
-	//if (updatePerSecond >= 1.0f) {
-	//	UpdateCaptureAreas();
-	//	updatePerSecond = 0.0f;
-	//}
-
-
-	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 }
 
 //--------------------------------------------------------------------------------------------//

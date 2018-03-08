@@ -71,6 +71,7 @@ protected:
 	WeaponType weapon;
 	bool weaponActive = false;
 	float weaponTimer;				// Weapon timer
+	float percWeapTimer;
 	bool shooting;
 
 	Vector3 dirRotation;		//The rotation based on camera
@@ -91,6 +92,9 @@ public:
 	virtual void OnAvatarUpdate(float dt);
 
 	Vector3 GetPosition() { return Physics()->GetPosition(); }
+
+	void SetWeaponTimer(float x) { weaponTimer = x; }
+	float GetPercentageWeaponTimer() { return weaponTimer / boostactiveTime; }
 
 	float GetMaxLife() { return maxLife; }
 	void SetMaxLife(float x) { maxLife = x; }
