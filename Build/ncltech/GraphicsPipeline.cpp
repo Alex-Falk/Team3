@@ -787,7 +787,7 @@ void GraphicsPipeline::SetPath(RenderNode* playerRenderNode, uint playerNumber)
 		pathSmoother[playerNumber]->Update(0);
 
 		pathSmoother[playerNumber]->SetChildBaseColor(playerRenderNode->GetBaseColor());
-		pathRenderNodes.push_back(pathSmoother[playerNumber]);
+		pathRenderNodes.push_back(pathSmoother[playerNumber]->GetChild());
 	}
 }
 
