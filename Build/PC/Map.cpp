@@ -201,6 +201,11 @@ void Map::AddCaptureArea(CaptureArea * ca) {
 //	AddGameObject(m);
 //}
 
+void Map::Addcuboid(GameObject * cube) {
+	cuboid.push_back(cube);
+	AddGameObject(cube);
+}
+
 
 
 //--------------------------------------------------------------------------------------------//

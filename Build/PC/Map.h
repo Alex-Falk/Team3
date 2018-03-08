@@ -39,6 +39,7 @@ protected:
 	vector<CaptureArea*> captureAreas;
 	
 	//vector<MinionBase*> minions;
+	vector<GameObject*> cuboid;
 
 
 public:
@@ -93,6 +94,9 @@ public:
 	//void RemoveMinion(MinionBase * m);
 	//MinionBase * GetMinion(int i) { return minions[i]; }
 	//uint GetMinionID(MinionBase * m);
+
+	//-WALLS-//
+	void Addcuboid(GameObject * cube);
 
 
 	//--------------------------------------------------------------------------------------------//

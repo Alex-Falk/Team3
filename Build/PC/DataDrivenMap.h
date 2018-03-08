@@ -31,6 +31,7 @@ private:
 	void BuildObjects();
 	void BuildObject(vector<std::string> object);
 	void AddGround(vector<std::string> object);
+	void AddCuboid(vector<std::string> object);
 	void SetSpawnLocation(vector<std::string> object);
 	void AddPaintPools(vector<std::string> object);
 	void AddPickups(vector<std::string> object);

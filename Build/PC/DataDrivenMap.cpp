@@ -3,7 +3,9 @@
 #include "PaintPool.h"
 #include "Game.h"
 #include "MultiPaintPool.h"
-#include <nclgl\Lexer.h>	
+#include <nclgl\Lexer.h>
+#include <ncltech\CommonUtils.h>
+
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
@@ -15,8 +17,7 @@ void DataDrivenMap::OnInitializeScene()
 	Buildmap();
 
 	for (uint i = 1; i < 5; i++) {
-		vector<string>line = GetObjects(lines[i]);
-		SetSpawnLocation(line);
+		BuildObject(GetObjects(lines[i]));
 	}
 
 	Map::OnInitializeScene();
@@ -68,7 +69,7 @@ void DataDrivenMap::Buildmap() {
 void DataDrivenMap::BuildObjects() {
 
 	int i = 5;
-	while (i < lines.size() - numemptyline)
+	while (i < lines.size())
 	{
 		vector<string>object = GetObjects(lines[i]);
 		BuildObject(object);
@@ -79,12 +80,14 @@ void DataDrivenMap::BuildObjects() {
 void DataDrivenMap::BuildObject(vector<std::string> object) {
 
 	if (object[0] == "CAPTURE_AREA")		AddCaptureAreas(object);
-	else if (object[0] == "PICKUP")		AddPickups(object);
-	else if (object[0] == "WEAPON_PICKUP")		AddWeaponPickups(object);
+	else if (object[0] == "CUBE")			AddCuboid(object);
+	else if (object[0] == "PICKUP")			AddPickups(object);
+	else if (object[0] == "WEAPON_PICKUP")	AddWeaponPickups(object);
 	else if (object[0] == "PAINT_POOL")		AddPaintPools(object);
 	else if (object[0] == "MULTI_POOL")		AddMultiPaintPools(object);
-	else if (object[0] == "MINION_AREA")		AddMinionAreas(object);
-	else if (object[0] == "GROUND")		AddGround(object);
+	else if (object[0] == "MINION_AREA")	AddMinionAreas(object);
+	else if (object[0] == "GROUND")			AddGround(object);
+	else if (object[0] == "SPAWN_LOC")		SetSpawnLocation(object);
 }
 
 vector<string> DataDrivenMap::GetLines(std::string file) {
@@ -155,6 +158,11 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 	CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[4]), stof(object[5]), stof(object[6])), object[7], Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
 	AddCaptureArea(capt);
 	static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
+}
+
+void DataDrivenMap::AddCuboid(vector<std::string> object) {
+	Addcuboid(CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])),true, stof(object[8]),true,false,DEFAULT_PHYSICS, DEFAULT_COLOUR));
+
 }
 
 void DataDrivenMap::AddMinionAreas(vector<std::string> object) {
