@@ -90,24 +90,19 @@ void Game::ResetGame()
 	//PhysicsEngine::Instance()->SetPaused(false);
 }
 
-void Game::ClaimPickup(Pickup * pickup)
+void Game::ClaimPickup(uint i)
 {
-	user->RequestPickup(getUserID(), pickup->GetName());
-}
-
-void Game::ClaimArea(CaptureArea * object)
-{
-	user->RequestCaptureArea(getUserID(), object->GetName());
+	user->RequestPickup(getUserID(), i);
 }
 
 void Game::SpawnMinion(MinionBase * minion)
 {
 	Map * m = static_cast<Map*>(GetMap());
 
-	//m->AddMinion(minion);
+	m->AddMinion(minion);
 
-	//if (getUserID() == 0)
-	//	((Server*)user)->SendMinionSpawn(m->GetMinionID(minion), minion->GetColour(), minion->Physics()->GetPosition());
+	if (getUserID() == 0)
+		((Server*)user)->SendMinionSpawn(m->GetMinionID(minion), minion->GetColour(), minion->Physics()->GetPosition());
 
 }
 
@@ -115,11 +110,11 @@ void Game::KillMinion(MinionBase * minion)
 {
 	Map * m = static_cast<Map*>(GetMap());
 
-	//uint minionID = m->GetMinionID(minion);
+	uint minionID = m->GetMinionID(minion);
 
 	if (getUserID() == 0)
 	{
-	/*	((Server*)user)->SendMinionDeath(minionID);*/
+		((Server*)user)->SendMinionDeath(minionID);
 	}
 }
 

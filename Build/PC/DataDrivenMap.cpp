@@ -176,16 +176,14 @@ void DataDrivenMap::AddPaintPools(vector<std::string> object) {
 	if (object[4] == "GREEN")	team = GREEN;
 	if (object[4] == "BLUE")	team = BLUE;
 	if (object[4] == "PINK")	team = PINK;
-	AddPickup(new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, to_string(activePickups)));
-	activePickups++;
+	AddGameObject(new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, object[5]));
 }
 
 void DataDrivenMap::AddPickups(vector<std::string> object) {
 
 	if (object[4] == "SPEED_BOOST")		type = SPEED_BOOST;
 	if (object[4] == "JUMP_BOOST")		type = JUMP_BOOST;
-	AddPickup(new Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, to_string(activePickups)));
-	activePickups++;
+	AddGameObject(new Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, object[5]));
 }
 
 void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
@@ -194,39 +192,56 @@ void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
 	if (object[4] == "PAINT_PISTOL")		weapType = PAINT_PISTOL;
 	if (object[4] == "AUTO_PAINT_LAUNCHER")	weapType = AUTO_PAINT_LAUNCHER;
 	if (object[4] == "PAINT_ROCKET")		weapType = PAINT_ROCKET;
-	AddPickup(new WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, to_string(activePickups), stof(object[6])));
-	activePickups++;
+	AddGameObject(new WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, object[5] , stof(object[6])));
 }
 
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
-	AddCaptureArea(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), to_string(activeCapture), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8])));
-	activeCapture++;
+	if (Game::Instance()->getUserID() == 0)
+	{
+		AddGameObject(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8])));
+	}
+	else
+	{
+		GameObject * ca = CommonUtils::BuildCuboidObject("CA", Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
+		ca->SetColour(Colour(stoi(object[8])));
+		AddGameObject(ca);
+	}
 }
 
 void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
+	if (Game::Instance()->getUserID() == 0)
+	{
+		Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, object[4]);
+		AddGameObject(pool);
+		CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[5]), stof(object[6]), stof(object[7])), object[4], Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
+		AddGameObject(capt);
+		static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
+	}
+	else
+	{
+		GameObject * pool = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
+		pool->SetColour(Colour(stoi(object[8])));
+		AddGameObject(pool);
 
-	Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, to_string(activePickups));
-	AddPickup(pool);
-	activePickups++;
-	CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[5]), stof(object[6]), stof(object[7])), to_string(activeCapture), Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
-	AddCaptureArea(capt);
-	activeCapture++;
-	static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
+		GameObject * ca = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
+		ca->SetColour(Colour(stoi(object[8])));
+		AddGameObject(ca);
+	}
+
 }
 
 void DataDrivenMap::AddCuboid(vector<std::string> object) {
 	GameObject* cube =  CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, stof(object[8]), true, false, DEFAULT_PHYSICS, DEFAULT_COLOUR);
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])),1));
-	Addcuboid(cube);
+	AddGameObject(cube);
 }
 
 void DataDrivenMap::AddGround(vector<std::string> object) {
 	GameObject* cube = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, 0, true, false, BIG_NODE, DEFAULT_COLOUR, MATERIALTYPE::Ground);
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 1));
-	Addcuboid(cube);
+	AddGameObject(cube);
 }
 
 void DataDrivenMap::AddMinionAreas(vector<std::string> object) {
-	AddCaptureArea(new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f,1.5f,1.5f), stoi(object[5])));
-	activeCapture++;
+	AddGameObject(new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f,1.5f,1.5f), stoi(object[5])));
 }

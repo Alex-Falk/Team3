@@ -33,6 +33,7 @@ void User::ReceiveAvatarUpdate(string data)
 
 	float life = stoi(splitData[4]);
 	bool inAir = stoi(splitData[5]);
+
 	if (playerID != userID)
 	{
 		Game::Instance()->GetPlayer(playerID)->SetLife(life);

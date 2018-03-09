@@ -196,7 +196,7 @@ bool CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) {
 			//check if player actually has enough life to take the point
 			if (((Avatar*)p->GetParent())->GetLife() >= ((Avatar*)p->GetParent())->GetMinLife() + (lifeToTake)) {
 				this->SetColour(((Avatar*)p->GetParent())->GetColour());
-				Game::Instance()->ClaimArea(this);
+				//Game::Instance()->ClaimArea(this->GetIdx());
 				((Avatar*)p->GetParent())->ChangeLife(-lifeToTake);
 			}
 			UpdatePercentage();
@@ -234,7 +234,7 @@ bool CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) {
 				}
 				if (playerScores[index] >= lifeReq) {
 					this->SetColour(((Minion*)p->GetParent())->GetColour());
-					Game::Instance()->ClaimArea(this);
+					//Game::Instance()->ClaimArea(this->GetIdx());
 				}
 			}	
 			UpdatePercentage();
@@ -270,7 +270,7 @@ bool CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index) {
 				}
 				if (playerScores[index] >= lifeReq) {
 					this->SetColour(((Projectile*)p->GetParent())->GetColour());
-					Game::Instance()->ClaimArea(this);
+					//Game::Instance()->ClaimArea(this->GetIdx());
 				}
 			}
 			UpdatePercentage();

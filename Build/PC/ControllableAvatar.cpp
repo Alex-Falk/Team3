@@ -180,7 +180,7 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 					p->SetActive(false);
 			}
 
-			Game::Instance()->ClaimPickup(p);
+			Game::Instance()->ClaimPickup(p->GetIdx());
 
 		}
 

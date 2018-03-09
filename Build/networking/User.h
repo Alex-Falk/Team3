@@ -6,12 +6,19 @@
 #include <ctime>
 #include "NetworkCommon.h"
 
-struct TempData {
+struct TempPlayerData {
 	Vector3 positions[4];
 	Vector3 linVelocities[4];
 	Vector3 angVelocities[4];
 	Vector3 accelerations[4];
 	float sizes[4];
+};
+
+struct TempObjData {
+	Vector3 pos;
+	Vector3 linVel;
+	Vector3 angVel;
+	Vector3 acc;
 };
 
 class User
@@ -23,7 +30,7 @@ protected:
 	int mapID = 0;
 	bool destroy = false;
 
-	TempData temps;
+	TempPlayerData temps;
 
 public:
 	User();
@@ -36,8 +43,7 @@ public:
 	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life, int inAir) = 0;
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir) = 0;
 
-	virtual void RequestPickup(uint ID, string uniqueName) {};
-	virtual void RequestCaptureArea(uint ID, string uniqueName) {};
+	virtual void RequestPickup(uint ID, uint objectID) {};
 
 	//--------------------------------------------------------------------------------------------//
 	// Receiving

@@ -8,24 +8,12 @@
 Map::~Map() 
 {
 	TextureManager::Instance()->RemoveAllTexture();
-	for (auto itr = pickups.begin(); itr != pickups.end(); ++itr)
-	{
-		(*itr)->SetToDestroy();
-	}
-	pickups.clear();
-
-	for (auto itr = captureAreas.begin(); itr != captureAreas.end(); ++itr)
-	{
-		(*itr)->SetToDestroy();
-	}
-	captureAreas.clear();
 
 	for (int i = 0; i < maxMinions; ++i)
 	{
 		minions[i]->SetToDestroy();
 		minions[i] = nullptr;
 	}
-	captureAreas.clear();
 };
 
 //--------------------------------------------------------------------------------------------//
@@ -47,7 +35,7 @@ void Map::onConnectToScene()
 				p->SetLife(50.0f);
 			}
 
-			this->AddGameObject(p->GetGameObject());
+			this->AddGameObject(p->GetGameObject(),true);
 			Game::Instance()->SetAvatar(i, p);
 
 			GraphicsPipeline::Instance()->AddPlayerRenderNode(Game::Instance()->GetPlayer(i)->GetGameObject()->Render()->GetChild());
@@ -64,16 +52,6 @@ void Map::OnInitializeScene() {
 	OnInitializeGUI();
 
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
-
-	if (pickups.size() > 0)
-	{
-		pickups.clear();
-	}
-
-	if (captureAreas.size() > 0)
-	{
-		captureAreas.clear();
-	}
 
 	for (int i = 0; i < maxMinions; ++i)
 	{
@@ -98,11 +76,6 @@ void Map::OnInitializeScene() {
 //--------------------------------------------------------------------------------------------//
 // Updating CaptureAreas Score
 //--------------------------------------------------------------------------------------------//
-
-void Map::Addcuboid(GameObject * cube) {
-	cuboid.push_back(cube);
-	AddGameObject(cube);
-}
 
 void Map::OnInitializeGUI()
 {
@@ -207,13 +180,8 @@ void Map::OnCleanupScene()
 	DeleteAllGameObjects();
 	TextureManager::Instance()->RemoveAllTexture();
 	GraphicsPipeline::Instance()->RemoveAllPlayerRenderNode();
-	captureAreas.clear();
 };
 
-void Map::AddPickup(Pickup * p) {
-	pickups.push_back(p);
-	AddGameObject(p);
-}
 void Map::TransferAndUpdateTimer()
 {
 	float t_time = Game::Instance()->GetTimeLeft();
@@ -233,10 +201,10 @@ void Map::TransferAndUpdateTimer()
 	}
 }
 
-void Map::AddCaptureArea(CaptureArea * ca) {
-	captureAreas.push_back(ca);
-	AddGameObject(ca);
-}
+//void Map::AddCaptureArea(CaptureArea * ca) {
+//	captureAreas.push_back(ca);
+//	AddGameObject(ca);
+//}
 
 void Map::AddMinion(MinionBase * m)
 {
@@ -245,7 +213,7 @@ void Map::AddMinion(MinionBase * m)
 		if (!minions[i])
 		{
 			minions[i] = m;
-			AddGameObject(m);
+			AddGameObject(m,true);
 			break;
 		}
 	}	
@@ -259,7 +227,7 @@ void Map::AddMinion(MinionBase * m, int location)
 	}
 
 	minions[location] = m;
-	AddGameObject(m);
+	AddGameObject(m,true);
 }
 
 void Map::RemoveMinion(MinionBase * m)
@@ -338,14 +306,20 @@ void Map::OnUpdateScene(float dt)
 	if (m_AccumTime > 1 / 60.0f)
 	{
 		perfMapObjects.BeginTimingSection();
-
-		for (int i = 0; i < this->m_vpObjects.size(); ++i)
+		for (int i = 0; i < this->mapConstantObjects.size(); ++i)
 		{
-			if (m_vpObjects[i])
+			if (mapConstantObjects[i])
 			{
-				m_vpObjects[i]->Update(dt);
+				mapConstantObjects[i]->Update(dt);
 			}
+		}
 
+		for (int i = 0; i < this->mapDynamicObjects.size(); ++i)
+		{
+			if (mapDynamicObjects[i])
+			{
+				mapDynamicObjects[i]->Update(dt);
+			}
 		}
 
 		perfMapObjects.EndTimingSection();

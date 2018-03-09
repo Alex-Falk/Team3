@@ -174,7 +174,7 @@ void Server::UpdateUser(float dt)
 				string data = GetPacketData(evnt);
 				PacketType type = FindType(data);
 				switch (type) {
-				case AVATAR_UPDATE:
+				case PLAYER_UPDATE:
 				{
 					size_t colonIdx = data.find_first_of(':');
 					size_t semicolonIdx = data.find_first_of(';');
@@ -235,45 +235,58 @@ void Server::UpdateUser(float dt)
 
 		if (Game::Instance()->IsRunning())
 		{
-			HandleRequests();
-			for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
+			accumTime += dt;
+			if (accumTime > 1 / 60.0f)
 			{
-				if (Game::Instance()->GetPlayer(i))
+				HandleRequests();
+				for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 				{
-					//SendSize(i);
-					SendAvatarUpdate(
-						i,
-						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition(),
-						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity(),
-						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity(),
-						Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration(),
-						Game::Instance()->GetPlayer(i)->GetLife(),
-						Game::Instance()->GetPlayer(i)->IsPlayerInAir()
-					);
+					if (Game::Instance()->GetPlayer(i))
+					{
+						//SendSize(i);
+						SendAvatarUpdate(
+							i,
+							Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition(),
+							Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetLinearVelocity(),
+							Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAngularVelocity(),
+							Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetAcceleration(),
+							Game::Instance()->GetPlayer(i)->GetLife(),
+							Game::Instance()->GetPlayer(i)->IsPlayerInAir()
+						);
+
+					}
+				}
+
+				Map * m = static_cast<Map*>(Game::Instance()->GetMap());
+
+				for (GameObject * go : m->GetConstantGameObjects())
+				{
+					if (go->Physics()->GetInverseMass() > 0.01f)
+					{
+						SendObjectUpdate(go);
+					}
 					
 				}
-			}
 
-			Map * m = static_cast<Map*>(Game::Instance()->GetMap());
-
-			/*MinionBase ** minions = m->GetMinions();
-			for (int i = 0; i < m->GetMaxMinions(); ++i)
-			{
-				if (minions[i])
+				MinionBase ** minions = m->GetMinions();
+				for (int i = 0; i < m->GetMaxMinions(); ++i)
 				{
-					SendMinionUpdate(
-						i,
-						minions[i]->GetColour(),
-						minions[i]->Physics()->GetPosition(),
-						minions[i]->Physics()->GetLinearVelocity(),
-						minions[i]->Physics()->GetAngularVelocity(),
-						minions[i]->Physics()->GetAcceleration(),
-						minions[i]->GetLife()
-					);
+					if (minions[i])
+					{
+						SendMinionUpdate(
+							i,
+							minions[i]->GetColour(),
+							minions[i]->Physics()->GetPosition(),
+							minions[i]->Physics()->GetLinearVelocity(),
+							minions[i]->Physics()->GetAngularVelocity(),
+							minions[i]->Physics()->GetAcceleration(),
+							minions[i]->GetLife()
+						);
+					}
 				}
-			}*/
 
-			SendScores();
+				SendScores();
+			}
 		}
 	}
 
@@ -284,22 +297,12 @@ void Server::Disconnect()
 	server->Release();
 }
 
-void Server::RequestPickup(uint ID, string uniqueName)
+void Server::RequestPickup(uint ID, uint objectID)
 {
 	UserCaptureRequest r;
 	r.userID = ID;
-	r.objectID = stoi(uniqueName);
+	r.objectID = objectID;
 	r.type = PICKUP;
-
-	requests.push(r);
-}
-
-void Server::RequestCaptureArea(uint ID, string uniqueName)
-{
-	UserCaptureRequest r;
-	r.userID = ID;
-	r.objectID = stoi(uniqueName);
-	r.type = PAINTABLE_OBJECT;
 
 	requests.push(r);
 }
@@ -324,41 +327,30 @@ void Server::HandleRequests()
 				to_string(r.userID) + ";" +
 				to_string(r.objectID) + ",";
 
-			if (m->GetPickup(r.objectID)->GetActive())
-			{
-				data = data + "0";
-				if(userID == 0)
+			Pickup * pickup = static_cast<Pickup*>(m->GetGameObject(r.objectID));
 
-				m->GetPickup(r.objectID)->SetActive(false);
-			}
-			else
+			if (pickup)
 			{
-				data = data + "1";
-			}
+				if (pickup->GetActive())
+				{
+					data = data + "0";
+					if (userID == 0)
 
-			if (r.userID != userID)
-			{
-				ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-				enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
-			}
+						pickup->SetActive(false);
+				}
+				else
+				{
+					data = data + "1";
+				}
 
+				if (r.userID != userID)
+				{
+					ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
+					enet_peer_send(&server->m_pNetwork->peers[r.userID - 1], 0, packet);
+				}
+			}
 		}
-		else if (r.type = PAINTABLE_OBJECT)
-		{
-			data = to_string(MAP_OBJECT_REQUEST) + ":" +
-				to_string(r.userID) + ";" +
-				to_string(r.objectID);
-
-			m->GetCaptureArea(r.objectID)->SetColour(Colour(r.userID));
-
-			ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-			enet_host_broadcast(server->m_pNetwork, 0, packet);
-		}
-
 		requests.pop();
-
-
-
 	}
 }
 
@@ -436,11 +428,26 @@ void Server::SendGameStart(uint mapID)
 
 }
 
+void Server::SendObjectUpdate(GameObject * go)
+{
+	string data;
+
+	data = to_string(OBJECT_UPDATE) + ":" +
+		to_string(go->GetIdx()) + ";" +
+		Vector3ToString(go->Physics()->GetPosition()) + "," +
+		Vector3ToString(go->Physics()->GetLinearVelocity()) + "," +
+		Vector3ToString(go->Physics()->GetAngularVelocity()) + "," +
+		Vector3ToString(go->Physics()->GetAcceleration());
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
+
 void Server::SendAvatarUpdate(uint ID,Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life, int inAir)
 {
 	string data;
 	
-	data = to_string(AVATAR_UPDATE) + ":" +
+	data = to_string(PLAYER_UPDATE) + ":" +
 		to_string(ID) + ";" +
 		Vector3ToString(pos) + "," +
 		Vector3ToString(linVel) + "," +

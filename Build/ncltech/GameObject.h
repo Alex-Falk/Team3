@@ -22,6 +22,7 @@ position/orientation each frame.
 #include <vector>
 #include <functional>
 #include "CommonMeshes.h"
+#include <PC\GamePlay.h>
 
 class Scene;
 class PhysicsEngine;
@@ -48,7 +49,7 @@ public:
 	{
 		RegisterPhysicsToRenderTransformCallback();
 		SetPhysics(physicsNde);
-		physicsNde->SetName(name);
+		//physicsNde->SetName(name);
 	}
 
 	virtual ~GameObject()
@@ -72,6 +73,12 @@ public:
 
 	inline const Scene* GetScene() const	{ return scene; }
 	inline		 Scene* GetScene()			{ return scene; }
+
+	inline uint GetIdx() { return index; }
+	inline void SetIdx(uint i) { index = i; }
+
+	inline bool IsDynamic() { return isDynamic; }
+	inline void SetDynamic(bool d) { isDynamic = d; }
 
 	bool GetDestroy() { return destroy; }
 	void SetToDestroy() { destroy = true; }
@@ -128,7 +135,11 @@ public:
 		}
 	}
 
-
+	inline void SetColour(Colour c)
+	{
+		renderNode->SetBaseColor(EnumToVectorColour(c));
+		renderNode->SetChildBaseColor(EnumToVectorColour(c));
+	}
 	//---------- SOUND (?) ------------>
 
 
@@ -173,4 +184,6 @@ protected:
 
 	bool						isCollided = false;
 	bool						siblingsCollide = false;
+	uint						index = 0;
+	bool						isDynamic = false;
 };

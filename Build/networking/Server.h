@@ -78,8 +78,7 @@ public:
 	virtual void StartGame(uint mapID = 0);
 	void UpdateUser(float dt);
 	void Disconnect();
-	virtual void RequestPickup(uint ID, string uniqueName);
-	virtual void RequestCaptureArea(uint ID, string uniqueName);
+	virtual void RequestPickup(uint ID, uint objectID);
 	void HandleRequests();
 	std::string GetPacketData(const ENetEvent & evnt)
 	{
@@ -106,6 +105,7 @@ public:
 	void SendPlayerNames();
 	void SendGameStart(uint mapID);
 	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc,float life, int inAir);
+	void SendObjectUpdate(GameObject * go);
 	void SendMinionSpawn(uint minionID, Colour c, Vector3 pos);
 	void SendMinionUpdate(uint minionID, Colour c, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life);
 	void SendMinionDeath(uint minionID);
@@ -118,5 +118,7 @@ protected:
 	// Stored Variables
 	//--------------------------------------------------------------------------------------------//
 	std::queue<UserCaptureRequest> requests;
+
+	float accumTime = 0.0f;
 };
 

@@ -59,8 +59,7 @@ public:
 	void SendUsername();
 	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life, int inAir);
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
-	void RequestPickup(uint ID, string uniqueName);
-	void RequestCaptureArea(uint ID, string uniqueName);
+	void RequestPickup(uint ID, uint objectID);
 
 	virtual void UpdateName() { SendUsername(); };
 
@@ -70,6 +69,7 @@ public:
 
 	void ReceiveNumberUsers(string data);
 	void ReceiveUserNames(string data);
+	void ReceiveObjectUpdate(string data);
 	void ReceiveScores(string data);
 	void ReceiveMapIndex(string data);
 	void ReceiveMapChange(string data);
@@ -78,12 +78,14 @@ public:
 	void ReceiveMinionUpdate(string data);
 	void ReceiveMinionDeath(string data);
 
+	void DeadReckonObject(GameObject * go, TempObjData data, float dt);
 protected:
 	//--------------------------------------------------------------------------------------------//
 	// Stored Variables
 	//--------------------------------------------------------------------------------------------//
 	NetworkBase network;
 	ENetPeer* serverConnection;
+	float accumTime = 0.0f;
 
 
 };

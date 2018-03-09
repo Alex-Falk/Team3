@@ -430,12 +430,14 @@ void GraphicsPipeline::RenderScene()
 		//Build shadowmaps
 		perfShadow.BeginTimingSection();
 		RenderShadow();
-		perfShadow.EndTimingSection();
+		perfShadow.EndTimingSection();
+
 
 		//Render scene to screen fbo
 		perfObjects.BeginTimingSection();
 		RenderObject();
-		perfObjects.EndTimingSection();
+		perfObjects.EndTimingSection();
+
 
 		//render the path to texture
 		RenderPath();
@@ -443,18 +445,22 @@ void GraphicsPipeline::RenderScene()
 		//post process and present
 		perfPostProcess.BeginTimingSection();
 		RenderPostprocessAndPresent();
-		perfPostProcess.EndTimingSection();
+		perfPostProcess.EndTimingSection();
+
 
 		//draw the minimap on screen
-		perfScoreandMap.BeginTimingSection();
+		perfScoreandMap.BeginTimingSection();
+
 		if (isMainMenu == false) {
 			CountScore();
 		}
+		perfScoreandMap.EndTimingSection();
 
 		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
 			DrawMiniMap();
 		}
-		perfScoreandMap.EndTimingSection();
+		
+
 
 		//NCLDEBUG - Text Elements (aliased)
 		if (isMainMenu == false) {
@@ -1080,28 +1086,46 @@ void GraphicsPipeline::DrawMiniMap() {
 	int pickupColours[20];
 	//reset count
 	count = 0;
-	for (int i = 0; i < map->GetPickups().size(); ++i) {
-		Pickup* p = map->GetPickup(i);
-		if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
-			pickupTypes[count] = p->GetPickupType();
-			if (pickupTypes[count] == PickupType::PAINTPOOL) {
-				pickupColours[count] = ((PaintPool*)map->GetPickups()[i])->GetColour();
+
+	vector<GameObject*> gameobjects = map->GetConstantGameObjects();
+
+	for (GameObject * go : gameobjects)
+	{
+		if (go)
+		{
+			if (go->Physics())
+			{
+				switch (go->Physics()->GetType())
+				{
+				case PICKUP:
+				{
+					Pickup* p = static_cast<Pickup*>(go);
+					if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
+						pickupTypes[count] = p->GetPickupType();
+						if (pickupTypes[count] == PickupType::PAINTPOOL) {
+							pickupColours[count] = ((PaintPool*)p)->GetColour();
+						}
+						Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
+						pickupPositions[count * 2] = v.x;
+						pickupPositions[(count * 2) + 1] = v.y;
+						count++;
+					}
+					break;
+				}
+				case PAINTABLE_OBJECT:
+				{
+					CaptureArea * c = static_cast<CaptureArea*>(go);
+					pickupTypes[count] = 4;
+					pickupColours[count] = c->GetColour();
+					Vector2 v = VectorToMapCoord(c->Physics()->GetPosition());
+					pickupPositions[count * 2] = v.x;
+					pickupPositions[(count * 2) + 1] = v.y;
+					count++;
+					break;
+				}
+				}
 			}
-			Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
-			pickupPositions[count * 2] = v.x;
-			pickupPositions[(count * 2) + 1] = v.y;
-			count++;
 		}
-	}
-	//capturable object
-	for (int i = 0; i < map->GetCaptureAreaVector().size(); i++) {
-		//four is one more than the highest number
-		pickupTypes[count] = 4;
-		pickupColours[count] = map->GetCaptureAreaColour(i);
-		Vector2 v = VectorToMapCoord(map->GetCaptureAreaPos(i));
-		pickupPositions[count * 2] = v.x;
-		pickupPositions[(count * 2) + 1] = v.y;
-		count++;
 	}
 
 	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);

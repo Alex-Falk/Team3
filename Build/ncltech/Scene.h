@@ -123,13 +123,25 @@ public:
 	// Add GameObject to the scene list
 	//    - All added game objects are managed by the scene itself, firing
 	//		OnRender and OnUpdate functions automatically
-	void AddGameObject(GameObject* game_object)
+	void AddGameObject(GameObject* game_object, bool dynamic = false)
 	{
+
 		if (game_object)
 		{
 			if (game_object->scene) game_object->scene->RemoveGameObject(game_object);				
 
-			m_vpObjects.push_back(game_object);
+			if (dynamic)
+			{
+				game_object->SetIdx(mapDynamicObjects.size());
+				game_object->SetDynamic(true);
+				mapDynamicObjects.push_back(game_object);
+			}
+			else
+			{
+				game_object->SetIdx(mapConstantObjects.size());
+				mapConstantObjects.push_back(game_object);
+			}
+
 			game_object->scene = this;
 			game_object->OnAttachedToScene();
 
@@ -138,13 +150,40 @@ public:
 		}
 	}
 
+	vector<GameObject*> GetConstantGameObjects()
+	{
+		return mapConstantObjects;
+	}
+
+	GameObject* GetGameObject(uint idx)
+	{
+		if (idx < mapConstantObjects.size())
+		{
+			if (mapConstantObjects[idx]->index == idx)
+			{
+				return mapConstantObjects[idx];
+			}
+			else
+			{
+				for (GameObject * go : mapConstantObjects)
+				{
+					if (go->GetIdx() == idx)
+					{
+						return go;
+					}
+				}
+			}
+		}
+		return nullptr;
+	}
+
 	void AddMultiGameObject(MultiGameObject* game_object)
 	{
 		if (game_object)
 		{
 			//if (game_object->scene) game_object->scene->RemoveGameObject(game_object);
 
-			m_vpObjects.push_back(game_object);
+			mapConstantObjects.push_back(game_object);
 			game_object->scene = this;
 			game_object->OnAttachedToScene();
 
@@ -164,16 +203,33 @@ public:
 	//		  it will not call any delete functions.
 	void RemoveGameObject(GameObject* game_object)
 	{
-		if (game_object && game_object->scene == this)
+		if (!game_object->IsDynamic())
 		{
-			if (game_object->renderNode) GraphicsPipeline::Instance()->RemoveRenderNode(game_object->renderNode);
-			if (game_object->physicsNode) PhysicsEngine::Instance()->RemovePhysicsObject(game_object->physicsNode);
+			if (game_object && game_object->scene == this)
+			{
+				if (game_object->renderNode) GraphicsPipeline::Instance()->RemoveRenderNode(game_object->renderNode);
+				if (game_object->physicsNode) PhysicsEngine::Instance()->RemovePhysicsObject(game_object->physicsNode);
 
-			m_vpObjects.erase(std::remove(m_vpObjects.begin(), m_vpObjects.end(), game_object), m_vpObjects.end());
-			game_object->OnDetachedFromScene();
-			game_object->scene = NULL;
-			SAFE_DELETE(game_object);
+				mapConstantObjects.erase(std::remove(mapConstantObjects.begin(), mapConstantObjects.end(), game_object), mapConstantObjects.end());
+				game_object->OnDetachedFromScene();
+				game_object->scene = NULL;
+				SAFE_DELETE(game_object);
+			}
 		}
+		else
+		{
+			if (game_object && game_object->scene == this)
+			{
+				if (game_object->renderNode) GraphicsPipeline::Instance()->RemoveRenderNode(game_object->renderNode);
+				if (game_object->physicsNode) PhysicsEngine::Instance()->RemovePhysicsObject(game_object->physicsNode);
+
+				mapDynamicObjects.erase(std::remove(mapDynamicObjects.begin(), mapDynamicObjects.end(), game_object), mapDynamicObjects.end());
+				game_object->OnDetachedFromScene();
+				game_object->scene = NULL;
+				SAFE_DELETE(game_object);
+			}
+		}
+
 	}
 
 
@@ -182,12 +238,21 @@ public:
 	//     or NULL if none can be found.
 	GameObject* FindGameObject(const std::string& name)
 	{
-		for (GameObject* obj : m_vpObjects)
+		for (GameObject* obj : mapConstantObjects)
 		{
 			if (obj->GetName() == name)
 				return obj;
 		}
 		return NULL;
+	}
+
+	GameObject* FindDynamicGameObject(const std::string& name)
+	{
+		for (GameObject* obj : mapDynamicObjects)
+		{
+			if (obj->GetName() == name)
+				return obj;
+		}
 	}
 
 	// The friendly name associated with this scene instance
@@ -235,16 +300,22 @@ protected:
 	{
 		m_UpdateCallbacks.clear();
 
-		for (auto obj : m_vpObjects)
+		for (auto obj : mapConstantObjects)
 			delete obj;
 		
-		m_vpObjects.clear();
+		mapConstantObjects.clear();
+
+		for (auto obj : mapDynamicObjects)
+			delete obj;
+
+		mapDynamicObjects.clear();
 	}
 
 
 protected:
 	std::string					m_SceneName;
-	std::vector<GameObject*>	m_vpObjects;
+	std::vector<GameObject*>	mapConstantObjects;
+	std::vector<GameObject*>	mapDynamicObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
 
 	// Timing Variables

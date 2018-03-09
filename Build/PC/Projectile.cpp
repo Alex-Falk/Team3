@@ -155,7 +155,7 @@ void Projectile::Explode() {
 		Vector3 direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
 		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, 0.05f, 5.0f, 3.0f);
 
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle);
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle,1);
 	
 	}
 
@@ -163,7 +163,7 @@ void Projectile::Explode() {
 	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 3.0f, 5.0f, SPRAY, 4, "Spray");
 	explosion->UnregisterPhysicsToRenderTransformCallback();
 	explosion->Render()->SetTransform(Matrix4::Translation(Vector3{ 1000.f,1000.f,1000.f }));
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(explosion);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(explosion,1);
 	
 	//move above the arena so we don't see the sphere for the frame it exists
 	Physics()->SetPosition(Physics()->GetPosition() + Vector3{ 0,200,0 }); 

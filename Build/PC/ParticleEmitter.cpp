@@ -34,7 +34,7 @@ void ParticleEmitter::Update(float dt)
 		Vector3 direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * dir * 10;
 
 		Particle * particle = new Particle(col, pos, direction, 0.05f);
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle);
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle,1);
 
 		t = 0;
 	}

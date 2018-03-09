@@ -94,8 +94,8 @@ public:
 	void ResetGame();
 	void DetermineWinner();
 
-	void ClaimPickup(Pickup * pickup);
-	void ClaimArea(CaptureArea *object);
+	void ClaimPickup(uint i);
+	//void ClaimArea(uint i);
 
 	void SpawnMinion(MinionBase * minion);
 	void KillMinion(MinionBase * minion);

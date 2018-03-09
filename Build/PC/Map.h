@@ -34,12 +34,6 @@ protected:
 	}
 
 	inline Vector2 GetMapDimensions() { return dimensions; }
-
-	//pickup stuff
-	vector<Pickup*> pickups;
-	//capture areas
-	vector<CaptureArea*> captureAreas;
-	vector<GameObject*> cuboid;
 	
 	static const int maxMinions = 20;
 	MinionBase * minions[maxMinions];
@@ -79,17 +73,17 @@ public:
 	//--------------------------------------------------------------------------------------------//
 
 	//-PICKUPS-//
-	void AddPickup(Pickup * p);
+	//void AddPickup(Pickup * p);
 
-	Pickup * GetPickup(int i)					{ return pickups[i]; }
-	vector<Pickup*> GetPickups()				{ return pickups; }
+	//Pickup * GetPickup(int i)					{ return pickups[i]; }
+	//vector<Pickup*> GetPickups()				{ return pickups; }
 
 	//-CAPTURE AREAS-//
-	void AddCaptureArea(CaptureArea * ca);
-	CaptureArea * GetCaptureArea(int i)				{ return captureAreas[i]; }
-	Colour GetCaptureAreaColour(uint i)				{ return captureAreas[i]->GetColour(); }
-	Vector3 GetCaptureAreaPos(uint i)				{ return captureAreas[i]->Physics()->GetPosition(); }
-	vector<CaptureArea*> GetCaptureAreaVector()		{ return captureAreas; }
+	//void AddCaptureArea(CaptureArea * ca);
+	//CaptureArea * GetCaptureArea(int i)				{ return captureAreas[i]; }
+	//Colour GetCaptureAreaColour(uint i)				{ return captureAreas[i]->GetColour(); }
+	//Vector3 GetCaptureAreaPos(uint i)				{ return captureAreas[i]->Physics()->GetPosition(); }
+	//vector<CaptureArea*> GetCaptureAreaVector()		{ return captureAreas; }
 
 	//-MINIONS-//
 	void AddMinion(MinionBase * m);
@@ -101,7 +95,7 @@ public:
 
 	int GetMaxMinions() { return maxMinions; }
 
-	void Addcuboid(GameObject * cube);
+	//void Addcuboid(GameObject * cube);
 
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars
