@@ -40,6 +40,10 @@
  .%                   #@@                                 *                              @         
   @.                                                                                   @,@    
 */
+
+// Additions by Alex Falk.
+
+
 #include "DataDrivenMap.h"
 #include "WeaponPickup.h"
 #include "PaintPool.h"
@@ -56,8 +60,6 @@
 void DataDrivenMap::OnInitializeScene()
 {
 	float m_AccumTime = 0;
-	activePickups = 0;
-	activeCapture = 0;
 	numemptyline = 0;
 
 	ReadFile();
@@ -202,9 +204,12 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 	}
 	else
 	{
+		//-Alex Falk----------------------------------------------------------//
+		// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
 		GameObject * ca = CommonUtils::BuildCuboidObject("CA", Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
 		ca->SetColour(Colour(stoi(object[8])));
 		AddGameObject(ca);
+		//--------------------------------------------------------------------//
 	}
 }
 
@@ -219,6 +224,8 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 	}
 	else
 	{
+		//-Alex Falk----------------------------------------------------------//
+		// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
 		GameObject * pool = CommonUtils::BuildCuboidObject(
 			object[4], 
 			Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
@@ -243,6 +250,7 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 			DEFAULT_PHYSICS,
 			DEFAULT_COLOUR);
 		AddGameObject(ca);
+		//--------------------------------------------------------------------//
 	}
 
 }

@@ -13,6 +13,7 @@ automatically update the object's world transform based off it's physical
 position/orientation each frame.
 
 *//////////////////////////////////////////////////////////////////////////////
+// Adapted by Alex Falk
 #pragma once
 #include <nclgl\Matrix4.h>
 #include <nclgl\RenderNode.h>
@@ -134,12 +135,15 @@ public:
 			if (scene) GraphicsPipeline::Instance()->AddRenderNode(node);
 		}
 	}
-
+	
+	//-Alex Falk----------------------------------------------------------//
 	inline void SetColour(Colour c)
 	{
 		renderNode->SetBaseColor(EnumToVectorColour(c));
 		renderNode->SetChildBaseColor(EnumToVectorColour(c));
 	}
+	//--------------------------------------------------------------------//
+
 	//---------- SOUND (?) ------------>
 
 
@@ -183,6 +187,8 @@ protected:
 	PhysicsNode*				physicsNode;
 
 	bool						isCollided = false;
+
+	//Alex Falk
 	bool						siblingsCollide = false;
 	uint						index = 0;
 	bool						isDynamic = false;

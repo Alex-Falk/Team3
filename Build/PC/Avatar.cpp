@@ -20,6 +20,7 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"         
 // Nikos Fragkas 05/02/2018
+// Extended by Alex Falk
 
 
 
@@ -299,7 +300,7 @@ void Avatar::Spray()
 			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 
-			// Send over network
+			// Alex Falk - Required for networking
 			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
 		}
 	}
@@ -323,7 +324,7 @@ void Avatar::ShootRocket()
 
 		ShootRocket(Physics()->GetPosition(), direction);
 
-		// Send over network
+		// Alex Falk - Required for networking
 		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 	}
 }
@@ -345,6 +346,7 @@ void Avatar::ShootProjectile()
 	}
 }
 
+//-Alex Falk----------------------------------------------------------//
 void Avatar::Spray(Vector3 pos, Vector3 dir)
 {
 	Projectile * spray = new Projectile(col, colour, pos, dir, 0.15f, 5.0f, SPRAY, 1, "Spray");
@@ -363,6 +365,7 @@ void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
 	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
 }
+//--------------------------------------------------------------------//
 
 void Avatar::ManageWeapons() 
 {

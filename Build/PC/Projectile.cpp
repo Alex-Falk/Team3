@@ -1,5 +1,5 @@
 //Michael Davis 14/02/2018
-
+// Additions + Bugfixes by Alex Falk
 
 #include "Avatar.h"
 #include "Explosion.h"
@@ -147,6 +147,9 @@ void Projectile::Explode() {
 	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(3.0f, 3.0f, 3.0f))));
 	int randPitch;
 	int randYaw;
+	
+	//-Alex Falk----------------------------------------------------------//
+	// Particle Effect on rocket explosion
 	for (uint i = 0; i < 60; ++i)
 	{
 		randPitch = rand() % 180;
@@ -156,8 +159,8 @@ void Projectile::Explode() {
 		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, 0.05f, 5.0f, 3.0f);
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle,1);
-	
 	}
+	//--------------------------------------------------------------------//
 
 
 	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 3.0f, 5.0f, SPRAY, 4, "Spray");

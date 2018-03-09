@@ -29,7 +29,6 @@ Description:
 #pragma once
 
 #include "GameObject.h"
-#include "MultiGameObject.h"
 #include "PhysicsEngine.h"
 #include <nclgl\NCLDebug.h>
 #include <nclgl\TSingleton.h>
@@ -123,6 +122,8 @@ public:
 	// Add GameObject to the scene list
 	//    - All added game objects are managed by the scene itself, firing
 	//		OnRender and OnUpdate functions automatically
+
+	//-Alex Falk----------------------------------------------------------//
 	void AddGameObject(GameObject* game_object, bool dynamic = false)
 	{
 
@@ -149,6 +150,7 @@ public:
 			if (game_object->physicsNode) PhysicsEngine::Instance()->AddPhysicsObject(game_object->physicsNode);
 		}
 	}
+	//--------------------------------------------------------------------//
 
 	vector<GameObject*> GetConstantGameObjects()
 	{
@@ -175,27 +177,6 @@ public:
 			}
 		}
 		return nullptr;
-	}
-
-	void AddMultiGameObject(MultiGameObject* game_object)
-	{
-		if (game_object)
-		{
-			//if (game_object->scene) game_object->scene->RemoveGameObject(game_object);
-
-			mapConstantObjects.push_back(game_object);
-			game_object->scene = this;
-			game_object->OnAttachedToScene();
-
-			if (game_object->renderNode) GraphicsPipeline::Instance()->AddRenderNode(game_object->renderNode);
-			if (game_object->physicsNodes[0]) {
-				for (std::vector<PhysicsNode*>::iterator it = game_object->physicsNodes.begin()
-					; it != game_object->physicsNodes.end(); ++it)
-				{
-					PhysicsEngine::Instance()->AddPhysicsObject(*it);
-				}
-			}
-		}
 	}
 
 	// Remove GameObject from the scene list

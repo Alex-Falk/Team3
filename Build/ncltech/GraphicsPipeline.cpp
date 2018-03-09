@@ -452,16 +452,16 @@ void GraphicsPipeline::RenderScene()
 		//draw the minimap on screen
 		perfScoreandMap.BeginTimingSection();
 
-		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
-			DrawMiniMap();
-		}
-
-		if (accumTime > 1.0f)
+		if (accumTime > 0.1f)
 		{
 			if (isMainMenu == false) {
 				CountScore();
 			}
 			accumTime = 0.0f;
+		}
+
+		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
+			DrawMiniMap();
 		}
 
 

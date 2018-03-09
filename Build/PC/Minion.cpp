@@ -1,4 +1,5 @@
 //Michael Davis 16/02/2018
+//Adapted and split up by Alex Falk (necessary for Netwokring functionality)
 #include "Minion.h"
 #include "MinionStates.h"
 #include "Game.h" 

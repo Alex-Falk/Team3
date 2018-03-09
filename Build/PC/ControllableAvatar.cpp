@@ -7,7 +7,7 @@
 //  .8P  d88'     8888888888P      Y8888888888     `88b  Y8.
 // d8' .d8'       `Y88888888'      `88888888P'       `8b. `8b
 //.8P .88P            """"            """"            Y88. Y8.
-//88  888                 Nick Bedford                 888  88
+//88  888                 Nick Bedford                 888  88		AND			Nikos Fragkas
 //88  888           ControllableAvatar Class           888  88
 //88  888.        ..       13/02/2018       ..        .888  88
 //`8b `88b,     d8888b.od8bo.      .od8bo.d8888b     ,d88' d8'
@@ -19,6 +19,8 @@
 //          `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"      
+
+// Additions by Alex Falk, Phillip Beck
 
 #include "ControllableAvatar.h"
 #include <ncltech\SphereCollisionShape.h>
@@ -180,6 +182,7 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 					p->SetActive(false);
 			}
 
+			// Alex - needed for Networking
 			Game::Instance()->ClaimPickup(p->GetIdx());
 
 		}
