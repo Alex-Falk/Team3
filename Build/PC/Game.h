@@ -148,5 +148,5 @@ private:
 	//--------------------------------------------------------------------------------------------//	
 	PerfTimer perfNetwork;
 	float time = 0.0f;
-	float gameLength = 30.0f;
+	float gameLength = 180.0f;
 };
