@@ -62,6 +62,10 @@ vector<string> split_string(string s, char d) {
 			chars.push_back((*it));
 		}
 	}
+	else
+	{
+		chars.push_back(s);
+	}
 
 	return chars;
 }

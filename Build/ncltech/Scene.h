@@ -84,16 +84,16 @@ public:
 	//	   michael davis: projectiles delete after 10 seconds
 	virtual void onConnectToScene() {}
 	virtual void OnUpdateScene(float dt) {
-		vector<GameObject*> tempVec;
-		for (int i = 0; i < m_vpObjects.size(); i++) {
-			m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
-			if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE || m_vpObjects[i]->Physics()->GetType() == SPRAY) {
-				if (m_vpObjects[i]->GetTimeInScene() > 10.0f) {
-					m_vpObjects[i]->SetToDestroy();
-					//tempVec.push_back(m_vpObjects[i]);
-				}
-			}
-		}
+		//vector<GameObject*> tempVec;
+		//for (int i = 0; i < m_vpObjects.size(); i++) {
+		//	m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
+		//	if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE || m_vpObjects[i]->Physics()->GetType() == SPRAY) {
+		//		if (m_vpObjects[i]->GetTimeInScene() > 10.0f) {
+		//			m_vpObjects[i]->SetToDestroy();
+		//			//tempVec.push_back(m_vpObjects[i]);
+		//		}
+		//	}
+		//}
 		//for (int i = 0; i < tempVec.size(); i++) {
 		//	RemoveGameObject(tempVec[i]);
 		//}

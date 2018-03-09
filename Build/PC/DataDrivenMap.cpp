@@ -33,17 +33,9 @@ void DataDrivenMap::OnUpdateScene(float dt)
 {
 	perfMapObjects.UpdateRealElapsedTime(dt);
 	Map::OnUpdateScene(dt);
-	for (uint i = 0; i < pickups.size(); ++i)
-	{
-		if (GetPickups()[i])
-		{
-			GetPickups()[i]->Update(dt);
-		}
-	}
+
 	perfMapObjects.BeginTimingSection();
-	//if (mc) {
-	//	mc->Update(dt);
-	//}
+
 }
 
 //--------------------------------------------------------------------------------------------//
@@ -60,6 +52,7 @@ void DataDrivenMap::ReadFile() {
 		(std::istreambuf_iterator<char>()));
 	lines = GetLines(file);
 	cout << "file ok";
+	ifs.close();
 }
 
 void DataDrivenMap::Buildmap() {

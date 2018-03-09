@@ -61,7 +61,7 @@ void MinionStateWander::Execute(Minion* pMinion)
 		{
 			pMinion->ChangeState(MinionStateEscapeRocket::GetInstance());
 		}
-		else if (pMinion->DistanceToClosestFriendlySQ() <= pMinion->GetDetectionRadiusSQ() && pMinion->HealthOfClosestFriendly() <= pMinion->GetAllyHealPursueLimit())
+		else if (pMinion->DistanceToClosestFriendlySQ() <= pMinion->GetDetectionRadiusSQ())
 		{
 			pMinion->ChangeState(MinionStateHealFriendlyPlayer::GetInstance());
 		}

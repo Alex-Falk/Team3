@@ -137,21 +137,10 @@
 
 #pragma once
 
-#include <nclgl\NCLDebug.h>
 #include <ncltech\Scene.h>
-#include <ncltech\SceneManager.h>
-#include <ncltech\PhysicsEngine.h>
-#include <ncltech\DistanceConstraint.h>
-#include <ncltech\CommonUtils.h>
-#include <ncltech\TextureManager.h> 
-#include "GamePlay.h"
-#include "Pickup.h"
-#include "Avatar.h"
-#include "Game.h"
-#include "AudioSystem.h"
 #include <cstring>
-#include "Map.h"
 
+class Avatar;
 class MainMenu : public Scene
 {
 private:
@@ -245,16 +234,16 @@ public:
 	void OnEnableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(true); }
 	void OnDisableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(false); }
 	//Slider function
-	void onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
-	void onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
-	void onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
+	void onMastervolumeChanged();
+	void onGameSoundvolumeChanged();
+	void onMusicvolumeChanged();
 	void onCameraSensitivityChanged();
 	void onEnableBloomButtonClicked();
 	void onDisableBloomButtonClicked();
 
 
 	//3. create game menu buttons
-	void onStartGameClicked() { Game::Instance()->StartGame(nextMapID); GUIsystem::Instance()->SetIsTyping(false); }
+	void onStartGameClicked();
 	void onMap1selected();
 	void onMap2selected();
 	void onMap3selected();
@@ -287,9 +276,7 @@ public:
 	void HideConnectionMenu();
 
 	//Quit the whole program cleanly
-	void Quit() {
-		SceneManager::Instance()->SetExitButtonClicked(true);
-	}
+	void Quit();
 
 	//Text input helper function
 	void TextInputHelper();

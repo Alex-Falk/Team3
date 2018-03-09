@@ -1,3 +1,8 @@
+#include <ncltech\SceneManager.h>
+#include <ncltech\CommonUtils.h>
+#include "AudioSystem.h"
+#include "Game.h"
+#include "Avatar.h"
 #include "MainMenu.h"
 
 string temp[4] = { "", "", "", "" };
@@ -42,7 +47,7 @@ void MainMenu::OnInitializeScene()
 
 	this->AddGameObject(ground);
 
-	player = new Avatar(Vector3(0.0, 1.0, 0.0), START_COLOUR, 0, 1.0f);
+	player = new Avatar(Vector3(0.0, 1.0, 0.0), GREEN, 0, 1.0f);
 
 	this->AddGameObject(player->GetGameObject());
 
@@ -72,6 +77,12 @@ void MainMenu::TextInputHelper()
 		}
 		GUIsystem::Instance()->sendInfo = false;
 	}
+}
+
+void MainMenu::onStartGameClicked() 
+{ 
+	Game::Instance()->StartGame(nextMapID); 
+	GUIsystem::Instance()->SetIsTyping(false); 
 }
 
 void MainMenu::OnUpdateScene(float dt)
@@ -698,8 +709,7 @@ void MainMenu::onConnectButtonClicked()
 
 		if (!Game::Instance()->GetUser())
 		{
-			//TODO: Set User Name and Sent to the server
-			Game::Instance()->setClient(ip);
+			Game::Instance()->SetClient(ip);
 		}
 	}
 	HideConnectionMenu();
@@ -868,3 +878,10 @@ void MainMenu::ShowOptionMenu1()
 	disableBloomButton->setVisible(true);
 }
 
+void MainMenu::onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
+void MainMenu::onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
+void MainMenu::onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
+
+void MainMenu::Quit() {
+	SceneManager::Instance()->SetExitButtonClicked(true);
+}

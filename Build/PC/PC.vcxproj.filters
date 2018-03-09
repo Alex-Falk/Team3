@@ -141,9 +141,6 @@
     <ClInclude Include="Minion.h">
       <Filter>GamePlay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="MinionCamp.h">
-      <Filter>GamePlay\Header</Filter>
-    </ClInclude>
     <ClInclude Include="UserInterface.h">
       <Filter>GUI/Post process</Filter>
     </ClInclude>
@@ -180,6 +177,12 @@
     <ClInclude Include="PostProcess.h">
       <Filter>GUI/Post process</Filter>
     </ClInclude>
+    <ClInclude Include="MinionBase.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MinionCaptureArea.h">
+      <Filter>GamePlay\Header</Filter>
+    </ClInclude>
     <ClInclude Include="MultiPaintPool.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
@@ -188,6 +191,12 @@
     </ClInclude>
     <ClInclude Include="DataDrivenMap.h">
       <Filter>Maps\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapOne.h">
+      <Filter>Maps\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
+      <Filter>Gameplay\Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -245,9 +254,6 @@
     <ClCompile Include="Minion.cpp">
       <Filter>GamePlay\Source</Filter>
     </ClCompile>
-    <ClCompile Include="MinionCamp.cpp">
-      <Filter>GamePlay\Source</Filter>
-    </ClCompile>
     <ClCompile Include="CaptureArea.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
@@ -281,6 +287,12 @@
     <ClCompile Include="PostProcess.cpp">
       <Filter>GUI/Post process</Filter>
     </ClCompile>
+    <ClCompile Include="MinionBase.cpp">
+      <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MinionCaptureArea.cpp">
+      <Filter>GamePlay\Source</Filter>
+    </ClCompile>
     <ClCompile Include="MultiPaintPool.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
@@ -289,6 +301,12 @@
     </ClCompile>
     <ClCompile Include="DataDrivenMap.cpp">
       <Filter>Maps\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapOne.cpp">
+      <Filter>Maps\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>Gameplay\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

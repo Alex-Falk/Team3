@@ -7,58 +7,11 @@
 #include "../ncltech/SphereCollisionShape.h"
 #include "../ncltech/SceneManager.h"
 
-Minion::Minion() : GameObject() {
-	colour = START_COLOUR;
-	RGBA = DEFAULT_COLOUR;
-	life = 50;
-	size = 0.3f;
+Minion::Minion() : MinionBase() {
+
 }
 
-Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : GameObject(name) {
-	size = 0.3f;
-	RenderNode * rnode = new RenderNode();
-	PhysicsNode * pnode = new PhysicsNode();
-
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), "Minion", RGBA);
-	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
-	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
-	rnode->AddChild(dummy);
-
-	rnode->GetChild()->SetBaseColor(RGBA);
-	rnode->SetTransform(Matrix4::Translation(position));
-
-	pnode->SetBoundingRadius(size);
-	rnode->SetBoundingRadius(size);
-
-	pnode->SetPosition(position);
-	lastPos = position;
-	pnode->SetType(MINION);
-	pnode->SetInverseMass(2.0f);
-
-	CollisionShape* pColshape = new SphereCollisionShape(size);
-	pnode->SetCollisionShape(pColshape);
-	pnode->SetInverseInertia(pColshape->BuildInverseInertia(2.0f));
-
-	pnode->SetOnCollisionCallback(
-		std::bind(&Minion::MinionCallbackFunction,
-			this,							//Any non-placeholder param will be passed into the function each time it is called
-			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
-			std::placeholders::_2
-		)
-	);
-
-	renderNode = rnode;
-	physicsNode = pnode;
-
-	RegisterPhysicsToRenderTransformCallback();
-	SetPhysics(physicsNode);
-	physicsNode->SetName(name);
-
-	dead = false;
-	
-	minLife = 10;
-	maxLife = 50;
-	life = maxLife;
+Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : MinionBase(c, RGBA, position, name) {
 
 	detectionRadiusSQ = 15.0f * 15.0f;
 	pursueRadiusSQ = 17.5f * 17.5f;
@@ -67,17 +20,7 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Ga
 	behaviourWeight = 12;
 	behaviourXZMagnitude = 20;
 
-	colour = c;
-	this->RGBA = RGBA;
-
-
-	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
-	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-
-	isGrounded = false;
 	ChangeState(MinionStateWander::GetInstance());
-	physicsNode->SetFriction(0.0f);
-	physicsNode->SetElasticity(1.0f);
 
 	ComputeClosestEnemyPlayer();
 	ComputeClosestFriendlyPlayer();
@@ -124,6 +67,18 @@ void Minion::Update(float dt)
 {
 	//float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
 	//life -= lifeLoss / (dt * 10);
+	if (life < minLife) {
+		dead = true;
+	}
+
+	if (dead)
+	{
+		this->SetToDestroy();
+		Game::Instance()->KillMinion(this);
+		((Map*)Game::Instance()->GetMap())->RemoveMinion(this);
+		return;
+	}
+
 	lastPos = Physics()->GetPosition();
 
 
@@ -134,64 +89,49 @@ void Minion::Update(float dt)
 	if (currentState){
 		currentState->Execute(this);
 	}
-
-	if (life < minLife) {
-		dead = true;
-		destroy = true;
-	}
-	else {
-		if (minionBlackboard.GetGoToNearestCaptureZone()) {
-			if (GetIsGrounded()) {
-				if (GetClosestCaptureArea()) {
-					physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
-					physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-					physicsNode->SetAcceleration(Behaviours::Seek(closestCaptureArea->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
-					isGrounded = false;
-				}
-			}
-			else {
-				physicsNode->SetAcceleration({ 0, 0, 0 });
-			}
-		}
-		else if (minionBlackboard.GetWander()) {
-			if (GetIsGrounded()) {
+	if (GetIsGrounded()) 
+	{
+		if (minionBlackboard.GetGoToNearestCaptureZone()) 
+		{
+			if (GetClosestCaptureArea()) 
+			{
 				physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
 				physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetAcceleration(Behaviours::Seek(wanderPosition, physicsNode->GetPosition(), physicsNode->GetLinearVelocity(), isGrounded, behaviourWeight, behaviourXZMagnitude));
+				physicsNode->SetAcceleration(Behaviours::Seek(closestCaptureArea->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
 				isGrounded = false;
 			}
-			else {
-				physicsNode->SetAcceleration({ 0, 0, 0 });
-			}
+			
 		}
-
+		else if (minionBlackboard.GetWander()) 
+		{
+			physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetAcceleration(Behaviours::Seek(wanderPosition, physicsNode->GetPosition(), physicsNode->GetLinearVelocity(), isGrounded, behaviourWeight, behaviourXZMagnitude));
+			isGrounded = false;
+		}
 		else if (minionBlackboard.GetFleeTarget()) {
 
 		}
-
-		else if (minionBlackboard.GetGoToClosestAlly()) {
-			if (isGrounded) {
-				physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetAcceleration(Behaviours::Pursue(closestFriendlyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
-				isGrounded = false;
-			}
-			else {
-				physicsNode->SetAcceleration({ 0, 0, 0 });
-			}
+		else if (minionBlackboard.GetGoToClosestAlly()) 
+		{
+			physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetAcceleration(Behaviours::Pursue(closestFriendlyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
+			isGrounded = false;
 		}
-		else if (minionBlackboard.GetGoToNearestEnemy()) {
-			if (GetIsGrounded()) {
-				physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-				physicsNode->SetAcceleration(Behaviours::Pursue(closestEnemyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
-				isGrounded = false;
-			}
-			else {
-				physicsNode->SetAcceleration({ 0, 0, 0 });
-			}
+		else if (minionBlackboard.GetGoToNearestEnemy()) 
+		{
+			physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
+			physicsNode->SetAcceleration(Behaviours::Pursue(closestEnemyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
+			isGrounded = false;
 		}
 	}
+	else 
+	{
+		physicsNode->SetAcceleration({ 0, 0, 0 });
+	}
+
 
 	wanderTimer += dt;
 	closestPlayerTimer += dt;
@@ -209,59 +149,6 @@ void Minion::Update(float dt)
 	}
 }
 
-void Minion::ChangeLife(float l) {
-	life += l;
-	if (life < minLife) {
-		dead = true;
-		destroy = true;
-	}
-	if (life > maxLife) {
-		life = maxLife;
-	}
-}
-
-bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
-	if (collidingObject->GetType() == PLAYER) {
-		if (!dead) {
-			if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				((Avatar*)collidingObject->GetParent())->ChangeLife(-(life / 5));
-			}
-			else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);
-			dead = true;
-			destroy = true;
-		}
-		return false;
-	}
-	else if (collidingObject->GetType() == MINION) {
-		if (!dead && ((Minion*)(collidingObject->GetParent()))->IsAlive()) {
-			if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				float tempLife = life;
-				ChangeLife(-((Minion*)collidingObject->GetParent())->GetLife());
-				((Minion*)(collidingObject->GetParent()))->ChangeLife(-(tempLife));
-				return false;
-			}
-		}
-		return true;
-	}
-	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
-		isGrounded = true;
-		ChangeLife(-1);
-		return true;
-	}
-	if (collidingObject->GetType() == PICKUP) {
-		return false;
-	}
-	return true;
-}
-
-void Minion::ChangeSize(float newSize) {
-	Render()->GetChild()->SetBoundingRadius(newSize);
-	Render()->SetBoundingRadius(newSize);
-	Physics()->SetBoundingRadius(newSize);
-	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
-
-	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
-}
 
 void Minion::ComputeNewWanderPosition() {
 	wanderTimer = 0.0f;
@@ -271,6 +158,7 @@ void Minion::ComputeNewWanderPosition() {
 }
 
 void Minion::ComputeClosestEnemyPlayer() {
+	closestEnemyPlayer = nullptr;
 	closestPlayerTimer = 0.0f;
 	float minDist = 10000.0f;
 	for (int i = 0; i < 4; i++) {
@@ -285,6 +173,7 @@ void Minion::ComputeClosestEnemyPlayer() {
 }
 
 void Minion::ComputeClosestFriendlyPlayer() {
+	closestFriendlyPlayer = nullptr;
 	closestPlayerTimer = 0.0f;
 	float minDist = 10000.0f;
 	for (int i = 0; i < 4; i++) {

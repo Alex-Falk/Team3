@@ -480,7 +480,7 @@ void GUIsystem::SetUpLoadingScreen()
 	SetFont2("Junicode-13");
 
 	//Loading Texture for background
-	loadingScreenTexture[START] = SOIL_load_OGL_texture(TEXTUREDIR"LoadingScreen/Van-Gogh-Starry-Night.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	loadingScreenTexture[START] = SOIL_load_OGL_texture(TEXTUREDIR"LoadingScreen/loadingscreen.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
 	loadingScreenTexture[TRANSITION] = SOIL_load_OGL_texture(TEXTUREDIR"LoadingScreen/Paint2.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
 	//LoadingTexture for animated icon
 

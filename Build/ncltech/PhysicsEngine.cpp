@@ -384,7 +384,7 @@ LineCollision PhysicsEngine::CastRay(Vector3 origin, Vector3 direction, PhysicsN
 	for (PhysicsNode* obj : physicsNodes)
 	{
 		//objects to be ignored by the ray tracing
-		if (obj->GetType() != BIG_NODE) {
+		if (obj->GetType() != BIG_NODE || obj->GetType() != INVISIBLE_WALL) {
 			continue;
 		}
 		//the vector between the origin and the center of the physics node

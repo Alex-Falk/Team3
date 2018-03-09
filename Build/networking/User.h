@@ -1,12 +1,10 @@
 #pragma once
 #include <enet\enet.h>
-#include <nclgl\GameTimer.h>
-#include <nclgl\Vector3.h>
 #include <nclgl\common.h>
 #include <ncltech\NetworkBase.h>
-#include "NetworkCommon.h"
-#include <ncltech\SceneManager.h>
+
 #include <ctime>
+#include "NetworkCommon.h"
 
 struct TempData {
 	Vector3 positions[4];
@@ -35,8 +33,11 @@ public:
 	// Sending
 	//--------------------------------------------------------------------------------------------//
 
-	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, int inAir) = 0;
+	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life, int inAir) = 0;
 	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir) = 0;
+
+	virtual void RequestPickup(uint ID, string uniqueName) {};
+	virtual void RequestCaptureArea(uint ID, string uniqueName) {};
 
 	//--------------------------------------------------------------------------------------------//
 	// Receiving

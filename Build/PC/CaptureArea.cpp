@@ -20,13 +20,15 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"     
 
-#include "CaptureArea.h"
+
 #include <ncltech\CuboidCollisionShape.h>
 #include <string.h>
+#include <nclgl\NCLDebug.h>
+#include "Game.h"
 #include "Avatar.h"
 #include "Projectile.h"
-#include <nclgl\NCLDebug.h>
 #include "Minion.h"
+#include "CaptureArea.h"
 
 CaptureArea::CaptureArea()
 {
@@ -42,7 +44,7 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 	this->colour = colour;
 
 	RenderNode* rnode = new RenderNode();
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), "CaptureArea",paintColour);
+	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), unique_name,paintColour);
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
@@ -59,6 +61,7 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 	pnode->SetPosition(pos);
 	pnode->SetInverseMass(0.0f);
 	pnode->SetName(unique_name);
+	pnode->SetType(PAINTABLE_OBJECT);
 
 	float x = halfdims.x*2.0f;
 	float y = halfdims.y*2.0f;
@@ -74,12 +77,10 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 	CollisionShape* pColshape = new CuboidCollisionShape(halfdims);
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
-	this->friendlyName = "CaptureArea";
 	this->renderNode = rnode;
 	this->physicsNode = pnode;
 	RegisterPhysicsToRenderTransformCallback();
 	SetPhysics(pnode);
-	pnode->SetName("CaptureArea");
 
 	Physics()->SetOnCollisionCallback(
 		std::bind(&CaptureArea::CaptureAreaCallbackFunction,
@@ -155,26 +156,21 @@ void CaptureArea::SetColour(Colour c)
 
 bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
 {
-	if (collidingObject->GetType() == PLAYER)
 	{
-		if (CheckPlayerCollision(collidingObject, 0)) return true;
-		if (CheckPlayerCollision(collidingObject, 1)) return true;
-		if (CheckPlayerCollision(collidingObject, 2)) return true;
-		if (CheckPlayerCollision(collidingObject, 3)) return true;
+		if (collidingObject->GetType() == PLAYER)
+		{
+			if (CheckPlayerCollision(collidingObject, Game::Instance()->getUserID())) return true;
+		}
+		else if (collidingObject->GetType() == PROJECTILE || collidingObject->GetType() == SPRAY)
+		{
+			if (CheckProjectileCollision(collidingObject, Game::Instance()->getUserID())) return true;
+		}
+		else if (collidingObject->GetType() == MINION) 
+		{
+			if (CheckMinionCollision(collidingObject, Game::Instance()->getUserID())) return true;
+		}
 	}
-	else if (collidingObject->GetType() == PROJECTILE || collidingObject->GetType() == SPRAY)
-	{
-		if (CheckProjectileCollision(collidingObject, 0)) return true;
-		if (CheckProjectileCollision(collidingObject, 1)) return true;
-		if (CheckProjectileCollision(collidingObject, 2)) return true;
-		if (CheckProjectileCollision(collidingObject, 3)) return true;
-	}
-	else if (collidingObject->GetType() == MINION) {
-		if (CheckMinionCollision(collidingObject, 0)) return true;
-		if (CheckMinionCollision(collidingObject, 1)) return true;
-		if (CheckMinionCollision(collidingObject, 2)) return true;
-		if (CheckMinionCollision(collidingObject, 3)) return true;
-	}
+
 
 	//Return true to enable collision resolution
 	return true;
@@ -200,6 +196,7 @@ bool CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) {
 			//check if player actually has enough life to take the point
 			if (((Avatar*)p->GetParent())->GetLife() >= ((Avatar*)p->GetParent())->GetMinLife() + (lifeToTake)) {
 				this->SetColour(((Avatar*)p->GetParent())->GetColour());
+				Game::Instance()->ClaimArea(this);
 				((Avatar*)p->GetParent())->ChangeLife(-lifeToTake);
 			}
 			UpdatePercentage();
@@ -237,6 +234,7 @@ bool CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) {
 				}
 				if (playerScores[index] >= lifeReq) {
 					this->SetColour(((Minion*)p->GetParent())->GetColour());
+					Game::Instance()->ClaimArea(this);
 				}
 			}	
 			UpdatePercentage();
@@ -272,6 +270,7 @@ bool CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index) {
 				}
 				if (playerScores[index] >= lifeReq) {
 					this->SetColour(((Projectile*)p->GetParent())->GetColour());
+					Game::Instance()->ClaimArea(this);
 				}
 			}
 			UpdatePercentage();

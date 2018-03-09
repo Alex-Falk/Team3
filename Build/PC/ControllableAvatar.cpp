@@ -36,6 +36,8 @@
 ControllableAvatar::ControllableAvatar() : Avatar()
 {
 	lifeDrainFactor = 1000;
+	curMove = NO_MOVE;
+	previousMove = NO_MOVE;
 }
 
 ControllableAvatar::~ControllableAvatar()
@@ -45,6 +47,8 @@ ControllableAvatar::~ControllableAvatar()
 ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) : Avatar(pos, c, id, s)
 {
 	lifeDrainFactor = 1000;
+	curMove = NO_MOVE;
+	previousMove = NO_MOVE;
 }
 
 
@@ -102,7 +106,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 
 
 // Updates everything on player
-void ControllableAvatar::OnAvatarUpdate(float dt) {
+void ControllableAvatar::Update(float dt) {
 
 	shooting = false;
 
@@ -175,10 +179,8 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 				if(p->GetPickupType() != PickupType::PAINTPOOL)
 					p->SetActive(false);
 			}
-			else
-			{
-				Game::Instance()->ClaimPickup(this, p);
-			}
+
+			Game::Instance()->ClaimPickup(p);
 
 		}
 
@@ -187,3 +189,85 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 	return true;
 }
 
+void ControllableAvatar::MovementState(Movement inputDir, float yaw, float dt)
+{
+	Vector3 force;
+	moveTimer += dt;
+	switch (inputDir)
+	{
+	case NO_MOVE: {
+		force = Vector3(0, 0, 0);
+		break;
+	}
+	case MOVE_FORWARD:
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * (standarSpinSpeed);
+		curMove = MOVE_FORWARD;
+		break;
+
+	case MOVE_BACKWARD:
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * (standarSpinSpeed);
+		curMove = MOVE_BACKWARD;
+		break;
+
+	case MOVE_LEFT:
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * (standarSpinSpeed);
+		curMove = MOVE_LEFT;
+		break;
+
+	case MOVE_RIGHT:
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * (standarSpinSpeed);
+		curMove = MOVE_RIGHT;
+		break;
+	case MOVE_JUMP: {
+		curMove = MOVE_JUMP;
+		if (canJump) {
+			Vector3 vel = Physics()->GetLinearVelocity();
+			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
+			inAir = true;
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+			canJump = false;
+		}
+		break;
+	}
+	}
+	force.y = 0;
+
+	// Setting Angular Velocity
+	int basicSpinSpeed = 55; //Change this number to change the spin speed
+	if (moveTimer > 2.f) { rollSpeed -= 1; }
+	if (rollSpeed < 0) { rollSpeed = 0; }
+
+	if (curMove != previousMove)
+	{
+		Physics()->SetAngularVelocity(((dirRotation * 3.0f) / (2.0f * life * PI)) * (float)basicSpinSpeed);
+		previousMove = curMove;
+		moveTimer = 0;
+	}
+	else if (curMove == inputDir && inputDir != MOVE_JUMP) {
+		rollSpeed += 1;
+		if (inAir) {
+			if (rollSpeed > maxRotationSpeed) { rollSpeed = maxRotationSpeed; }
+		}
+		else {
+			if (rollSpeed > 20) { rollSpeed = 20; }
+		}
+		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * (basicSpinSpeed + rollSpeed));
+	}
+
+	// Setting MoveMent
+	if (inAir)
+	{
+		force = Vector3(0, 0, 0);
+	}
+
+	Physics()->SetForce(force);
+
+	if (Physics()->GetLinearVelocity().Length() > maxVel)
+	{
+		Physics()->SetLinearVelocity(Vector3(Physics()->GetLinearVelocity()).Normalise() * maxVel);
+	}
+}
