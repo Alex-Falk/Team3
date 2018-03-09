@@ -55,10 +55,10 @@
 //--------------------------------------------------------------------------------------------//
 void DataDrivenMap::OnInitializeScene()
 {
-	float m_AccumTime = 0;
-	uint activePickups = 0;
-	uint activeCapture = 0;
-	uint numemptyline = 0;
+	m_AccumTime = 0;
+	activePickups = 0;
+	activeCapture = 0;
+	numemptyline = 0;
 
 	ReadFile();
 
