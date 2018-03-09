@@ -266,6 +266,10 @@ void Avatar::UpdatePickUp(float dt)
 
 void Avatar::Spray()
 {
+	int randPitch;
+	int randYaw;
+	Vector3 direction;
+
 	if (life > minLife + 5.0f)
 	{
 		randPitch = rand() % 90;
