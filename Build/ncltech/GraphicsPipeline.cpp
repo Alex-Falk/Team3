@@ -428,18 +428,25 @@ void GraphicsPipeline::RenderScene()
 	case NOT_LOADING:
 
 		//Build shadowmaps
+		perfShadow.BeginTimingSection();
 		RenderShadow();
+		perfShadow.EndTimingSection();
 
 		//Render scene to screen fbo
+		perfObjects.BeginTimingSection();
 		RenderObject();
+		perfObjects.EndTimingSection();
 
 		//render the path to texture
 		RenderPath();
 
 		//post process and present
+		perfPostProcess.BeginTimingSection();
 		RenderPostprocessAndPresent();
+		perfPostProcess.EndTimingSection();
 
 		//draw the minimap on screen
+		perfScoreandMap.BeginTimingSection();
 		if (isMainMenu == false) {
 			CountScore();
 		}
@@ -447,6 +454,7 @@ void GraphicsPipeline::RenderScene()
 		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
 			DrawMiniMap();
 		}
+		perfScoreandMap.EndTimingSection();
 
 		//NCLDEBUG - Text Elements (aliased)
 		if (isMainMenu == false) {
