@@ -200,11 +200,8 @@ void HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE))
 	{
-		if (Game::Instance()->IsRunning())
-			Game::Instance()->ResetGame();
-		
-		if (SceneManager::Instance()->GetCurrentSceneIndex() != 0)
-			SceneManager::Instance()->JumpToScene(0);
+		Game::Instance()->ResetGame();
+		SceneManager::Instance()->JumpToScene(0);
 	}
 		
 

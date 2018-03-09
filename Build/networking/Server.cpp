@@ -114,16 +114,19 @@ Server::Server() {
 //--------------------------------------------------------------------------------------------//
 void Server::StartGame(uint mapID)
 {
+	for (uint i = 0; i < server->m_pNetwork->connectedPeers; ++i)
+	{
+		enet_peer_ping(&server->m_pNetwork->peers[i]);
+	}
+
 	SendGameStart(mapID);
+
 	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
 	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
-	for (uint i = 0; i < server->m_pNetwork->connectedPeers; ++i)
-	{
-		enet_peer_ping(&server->m_pNetwork->peers[i]);
-	}
+
 }
 
 void Server::UpdateUser(float dt)

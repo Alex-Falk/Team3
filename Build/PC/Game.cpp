@@ -67,12 +67,20 @@ void Game::ResetGame()
 {
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 	{
-		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(avatars[i]);
-		avatars[i] = nullptr;
+		if (avatars[i])
+		{
+			SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(avatars[i]);
+			avatars[i] = nullptr;
+		}
+
 	}
-	user->Disconnect();
-	delete user;
-	user = nullptr;
+	if (user)
+	{
+		user->Disconnect();
+		delete user;
+		user = nullptr;
+	}
+
 	enet_deinitialize();
 	gameRunning = false;
 	time = 0.0f;
