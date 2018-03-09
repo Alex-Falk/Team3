@@ -36,6 +36,7 @@ protected:
 	bool inAir;
 
 	float life;
+	float targetLife;
 	float maxLife;
 	float minLife;
 
@@ -120,6 +121,8 @@ public:
 	void ShootRocket();
 	void ShootProjectile();
 
+	void LerpLife(float dt);
+
 	void Spray(Vector3 pos, Vector3 dir);
 	void ShootRocket(Vector3 pos, Vector3 dir);
 	void ShootProjectile(Vector3 pos, Vector3 dir);
@@ -128,13 +131,22 @@ public:
 	//void SetSize(float s) { size = s; }
 
 	void ChangeLife(float x) { 
-		life += x; if (life < minLife) { life = minLife; } else if (life > maxLife) { life = maxLife; }	
+		targetLife += x; if (targetLife < minLife) { targetLife = minLife; } else if (targetLife > maxLife) { targetLife = maxLife; }
 	}
 
-	void RestoreLife() { life = maxLife/2; }
-	float GetLife() { return life; }
-	void SetLife(float l) { life = l; if (life < minLife) { life = minLife; }
-	else if (life > maxLife) { life = maxLife; }
+	void RestoreLife() { targetLife = maxLife/2; }
+	float GetLife() { return targetLife; }
+	void SetLife(float l) 
+	{
+		targetLife = l; 
+		if (targetLife < minLife) 
+		{ 
+			targetLife = minLife; 
+		}
+		else if (targetLife > maxLife) 
+		{ 
+			targetLife = maxLife; 
+		}
 	}
 
 	virtual void PickUpBuffActivated();

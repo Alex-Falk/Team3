@@ -123,16 +123,18 @@ void ControllableAvatar::Update(float dt) {
 	}
 
 
-	if (life > minLife) 
+	if (targetLife > minLife)
 	{
-		life -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
+		targetLife -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
 
-		if (life < minLife)
+		if (targetLife < minLife)
 		{
-			life = minLife;
+			targetLife = minLife;
 		}
 	}
 	
+	LerpLife(dt);
+
 	curSize = size * (life / 100);
 
 	ChangeSize(curSize);
