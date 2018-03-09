@@ -198,6 +198,9 @@
     <ClInclude Include="Particle.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -306,6 +309,9 @@
       <Filter>Maps\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">
+      <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
   </ItemGroup>

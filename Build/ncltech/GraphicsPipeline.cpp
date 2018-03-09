@@ -428,18 +428,25 @@ void GraphicsPipeline::RenderScene()
 	case NOT_LOADING:
 
 		//Build shadowmaps
+		perfShadow.BeginTimingSection();
 		RenderShadow();
+		perfShadow.EndTimingSection();
 
 		//Render scene to screen fbo
+		perfObjects.BeginTimingSection();
 		RenderObject();
+		perfObjects.EndTimingSection();
 
 		//render the path to texture
 		RenderPath();
 
 		//post process and present
+		perfPostProcess.BeginTimingSection();
 		RenderPostprocessAndPresent();
+		perfPostProcess.EndTimingSection();
 
 		//draw the minimap on screen
+		perfScoreandMap.BeginTimingSection();
 		if (isMainMenu == false) {
 			CountScore();
 		}
@@ -447,6 +454,7 @@ void GraphicsPipeline::RenderScene()
 		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
 			DrawMiniMap();
 		}
+		perfScoreandMap.EndTimingSection();
 
 		//NCLDEBUG - Text Elements (aliased)
 		if (isMainMenu == false) {
@@ -787,7 +795,7 @@ void GraphicsPipeline::SetPath(RenderNode* playerRenderNode, uint playerNumber)
 		pathSmoother[playerNumber]->Update(0);
 
 		pathSmoother[playerNumber]->SetChildBaseColor(playerRenderNode->GetBaseColor());
-		pathRenderNodes.push_back(pathSmoother[playerNumber]);
+		pathRenderNodes.push_back(pathSmoother[playerNumber]->GetChild());
 	}
 }
 
@@ -1074,7 +1082,7 @@ void GraphicsPipeline::DrawMiniMap() {
 	count = 0;
 	for (int i = 0; i < map->GetPickups().size(); ++i) {
 		Pickup* p = map->GetPickup(i);
-		if (p->GetActive()) {
+		if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
 			pickupTypes[count] = p->GetPickupType();
 			if (pickupTypes[count] == PickupType::PAINTPOOL) {
 				pickupColours[count] = ((PaintPool*)map->GetPickups()[i])->GetColour();

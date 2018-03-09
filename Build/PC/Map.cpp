@@ -44,6 +44,7 @@ void Map::onConnectToScene()
 			else
 			{
 				p = new Avatar(spawnPositions[i], Colour(i), i, 1.0f);
+				p->SetLife(50.0f);
 			}
 
 			this->AddGameObject(p->GetGameObject());
@@ -57,6 +58,9 @@ void Map::onConnectToScene()
 }
 
 void Map::OnInitializeScene() {
+
+	SetMapDimensions(dimensions);
+	
 	OnInitializeGUI();
 
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
@@ -94,34 +98,6 @@ void Map::OnInitializeScene() {
 //--------------------------------------------------------------------------------------------//
 // Updating CaptureAreas Score
 //--------------------------------------------------------------------------------------------//
-//void Map::UpdateCaptureAreas() {
-//	
-//	int captAreaTeamScore[4] = { (0,0,0,0) };
-//	for (uint i = 0;i < ncapture;i++)
-//	{
-//		switch (capture[i]->GetColour())
-//		{
-//		case RED:
-//			captAreaTeamScore[0] += capture[i]->GetScoreValue();
-//			break;
-//		case GREEN:
-//			captAreaTeamScore[1] += capture[i]->GetScoreValue();
-//			break;
-//		case BLUE:
-//			captAreaTeamScore[2] += capture[i]->GetScoreValue();
-//			break;
-//		case PINK:
-//			captAreaTeamScore[3] += capture[i]->GetScoreValue();
-//			break;
-//		default:
-//			break;
-//		}
-//	}
-//	Game::Instance()->SetAreaScores(0, captAreaTeamScore[0]);
-//	Game::Instance()->SetAreaScores(1, captAreaTeamScore[1]);
-//	Game::Instance()->SetAreaScores(2, captAreaTeamScore[2]);
-//	Game::Instance()->SetAreaScores(3, captAreaTeamScore[3]);
-//}
 
 void Map::Addcuboid(GameObject * cube) {
 	cuboid.push_back(cube);
@@ -374,14 +350,6 @@ void Map::OnUpdateScene(float dt)
 
 		perfMapObjects.EndTimingSection();
 	}
-
-
-
-	//update only once a second
-	//if (updatePerSecond >= 1.0f) {
-	//	UpdateCaptureAreas();
-	//	updatePerSecond = 0.0f;
-	//}
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();

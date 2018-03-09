@@ -81,7 +81,7 @@ public:
 	inline float GetScore(uint id)			{ return teamScores[id]; }
 
 
-	inline void StartGame(uint mapID = 0)	{ gameRunning = true; mapIdx = mapID; user->StartGame(mapID); }
+	inline void StartGame(uint mapID = 0)	{ gameRunning = true; user->StartGame(mapID); mapIdx = mapID;  }
 	inline void StopGame()					{ gameRunning = false; }
 
 	inline bool IsRunning()					{ return gameRunning; }
@@ -121,8 +121,9 @@ private:
 	~Game() 
 	{
 		for (int i = 0; i < 4; i++) {
-			delete avatars[i];
+			SAFE_DELETE(avatars[i]);
 		}
+		SAFE_DELETE(user);
 	};
 
 	//--------------------------------------------------------------------------------------------//
