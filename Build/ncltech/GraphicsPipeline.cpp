@@ -402,6 +402,7 @@ void GraphicsPipeline::UpdateScene(float dt)
 
 	//increment time
 	time += dt;
+	accumTime += dt;
 	NCLDebug::_SetDebugDrawData(
 		projMatrix,
 		viewMatrix,
@@ -451,14 +452,21 @@ void GraphicsPipeline::RenderScene()
 		//draw the minimap on screen
 		perfScoreandMap.BeginTimingSection();
 
-		if (isMainMenu == false) {
-			CountScore();
-		}
-		perfScoreandMap.EndTimingSection();
-
 		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
 			DrawMiniMap();
 		}
+
+		if (accumTime > 1.0f)
+		{
+			if (isMainMenu == false) {
+				CountScore();
+			}
+			accumTime = 0.0f;
+		}
+
+
+
+		perfScoreandMap.EndTimingSection();
 		
 
 
@@ -1016,6 +1024,7 @@ void GraphicsPipeline::DrawMiniMap() {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//add textures
+	glActiveTexture(GL_TEXTURE0);
 	glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
 	glBindTexture(GL_TEXTURE_2D, pathTex);
 
@@ -1060,7 +1069,7 @@ void GraphicsPipeline::DrawMiniMap() {
 		Avatar* a = Game::Instance()->GetPlayer(i);
 		if (a) {
 			//let the shader know which is the current player
-			if (i == Game::Instance()->getUserID()) {
+			if (i == Game::Instance()->GetUserID()) {
 				glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "self"), count);
 			}
 			//adding the player's positions

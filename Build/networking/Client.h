@@ -72,11 +72,11 @@ public:
 	void ReceiveObjectUpdate(string data);
 	void ReceiveScores(string data);
 	void ReceiveMapIndex(string data);
-	void ReceiveMapChange(string data);
 	void ReceiveRequestResponse(string data, PhysNodeType ptype);
 	void ReceiveMinionSpawn(string data);
 	void ReceiveMinionUpdate(string data);
 	void ReceiveMinionDeath(string data);
+	void ReceiveAreaCapture(string data);
 
 	void DeadReckonObject(GameObject * go, TempObjData data, float dt);
 protected:

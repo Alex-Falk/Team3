@@ -6,6 +6,6 @@ SPAWN_LOC 3 -75 0 75     //Spawn Position 4 x y z
 PICKUP 40 1 0 SPEED_BOOST speed 
 WEAPON_PICKUP 0 1 -70 PAINT_PISTOL weapon 10 
 PAINT_POOL 135 1 135 RED redpool 
-MULTI_POOL 0 1 0 pool 0 2 0 2 2 2  
+MULTI_POOL 0 1 0 pool 0 4 0 2 2 2  
 CUBE 15.1 5 14.7 wall 1 1 1 0.5 45 0 0
 MINION_AREA 70 3 70 minionspawn 50

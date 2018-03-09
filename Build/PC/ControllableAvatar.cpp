@@ -172,7 +172,7 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 				weapon = ((WeaponPickup*)p)->GetWeaponType();
 			}
 
-			if (Game::Instance()->getUserID() == 0)
+			if (Game::Instance()->GetUserID() == 0)
 			{
 				PickUpBuffActivated(activePickUp);
 				//phil 06/03/2018 so the paint pools don't dissapear on minimap

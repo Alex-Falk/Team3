@@ -25,7 +25,7 @@ void Map::onConnectToScene()
 		if (Game::Instance()->GetUser())
 		{
 			Avatar * p = nullptr;
-			if (i == Game::Instance()->getUserID())
+			if (i == Game::Instance()->GetUserID())
 			{
 				p = new ControllableAvatar(spawnPositions[i], Colour(i), i, 1.0f);
 			}
@@ -285,7 +285,7 @@ void Map::UpdateGUI(float dt)
 
 	if (Game::Instance()->GetUser())
 	{
-		if (Game::Instance()->GetPlayer(Game::Instance()->getUserID()))
+		if (Game::Instance()->GetPlayer(Game::Instance()->GetUserID()))
 			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
 }
@@ -294,7 +294,7 @@ void Map::UpdateGUI(float dt)
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {
-	if(Game::Instance()->getUserID() == 0)
+	if(Game::Instance()->IsHost())
 	Scene::OnUpdateScene(dt);
 
 	m_AccumTime += dt;

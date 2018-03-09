@@ -196,7 +196,7 @@ void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
 }
 
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
-	if (Game::Instance()->getUserID() == 0)
+	if (Game::Instance()->GetUserID() == 0)
 	{
 		AddGameObject(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8])));
 	}
@@ -209,7 +209,7 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 }
 
 void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
-	if (Game::Instance()->getUserID() == 0)
+	if (Game::Instance()->GetUserID() == 0)
 	{
 		Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, object[4]);
 		AddGameObject(pool);
@@ -219,19 +219,46 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 	}
 	else
 	{
-		GameObject * pool = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
-		pool->SetColour(Colour(stoi(object[8])));
+		GameObject * pool = CommonUtils::BuildCuboidObject(
+			object[4], 
+			Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
+			Vector3(3, 0.5, 3),
+			true,
+			0.0f,
+			false,
+			false,
+			DEFAULT_PHYSICS,
+			DEFAULT_COLOUR);
+
 		AddGameObject(pool);
 
-		GameObject * ca = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
-		ca->SetColour(Colour(stoi(object[8])));
+		GameObject * ca = CommonUtils::BuildCuboidObject(
+			object[4], 
+			Vector3(stof(object[5]), stof(object[6]), stof(object[7])), 
+			Vector3(stof(object[8]), stof(object[9]), stof(object[10])),
+			true,
+			0.0f,
+			true, 
+			false, 
+			DEFAULT_PHYSICS,
+			DEFAULT_COLOUR);
 		AddGameObject(ca);
 	}
 
 }
 
 void DataDrivenMap::AddCuboid(vector<std::string> object) {
-	GameObject* cube =  CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, stof(object[8]), true, false, DEFAULT_PHYSICS, DEFAULT_COLOUR);
+	GameObject* cube =  CommonUtils::BuildCuboidObject(
+		object[4],
+		Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
+		Vector3(stof(object[5]), stof(object[6]), stof(object[7])), 
+		true, 
+		stof(object[8]), 
+		true, 
+		false, 
+		DEFAULT_PHYSICS, 
+		DEFAULT_COLOUR);
+
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])),1));
 	AddGameObject(cube);
 }

@@ -42,7 +42,7 @@ public:
 
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
 
-	inline void SetName(string name)					{ userNames[getUserID()] = name; user->UpdateName(); }
+	inline void SetName(string name)					{ userNames[GetUserID()] = name; user->UpdateName(); }
 	inline void SetPlayerName(uint id, string name)		{ userNames[id] = name; }
 
 	inline void SetSize(uint id, float size)			{ avatars[id]->SetLife(size); }
@@ -64,7 +64,7 @@ public:
 
 	inline uint GetPlayerNumber()			{ return playerNumber; }
 	inline uint GetMapIndex()				{ return mapIdx; }
-	inline uint getUserID()					{ return user->GetUserID(); }
+	inline uint GetUserID()					{ return user->GetUserID(); }
 	inline float GetGameLength()			{ return gameLength; }
 	inline float GetTimeLeft()				{ return gameLength - time; }
 	inline float GetTime()					{ return time; }
@@ -85,6 +85,7 @@ public:
 	inline void StopGame()					{ gameRunning = false; }
 
 	inline bool IsRunning()					{ return gameRunning; }
+	inline bool IsHost()					{ return isHost; }
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility
@@ -95,7 +96,7 @@ public:
 	void DetermineWinner();
 
 	void ClaimPickup(uint i);
-	//void ClaimArea(uint i);
+	void Capture(uint i, Colour c);
 
 	void SpawnMinion(MinionBase * minion);
 	void KillMinion(MinionBase * minion);
@@ -139,6 +140,7 @@ private:
 	string userNames[4] = { "Player 1","Player 2","Player 3","Player 4" };
 
 	User* user = nullptr;
+	bool isHost = false;
 
 
 	bool gameRunning = false;

@@ -11,6 +11,7 @@ void Game::SetServer()
 {
 	if (user) { SAFE_DELETE(user) };
 	user = new Server();
+	isHost = true;
 }
 
 void Game::SetClient(IP ip)
@@ -44,7 +45,7 @@ void Game::Update(float dt)
 	{
 		time += dt;
 
-		if (getUserID() == 0)
+		if (GetUserID() == 0)
 		{
 			for (uint i = 0; i < playerNumber; ++i)
 			{
@@ -92,7 +93,15 @@ void Game::ResetGame()
 
 void Game::ClaimPickup(uint i)
 {
-	user->RequestPickup(getUserID(), i);
+	user->RequestPickup(GetUserID(), i);
+}
+
+void Game::Capture(uint i, Colour c)
+{
+	if (IsHost())
+	{
+		((Server*)user)->SendAreaCapture(i,c);
+	}
 }
 
 void Game::SpawnMinion(MinionBase * minion)
@@ -101,7 +110,7 @@ void Game::SpawnMinion(MinionBase * minion)
 
 	m->AddMinion(minion);
 
-	if (getUserID() == 0)
+	if (GetUserID() == 0)
 		((Server*)user)->SendMinionSpawn(m->GetMinionID(minion), minion->GetColour(), minion->Physics()->GetPosition());
 
 }
@@ -112,7 +121,7 @@ void Game::KillMinion(MinionBase * minion)
 
 	uint minionID = m->GetMinionID(minion);
 
-	if (getUserID() == 0)
+	if (GetUserID() == 0)
 	{
 		((Server*)user)->SendMinionDeath(minionID);
 	}
@@ -133,7 +142,7 @@ void Game::DetermineWinner() {
 
 	//Determine whether the winner is this user
 	GUIsystem::Instance()->SetDrawResult(true);
-	if (currentWinner == getUserID()) {
+	if (currentWinner == GetUserID()) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
 		GUIsystem::Instance()->SetResult(RESULT::WIN);
 	}

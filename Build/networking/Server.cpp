@@ -123,7 +123,7 @@ void Server::StartGame(uint mapID)
 
 	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(0)->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 
 
@@ -203,11 +203,6 @@ void Server::UpdateUser(float dt)
 				case MAP_PICKUP_REQUEST:
 				{
 					ReceiveRequest(data,PICKUP);
-					break;
-				}
-				case MAP_OBJECT_REQUEST:
-				{
-					ReceiveRequest(data, PAINTABLE_OBJECT);
 					break;
 				}
 				}
@@ -528,6 +523,17 @@ void Server::SendMap()
 	enet_host_broadcast(server->m_pNetwork, 0, packet);
 }
 
+void Server::SendAreaCapture(uint ID, Colour c)
+{
+	string data;
+
+	data = to_string(MAP_OBJECT_CAPTURE) + ":" +
+		to_string(ID) + ";" +
+		to_string(c);
+
+	ENetPacket* packet = CreatePacket(data);
+	enet_host_broadcast(server->m_pNetwork, 0, packet);
+}
 void Server::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 {
 	string data;

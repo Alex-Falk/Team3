@@ -204,9 +204,9 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveRequestResponse(data, PICKUP);
 			break;
 		}
-		case MAP_OBJECT_REQUEST:
+		case MAP_OBJECT_CAPTURE:
 		{
-			ReceiveRequestResponse(data, PAINTABLE_OBJECT);
+			ReceiveAreaCapture(data);
 			break;
 		}
 		case MINION_SPAWN:
@@ -333,16 +333,6 @@ void Client::ReceiveMapIndex(string data)
 {
 	string s = data.substr(data.find_first_of(':') + 1);
 	uint mapIndex = stoi(s);
-
-	//Game::Instance()->LoadLevel(mapIndex);
-}
-
-void Client::ReceiveMapChange(string data)
-{
-	string s = data.substr(data.find_first_of(':') + 1);
-	uint mapIndex = stoi(s);
-
-	//Game::Instance()->LoadLevel(mapIndex);
 }
 
 void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
@@ -485,6 +475,18 @@ void Client::ReceiveMinionDeath(string data)
 
 }
 
+void Client::ReceiveAreaCapture(string data)
+{
+	Scene * m = Game::Instance()->GetMap();
+
+	uint colonIdx = (uint)(data.find_first_of(':'));
+	uint semicolonIdx = (uint)(data.find_first_of(';'));
+
+	uint objectID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+	Colour c = Colour(stoi(data.substr(semicolonIdx + 1)));
+
+	m->GetGameObject(objectID)->SetColour(c);
+}
 
 void Client::DeadReckonObject(GameObject * go, TempObjData data, float dt)
 {

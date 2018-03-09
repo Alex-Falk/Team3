@@ -48,7 +48,7 @@ enum PacketType {
 	PLAYER_NAME,			// Client->Server: Send Username
 	MAP_INDEX,				// Server->Client: Boradcast Map to load
 	MAP_PICKUP_REQUEST,
-	MAP_OBJECT_REQUEST,
+	MAP_OBJECT_CAPTURE,
 	MINION_SPAWN,
 	MINION_UPDATE,
 	MINION_DEATH

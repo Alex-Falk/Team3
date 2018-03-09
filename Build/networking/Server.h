@@ -111,6 +111,7 @@ public:
 	void SendMinionDeath(uint minionID);
 	void SendScores();
 	void SendMap();
+	void SendAreaCapture(uint ID, Colour c);
 	void SendWeaponFire(uint ID,WeaponType type, Vector3 pos, Vector3 dir);
 
 protected:

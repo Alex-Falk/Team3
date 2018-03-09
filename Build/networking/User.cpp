@@ -34,11 +34,12 @@ void User::ReceiveAvatarUpdate(string data)
 	float life = stoi(splitData[4]);
 	bool inAir = stoi(splitData[5]);
 
-	if (playerID != userID)
+	if (!Game::Instance()->IsHost())
 	{
 		Game::Instance()->GetPlayer(playerID)->SetLife(life);
 		Game::Instance()->GetPlayer(playerID)->SetInAir(inAir);
 	}
+
 }
 
 PlayerVector User::ReceiveVector(string data)
@@ -67,7 +68,7 @@ void User::ReceiveWeapon(string data) {
 
 	uint ID = stoi(data.substr(colonPos + 1, firstSemicolonPos));
 
-	if (ID != Game::Instance()->getUserID())
+	if (ID != Game::Instance()->GetUserID())
 	{
 		WeaponType type = static_cast<WeaponType>(stoi(data.substr(firstSemicolonPos + 1, secondSemicolonPos)));
 
@@ -140,7 +141,7 @@ void User::StartGame(uint mapID)
 {
 	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->GetUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 }
 

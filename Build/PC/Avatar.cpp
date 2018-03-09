@@ -300,7 +300,7 @@ void Avatar::Spray()
 			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 
 			// Send over network
-			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
+			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
 		}
 	}
 }
@@ -324,7 +324,7 @@ void Avatar::ShootRocket()
 		ShootRocket(Physics()->GetPosition(), direction);
 
 		// Send over network
-		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
+		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 	}
 }
 
