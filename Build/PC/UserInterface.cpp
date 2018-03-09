@@ -529,6 +529,7 @@ void GUIsystem::DrawWeaponIcon(){
 		glUseProgram(weaponShader->GetProgram());
 		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.9, -0.9, 0)) * Matrix4::Scale(Vector3(0.1, 0.1, 0));
 		glUniformMatrix4fv(glGetUniformLocation(weaponShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+		glUniform1fv(glGetUniformLocation(weaponShader->GetProgram(), "timer"), 1, (float*)&weaponTimer);
 		glUniform3fv(glGetUniformLocation(weaponShader->GetProgram(), "playerColour"), 1, (float*)&playerColour);
 		//displays the weapom the user has equipped
 		glBindTexture(GL_TEXTURE_2D, weaponTextures[currentWeapon]);
@@ -589,4 +590,15 @@ void GUIsystem::SetUpResultText()
 		));
 	ResultText->disable();
 	ResultText->setVisible(false);
+}
+
+void GUIsystem::MapProblem(uint errorNumber, uint errorLine) {
+	for (int i = 0; i < 50; i++) {
+		if (errorNumber == 0) {
+			cout << "File was corrupted";
+		}
+		else if (errorNumber == 1) {
+			cout << "File was not writen in apropriate format in line " << to_string(errorLine) << " \n";
+		}
+	}
 }

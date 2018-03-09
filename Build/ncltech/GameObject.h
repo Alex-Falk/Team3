@@ -79,6 +79,8 @@ public:
 	void SetTimeInScene(float f) { timeInScene = f; }
 	float GetTimeInScene() { return timeInScene; }
 
+	virtual void Update(float dt) {};
+
 	//<---------- PHYSICS ------------>
 	virtual inline bool  HasPhysics() const					{ return (physicsNode != NULL); }
 	virtual inline const PhysicsNode*	Physics() const		{ return physicsNode; }

@@ -71,6 +71,7 @@ protected:
 	WeaponType weapon;
 	bool weaponActive = false;
 	float weaponTimer;				// Weapon timer
+	float percWeapTimer;
 	bool shooting;
 
 	Vector3 dirRotation;		//The rotation based on camera
@@ -88,9 +89,12 @@ public:
 	Avatar();
 	Avatar(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
 
-	virtual void OnAvatarUpdate(float dt);
+	virtual void Update(float dt);
 
 	Vector3 GetPosition() { return Physics()->GetPosition(); }
+
+	void SetWeaponTimer(float x) { weaponTimer = x; }
+	float GetPercentageWeaponTimer() { return weaponTimer / boostactiveTime; }
 
 	float GetMaxLife() { return maxLife; }
 	void SetMaxLife(float x) { maxLife = x; }

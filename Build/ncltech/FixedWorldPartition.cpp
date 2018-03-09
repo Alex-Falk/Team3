@@ -126,7 +126,7 @@ void FixedWorldPartition::RepartitionWorld(Vector3 mins, Vector3 maxs, std::vect
 
 	for (std::vector<PhysicsNode*>::iterator itr = elements->begin(); itr != elements->end(); ++itr)
 	{
-		if ((*itr)->GetType() == BIG_NODE)
+		if ((*itr)->GetType() == BIG_NODE || (*itr)->GetType() == INVISIBLE_WALL)
 		{
 			bigNodes->push_back((*itr));
 		}

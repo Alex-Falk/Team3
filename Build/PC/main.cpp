@@ -13,7 +13,7 @@
 #include "MainMenu.h"
 #include "SimpleGamePlay.h"
 #include "Stage4.h"
-#include "MapOne.h"
+#include "DataDrivenMap.h"
 
 
 bool draw_debug = true;
@@ -90,10 +90,11 @@ void Initialize()
 	PhysicsEngine::Instance();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("MapOne - Dongli's Angels"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
@@ -273,6 +274,7 @@ void HandleGUIMouseButton()
 		GUIsystem::Instance()->SetCurrentWeapon(p->GetWeapon());
 		//only needs setting once
 		GUIsystem::Instance()->SetPlayerColour(p->GetColourRGBA().ToVector3());
+		GUIsystem::Instance()->SetWeaponTimer(p->GetPercentageWeaponTimer());
 	}
 
 	fpsCounter++;

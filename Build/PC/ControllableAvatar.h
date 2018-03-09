@@ -45,7 +45,7 @@ public:
 	ControllableAvatar();
 	ControllableAvatar(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
 	
-	virtual void OnAvatarUpdate(float dt);
+	virtual void Update(float dt);
 
 	void MovementState(Movement moveDir, float yaw, float dt); // handles the movement of the player.
 

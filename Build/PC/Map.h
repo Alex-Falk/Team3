@@ -39,6 +39,7 @@ protected:
 	vector<Pickup*> pickups;
 	//capture areas
 	vector<CaptureArea*> captureAreas;
+	vector<GameObject*> cuboid;
 	
 	static const int maxMinions = 20;
 	MinionBase * minions[maxMinions];
@@ -99,8 +100,8 @@ public:
 	MinionBase ** GetMinions() { return minions; }
 
 	int GetMaxMinions() { return maxMinions; }
-	
 
+	void Addcuboid(GameObject * cube);
 
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars

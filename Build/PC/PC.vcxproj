@@ -154,6 +154,7 @@
     <ClInclude Include="..\networking\NetworkCommon.h" />
     <ClInclude Include="..\networking\Server.h" />
     <ClInclude Include="..\networking\User.h" />
+    <ClInclude Include="Arena.h" />
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Avatar.h" />
     <ClInclude Include="Behaviours.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="MinionBase.h" />
     <ClInclude Include="CaptureArea.h" />
     <ClInclude Include="ControllableAvatar.h" />
+    <ClInclude Include="DataDrivenMap.h" />
     <ClInclude Include="MinionStateCaptureZone.h" />
     <ClInclude Include="MinionStateChaseEnemyPlayer.h" />
     <ClInclude Include="Explosion.h" />
@@ -174,6 +176,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Minion.h" />
     <ClInclude Include="MinionCaptureArea.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="PostProcess.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="SimpleGamePlay.h" />
@@ -197,6 +200,7 @@
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="Behaviours.cpp" />
     <ClCompile Include="CaptureArea.cpp" />
+    <ClCompile Include="DataDrivenMap.cpp" />
     <ClCompile Include="MapOne.cpp" />
     <ClCompile Include="MinionBase.cpp" />
     <ClCompile Include="MinionStateCaptureZone.cpp" />
@@ -211,6 +215,7 @@
     <ClCompile Include="PaintPool.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PostProcess.cpp" />
     <ClCompile Include="Projectile.cpp" />
