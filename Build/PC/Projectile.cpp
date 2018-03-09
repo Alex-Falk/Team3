@@ -143,9 +143,8 @@ void Projectile::Explode() {
 	exploded = true;
 
 	//turn into sphere for spherical paint splat
-	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(2.0f, 2.0f, 2.0f))));
 	Render()->GetChild()->SetMesh(CommonMeshes::Sphere());
-
+	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(3.0f, 3.0f, 3.0f))));
 	int randPitch;
 	int randYaw;
 	for (uint i = 0; i < 60; ++i)
@@ -154,14 +153,14 @@ void Projectile::Explode() {
 		randYaw = rand() % 360;
 
 		Vector3 direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
-		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, 0.05f);
+		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, 0.05f, 5.0f, 3.0f);
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle);
 	
 	}
 
 
-	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 2.0f, 5.0f, SPRAY, 4, "Spray");
+	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 3.0f, 5.0f, SPRAY, 4, "Spray");
 	explosion->UnregisterPhysicsToRenderTransformCallback();
 	explosion->Render()->SetTransform(Matrix4::Translation(Vector3{ 1000.f,1000.f,1000.f }));
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(explosion);

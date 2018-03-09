@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "MultiPaintPool.h"
 #include "CaptureArea.h"
+#include "ParticleEmitter.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
@@ -44,7 +45,8 @@ void SimpleGamePlay::AddObjects()
 	AddCaptureArea(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
 	AddCaptureArea(new CaptureArea(Vector3(15, 0.6, -15), "2", Vector3(3.0f, 0.5f, 3.0f), 10));
 
-
+	ParticleEmitter * e = new ParticleEmitter(RED, { 0,2,0 }, 20, { 1,1,0 }, 10,10,5,50);
+	this->AddGameObject(e);
 }
 
 //--------------------------------------------------------------------------------------------//
