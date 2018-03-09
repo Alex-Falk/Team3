@@ -1,3 +1,45 @@
+/*
+                                           .*                                                      
+                               .          #%%                                                      
+                              @#,         .@(         .@#    *&      /@                            
+                              /%.                  & .,,%   % % *@@/,*#%@       (,                 
+                         @%@           #@/ &        @  #*   /(   /#%,% %(      ,@                  
+                      /@ % /,        ,@./% % .@@ @&@%  @@(  ,@ &//(%,@ ,@@      .                  
+                     %,    % %/       &#   @ *,,,@      @  *%.&         ,( #%.                     
+           *#         %     ,.@     /@.,% %*(@.        ,((@&.%%        ,&(#@ %       @@            
+          ,@@      @@%&      %*    %,(%&                               @,@%.%..   %/@@@            
+           .#   /%.&,       ,&&@ /# .%                                      @*(@(%*% ,%.#          
+              #@% .,           @%,&&&.                                        @(@#%,   ,,          
+             .   %            %. &                                                    %.(          
+          #&@    %                           *@@                               ,@*    .@/%&%/      
+          % ,@@@%                          *@*  @@      ,@@@@@@@@@@@@@@@@@@@@@@@@*@#    .@@ /%     
+          @          ,@@@@*               @@@@ ,@@@%    ,@                         &@      *(      
+          &@%        ,@   @*                 @ ,@       ,@ %@%%%%%%%%%%%%%%%%%%&@@@        @@,     
+        ,%           ,@    @*                @ ,@       ,@ %%                  ,@           %      
+       ##@@@@%       ,@ %@  @#               @ ,@       ,@ %%                             *#       
+       %@     @      ,@ %@@  @#              @ ,@       ,@ %%                             #@(@     
+         .@@  @      ,@ %@.@  @*             @ ,@       ,@ %%                              &&.     
+         % @%@*      ,@ %@  @* @#            @ ,@       ,@ %%                            @*@%@   *%
+         &           ,@ %@  .@. @&           @ ,@       ,@ %%             %@*               .&  %%.
+          .#%        ,@ %@    @* &&          @ ,@       ,@ %@@@@@@@@@@@@@@@%*@*          /& @      
+      @, /% ,,       ,@ %@     @. @#         @ ,@       ,@                    @@         %&@       
+      @  %  ,,       ,@ %@      @* @&        @ ,@       ,@ %@@@@@@@@@@@@@@@%#@            /(/@&    
+   #@ &.             ,@ %@       @# &@       @ ,@       ,@ %%             %@             % .%.%    
+   ,@/   &#.         ,@ %@        @* &&      @ ,@       ,@ %%                            ,,,  ,,   
+        ,   %        ,@ %@         @& &&     @ ,@       ,@ %%                               ,%@    
+     /*%,   %        ,@ %@          @& @@    @ ,@       ,@ %%                              &%,     
+    ,(  (@@&         ,@ %@           && #@   @ ,@       ,@ %%                               @      
+    .%               ,@ %@            @# #@  @ ,@       ,@ %%                            ,@,       
+      ,&#            ,@ %@             @@ #@ @ ,@       ,@ %%                            #@@%      
+    #/ *%            ,@ %@              #@ *@@ ,@       ,@ %%                              .%      
+    %                ,@ %@               && #@ ,@       ,@ %%                            #@@@/     
+    #*               ,@ %@                &@ * ,@       ,@ %%                            .,%#@     
+      .@.            ,@ %@                 #@  ,@       ,@ %%                            %(  ,     
+   *@  @           @@@@ %@@@,               *@%&@     *@*    #@                          /%        
+ .&/@@&,            @@   #@                             #@*#@*                      &    &         
+ .%                   #@@                                 *                              @         
+  @.                                                                                   @,@    
+*/
 #include "DataDrivenMap.h"
 #include "WeaponPickup.h"
 #include "PaintPool.h"
@@ -5,6 +47,7 @@
 #include "MultiPaintPool.h"
 #include <nclgl\Lexer.h>
 #include <ncltech\CommonUtils.h>
+#include "MinionCaptureArea.h"
 
 
 //--------------------------------------------------------------------------------------------//
@@ -12,6 +55,11 @@
 //--------------------------------------------------------------------------------------------//
 void DataDrivenMap::OnInitializeScene()
 {
+	float m_AccumTime = 0;
+	uint activePickups = 0;
+	uint activeCapture = 0;
+	uint numemptyline = 0;
+
 	ReadFile();
 
 	Buildmap();
@@ -128,14 +176,16 @@ void DataDrivenMap::AddPaintPools(vector<std::string> object) {
 	if (object[4] == "GREEN")	team = GREEN;
 	if (object[4] == "BLUE")	team = BLUE;
 	if (object[4] == "PINK")	team = PINK;
-	AddPickup(new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, object[5]));
+	AddPickup(new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, to_string(activePickups)));
+	activePickups++;
 }
 
 void DataDrivenMap::AddPickups(vector<std::string> object) {
 
 	if (object[4] == "SPEED_BOOST")		type = SPEED_BOOST;
 	if (object[4] == "JUMP_BOOST")		type = JUMP_BOOST;
-	AddPickup(new Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, object[5]));
+	AddPickup(new Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, to_string(activePickups)));
+	activePickups++;
 }
 
 void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
@@ -144,19 +194,23 @@ void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
 	if (object[4] == "PAINT_PISTOL")		weapType = PAINT_PISTOL;
 	if (object[4] == "AUTO_PAINT_LAUNCHER")	weapType = AUTO_PAINT_LAUNCHER;
 	if (object[4] == "PAINT_ROCKET")		weapType = PAINT_ROCKET;
-	AddPickup(new WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, object[5], stof(object[6])));
+	AddPickup(new WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, to_string(activePickups), stof(object[6])));
+	activePickups++;
 }
 
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
-	AddCaptureArea(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8])));
+	AddCaptureArea(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), to_string(activeCapture), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8])));
+	activeCapture++;
 }
 
 void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 
-	Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, "0");
+	Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, to_string(activePickups));
 	AddPickup(pool);
-	CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[4]), stof(object[5]), stof(object[6])), object[7], Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
+	activePickups++;
+	CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[4]), stof(object[5]), stof(object[6])), to_string(activeCapture), Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
 	AddCaptureArea(capt);
+	activeCapture++;
 	static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
 }
 
@@ -173,5 +227,6 @@ void DataDrivenMap::AddGround(vector<std::string> object) {
 }
 
 void DataDrivenMap::AddMinionAreas(vector<std::string> object) {
-
+	AddCaptureArea(new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f,1.5f,1.5f), stoi(object[5])));
+	activeCapture++;
 }
