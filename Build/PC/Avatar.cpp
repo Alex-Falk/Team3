@@ -318,8 +318,6 @@ void Avatar::ShootRocket()
 		}
 
 		Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
-		Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.18f,0.18f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-		projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0.0f));
 
 		ShootRocket(Physics()->GetPosition(), direction);
 
@@ -354,7 +352,11 @@ void Avatar::Spray(Vector3 pos, Vector3 dir)
 void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-	projectile->Physics()->SetOrientation(Quaternion(dir, 0));
+	
+	float angle = atan2(dir.x, dir.z);
+	
+	projectile->Physics()->SetOrientation(Quaternion(0, sin(angle / 2), 0, cos(angle / 2)));
+	
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
 }
 

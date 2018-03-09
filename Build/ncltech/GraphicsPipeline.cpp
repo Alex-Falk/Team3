@@ -1088,7 +1088,13 @@ void GraphicsPipeline::DrawMiniMap() {
 	//capturable object
 	for (int i = 0; i < map->GetCaptureAreaVector().size(); i++) {
 		//four is one more than the highest number
-		pickupTypes[count] = 4;
+		switch (map->GetCaptureAreaVector()[i]->GetType())
+		{
+			case MULTIPAINTPOOL_CAPTURE_AREA:
+			case MINION_CAPTURE_AREA:			pickupTypes[count] = 5;		break;
+			default:							pickupTypes[count] = 4;		break;
+		}
+
 		pickupColours[count] = map->GetCaptureAreaColour(i);
 		Vector2 v = VectorToMapCoord(map->GetCaptureAreaPos(i));
 		pickupPositions[count * 2] = v.x;
@@ -1096,10 +1102,10 @@ void GraphicsPipeline::DrawMiniMap() {
 		count++;
 	}
 
-	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
+	glUniform1ui (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
 	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
-	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
-	glUniform1iv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
+	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
+	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
 
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
