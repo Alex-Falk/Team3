@@ -23,8 +23,7 @@
   (            %,%,          #* @%%%     %%%%                     (@(    
     #.         %,%,           #&  %%     %%%%                     *%%,   
  (* %.       #@%.(@@.          *@@@%   #@@%%@@#                  .#      
-(              #(@*                      @#*&                    *,      
-*/
+(              #(@*                      @#*&                   */
 #pragma once
 #include <string>																				
 #include <fstream>
@@ -44,8 +43,6 @@ private:
 	string fileName = "Map4";
 	vector<string> lines;
 
-	vector<Pickup> pickups;
-	vector<CaptureArea> captAreas;
 	Colour team;
 	PickupType type;
 	WeaponType weapType;
@@ -87,6 +84,8 @@ public:
 	virtual void OnInitializeScene() override;
 	virtual void SetSpawnLocations() override;
 	virtual void AddObjects() override;
+
+	inline void SetMapName(string name) { fileName = name; }
 
 	//--------------------------------------------------------------------------------------------//
 	// Special Object udpates (e.g. Pickups)

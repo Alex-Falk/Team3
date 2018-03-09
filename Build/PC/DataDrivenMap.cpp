@@ -23,8 +23,7 @@
   (            %,%,          #* @%%%     %%%%                     (@(    
     #.         %,%,           #&  %%     %%%%                     *%%,   
  (* %.       #@%.(@@.          *@@@%   #@@%%@@#                  .#      
-(              #(@*                      @#*&                    *,      
-*/
+(              #(@*                      @#*&                   */
 #include "DataDrivenMap.h"
 #include "WeaponPickup.h"
 #include "PaintPool.h"
@@ -193,7 +192,7 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 	Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, to_string(activePickups));
 	AddPickup(pool);
 	activePickups++;
-	CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[4]), stof(object[5]), stof(object[6])), to_string(activeCapture), Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
+	CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[5]), stof(object[6]), stof(object[7])), to_string(activeCapture), Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
 	AddCaptureArea(capt);
 	activeCapture++;
 	static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
