@@ -2,7 +2,7 @@
 #include "Particle.h"
 #include <nclgl\Camera.h>
 
-Particle::Particle(Colour col, Vector3 pos, Vector3 vel, float size, string name)
+Particle::Particle(Colour col, Vector3 pos, Vector3 vel, float size, float lifeTime, float maxDist, string name)
 {
 	RenderNode * rnode = new RenderNode();
 
@@ -19,6 +19,8 @@ Particle::Particle(Colour col, Vector3 pos, Vector3 vel, float size, string name
 	position = pos;
 	spawnPos = pos;
 	velocity = vel*2.0f;
+	this->lifeTime = lifeTime;
+	this->maxDist = maxDist;
 
 	renderNode = rnode;
 }
@@ -39,7 +41,7 @@ void Particle::Update(float dt)
 	//renderNode->SetBaseColor(Vector4(RGB.x, RGB.y, RGB.z, 0.1f));
 	renderNode->SetTransform(Matrix4::Translation(position));
 
-	if (dist > 3.0f || lifeTime <= 0)
+	if (dist > maxDist || lifeTime <= 0)
 	{
 		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
 	}	

@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "MultiPaintPool.h"
 #include "CaptureArea.h"
+#include "ParticleEmitter.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
@@ -59,7 +60,8 @@ void SimpleGamePlay::AddObjects()
 	mpp->AddPool(cpp3);
 	mpp->AddPool(cpp4);
 
-
+	ParticleEmitter * e = new ParticleEmitter(RED, { 0,2,0 }, 20, { 1,1,0 }, 10,10,5,50);
+	this->AddGameObject(e);
 }
 
 //--------------------------------------------------------------------------------------------//
