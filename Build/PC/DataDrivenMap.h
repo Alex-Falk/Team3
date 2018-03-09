@@ -10,9 +10,9 @@ class DataDrivenMap :public Map
 {
 private:
 	float m_AccumTime = 0;
-	int numemptyline = 0;
+	uint numemptyline = 0;
 	Map* map;
-	string fileName = "Map4.txt";
+	string fileName = "Map4";
 	vector<string> lines;
 
 	vector<Pickup> pickups;
@@ -30,6 +30,7 @@ private:
 	void Buildmap();
 	void BuildObjects();
 	void BuildObject(vector<std::string> object);
+	void BuildMapDimenions(vector<std::string> object);
 	void AddGround(vector<std::string> object);
 	void AddCuboid(vector<std::string> object);
 	void SetSpawnLocation(vector<std::string> object);
@@ -39,6 +40,7 @@ private:
 	void AddCaptureAreas(vector<std::string> object);
 	void AddMultiPaintPools(vector<std::string> object);
 	void AddMinionAreas(vector<std::string> object);
+	inline void CoruptedFile(uint errorNumber, uint errorLine){ GUIsystem::Instance()->MapProblem(errorNumber, errorLine); }
 
 public:
 	//--------------------------------------------------------------------------------------------//

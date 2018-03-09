@@ -140,6 +140,9 @@ public:
 
 	//Loading Screen textrue translation
 	float translation = 0.01;
+
+	//Map Problem
+	void MapProblem(uint errorNumber, uint errorLine);
 	
 	//Temp text context holder
 	std::string userName;

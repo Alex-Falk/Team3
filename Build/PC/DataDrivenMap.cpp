@@ -47,12 +47,17 @@ void DataDrivenMap::onButtonClicked()
 }
 
 void DataDrivenMap::ReadFile() {
-	std::ifstream ifs(fileName);
-	std::string file((std::istreambuf_iterator<char>(ifs)),
-		(std::istreambuf_iterator<char>()));
+	try {
+		std::ifstream ifs("../../Data/Maps/"+fileName+".txt");
+		std::string file((std::istreambuf_iterator<char>(ifs)),
+			(std::istreambuf_iterator<char>()));
+
 	lines = GetLines(file);
-	cout << "file ok";
 	ifs.close();
+	}
+	catch (const ifstream::failure& e) {
+		CoruptedFile(0,0);
+	}
 }
 
 void DataDrivenMap::Buildmap() {
@@ -71,7 +76,7 @@ void DataDrivenMap::BuildObjects() {
 }
 
 void DataDrivenMap::BuildObject(vector<std::string> object) {
-
+	numemptyline++;
 	if (object[0] == "CAPTURE_AREA")		AddCaptureAreas(object);
 	else if (object[0] == "CUBE")			AddCuboid(object);
 	else if (object[0] == "PICKUP")			AddPickups(object);
@@ -81,6 +86,8 @@ void DataDrivenMap::BuildObject(vector<std::string> object) {
 	else if (object[0] == "MINION_AREA")	AddMinionAreas(object);
 	else if (object[0] == "GROUND")			AddGround(object);
 	else if (object[0] == "SPAWN_LOC")		SetSpawnLocation(object);
+	else if (object[0] == "MAP")			BuildMapDimenions(object);
+	else  CoruptedFile(1, numemptyline);
 }
 
 vector<string> DataDrivenMap::GetLines(std::string file) {
@@ -98,7 +105,7 @@ vector<string> DataDrivenMap::GetObjects(std::string line) {
 	return object;
 }
 
-void DataDrivenMap::AddGround(vector<std::string> object) {
+void DataDrivenMap::BuildMapDimenions(vector<std::string> object) {
 	Map::SetMapDimensions(Vector2(stof(object[1]), stof(object[2])));
 	BuildGround(Vector2(stof(object[1]), stof(object[2])));
 }
@@ -154,8 +161,15 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 }
 
 void DataDrivenMap::AddCuboid(vector<std::string> object) {
-	Addcuboid(CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])),true, stof(object[8]),true,false,DEFAULT_PHYSICS, DEFAULT_COLOUR));
+	GameObject* cube =  CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, stof(object[8]), true, false, DEFAULT_PHYSICS, DEFAULT_COLOUR);
+	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])),1));
+	Addcuboid(cube);
+}
 
+void DataDrivenMap::AddGround(vector<std::string> object) {
+	GameObject* cube = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, 0, true, false, BIG_NODE, DEFAULT_COLOUR, MATERIALTYPE::Ground);
+	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 1));
+	Addcuboid(cube);
 }
 
 void DataDrivenMap::AddMinionAreas(vector<std::string> object) {

@@ -591,3 +591,14 @@ void GUIsystem::SetUpResultText()
 	ResultText->disable();
 	ResultText->setVisible(false);
 }
+
+void GUIsystem::MapProblem(uint errorNumber, uint errorLine) {
+	for (int i = 0; i < 50; i++) {
+		if (errorNumber == 0) {
+			cout << "File was corrupted";
+		}
+		else if (errorNumber == 1) {
+			cout << "File was not writen in apropriate format in line " << to_string(errorLine) << " \n";
+		}
+	}
+}
