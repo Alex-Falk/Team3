@@ -105,49 +105,11 @@ void CaptureArea::SetColour(Colour c)
 
 	switch (colour)
 	{
-	case RED:
-		paintColour = RED_COLOUR;
-		playerScores[0] = lifeReq;
-		playerScores[1] = 0;
-		playerScores[2] = 0;
-		playerScores[3] = 0;
-		break;
-
-	case GREEN:
-		paintColour = GREEN_COLOUR;
-		playerScores[0] = 0;
-		playerScores[1] = lifeReq;
-		playerScores[2] = 0;
-		playerScores[3] = 0;
-		break;
-
-	case BLUE:
-		paintColour = BLUE_COLOUR;
-		playerScores[0] = 0;
-		playerScores[1] = 0;
-		playerScores[2] = lifeReq;
-		playerScores[3] = 0;
-		break;
-
-	case PINK:
-		paintColour = PINK_COLOUR;
-		playerScores[0] = 0;
-		playerScores[1] = 0;
-		playerScores[2] = 0;
-		playerScores[3] = lifeReq;
-		break;
-
-	case START_COLOUR:
-		paintColour = DEFAULT_COLOUR;
-		playerScores[0] = 0;
-		playerScores[1] = 0;
-		playerScores[2] = 0;
-		playerScores[3] = 0;
-		break;
-
-	default:
-		paintColour = DEFAULT_COLOUR;
-		break;
+		case RED:			paintColour = RED_COLOUR;		playerScores[0] = lifeReq;	playerScores[1] = 0;		playerScores[2] = 0;		playerScores[3] = 0;		break;
+		case GREEN:			paintColour = GREEN_COLOUR;		playerScores[0] = 0;		playerScores[1] = lifeReq;	playerScores[2] = 0;		playerScores[3] = 0;		break;
+		case BLUE:			paintColour = BLUE_COLOUR;		playerScores[0] = 0;		playerScores[1] = 0;		playerScores[2] = lifeReq;	playerScores[3] = 0;		break;
+		case PINK:			paintColour = PINK_COLOUR;		playerScores[0] = 0;		playerScores[1] = 0;		playerScores[2] = 0;		playerScores[3] = lifeReq;	break;
+		case START_COLOUR:	paintColour = DEFAULT_COLOUR;	playerScores[0] = 0;		playerScores[1] = 0;		playerScores[2] = 0;		playerScores[3] = 0;		break;
 	}
 
 	Render()->SetChildBaseColor(paintColour);
@@ -177,6 +139,7 @@ bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* co
 
 }
 
+//TODO: FOR ALEX 
 bool CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) {
 	if (Game::Instance()->GetPlayer(index)) {
 		if (Game::Instance()->GetPlayer(index)->GetColour() != ((Avatar*)p->GetParent())->GetColour()) {
