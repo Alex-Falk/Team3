@@ -95,6 +95,7 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 	SetColour(colour);
 	UpdatePercentage();
 	currentlyCapturing = RED;
+	type = DEFAULT_CAPTURE_AREA;
 }
 
 void CaptureArea::SetColour(Colour c)
@@ -115,6 +116,15 @@ void CaptureArea::SetColour(Colour c)
 	Render()->SetChildBaseColor(paintColour);
 }
 
+CaptureAreaType CaptureArea::GetType()
+{
+	return type;
+}
+
+void CaptureArea::SetType(CaptureAreaType newType)
+{
+	type = newType;
+}
 
 bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
 {

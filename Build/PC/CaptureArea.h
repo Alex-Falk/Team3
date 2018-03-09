@@ -42,7 +42,9 @@ public:
 	void SetLifeReq(float l) { lifeReq = l; }
 	float GetLifeReq() { return lifeReq; }
 	
-	~CaptureArea();
+	CaptureAreaType GetType();
+	void SetType(CaptureAreaType newType);
+
 
 	virtual void Update(float dt) {}
 
@@ -56,7 +58,8 @@ public:
 
 	void UpdatePercentage();
 
-
+	~CaptureArea();
+	
 protected:
 
 	Colour currentlyCapturing;
@@ -67,5 +70,6 @@ protected:
 	int scoreValue;
 	Colour colour;
 	int life;
+	CaptureAreaType type;
 };
 
