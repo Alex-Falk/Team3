@@ -215,6 +215,9 @@
     <ClInclude Include="NCLDebug.h">
       <Filter>Files\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Lexer.h">
+      <Filter>Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="CHANGELIST.txt">

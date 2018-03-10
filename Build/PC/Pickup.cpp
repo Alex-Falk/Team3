@@ -20,6 +20,7 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"      
 
+
 #include "Pickup.h"
 #include <ncltech\CuboidCollisionShape.h>
 #include <string.h>
@@ -34,7 +35,7 @@ Pickup::Pickup()
 	Vector3 halfdims(0.5f, 0.5f, 0.5f);
 	
 	RenderNode* rnode = new RenderNode();
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), "Pickup", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
@@ -93,7 +94,7 @@ Pickup::Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTi
 	friendlyName = unique_name;
 
 	RenderNode* rnode = new RenderNode();
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), Vector4(0.0f, 1.0f, 0.0f, 1.0f));
+	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), "PickUp", Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
@@ -126,12 +127,10 @@ Pickup::Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTi
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
 
-	//this->friendlyName = "Pickup";
 	this->renderNode = rnode;
 	this->physicsNode = pnode;
 	RegisterPhysicsToRenderTransformCallback();
 	SetPhysics(pnode);
-	//pnode->SetName("Pickup");
 
 	Physics()->SetOnCollisionCallback(
 		std::bind(&Pickup::PickupCallbackFunction,

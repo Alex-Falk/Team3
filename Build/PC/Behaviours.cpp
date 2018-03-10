@@ -22,6 +22,8 @@
 #include "Behaviours.h"
 using namespace Behaviours;
 
+#define RANDOM_MOVEMENT (float)(((rand() % 100) / 10.0f)-5.0f)
+
 Vector3 Behaviours::Seek(Vector3 targetPos, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxXZMagnitude)
 {
 	// Applies wall avoid accelleration
@@ -29,11 +31,12 @@ Vector3 Behaviours::Seek(Vector3 targetPos, Vector3 currentPos, Vector3 currentV
 
 	// If no wall avoidance was needed
 	if (grounded && currentVelocity.LengthSQ() < 2)
+	//if (grounded)
 	{
 		// Create a vector to the target point 
 		Vector3 desiredDirection = (targetPos - currentPos).Normalise();
 
-		behaviourAccn = (desiredDirection * maxXZMagnitude) + Vector3(0.0f,8.0f,0.0f);
+		behaviourAccn = (desiredDirection * maxXZMagnitude) + Vector3(RANDOM_MOVEMENT, 14.0f, RANDOM_MOVEMENT);
 	}
 
 	return behaviourAccn * weight;
@@ -46,7 +49,7 @@ Vector3 Behaviours::Seek(PhysicsNode* target, PhysicsNode* currentNode, bool gro
 		return Vector3(0, 0, 0);
 	}
 
-	Seek(target->GetPosition(), currentNode->GetPosition(), currentNode->GetLinearVelocity(), grounded, weight, maxXZMagnitude);
+	return Seek(target->GetPosition(), currentNode->GetPosition(), currentNode->GetLinearVelocity(), grounded, weight, maxXZMagnitude);
 }
 
 Vector3 Behaviours::Flee(Vector3 targetPos, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxXZMagnitude)
@@ -61,7 +64,7 @@ Vector3 Behaviours::Flee(PhysicsNode* target, PhysicsNode* currentNode, bool gro
 		return Vector3(0, 0, 0);
 	}
 
-	Seek(currentNode->GetPosition(), target->GetPosition(), currentNode->GetLinearVelocity(), grounded, weight, maxXZMagnitude);
+	return Seek(currentNode->GetPosition(), target->GetPosition(), currentNode->GetLinearVelocity(), grounded, weight, maxXZMagnitude);
 }
 
 Vector3 Behaviours::TargetPrediction(Vector3 targetPos, Vector3 targetVelocity, Vector3 currentPos, float maxXZMagnitude)

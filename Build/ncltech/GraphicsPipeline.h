@@ -25,6 +25,7 @@
 #include <nclgl\Mouse.h>
 #include <PC\UserInterface.h>
 #include <PC\PostProcess.h>
+#include <nclgl\PerfTimer.h>
 
 //material
 #include <nclgl\Material.h>
@@ -187,6 +188,7 @@ public:
 	//GUI
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 	bool GetIsMainMenu() { return isMainMenu; }
+	void ResetPath();
 
 	inline GLuint GetScreenTexWidth() { return screenTexWidth; }
 	inline GLuint GetScreenTexHeight() { return screenTexHeight; }
@@ -199,7 +201,15 @@ public:
 	inline int GetHeight() { return height; }
 	inline Mesh* GetScreenQuad() { return fullscreenQuad; }
 	//Score
-	inline float GetScore(uint i) { return scores[i]; }
+	inline float GetScore(uint i) { return (float)scores[i]; }
+
+	void PrintPerformanceTimers(const Vector4& color)
+	{
+		perfShadow.PrintOutputToStatusEntry(color,		"              Shadows        :");
+		perfObjects.PrintOutputToStatusEntry(color,		"              Objects        :");
+		perfPostProcess.PrintOutputToStatusEntry(color, "              PostProcess    :");
+		perfScoreandMap.PrintOutputToStatusEntry(color, "              Score & Map    :");
+	}
 
 protected:
 	GraphicsPipeline();
@@ -274,10 +284,18 @@ protected:
 
 	//path
 	Vector2		groundSize;
+	Vector3		lastPath[4];
+
+	void SetPath(RenderNode* playerRenderNode, uint playerNumber);
+	void SetupPathSmoother();
+	
 	std::vector<RenderNode*>	playerRenderNodes;
 	std::vector<RenderNode*>	pathRenderNodes;
+	std::vector<RenderNode*>    pathSmoother;
+	
 	GLuint		pathFBO;
 	GLuint		pathTex;
+	
 
 	//Score - Alex 27/02/2018
 	GLuint		scoreFBO;
@@ -285,11 +303,20 @@ protected:
 	GLuint		scoreBuffer;
 	uint		scores[4];
 
+	float accumTime = 0.0f;
 	//For minimap
 	float time;
 	//translates a world position into a position for the minimap
 	Vector2 VectorToMapCoord(Vector3 pos);
 	//GUI
 	bool isMainMenu = false;
+
+	//--------------------------------------------------------------------------------------------//	Fragkas Nikolaos
+	// Performance Timers																				Date: 02/03/2018
+	//--------------------------------------------------------------------------------------------//	
+	PerfTimer perfShadow;
+	PerfTimer perfObjects;
+	PerfTimer perfPostProcess;
+	PerfTimer perfScoreandMap;
 };
 

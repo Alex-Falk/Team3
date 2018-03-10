@@ -82,8 +82,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{8F46EB91-D896-4889-8C43-9CF76240A4E3}"
 	ProjectSection(SolutionItems) = preProject
 		..\Data\Shaders\UI\ColorFragment.glsl = ..\Data\Shaders\UI\ColorFragment.glsl
+		..\Data\Shaders\UI\LoadingScreenFrag.glsl = ..\Data\Shaders\UI\LoadingScreenFrag.glsl
+		..\Data\Shaders\UI\LoadingScreenVertex.glsl = ..\Data\Shaders\UI\LoadingScreenVertex.glsl
+		..\Data\Shaders\Game\MiniMapFragment.glsl = ..\Data\Shaders\Game\MiniMapFragment.glsl
+		..\Data\Shaders\Game\MiniMapVertex.glsl = ..\Data\Shaders\Game\MiniMapVertex.glsl
 		..\Data\Shaders\UI\ScoreBarFragment.glsl = ..\Data\Shaders\UI\ScoreBarFragment.glsl
 		..\Data\Shaders\UI\ScorebarVertex.glsl = ..\Data\Shaders\UI\ScorebarVertex.glsl
+		..\Data\Shaders\Game\ScoreFragment.glsl = ..\Data\Shaders\Game\ScoreFragment.glsl
+		..\Data\Shaders\Game\ScoreVertex.glsl = ..\Data\Shaders\Game\ScoreVertex.glsl
+		..\Data\Shaders\UI\WeaponTextureFrag.glsl = ..\Data\Shaders\UI\WeaponTextureFrag.glsl
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Post Process", "Post Process", "{A46604DF-82C8-429E-B925-33739FEF5CB0}"
@@ -97,6 +104,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Post Process", "Post Proces
 		..\Data\Shaders\Post Process\INVERSION.glsl = ..\Data\Shaders\Post Process\INVERSION.glsl
 		..\Data\Shaders\Post Process\SHARPEN.glsl = ..\Data\Shaders\Post Process\SHARPEN.glsl
 		..\Data\Shaders\Post Process\SOBEL.glsl = ..\Data\Shaders\Post Process\SOBEL.glsl
+		..\Data\Shaders\Post Process\WIN.glsl = ..\Data\Shaders\Post Process\WIN.glsl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Font", "Font", "{1F801B21-045D-407C-8484-6B61494141CE}"
+	ProjectSection(SolutionItems) = preProject
+		..\Data\GUIResource\fonts\.font = ..\Data\GUIResource\fonts\.font
+		..\Data\GUIResource\fonts\Batang-18.font = ..\Data\GUIResource\fonts\Batang-18.font
+		..\Data\GUIResource\fonts\DejaVuSans-10.font = ..\Data\GUIResource\fonts\DejaVuSans-10.font
+		..\Data\GUIResource\fonts\DejaVuSans-12.font = ..\Data\GUIResource\fonts\DejaVuSans-12.font
+		..\Data\GUIResource\fonts\DejaVuSans-14.font = ..\Data\GUIResource\fonts\DejaVuSans-14.font
+		..\Data\GUIResource\fonts\GreatVibes-16.font = ..\Data\GUIResource\fonts\GreatVibes-16.font
+		..\Data\GUIResource\fonts\GreatVibes-22.font = ..\Data\GUIResource\fonts\GreatVibes-22.font
+		..\Data\GUIResource\fonts\Junicode-13.font = ..\Data\GUIResource\fonts\Junicode-13.font
+		..\Data\GUIResource\fonts\Jura-10.font = ..\Data\GUIResource\fonts\Jura-10.font
+		..\Data\GUIResource\fonts\Jura-13.font = ..\Data\GUIResource\fonts\Jura-13.font
+		..\Data\GUIResource\fonts\Jura-18.font = ..\Data\GUIResource\fonts\Jura-18.font
 	EndProjectSection
 EndProject
 Global

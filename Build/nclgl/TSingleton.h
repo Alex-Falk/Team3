@@ -15,7 +15,6 @@ If your interested in learning more about the singleton pattern or good programm
 this wikibook has all you'll ever need! =]
 https://en.wikibooks.org/wiki/C%2B%2B_Programming/Code/Design_Patterns
 
-
 Note: Currently no nclgl class's have been changed to use this format (Window::GetWindow() is still around)!
 	  Only ncltech class's will use this quick hack class, though I as a low level utility function I thought
 	  it best to live inside nclgl.
@@ -62,8 +61,6 @@ public:
 			m_pInstance = NULL;
 		}
 	}
-
-
 
 protected:
 	//Only allow the class to be created and destroyed by itself

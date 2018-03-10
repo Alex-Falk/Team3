@@ -1,62 +1,81 @@
+/*               
+                          .,okkkd:.                          
+                       .:x0KOdooxKKkl,.                      
+                   .,oOKKxc'. .. .;oOX0d:.                   
+                ...oKOo;. .;dO00xc.  'cxKO, ..               
+            .,lk0l...  .:oxXMMMMMWOoc'  .. ,O0d:.            
+         .:d0XOo;.     ;c..kMMMMMK;.;:.     'ckKKkc'.        
+      'lkKKxc'  .,.        oWMMMMO.        ''  .:d0KOo;.     
+     '0Wk;. .,loo:.        :NMMMMx.        ,loo:. .,oXNc     
+     ,0X: .lKWMKl.         ,KMMMWo         .;kWWXx' .kNc     
+     '0X; .OMMMMWXx;.      ,0MMMNl       'o0NMMMMN: .kWc     
+     '0X; .k0d0NWMMW0o,..cxKWMMMMXkl,..ckNMMMWKxkK: .kWc     
+     '0X; .kl  ':okKWMNKXWMMMMMMMMMMNKXWWXOdc,. ,O: .kWc     
+     '0X;  ,.      .,oXMMMMMMMMMMMMMMMWk;.      .;. .kNc     
+     .,;.            '0MMMMMMMMMMMMMMMWc             ';.			Alexander Falk
+     .lo.            '0MMMMMMMMMMMMMMMWc            .cd,			Map.h
+     '0X: .:,     .,lkNMMMMMMMMMMMMMMMWKo:'.    .c' .OWl     
+     '0X; .ko.':okXWMW0xkXWMMMMMMMMN0xkNMWN0xl;.:O: .OWc     
+     '0X; .OX0NMMMWKx;.  .:xNMMMW0l,.  'lONMMMWKKX: .kWc     
+     '0X: .OMMMMNkc.       '0MMMNc       .;dKWMMMN: .kWc     
+     '0N: .;xKWKc.         ;XMMMWo          'kNXkl. .OWc     
+     .xNKd:. .;loc.        cNMMMMk.       .;ol;. .,lONK;     
+      .'lkKKkl,. .         dWMMWM0'        .  .:d0XOo;.      
+          .:d0X0d,     ,l:;OMMMMMXl;lc.    .ckKKkc'          
+             .,lxc.,c'. .:d0WMMMMXkl,. .;:.'dd:.             
+                  .l0XOo;. .;oooc' .'cxKKx'                  
+                    .,lkKKxc'.  .;oOK0d:.                    
+                        .:d0K000KKkl,.                       
+                           .,cll:.                            
+*/
+// General Map Class that serves as a base for Maps - now as a base for the DataDrivenMap.
+
 #pragma once
-#include <nclgl\NCLDebug.h>
-#include <ncltech\Scene.h>
-#include <ncltech\SceneManager.h>
-#include <ncltech\PhysicsEngine.h>
-#include <ncltech\DistanceConstraint.h>
 #include <ncltech\CommonUtils.h>
 #include <ncltech\TextureManager.h> 
-#include "GamePlay.h"
-#include "Pickup.h"
-#include "Avatar.h"
-#include "ControllableAvatar.h"
-#include "Game.h"
-#include "GamePlay.h"
-#include "WeaponPickup.h"
+#include <ncltech\SceneManager.h>
 #include "CaptureArea.h"
+#include "Pickup.h"
+#include "GamePlay.h"
+#include "Game.h"
 
+class MinionBase;
 class Map : public Scene
 {
 protected:
 	float m_AccumTime = 0;
+	float updatePerSecond = 0;
 	Vector3 spawnPositions[4];
+	
 	static int mapIndex; // Controls which map will be loaded
 
-	CEGUI::ProgressBar* lifeBar;
+	
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
+	CEGUI::ProgressBar* lifeBar;
+	CEGUI::Titlebar* timer;
 	//--------------------------------------------------------------------------------------------//
-	//CEGUI::ProgressBar* energyBar;
 
 	//--------------------------------------------------------------------------------------------//
 	// Map Size
 	//--------------------------------------------------------------------------------------------//
 	Vector2 dimensions;
-	inline void SetMapDimensions(Vector2 dimens)	{ dimensions = dimens; }
-	inline Vector2 GetMapDimensions()				{ return dimensions; }
+	inline void SetMapDimensions(Vector2 dimens) 
+	{
+		dimensions = dimens; PhysicsEngine::Instance()->SetLimits(Vector3(-dimensions.x, -20, -dimensions.y), Vector3(dimensions.x, 50, dimensions.y));
+	}
 
+	inline Vector2 GetMapDimensions() { return dimensions; }
+	
+	static const int maxMinions = 20;
+	MinionBase * minions[maxMinions];
 
-	//pickup stuff
-	uint npickup;
-	Pickup** pickup;
-	//capture areas for minimap
-	uint ncapture;
-	CaptureArea** capture;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
 	//--------------------------------------------------------------------------------------------//
 	Map(const std::string& friendly_name) : Scene(friendly_name) {}
-	~Map() {
-		TextureManager::Instance()->RemoveAllTexture();
-		//delete the array of pickups
-		if (pickup) {
-			delete[] pickup;
-		}
-		if (capture) {
-			delete[] capture;
-		}
-	};
+	virtual ~Map();
 
 	virtual void OnCleanupScene();
 
@@ -69,20 +88,44 @@ public:
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
 
+
+	//--------------------------------------------------------------------------------------------//
+	// Utility
+	//--------------------------------------------------------------------------------------------//
 	static int GetMapIndex() { return mapIndex; }
-	void SetMapIndex(int mapIndx); 
+	void SetMapIndex(int mapIndx);
+
+	//phil 21/02/2018 for minimap
+	inline float GetXDimension() { return dimensions.x; }
+	inline float GetYDimension() { return dimensions.y; }
+
+
+	//--------------------------------------------------------------------------------------------//
+	// Minions - Special Gameobjects
+	//--------------------------------------------------------------------------------------------//
+
+	void AddMinion(MinionBase * m);
+	void AddMinion(MinionBase * m,int location);
+	void RemoveMinion(MinionBase * m);
+	MinionBase * GetMinion(int i) { return minions[i]; }
+	uint GetMinionID(MinionBase * m);
+	MinionBase ** GetMinions() { return minions; }
+
+	int GetMaxMinions() { return maxMinions; }
+
+
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 
-	//phil 21/02/2018 for minimap
-	inline int GetXDimension() { return dimensions.x; }
-	inline int GetYDimension() { return dimensions.y; }
+	//Jeffery 06/03/2018 for timer GUI
+	void TransferAndUpdateTimer();
 
-	inline uint GetNPickup() { return npickup; }
-	inline Pickup** GetPickups() { return pickup; }
-	inline uint GetNCapture() { return ncapture; }
-	inline CaptureArea** GetCaptureAreas() { return capture; }
+	//Jeffery 06/03/2018 for updating playername and position for GUI rendering
+	void UpdateGUI(float dt);
+
+	float temp_fps = 0;
+	bool isLoading = false;
 };
 

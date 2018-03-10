@@ -13,7 +13,7 @@
      '0X; .kl  ':okKWMNKXWMMMMMMMMMMNKXWWXOdc,. ,O: .kWc     
      '0X;  ,.      .,oXMMMMMMMMMMMMMMMWk;.      .;. .kNc     
      .,;.            '0MMMMMMMMMMMMMMMWc             ';.			Alexander Falk
-     .lo.            '0MMMMMMMMMMMMMMMWc            .cd,			05/02/2018
+     .lo.            '0MMMMMMMMMMMMMMMWc            .cd,			NetworkCommon.cpp
      '0X: .:,     .,lkNMMMMMMMMMMMMMMMWKo:'.    .c' .OWl     
      '0X; .ko.':okXWMW0xkXWMMMMMMMMN0xkNMWN0xl;.:O: .OWc     
      '0X; .OX0NMMMWKx;.  .:xNMMMW0l,.  'lONMMMWKKX: .kWc     
@@ -28,6 +28,7 @@
                         .:d0K000KKkl,.                       
                            .,cll:.                            
 */
+// Common Functions For the Network
 
 #include "NetworkCommon.h"
 
@@ -61,6 +62,10 @@ vector<string> split_string(string s, char d) {
 		for (vector<string>::iterator it = subs.begin(); it != subs.end(); ++it) {
 			chars.push_back((*it));
 		}
+	}
+	else
+	{
+		chars.push_back(s);
 	}
 
 	return chars;

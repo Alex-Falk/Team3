@@ -21,13 +21,16 @@
 #include "GraphicsPipeline.h"
 #include "ScreenPicker.h"
 #include "BoundingBox.h"
+#include "CommonMeshes.h"
 #include <nclgl\NCLDebug.h>
 #include <algorithm>
 #include <ncltech\TextureManager.h>
+
 //used by minimap
 #include <PC\Game.h>
 #include <PC\Map.h>
 #include <PC\PaintPool.h>
+#include<PC\CaptureArea.h>
 
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
@@ -48,6 +51,7 @@ GraphicsPipeline::GraphicsPipeline()
 	for (int i = 0; i < 2; ++i) {
 		screenTexColor[i] = NULL;
 	}
+	GUIsystem::Instance();
 	LoadShaders();
 	LoadMaterial();
 	NCLDebug::_LoadShaders();
@@ -122,6 +126,11 @@ GraphicsPipeline::~GraphicsPipeline()
 
 	playerRenderNodes.clear();
 	pathRenderNodes.clear();
+	
+	for (auto itr = pathSmoother.begin(); itr != pathSmoother.end(); ++itr)
+	{
+		delete *itr;
+	}
 }
 
 void GraphicsPipeline::InitializeDefaults()
@@ -379,6 +388,11 @@ void GraphicsPipeline::UpdateScene(float dt)
 	//update all of the camera stuff
 	camera->UpdateCamara(dt);
 
+	// Update Timers
+	perfShadow.UpdateRealElapsedTime(dt);
+	perfObjects.UpdateRealElapsedTime(dt);
+	perfPostProcess.UpdateRealElapsedTime(dt);
+	perfScoreandMap.UpdateRealElapsedTime(dt);
 
 	viewMatrix = camera->BuildViewMatrix();
 	projViewMatrix = projMatrix * viewMatrix;
@@ -388,6 +402,7 @@ void GraphicsPipeline::UpdateScene(float dt)
 
 	//increment time
 	time += dt;
+	accumTime += dt;
 	NCLDebug::_SetDebugDrawData(
 		projMatrix,
 		viewMatrix,
@@ -402,42 +417,104 @@ void GraphicsPipeline::RenderScene()
 	for (RenderNode* node : allNodes)
 		node->Update(0.0f); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
 
-	//Build Transparent/Opaque Renderlists
+							//Build Transparent/Opaque Renderlists
 	BuildAndSortRenderLists();
 
 	//NCLDebug - Build render lists
 	NCLDebug::_BuildRenderLists();
 
-	//Build shadowmaps
-	RenderShadow();
+	//Jianfei - 2018/03/02
+	switch (GUIsystem::Instance()->GetCurrentLoadingScreen())
+	{
+	case NOT_LOADING:
 
-	//Render scene to screen fbo
-	RenderObject();
+		//Build shadowmaps
+		perfShadow.BeginTimingSection();
+		RenderShadow();
+		perfShadow.EndTimingSection();
 
-	//render the path to texture
-	RenderPath();
 
-	//post process and present
-	RenderPostprocessAndPresent();
+		//Render scene to screen fbo
+		perfObjects.BeginTimingSection();
+		RenderObject();
+		perfObjects.EndTimingSection();
 
-	//draw the minimap on screen
-	if (isMainMenu == false) {
-		CountScore();
-		DrawMiniMap();
+
+		//render the path to texture
+		RenderPath();
+
+		//post process and present
+		perfPostProcess.BeginTimingSection();
+		RenderPostprocessAndPresent();
+		perfPostProcess.EndTimingSection();
+
+
+		//draw the minimap on screen
+		perfScoreandMap.BeginTimingSection();
+
+		if (accumTime > 0.1f)
+		{
+			if (isMainMenu == false) {
+				CountScore();
+			}
+			accumTime = 0.0f;
+		}
+
+		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
+			DrawMiniMap();
+		}
+
+		perfScoreandMap.EndTimingSection();
+		
+
+
+		//NCLDEBUG - Text Elements (aliased)
+		if (isMainMenu == false) {
+			NCLDebug::_RenderDebugClipSpace();
+		}
+		NCLDebug::_ClearDebugLists();
+
+		//RenderUI
+		RenderUI();
+		//GUIsystem::Instance()->DrawStartLoadingScreen();
+		break;
+	case START:
+		GUIsystem::Instance()->DrawStartLoadingScreen();
+		break;
+	case TRANSITION:
+		GUIsystem::Instance()->DrawTransitionLoadingScreen();
+		break;
+	default:
+		NCLERROR("Fatal Error: Unknown loading screen type!");
+		break;
 	}
-
-	//NCLDEBUG - Text Elements (aliased)
-	if (isMainMenu == false) {
-		NCLDebug::_RenderDebugClipSpace();
-	}
-	NCLDebug::_ClearDebugLists();
-
-
-	//RenderUI
-	RenderUI();
-
-
 	OGLRenderer::SwapBuffers();
+}
+
+void GraphicsPipeline::ResetPath()
+{
+	pathRenderNodes.clear();
+	for (int i = 0; i < playerRenderNodes.size(); ++i)
+	{
+		RecursiveAddToPathRenderLists(playerRenderNodes[i]);
+
+		if (playerRenderNodes[i]->GetName() == "RED_PLAYER")
+		{
+			lastPath[0] = playerRenderNodes[i]->GetParent()->GetTransform().GetPositionVector();
+		}
+		else if (playerRenderNodes[i]->GetName() == "GREEN_PLAYER")
+		{
+			lastPath[1] = playerRenderNodes[i]->GetParent()->GetTransform().GetPositionVector();
+		}
+		else if (playerRenderNodes[i]->GetName() == "BLUE_PLAYER")
+		{
+			lastPath[2] = playerRenderNodes[i]->GetParent()->GetTransform().GetPositionVector();
+		}
+		else if (playerRenderNodes[i]->GetName() == "PINK_PLAYER")
+		{
+			lastPath[3] = playerRenderNodes[i]->GetParent()->GetTransform().GetPositionVector();
+		}
+	}
 }
 
 void GraphicsPipeline::Resize(int x, int y)
@@ -681,13 +758,119 @@ void GraphicsPipeline::RenderUI()
 	GUIsystem::Instance()->Draw();
 }
 
+
+void GraphicsPipeline::SetPath(RenderNode* playerRenderNode, uint playerNumber)
+{
+	auto pathNode = std::find(pathRenderNodes.begin(), pathRenderNodes.end(), playerRenderNode);
+	if (pathNode != pathRenderNodes.end())
+	{
+		Vector3 scale((*pathNode)->GetBoundingRadius(), 1.0f, (lastPath[playerNumber] - (*pathNode)->GetWorldTransform().GetPositionVector()).Length() / 2.0f);
+
+		Vector3 a = Vector3(lastPath[playerNumber].x, 0, lastPath[playerNumber].z);
+		Vector3 temp = (*pathNode)->GetParent()->GetWorldTransform().GetPositionVector();
+
+		Vector3 ab = Vector3(temp.x, 0, temp.z) - a;
+
+		float yaw = 90 + (float)RadToDeg(acos(Vector3::Dot(ab, { 1.0f, 0.0f, 0.0f }) / (ab.Length())));
+
+		if (ab.x > 0 && ab.z > 0)
+		{
+			yaw = 360 - yaw;
+		}
+		else if (ab.x > 0 && ab.z <= 0)
+		{
+			yaw = yaw;
+		}
+		else if (ab.x <= 0 && ab.z <= 0)
+		{
+			yaw = 180 + yaw;
+		}
+		else if (ab.x <= 0 && ab.z > 0)
+		{
+			yaw = 180 - yaw;
+		}
+
+		
+
+		Matrix4 tempMatrix;
+		tempMatrix.ToIdentity();
+		tempMatrix.SetPositionVector(lastPath[playerNumber] + (((*pathNode)->GetParent()->GetWorldTransform().GetPositionVector() - lastPath[playerNumber]) / 2));
+		tempMatrix = tempMatrix * Matrix4::Rotation(yaw, { 0,1,0 });
+
+		pathSmoother[playerNumber]->SetTransform(tempMatrix);
+
+		tempMatrix.ToIdentity();
+		tempMatrix.SetScalingVector(scale);
+		tempMatrix = tempMatrix;
+		pathSmoother[playerNumber]->GetChild()->SetTransform(tempMatrix);
+
+		pathSmoother[playerNumber]->Update(0);
+
+		pathSmoother[playerNumber]->SetChildBaseColor(playerRenderNode->GetBaseColor());
+		pathRenderNodes.push_back(pathSmoother[playerNumber]->GetChild());
+	}
+}
+
+void GraphicsPipeline::SetupPathSmoother()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		Mesh* mesh = new Mesh();
+		*mesh = *CommonMeshes::Cube();
+		RenderNode* tempNode = new RenderNode(NULL, "PathSmoother", Vector4(0.5f, 0.5f, 0.5f, 0.5f));
+		RenderNode* dummy = new PlayerRenderNode(mesh, "PathSmoother", Vector4(0.5f, 0.5f, 0.5f, 0.5f));
+		tempNode->AddChild(dummy);
+		pathSmoother.push_back(tempNode);
+	}
+}
+
 void GraphicsPipeline::RenderPath()
 {
+	if (!pathSmoother.size())
+	{
+		SetupPathSmoother();
+	}
+
 	pathRenderNodes.clear();
 	for (int i = 0; i < playerRenderNodes.size(); ++i)
 	{
 		RecursiveAddToPathRenderLists(playerRenderNodes[i]);
+
+			if (playerRenderNodes[i]->GetName() == "RED_PLAYER")
+			{
+				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+				{ 
+					SetPath(playerRenderNodes[i], 0);
+				}		
+				lastPath[0] = playerRenderNodes[i]->GetParent()->GetWorldTransform().GetPositionVector();
+			}
+			else if (playerRenderNodes[i]->GetName() == "GREEN_PLAYER")
+			{
+				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+				{
+					SetPath(playerRenderNodes[i], 1);
+				}
+				lastPath[1] = playerRenderNodes[i]->GetParent()->GetWorldTransform().GetPositionVector();
+			}
+			else if (playerRenderNodes[i]->GetName() == "BLUE_PLAYER")
+			{
+				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+				{
+					SetPath(playerRenderNodes[i], 2);
+				}
+				lastPath[2] = playerRenderNodes[i]->GetParent()->GetWorldTransform().GetPositionVector();
+			}
+			else if (playerRenderNodes[i]->GetName() == "PINK_PLAYER")
+			{
+				if (!(dynamic_cast<PlayerRenderNode*>(playerRenderNodes[i])->GetIsInAir()))
+				{
+					SetPath(playerRenderNodes[i], 3);
+				}
+				lastPath[3] = playerRenderNodes[i]->GetParent()->GetWorldTransform().GetPositionVector();
+			}
 	}
+
+	
 
 	Matrix4 projMatrix2 = Matrix4::Orthographic(-40, 40, -groundSize.x, groundSize.x, -groundSize.y, groundSize.y);
 	Matrix4	viewMatrix2 = Matrix4::Rotation(90, Vector3(1, 0, 0)) *Matrix4::Translation(Vector3(0.0f,-20.0f,0.0f));
@@ -695,10 +878,12 @@ void GraphicsPipeline::RenderPath()
 	Matrix4 temp = projViewMatrix;
 	projViewMatrix = projMatrix2 * viewMatrix2;
 
+
+
 	// draw the object and do not clean the color
 	glBindFramebuffer(GL_FRAMEBUFFER, pathFBO);
 	static_cast<DrawPathMaterial*>(materials[MATERIALTYPE::Draw_Path])->SetProjViewMtx(projMatrix2 * viewMatrix2);
-	for (int i = 0; i < pathRenderNodes.size(); i++)
+	for (int i = 0; i < pathRenderNodes.size(); ++i)
 	{
 		pathRenderNodes[i]->DrawOpenGL(true, materials[MATERIALTYPE::Draw_Path]);
 	}
@@ -732,7 +917,7 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	glBindFramebuffer(GL_FRAMEBUFFER, pathFBO);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pathTex, 0);
-	glClearColor(0.0f,0.0f,0.0f,1.0f);
+	glClearColor(0.0f,0.0f,0.0f,0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	GLenum buf = GL_COLOR_ATTACHMENT0;
 	glDrawBuffers(1, &buf);
@@ -745,6 +930,7 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	//-Alex Falk----------------------------------------------------------//
 	//Score Init - I put this here because score only needs to be initialized if we initialize the path
 	// and because it requires the same size
 		if (!scoreBuffer) glGenBuffers(1, &scoreBuffer);
@@ -752,6 +938,7 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * 4, NULL, GL_DYNAMIC_DRAW);
 	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, scoreBuffer);
 	glBindFramebuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+	//--------------------------------------------------------------------//
 
 	//Color Texture
 	if (!scoreTex) glGenTextures(1, &scoreTex);
@@ -793,7 +980,7 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 		RecursiveAddToPathRenderLists(*itr);
 }
 
-// Score - Alex - 27/02/2018
+//-Alex Falk----------------------------------------------------------//
 void GraphicsPipeline::CountScore()
 {
 	ResetScoreBuffer();
@@ -823,8 +1010,9 @@ void GraphicsPipeline::ResetScoreBuffer()
 	glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, a);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
 }
+//--------------------------------------------------------------------//
 
-// Minimap - philip 20/02/2018
+// Minimap - philip 20/02/2018 - Improved by Alex Falk
 void GraphicsPipeline::DrawMiniMap() {
 	if (pathTex == NULL) {
 		glDeleteTextures(1, &pathTex);
@@ -837,6 +1025,7 @@ void GraphicsPipeline::DrawMiniMap() {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//add textures
+	glActiveTexture(GL_TEXTURE0);
 	glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
 	glBindTexture(GL_TEXTURE_2D, pathTex);
 
@@ -863,7 +1052,7 @@ void GraphicsPipeline::DrawMiniMap() {
 
 	//these numbers are hardcoded at the moment but will be variables in the end
 	float aspect = (float)width / height;
-	float sx = 0.2;
+	float sx = 0.2f;
 	float sy = sx * aspect;
 
 	glUniformMatrix4fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "modelMatrix"), 1, GL_FALSE,
@@ -881,7 +1070,7 @@ void GraphicsPipeline::DrawMiniMap() {
 		Avatar* a = Game::Instance()->GetPlayer(i);
 		if (a) {
 			//let the shader know which is the current player
-			if (i == Game::Instance()->getUserID()) {
+			if (i == Game::Instance()->GetUserID()) {
 				glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "self"), count);
 			}
 			//adding the player's positions
@@ -907,40 +1096,58 @@ void GraphicsPipeline::DrawMiniMap() {
 	int pickupColours[20];
 	//reset count
 	count = 0;
-	for (int i = 0; i < map->GetNPickup(); i++) {
-		Pickup* p = map->GetPickups()[i];
-		if (p->GetActive()) {
-			pickupTypes[count] = p->GetPickupType();
-			if (pickupTypes[count] == PickupType::PAINTPOOL) {
-				pickupColours[count] = ((PaintPool*)map->GetPickups()[i])->GetColour();
+
+	vector<GameObject*> gameobjects = map->GetConstantGameObjects();
+
+	for (GameObject * go : gameobjects)
+	{
+		if (go)
+		{
+			if (go->Physics())
+			{
+				switch (go->Physics()->GetType())
+				{
+				case PICKUP:
+				{
+					Pickup* p = static_cast<Pickup*>(go);
+					if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
+						pickupTypes[count] = p->GetPickupType();
+						if (pickupTypes[count] == PickupType::PAINTPOOL) {
+							pickupColours[count] = ((PaintPool*)p)->GetColour();
+						}
+						Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
+						pickupPositions[count * 2] = v.x;
+						pickupPositions[(count * 2) + 1] = v.y;
+						count++;
+					}
+					break;
+				}
+				case PAINTABLE_OBJECT:
+				{
+					CaptureArea * c = static_cast<CaptureArea*>(go);
+					pickupTypes[count] = 4;
+					pickupColours[count] = c->GetColour();
+					Vector2 v = VectorToMapCoord(c->Physics()->GetPosition());
+					pickupPositions[count * 2] = v.x;
+					pickupPositions[(count * 2) + 1] = v.y;
+					count++;
+					break;
+				}
+				}
 			}
-			Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
-			pickupPositions[count * 2] = v.x;
-			pickupPositions[(count * 2) + 1] = v.y;
-			count++;
 		}
 	}
-	//capturable object
-	for (int i = 0; i < map->GetNCapture(); i++) {
-		//four is one more than the highest number
-		pickupTypes[count] = 4;
-		pickupColours[count] = map->GetCaptureAreas()[i]->GetColour();
-		Vector2 v = VectorToMapCoord(map->GetCaptureAreas()[i]->Physics()->GetPosition());
-		pickupPositions[count * 2] = v.x;
-		pickupPositions[(count * 2) + 1] = v.y;
-		count++;
-	}
 
-	glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
+	glUniform1ui (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
 	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
-	glUniform2fv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
-	glUniform1iv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
+	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
+	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
 
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
 	//opacity of minimap, this will be a variable eventually
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), 1.0);
-	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), 0.7);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "opacity"), (GLfloat)1);
+	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "zoom"), (GLfloat)0.7);
 	//time
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "time"), time);
 

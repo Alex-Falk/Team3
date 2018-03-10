@@ -1,4 +1,4 @@
-#include <PC\UserInterface.h>
+#include <PC/UserInterface.h>
 
 CEGUI::OpenGL3Renderer* GUIsystem::m_renderer = NULL;
 
@@ -35,17 +35,12 @@ GUIsystem::GUIsystem()
 
 	currentWeapon = 0;
 	hasWeapon = false;
-
-
-	player1name == "\n\n";
-	player2name == "\n\n";
-	player3name == "\n\n";
-	player4name == "\n\n";
 }
 
 GUIsystem::~GUIsystem()
 {
 	Destory();
+
 }
 
 void GUIsystem::Init(const std::string& resourceDirectory)
@@ -76,6 +71,7 @@ void GUIsystem::Init(const std::string& resourceDirectory)
 
 	//Create Root window
 	m_root = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "root");
+
 	m_context->setRootWindow(m_root);
 
 	//Load Scheme - Which actually means UI style - notice that multiple Scheme could be load at once
@@ -90,6 +86,7 @@ void GUIsystem::Init(const std::string& resourceDirectory)
 	//SetMouseCursor
 	SetMouseCursor("AlfiskoSkin/MouseArrow");
 	ShowMouseCursor();
+
 }
 
 void GUIsystem::Destory()
@@ -105,6 +102,18 @@ void GUIsystem::Reset()
 
 void GUIsystem::Draw()
 {
+	//Render score bar
+	if (drawScorebar == true) {
+		glUseProgram(scorebarShader->GetProgram());
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.88, 0)) * Matrix4::Scale(Vector3(0.4, 0.03, 0));
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
+		scorebar->Draw();
+		glUseProgram(0);
+	}
 	//Render normal UI
 	glUseProgram(0);
 	glActiveTexture(GL_TEXTURE0);
@@ -117,21 +126,26 @@ void GUIsystem::Draw()
 	glDisable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
 
-	//Render score bar
-	if (drawScorebar == true) {
-		glUseProgram(scorebarShader->GetProgram());
-		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.9, 0)) * Matrix4::Scale(Vector3(0.4, 0.03, 0));
-		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
-		scorebar->Draw();
-		glUseProgram(0);
-	}
-
 	//draw weapon icon
 	DrawWeaponIcon();
+
+	if (drawPlayerName == true) {
+		//Draw player names
+		for (int i = 0; i < 4; i++) {
+			if (playerNames[i] != "") {
+				//draw
+				playersPosition[i].y += 0.7;
+				NCLDebug::DrawTextWs(playersPosition[i], 25.0f, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), playerNames[i]);
+			}
+			else {
+				//Cuz there will be no player afterwards
+				break;
+				//TODO: test for multi-players
+			}
+		}
+	}
+
+	DrawWinLostText();
 }
 
 void GUIsystem::SetMouseCursor(const std::string & imageFile)
@@ -148,7 +162,6 @@ void GUIsystem::HideMouseCursor()
 {
 	m_context->getMouseCursor().hide();
 }
-
 
 void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 {
@@ -277,20 +290,8 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		m_context->injectChar(0x20);
 		break;
 	case KEYBOARD_RETURN:
-		for (int i = 0; i < editboxes.size(); ++i) {
-			if (editboxes[i].type == currentType) {
-				if (currentType == "UserName") {
-					player1name = editboxes[i].editbox->getText().c_str();
-				}
-				else if (currentType == "ClientName") {
-					//TODO: Send clien name to the server
-				}
-				
-				break;
-			}
-			else {
-			}
-		}
+		isTyping = false;
+		sendInfo = true;
 		break;
 	default:
 		break;
@@ -359,6 +360,12 @@ void GUIsystem::SetFont(const std::string & fontFile)
 	m_context->setDefaultFont(fontFile);
 }
 
+void GUIsystem::SetFont2(const std::string& fontFile)
+{
+	CEGUI::FontManager::getSingleton().createFromFile(fontFile + ".font");
+	m_context_public->setDefaultFont(fontFile);
+}
+
 CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& destRectPerc, const Vector4& destRectPix, const std::string name)
 {
 	CEGUI::Window* newWindow = CEGUI::WindowManager::getSingleton().createWindow(type, name);
@@ -368,16 +375,230 @@ CEGUI::Window * GUIsystem::createWidget(const std::string type, const Vector4& d
 	return newWindow;
 }
 
+CEGUI::Window * GUIsystem::createWidgetForLoadingScreen(const std::string type, const Vector4 & destRectPerc, const Vector4 & destRectPix, const std::string name)
+{
+	CEGUI::Window* newWindow = CEGUI::WindowManager::getSingleton().createWindow(type, name);
+	m_loadingRoot->addChild(newWindow);
+	newWindow->setPosition(CEGUI::UVector2(CEGUI::UDim(destRectPerc.x, destRectPix.x), CEGUI::UDim(destRectPerc.y, destRectPix.y)));
+	newWindow->setSize(CEGUI::USize(CEGUI::UDim(destRectPerc.z, destRectPix.z), CEGUI::UDim(destRectPerc.w, destRectPix.w)));
+	return newWindow;
+}
+
+void GUIsystem::DrawTransitionLoadingScreen()
+{
+	loadingMessage->enable();
+	loadingMessage->setVisible(true);
+
+	loadingProgress->disable();
+	loadingProgress->setVisible(true);
+	glUseProgram(loadingScreenShader->GetProgram());
+	float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
+	//Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 1));
+	Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 0));
+	Matrix4 textureMatrix;
+	//textureMatrix.ToIdentity();
+	//Matrix4 textureMatrix = Matrix4::Scale(Vector3(0.8,0.8,0))* Matrix4::Translation(Vector3(translation, 0, 0));
+	//Matrix4 textureMatrix = Matrix4::Scale(Vector3(0.9, 0.9, 0)) * Matrix4::Translation(Vector3(texRotation,0,0));
+	glUniformMatrix4fv(glGetUniformLocation(loadingScreenShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(loadingScreenShader->GetProgram(), "textureMatrix"), 1, GL_FALSE, (float*)&textureMatrix);
+	glUniform1f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uGammaCorrection"),
+		GraphicsPipeline::Instance()->GetGammaCorrection());
+	glUniform1f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uNumSuperSamples"), superSamples);
+	glUniform2f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(loadingScreenShader->GetProgram(), "DiffuseTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, loadingScreenTexture[START]);
+	loadingScreen->Draw();
+
+	glUseProgram(0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_renderer->beginRendering();
+	m_context_public->draw();
+	m_renderer->endRendering();
+	glDisable(GL_SCISSOR_TEST);
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(0);
+	UpdateFakeProgressBar();
+}
+
+void GUIsystem::DrawStartLoadingScreen()
+{
+	glUseProgram(loadingScreenShader->GetProgram());
+	float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
+	//Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 1));
+	Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0, 0)) * Matrix4::Scale(Vector3(1, 1, 0));
+	Matrix4 textureMatrix;
+	//textureMatrix.ToIdentity();
+	//Matrix4 textureMatrix = Matrix4::Scale(Vector3(0.8,0.8,0))* Matrix4::Translation(Vector3(translation, 0, 0));
+	//Matrix4 textureMatrix = Matrix4::Scale(Vector3(0.9, 0.9, 0)) * Matrix4::Translation(Vector3(texRotation,0,0));
+	glUniformMatrix4fv(glGetUniformLocation(loadingScreenShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+	glUniformMatrix4fv(glGetUniformLocation(loadingScreenShader->GetProgram(), "textureMatrix"), 1, GL_FALSE, (float*)&textureMatrix);
+	glUniform1f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uGammaCorrection"),
+		GraphicsPipeline::Instance()->GetGammaCorrection());
+	glUniform1f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uNumSuperSamples"), superSamples);
+	glUniform2f(glGetUniformLocation(loadingScreenShader->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(loadingScreenShader->GetProgram(), "DiffuseTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, loadingScreenTexture[START]);
+	loadingScreen->Draw();
+	
+	glUseProgram(0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_renderer->beginRendering();
+	m_context_public->draw();
+	m_renderer->endRendering();
+	glDisable(GL_SCISSOR_TEST);
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(0);
+	UpdateFakeProgressBar();
+}
+
+void GUIsystem::UpdateFakeProgressBar()
+{
+	progressBarValue += 0.04;
+	if (progressBarValue > 1) {
+		progressBarValue = 0;
+	}
+	loadingProgress->setProgress(progressBarValue);
+}
+
+void GUIsystem::SetUpLoadingScreen()
+{
+	m_context_public = &CEGUI::System::getSingleton().createGUIContext(m_renderer->getDefaultRenderTarget());
+	m_loadingRoot = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "loadingRoot");
+	m_context_public->setRootWindow(m_loadingRoot);
+
+	loadingScreen = Mesh::GenerateQuad();
+	SetFont2("Junicode-13");
+
+	//Loading Texture for background
+	loadingScreenTexture[START] = SOIL_load_OGL_texture(TEXTUREDIR"LoadingScreen/loadingscreen.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	loadingScreenTexture[TRANSITION] = SOIL_load_OGL_texture(TEXTUREDIR"LoadingScreen/Paint2.jpg", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	//LoadingTexture for animated icon
+
+	for (int i = 0; i < Num_of_loadingTex; i++) {
+		glBindTexture(GL_TEXTURE_2D, weaponTextures[i]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	//Loading Shader for loading screen
+	if (loadingScreenShader == NULL) {
+		loadingScreenShader = new Shader(SHADERDIR"UI/LoadingScreenVertex.glsl",
+			SHADERDIR"UI/LoadingScreenFrag.glsl");
+		if (!loadingScreenShader->LinkProgram()) {
+			NCLERROR("Linking loading screen shader failed :(");
+		}
+	}
+
+	loadingMessage = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/Label",
+			Vector4(0.20f, 0.2f, 0.60f, 0.60f),
+			Vector4(),
+			"loadingMessage"
+		));
+	loadingMessage->setText("Loading.....");
+	//loadingMessage->setFont(titleFont);
+
+	loadingProgress = static_cast<CEGUI::ProgressBar*>(
+		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/ProgressBar",
+			Vector4(0.30f, 0.7f, 0.40f, 0.05f),
+			Vector4(),
+			"loadingProgress"
+		));
+
+	loadingMessage->disable();
+	loadingMessage->setVisible(false);
+
+	loadingProgress->disable();
+	loadingProgress->setVisible(false);
+	SetUpResultText();
+}
 
 void GUIsystem::DrawWeaponIcon(){
 	if (hasWeapon) {
 		glUseProgram(weaponShader->GetProgram());
 		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.9, -0.9, 0)) * Matrix4::Scale(Vector3(0.1, 0.1, 0));
 		glUniformMatrix4fv(glGetUniformLocation(weaponShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
+		glUniform1fv(glGetUniformLocation(weaponShader->GetProgram(), "timer"), 1, (float*)&weaponTimer);
 		glUniform3fv(glGetUniformLocation(weaponShader->GetProgram(), "playerColour"), 1, (float*)&playerColour);
 		//displays the weapom the user has equipped
 		glBindTexture(GL_TEXTURE_2D, weaponTextures[currentWeapon]);
 		weaponIcon->Draw();
 		glUseProgram(0);
+	}
+}
+
+void GUIsystem::DrawWinLostText()
+{
+	loadingMessage->disable();
+	loadingMessage->setVisible(false);
+
+	loadingProgress->disable();
+	loadingProgress->setVisible(false);
+	if (drawResult == true) {
+		switch (result) {
+		case WIN:
+			ResultText->setText("WINNER WINNER\n DONGLI DINNER");
+			break;
+		case LOST:
+			ResultText->setText("Advertising spaces\n for rent");
+			break;
+		case NONE:
+			break;
+		default:
+			break;
+		}
+		ResultText->enable();
+		ResultText->setVisible(true);
+	}
+	else {
+		ResultText->disable();
+		ResultText->setVisible(false);
+	}
+
+	glUseProgram(0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	m_renderer->beginRendering();
+	m_context_public->draw();
+	m_renderer->endRendering();
+	glDisable(GL_SCISSOR_TEST);
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(0);
+}
+
+void GUIsystem::SetUpResultText()
+{
+	ResultText = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidgetForLoadingScreen("OgreTray/Label",
+			Vector4(0.20f, 0.00f, 0.60f, 0.60f),
+			Vector4(),
+			"ResultText"
+		));
+	ResultText->disable();
+	ResultText->setVisible(false);
+}
+
+void GUIsystem::MapProblem(uint errorNumber, uint errorLine) {
+	for (int i = 0; i < 50; i++) {
+		if (errorNumber == 0) {
+			cout << "File was corrupted";
+		}
+		else if (errorNumber == 1) {
+			cout << "File was not writen in apropriate format in line " << to_string(errorLine) << " \n";
+		}
 	}
 }

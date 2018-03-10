@@ -114,11 +114,11 @@ GameObject* CommonUtils::BuildSphereObject(
 	// and a parent node that will contain the world transform/physics transform
 	RenderNode* rnode = new RenderNode();
 
-	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), color);
+	RenderNode* dummy = new RenderNode(CommonMeshes::Sphere(), "Sphere", color);
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
-
+	dummy->SetBoundingRadius(radius);
 	rnode->AddChild(dummy);
 
 	rnode->SetTransform(Matrix4::Translation(pos));
@@ -179,11 +179,12 @@ GameObject* CommonUtils::BuildCuboidObject(
 	*mesh = *CommonMeshes::Cube();
 	//if (tex) { mesh->SetTexture(tex); }
 
-	RenderNode* dummy = new RenderNode(mesh, color);
+	RenderNode* dummy = new RenderNode(mesh, "Cube", color);
 	
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
+	dummy->SetBoundingRadius(halfdims.Length());
 
 	rnode->AddChild(dummy);
 	
@@ -250,10 +251,11 @@ GameObject* CommonUtils::BuildPlaneObject(
 	// and a parent node that will contain the world transform/physics transform
 	RenderNode* rnode = new RenderNode();
 
-	RenderNode* dummy = new RenderNode(Mesh::GenerateQuad(), color);
+	RenderNode* dummy = new RenderNode(Mesh::GenerateQuad(), "Plane", color);
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
+	dummy->SetBoundingRadius(halfdims.Length());
 
 	rnode->AddChild(dummy);
 

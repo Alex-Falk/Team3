@@ -29,7 +29,6 @@ Description:
 #pragma once
 
 #include "GameObject.h"
-#include "MultiGameObject.h"
 #include "PhysicsEngine.h"
 #include <nclgl\NCLDebug.h>
 #include <nclgl\TSingleton.h>
@@ -54,6 +53,7 @@ typedef std::unordered_map<void*, SceneUpdateCallback> SceneUpdateMap;
 class Scene
 {
 public:
+
 	Scene(const std::string& friendly_name)	//Called once at program start - all scene initialization should be done in 'OnInitializeScene'
 		: m_SceneName(friendly_name)
 	{}; 
@@ -69,6 +69,7 @@ public:
 	//	 - Initialize objects/physics here
 	virtual void OnInitializeScene()	{ 
 		PhysicsEngine::Instance()->ResetWorldPartition();
+		PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 	}
 
 	// Called when scene is being swapped and will no longer be rendered/updated 
@@ -83,21 +84,28 @@ public:
 	//	   michael davis: projectiles delete after 10 seconds
 	virtual void onConnectToScene() {}
 	virtual void OnUpdateScene(float dt) {
-		vector<GameObject*> tempVec;
-		for (int i = 0; i < m_vpObjects.size(); i++) {
-			m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
-			if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE || m_vpObjects[i]->Physics()->GetType() == SPRAY) {
-				if (m_vpObjects[i]->GetTimeInScene() > 10.0f) {
-					m_vpObjects[i]->SetToDestroy();
-					//tempVec.push_back(m_vpObjects[i]);
-				}
-			}
-		}
+		//vector<GameObject*> tempVec;
+		//for (int i = 0; i < m_vpObjects.size(); i++) {
+		//	m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
+		//	if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE || m_vpObjects[i]->Physics()->GetType() == SPRAY) {
+		//		if (m_vpObjects[i]->GetTimeInScene() > 10.0f) {
+		//			m_vpObjects[i]->SetToDestroy();
+		//			//tempVec.push_back(m_vpObjects[i]);
+		//		}
+		//	}
+		//}
 		//for (int i = 0; i < tempVec.size(); i++) {
 		//	RemoveGameObject(tempVec[i]);
 		//}
 	}
 
+	//Timers For The Scenes
+	void PrintPerformanceTimers(const Vector4& color)
+	{
+		perfPlayer.PrintOutputToStatusEntry(color,		"              Player Update  :");
+		perfAI.PrintOutputToStatusEntry(color,			"              AI Update      :");
+		perfMapObjects.PrintOutputToStatusEntry(color,	"              Objects Update :");
+	}
 
 	// Should be the action fired by the main game loop when updating a scene
 	//   - This will call the above OnUpdateScene function along with any and all
@@ -115,13 +123,27 @@ public:
 	// Add GameObject to the scene list
 	//    - All added game objects are managed by the scene itself, firing
 	//		OnRender and OnUpdate functions automatically
-	void AddGameObject(GameObject* game_object)
+
+	//-Alex Falk----------------------------------------------------------//
+	void AddGameObject(GameObject* game_object, bool dynamic = false)
 	{
+
 		if (game_object)
 		{
 			if (game_object->scene) game_object->scene->RemoveGameObject(game_object);				
 
-			m_vpObjects.push_back(game_object);
+			if (dynamic)
+			{
+				game_object->SetIdx(mapDynamicObjects.size());
+				game_object->SetDynamic(true);
+				mapDynamicObjects.push_back(game_object);
+			}
+			else
+			{
+				game_object->SetIdx(mapConstantObjects.size());
+				mapConstantObjects.push_back(game_object);
+			}
+
 			game_object->scene = this;
 			game_object->OnAttachedToScene();
 
@@ -129,26 +151,33 @@ public:
 			if (game_object->physicsNode) PhysicsEngine::Instance()->AddPhysicsObject(game_object->physicsNode);
 		}
 	}
+	//--------------------------------------------------------------------//
 
-	void AddMultiGameObject(MultiGameObject* game_object)
+	vector<GameObject*> GetConstantGameObjects()
 	{
-		if (game_object)
+		return mapConstantObjects;
+	}
+
+	GameObject* GetGameObject(uint idx)
+	{
+		if (idx < mapConstantObjects.size())
 		{
-			//if (game_object->scene) game_object->scene->RemoveGameObject(game_object);
-
-			m_vpObjects.push_back(game_object);
-			game_object->scene = this;
-			game_object->OnAttachedToScene();
-
-			if (game_object->renderNode) GraphicsPipeline::Instance()->AddRenderNode(game_object->renderNode);
-			if (game_object->physicsNodes[0]) {
-				for (std::vector<PhysicsNode*>::iterator it = game_object->physicsNodes.begin()
-					; it != game_object->physicsNodes.end(); ++it)
+			if (mapConstantObjects[idx]->index == idx)
+			{
+				return mapConstantObjects[idx];
+			}
+			else
+			{
+				for (GameObject * go : mapConstantObjects)
 				{
-					PhysicsEngine::Instance()->AddPhysicsObject(*it);
+					if (go->GetIdx() == idx)
+					{
+						return go;
+					}
 				}
 			}
 		}
+		return nullptr;
 	}
 
 	// Remove GameObject from the scene list
@@ -156,16 +185,33 @@ public:
 	//		  it will not call any delete functions.
 	void RemoveGameObject(GameObject* game_object)
 	{
-		if (game_object && game_object->scene == this)
+		if (!game_object->IsDynamic())
 		{
-			if (game_object->renderNode) GraphicsPipeline::Instance()->RemoveRenderNode(game_object->renderNode);
-			if (game_object->physicsNode) PhysicsEngine::Instance()->RemovePhysicsObject(game_object->physicsNode);
+			if (game_object && game_object->scene == this)
+			{
+				if (game_object->renderNode) GraphicsPipeline::Instance()->RemoveRenderNode(game_object->renderNode);
+				if (game_object->physicsNode) PhysicsEngine::Instance()->RemovePhysicsObject(game_object->physicsNode);
 
-			m_vpObjects.erase(std::remove(m_vpObjects.begin(), m_vpObjects.end(), game_object), m_vpObjects.end());
-			game_object->OnDetachedFromScene();
-			game_object->scene = NULL;
-			SAFE_DELETE(game_object);
+				mapConstantObjects.erase(std::remove(mapConstantObjects.begin(), mapConstantObjects.end(), game_object), mapConstantObjects.end());
+				game_object->OnDetachedFromScene();
+				game_object->scene = NULL;
+				SAFE_DELETE(game_object);
+			}
 		}
+		else
+		{
+			if (game_object && game_object->scene == this)
+			{
+				if (game_object->renderNode) GraphicsPipeline::Instance()->RemoveRenderNode(game_object->renderNode);
+				if (game_object->physicsNode) PhysicsEngine::Instance()->RemovePhysicsObject(game_object->physicsNode);
+
+				mapDynamicObjects.erase(std::remove(mapDynamicObjects.begin(), mapDynamicObjects.end(), game_object), mapDynamicObjects.end());
+				game_object->OnDetachedFromScene();
+				game_object->scene = NULL;
+				SAFE_DELETE(game_object);
+			}
+		}
+
 	}
 
 
@@ -174,12 +220,21 @@ public:
 	//     or NULL if none can be found.
 	GameObject* FindGameObject(const std::string& name)
 	{
-		for (GameObject* obj : m_vpObjects)
+		for (GameObject* obj : mapConstantObjects)
 		{
 			if (obj->GetName() == name)
 				return obj;
 		}
 		return NULL;
+	}
+
+	GameObject* FindDynamicGameObject(const std::string& name)
+	{
+		for (GameObject* obj : mapDynamicObjects)
+		{
+			if (obj->GetName() == name)
+				return obj;
+		}
 	}
 
 	// The friendly name associated with this scene instance
@@ -227,15 +282,27 @@ protected:
 	{
 		m_UpdateCallbacks.clear();
 
-		for (auto obj : m_vpObjects)
+		for (auto obj : mapConstantObjects)
 			delete obj;
 		
-		m_vpObjects.clear();
+		mapConstantObjects.clear();
+
+		for (auto obj : mapDynamicObjects)
+			delete obj;
+
+		mapDynamicObjects.clear();
 	}
 
 
 protected:
 	std::string					m_SceneName;
-	std::vector<GameObject*>	m_vpObjects;
+	std::vector<GameObject*>	mapConstantObjects;
+	std::vector<GameObject*>	mapDynamicObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
+
+	// Timing Variables
+	PerfTimer perfPlayer;
+	PerfTimer perfAI;
+	PerfTimer perfMapObjects;
+
 };

@@ -2,7 +2,7 @@
 #include "../nclgl/Material.h"
 
 #include "../ncltech/GraphicsPipeline.h"
-RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
+RenderNode::RenderNode(Mesh*mesh, string name, Vector4 colour)	{
 	awake				= true;
 	this->mesh			= mesh;
 	this->color			= colour;
@@ -13,6 +13,7 @@ RenderNode::RenderNode(Mesh*mesh, Vector4 colour)	{
 	distanceFromCamera	= 0.0f;
 	modelScale			= Vector3(1,1,1);
 	smoothness = 0.3f;
+	this->name = name;
 }
 
 RenderNode::~RenderNode(void)	{

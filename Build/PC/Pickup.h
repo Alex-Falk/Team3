@@ -22,8 +22,8 @@
 #pragma once
 
 #include <ncltech\GameObject.h>
-#include <ncltech\CommonUtils.h>
-#include <nclgl\NCLDebug.h>
+//#include <ncltech\CommonUtils.h>
+//#include <nclgl\NCLDebug.h>
 #include "GamePlay.h"
 
 class Pickup : public GameObject

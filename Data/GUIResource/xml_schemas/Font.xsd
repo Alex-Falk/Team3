@@ -25,7 +25,7 @@
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
-		<xsd:attribute name="size" type="xsd:nonNegativeInteger" use="optional" default="12" />
+		<xsd:attribute name="size" type="xsd:nonNegativeInteger" use="optional" default="20" />
 		<xsd:attribute name="nativeHorzRes" type="xsd:nonNegativeInteger" use="optional" default="640" />
 		<xsd:attribute name="nativeVertRes" type="xsd:nonNegativeInteger" use="optional" default="480" />
 		<xsd:attribute name="autoScaled" default="false">

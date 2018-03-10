@@ -1,8 +1,13 @@
 //Michael Davis 14/02/2018
+// Additions + Bugfixes by Alex Falk
 
-#include "Projectile.h"
 #include "Avatar.h"
 #include "Explosion.h"
+#include <ncltech\SphereCollisionShape.h>
+#include "Minion.h"
+#include <ncltech/SceneManager.h>
+#include "Projectile.h"
+#include "Particle.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;
@@ -16,7 +21,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	PhysicsNode * pnode = new PhysicsNode();
 
 
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), RGBA);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), "Projectile",RGBA);
 	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
@@ -66,7 +71,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Cube(), RGBA);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Cube(), "Projectile", RGBA);
 	dummy->SetTransform(Matrix4::Scale(size));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
@@ -138,13 +143,30 @@ void Projectile::Explode() {
 	exploded = true;
 
 	//turn into sphere for spherical paint splat
-	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(2.0f, 2.0f, 2.0f))));
 	Render()->GetChild()->SetMesh(CommonMeshes::Sphere());
+	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(3.0f, 3.0f, 3.0f))));
+	int randPitch;
+	int randYaw;
+	
+	//-Alex Falk----------------------------------------------------------//
+	// Particle Effect on rocket explosion
+	for (uint i = 0; i < 60; ++i)
+	{
+		randPitch = rand() % 180;
+		randYaw = rand() % 360;
 
-	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 2.0f, 5.0f, SPRAY, 4, "Spray");
+		Vector3 direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
+		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, 0.05f, 5.0f, 3.0f);
+
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle,1);
+	}
+	//--------------------------------------------------------------------//
+
+
+	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 3.0f, 5.0f, SPRAY, 4, "Spray");
 	explosion->UnregisterPhysicsToRenderTransformCallback();
 	explosion->Render()->SetTransform(Matrix4::Translation(Vector3{ 1000.f,1000.f,1000.f }));
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(explosion);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(explosion,1);
 	
 	//move above the arena so we don't see the sphere for the frame it exists
 	Physics()->SetPosition(Physics()->GetPosition() + Vector3{ 0,200,0 }); 
@@ -169,11 +191,13 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 
 	if (collidingObject->GetType() == MINION) {
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-		if (projectileWorth >= 5 && !exploded) Explode(); 
-		else {
-			if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));
-			}
+		if (projectileWorth >= 5 && !exploded)
+		{
+			Explode();
+		}
+		else if (((Minion*)(collidingObject->GetParent()))->GetColour() != this->colour) 
+		{
+			((Minion*)(collidingObject->GetParent()))->ChangeLife((float)(-projectileWorth));
 		}
 		destroy = true;
 		return false;

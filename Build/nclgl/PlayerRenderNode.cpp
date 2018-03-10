@@ -18,8 +18,8 @@
 *****************************************************************************/
 #include "PlayerRenderNode.h"
 
-PlayerRenderNode::PlayerRenderNode(Mesh * m, Vector4 colour)
-	:RenderNode(m, colour)
+PlayerRenderNode::PlayerRenderNode(Mesh * m, string name,Vector4 colour)
+	:RenderNode(m, name, colour)
 {
 	destroy = false;
 }

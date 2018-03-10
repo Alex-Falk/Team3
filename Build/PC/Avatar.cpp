@@ -20,16 +20,19 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"         
 // Nikos Fragkas 05/02/2018
+// Extended by Alex Falk
 
-#include "Avatar.h"
-#include <ncltech\SphereCollisionShape.h>
-#include <string.h>
-#include "GameInput.h"
+
+
 #include <ncltech\CommonMeshes.h>
 #include <nclgl\PlayerRenderNode.h>
+#include <ncltech\SphereCollisionShape.h>
+#include <string.h>
+#include <ncltech\SceneManager.h>
+#include "Game.h"
 #include "Projectile.h"
-#include "Pickup.h"
-#include "WeaponPickup.h"
+#include "Avatar.h"
+
 
 Avatar::Avatar()
 {
@@ -53,15 +56,17 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	speed = standardSpeed;
 	boostedSpeed = standardSpeed * 2;
 
-	maxForce = 30;
+	maxRotationSpeed = 20;
+
+	maxVel = 20.0f;
 
 	minLife = 20;
 	maxLife = 100;
 	life = maxLife/2;
+	targetLife = maxLife / 2;
 	moveTimer = 0.0f;
 	rollSpeed = 0.2f;
-	curMove = NO_MOVE;
-	previousMove = NO_MOVE;
+	
 
 	jumpImpulse = 8.0f;
 	boostactiveTime = 15.0f;
@@ -81,44 +86,20 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	timeUntilInAir = 0.1f;
 
 	weapon = NUM_OF_WEAPONS;
-
+	string name;
 	switch (c)
 	{
-	case START_COLOUR:
-	{
-		colour = DEFAULT_COLOUR;
-	}
-
-	case GREEN:
-	{
-		colour = GREEN_COLOUR;
-	}
-	break;
-	case BLUE:
-	{
-		colour = BLUE_COLOUR;
-	}
-	break;
-	case RED:
-	{
-		colour = RED_COLOUR;
-	}
-	break;
-	case PINK:
-	{
-		colour = PINK_COLOUR;
-	}
-	break;
-	default:
-	{
-		colour = DEFAULT_COLOUR;
-	}
-	break;
+		case START_COLOUR:	colour = DEFAULT_COLOUR;	name = "DEFAULT_PLAYER";	break;
+		case GREEN:			colour = GREEN_COLOUR;		name = "GREEN_PLAYER";		break;
+		case BLUE:			colour = BLUE_COLOUR;		name = "BLUE_PLAYER";		break;
+		case RED:			colour = RED_COLOUR;		name = "RED_PLAYER";		break;
+		case PINK:			colour = PINK_COLOUR;		name = "PINK_PLAYER";		break;
+		default:			colour = DEFAULT_COLOUR;	name = "DEFAULT_PLAYER";	break;
 	}
 
 	RenderNode* rnode = new RenderNode();
 	float radius = s;
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), colour);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), name, colour);
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
@@ -168,28 +149,12 @@ bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObj
 		collisionTimerActive = true;
 		collisionTimer = timeUntilInAir;
 		inAir = false;
-		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
-	}
-	/*else if (collidingObject->GetType() == PICKUP)
-	{
-		Pickup * p = (Pickup*)(collidingObject->GetParent());
-		if (p->GetActive())
-		{
-			activePickUp = p->GetPickupType();
-			if (activePickUp == WEAPON)
-			{
-				weapon = ((WeaponPickup*)p)->GetWeaponType();
-			}
-			
-			if (Game::Instance()->ClaimPickup(this, p))
-			{
-				PickUpBuffActivated(activePickUp);
-			}
-			
+
+		if (collidingObject->GetType() == BIG_NODE) {
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 		}
 
-		return false;
-	}*/
+	}
 	return true;
 }
 
@@ -203,13 +168,14 @@ void Avatar::ChangeSize(float newSize)
 	standardSpeed = 25.0f*newSize;
 	boostedSpeed = 50.0f*newSize;
 	standarSpinSpeed = 40 * newSize;
+
 	((SphereCollisionShape*)Physics()->GetCollisionShape())->SetRadius(newSize);
 	
 	Render()->GetChild()->SetTransform(Matrix4::Scale(Vector3(newSize, newSize, newSize)));
 }
 
 // Updates everything on player
-void Avatar::OnAvatarUpdate(float dt) {
+void Avatar::Update(float dt) {
 
 	shooting = false;
 	
@@ -217,14 +183,12 @@ void Avatar::OnAvatarUpdate(float dt) {
 	
 	UpdatePickUp(dt);
 
-	if (life > minLife)
+	if (targetLife < minLife)
 	{
-		
-		if (life < minLife)
-		{
-			life = minLife;
-		}
+		targetLife = minLife;
 	}
+	
+	LerpLife(dt);
 
 	curSize = size * (life / 100);
 
@@ -244,6 +208,33 @@ void Avatar::OnAvatarUpdate(float dt) {
 
 }
 
+void Avatar::LerpLife(float dt)
+{
+	float lifeDif = ((targetLife - life) * dt);
+	
+	if (lifeDif > 0.5f)
+	{
+		life = life + lifeDif * 2;
+	}
+	else if (lifeDif > 0.001f)
+	{
+		life = life + lifeDif;
+	}
+	else
+	{
+		life = life + lifeDif;
+	}
+
+	if (life > maxLife)
+	{
+		life = maxLife;
+	}
+	else if (life < minLife)
+	{
+		life = minLife;
+	}
+}
+
 void Avatar::PickUpBuffActivated()
 {
 	PickUpBuffActivated(activePickUp);
@@ -253,25 +244,10 @@ void Avatar::PickUpBuffActivated(PickupType pickType) {
 
 	switch (pickType)
 	{
-	case SPEED_BOOST:
-		speed = boostedSpeed;
-		speedBoost = true;
-		speedTimer = boostactiveTime;
-		break;
-	case JUMP_BOOST:
-		jumpImpulse = boostedJumpImpulse;
-		jumpBoost = true;
-		jumpBoostTimer = boostactiveTime;
-		break;
-	case WEAPON:
-		weaponActive = true;
-		weaponTimer = boostactiveTime;
-		break;
-	default:
-		break;
+		case SPEED_BOOST:	speed = boostedSpeed;					speedBoost = true;				speedTimer = boostactiveTime;		break;
+		case JUMP_BOOST:	jumpImpulse = boostedJumpImpulse;		jumpBoost = true;				jumpBoostTimer = boostactiveTime;	break;
+		case WEAPON:		weaponActive = true;					weaponTimer = boostactiveTime;										break;
 	}
-
-
 }
 
 void Avatar::UpdatePickUp(float dt)
@@ -279,7 +255,6 @@ void Avatar::UpdatePickUp(float dt)
 	if (speedBoost)
 	{
 		speedTimer -= dt;
-
 		if (speedTimer <= 0)
 		{
 			speed = standardSpeed;
@@ -290,10 +265,9 @@ void Avatar::UpdatePickUp(float dt)
 	if (jumpBoost)
 	{
 		jumpBoostTimer -= dt;
-
 		if (jumpBoostTimer <= 0)
 		{
-			jumpImpulse = standardSpeed;
+			jumpImpulse = standardJumpImpulse;
 			jumpBoost = false;
 		}
 	}
@@ -301,7 +275,6 @@ void Avatar::UpdatePickUp(float dt)
 	if (weaponActive)
 	{
 		weaponTimer -= dt;
-
 		if (weaponTimer <= 0)
 		{
 			weaponActive = false;
@@ -311,7 +284,6 @@ void Avatar::UpdatePickUp(float dt)
 	if (weaponActive && !canShoot) 
 	{
 		shootCooldown -= dt;
-
 		if (shootCooldown <= 0) 
 		{
 			canShoot = true;
@@ -324,79 +296,104 @@ void Avatar::Spray()
 	int randPitch;
 	int randYaw;
 	Vector3 direction;
-	
-	
-	for (int i = 0; i < 10; ++i)
+
+	if (targetLife > minLife + 5.0f)
 	{
-		randPitch = rand() % 90 + 0;
+		randPitch = rand() % 90;
 		randYaw = rand() % 360;
-		float a = (float)(rand() % 10);
-		float b = (float)(rand() % 10);
-		float c = (float)(rand() % 10);
-		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
 
 		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
-
+		
 		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+		int randPitch;
+		int randYaw;
+		Vector3 direction;
 
-		// Send over network
-		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
+		for (int i = 0; i < 10; ++i)
+		{
+			randPitch = rand() % 90;
+			randYaw = rand() % 360;
+
+			float a = (float)(rand() % 10);
+			float b = (float)(rand() % 10);
+			float c = (float)(rand() % 10);
+
+			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
+			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
+
+			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
+			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
+
+			// Alex Falk - Required for networking
+			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
+		}
 	}
 }
 
 void Avatar::ShootRocket()
 {
-	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	if (targetLife > minLife + 15.0f)
+	{
+		targetLife -= 15.0f;
+		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+		float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 
-	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
-	if (canJump && pitch < 0) {
-		pitch = 0;
+		if (canJump && pitch < 0) {
+			pitch = 0.0f;
+		}
+
+		Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
+
+		ShootRocket(Physics()->GetPosition(), direction);
+
+		// Alex Falk - Required for networking
+		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 	}
-
-	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
-	Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.18f,0.18f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-	projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion((float)pitch, (float)yaw, 0.0f));
-
-	ShootRocket(Physics()->GetPosition(),direction);
-
-	// Send over network
-	Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 }
 
 void Avatar::ShootProjectile()
 {
-	int yaw = (int)GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+	if (targetLife > minLife + 5.0f)
+	{
+		targetLife -= 5.0f;
+		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
-	int pitch = (int)GraphicsPipeline::Instance()->GetCamera()->GetPitch();
-	if (canJump && pitch < 0) {
-		pitch = 0;
+		float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
+		if (canJump && pitch < 0) {
+			pitch = 0;
+		}
+
+		Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
+		ShootProjectile(Physics()->GetPosition(), direction);
 	}
-
-	Vector3 direction = Matrix3::Rotation((float)pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
-	ShootProjectile(Physics()->GetPosition(), direction);
-
 }
 
+//-Alex Falk----------------------------------------------------------//
 void Avatar::Spray(Vector3 pos, Vector3 dir)
 {
 	Projectile * spray = new Projectile(col, colour, pos, dir, 0.15f, 5.0f, SPRAY, 1, "Spray");
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 }
 
 void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-	projectile->Physics()->SetOrientation(Quaternion(dir, 0));
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	
+	float angle = atan2(dir.x, dir.z);
+	
+	projectile->Physics()->SetOrientation(Quaternion(0, sin(angle / 2), 0, cos(angle / 2)));
+	
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
 }
 
 void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
 }
+//--------------------------------------------------------------------//
 
 void Avatar::ManageWeapons() 
 {
@@ -404,118 +401,11 @@ void Avatar::ManageWeapons()
 	{
 		switch (weapon)
 		{
-			case PAINT_SPRAY:
-				
-				Spray();
-				shootCooldown = 2.5f;
-				canShoot = false;
-				break;
-
-			case PAINT_PISTOL:
-				
-				ShootProjectile();
-				shootCooldown = 0.5f;
-				break;
-
-			case AUTO_PAINT_LAUNCHER:
-				
-				ShootProjectile();
-				shootCooldown = 0.15f;
-				canShoot = false;
-				break;
-
-			case PAINT_ROCKET:
-				
-				ShootRocket();
-				shootCooldown = 0.5f;
-				canShoot = false;
-				
-				break;
-
-			default:
-				break;
+			case PAINT_SPRAY:			Spray();			shootCooldown = 2.5f;	canShoot = false;	break;
+			case PAINT_PISTOL:			ShootProjectile();	shootCooldown = 0.5f;						break;
+			case AUTO_PAINT_LAUNCHER:	ShootProjectile();	shootCooldown = 0.15f;	canShoot = false;	break;
+			case PAINT_ROCKET:			ShootRocket();		shootCooldown = 0.5f;	canShoot = false;	break;
 		}
 	}
 }
 
-void Avatar::MovementState(Movement inputDir, float yaw, float dt)
-{
-	Vector3 force;
-	moveTimer += dt;
-	switch (inputDir)
-	{
-	case NO_MOVE: {
-		force = Vector3(0, 0, 0);
-		break;
-	}
-	case MOVE_FORWARD: 
-		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * (standarSpinSpeed);
-		curMove = MOVE_FORWARD;
-		break;
-	
-	case MOVE_BACKWARD: 
-		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * (standarSpinSpeed);
-		curMove = MOVE_BACKWARD;
-		break;
-	
-	case MOVE_LEFT: 
-		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * (standarSpinSpeed);
-		curMove = MOVE_LEFT;
-		break;
-	
-	case MOVE_RIGHT: 
-		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
-		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * (standarSpinSpeed);
-		curMove = MOVE_RIGHT;
-		break;
-	case MOVE_JUMP: {
-		curMove = MOVE_JUMP;
-		if (canJump) {
-			Vector3 vel = Physics()->GetLinearVelocity();
-			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
-			inAir = true;
-			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
-			canJump = false;
-		}
-		break;
-	}
-	default: {
-		break;
-	}
-	}
-	force.y = 0;
-
-	// Setting Angular Velocity
-	int basicSpinSpeed = 55; //Change this number to change the spin speed
-	if (moveTimer > 2.f) { rollSpeed -= 1; }
-
-	if (curMove != previousMove)
-	{
-		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * basicSpinSpeed);
-		previousMove = curMove;
-		moveTimer = 0;
-		rollSpeed = 0;
-	}
-	else if (curMove == inputDir && inputDir !=MOVE_JUMP ){
-		rollSpeed += 1;
-		if (inAir) {
-			if (rollSpeed > 35) { rollSpeed = 35; }
-		}
-		else {
-			if (rollSpeed > 20) { rollSpeed = 20; }
-		}
-		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * (basicSpinSpeed + rollSpeed));
-	}
-
-
-	// Setting MoveMent
-	if (inAir) 
-	{ 
-		force = Vector3(0, 0, 0);
-	}
-
-	Physics()->SetForce(force);	
-}

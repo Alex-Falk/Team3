@@ -1,18 +1,18 @@
+
 #include <enet\enet.h>
-#include <ncltech\PhysicsEngine.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
 #include <nclgl\NCLDebug.h>
 #include <nclgl\PerfTimer.h>
 #include "UserInterface.h"
 #include "AudioSystem.h"
-#include "SimpleGamePlay.h"
-#include "MainMenu.h"
-#include "Arena.h"
-#include "TestMap.h"
 #include "GameInput.h"
-#include "Game.h"
-#include "PostProcess.h"
+#include "MinionStates.h"
+
+//Scenes
+#include "MainMenu.h"
+#include "SimpleGamePlay.h"
+#include "DataDrivenMap.h"
 
 
 bool draw_debug = true;
@@ -21,14 +21,23 @@ bool draw_performance = false;
 const Vector4 status_colour = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 const Vector4 status_colour_header = Vector4(0.8f, 0.9f, 1.0f, 1.0f);
 
-bool show_perf_metrics = false;
-PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio;
+bool show_full_perf_metrics = false;
+bool show_debug = false;
+
+PerfTimer timer_total, timer_physics, timer_update, timer_render, timer_audio, timer_gameplay;
 uint shadowCycleKey = 4;
 
 //Prevent multiple clicking from happening
-int fpsCounter = 6;
+int fpsCounter = 0;
 
-
+void ReleaseAIStates()
+{
+	MinionStateCaptureZone::Release();
+	MinionStateChaseEnemyPlayer::Release();
+	MinionStateEscapeRocket::Release();
+	MinionStateHealFriendlyPlayer::Release();
+	MinionStateWander::Release();
+}
 
 // Program Deconstructor
 //  - Releases all global components and memory
@@ -43,6 +52,7 @@ void Quit(bool error = false, const std::string &reason = "") {
 	GraphicsPipeline::Release();
 	enet_deinitialize();
 	AudioSystem::Release();
+	ReleaseAIStates();
 	Window::Destroy();
 	
 	//Show console reason before exit
@@ -68,24 +78,27 @@ void Initialize()
 	if (!Window::Initialise("Game Technologies", 1280, 800, false))
 		Quit(true, "Window failed to initialise!");
 
-
 	//Initialize Renderer
 	GraphicsPipeline::Instance();
 
-	GUIsystem::Instance();
+	//GUIsystem::Instance();
 
 	PostProcess::Instance();
+	
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
 
-	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - The worst menu ever!"));
+	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
+
+	GUIsystem::Instance()->SetUpLoadingScreen();
 }
 
 // Print Debug Info
@@ -93,33 +106,49 @@ void Initialize()
 //    hand corner of the screen each frame.
 void PrintStatusEntries()
 {
-	//Print Engine Options
-	NCLDebug::AddStatusEntry(status_colour_header, "NCLTech Settings");
-	NCLDebug::AddStatusEntry(status_colour, "     Physics Engine: %s (Press P to toggle)", PhysicsEngine::Instance()->IsPaused() ? "Paused  " : "Enabled ");
-	NCLDebug::AddStatusEntry(status_colour, "     Monitor V-Sync: %s (Press V to toggle)", GraphicsPipeline::Instance()->GetVsyncEnabled() ? "Enabled " : "Disabled");
-	NCLDebug::AddStatusEntry(status_colour, "");
+	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
+	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [0] ---");
+	if (!show_debug)
+		return;
 
-	//Print Current Scene Name
-	NCLDebug::AddStatusEntry(status_colour_header, "[%d/%d]: %s",
-		SceneManager::Instance()->GetCurrentSceneIndex() + 1,
-		SceneManager::Instance()->SceneCount(),
-		SceneManager::Instance()->GetCurrentScene()->GetSceneName().c_str()
-		);
-	NCLDebug::AddStatusEntry(status_colour, "     \x01 T/Y to cycle or R to reload scene");
+	////Print Engine Options
+	//NCLDebug::AddStatusEntry(status_colour_header, "NCLTech Settings");
+	//NCLDebug::AddStatusEntry(status_colour, "     Physics Engine: %s (Press P to toggle)", PhysicsEngine::Instance()->IsPaused() ? "Paused  " : "Enabled ");
+	//NCLDebug::AddStatusEntry(status_colour, "     Monitor V-Sync: %s (Press V to toggle)", GraphicsPipeline::Instance()->GetVsyncEnabled() ? "Enabled " : "Disabled");
+	//NCLDebug::AddStatusEntry(status_colour, "");
+
+	////Print Current Scene Name
+	//NCLDebug::AddStatusEntry(status_colour_header, "[%d/%d]: %s",
+	//	SceneManager::Instance()->GetCurrentSceneIndex() + 1,
+	//	SceneManager::Instance()->SceneCount(),
+	//	SceneManager::Instance()->GetCurrentScene()->GetSceneName().c_str()
+	//	);
+	//NCLDebug::AddStatusEntry(status_colour, "     \x01 T/Y to cycle or R to reload scene");
 
 	//Print Performance Timers
-	NCLDebug::AddStatusEntry(status_colour, "     FPS: %5.2f  (Press G for %s info)", 1000.f / timer_total.GetAvg(), show_perf_metrics ? "less" : "more");
-	if (show_perf_metrics)
-	{
-		timer_total.PrintOutputToStatusEntry(status_colour, "          Total Time     :");
-		timer_update.PrintOutputToStatusEntry(status_colour, "          Scene Update   :");
-		timer_physics.PrintOutputToStatusEntry(status_colour, "          Physics Update :");
-		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
-		timer_render.PrintOutputToStatusEntry(status_colour, "          Render Scene   :");
-		timer_audio.PrintOutputToStatusEntry(status_colour, "         Audio Update   :");
-	}
 
-	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
+
+	NCLDebug::AddStatusEntry(status_colour, "     FPS: %5.2f  (Press 9 for %s info)", 1000.f / timer_total.GetAvg(), show_full_perf_metrics ? "less" : "more");
+	if (!show_full_perf_metrics) {
+		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
+		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Renderer Update :");
+		timer_update.PrintOutputToStatusEntry(status_colour,	"            Gameplay Update :");
+		Game::Instance()->PrintPerformanceTimers(status_colour);//           NetworkUpdate
+		timer_audio.PrintOutputToStatusEntry(status_colour,		"            Audio Update    :");
+	}
+	else 
+	{
+		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
+		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
+		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    :");
+		GraphicsPipeline::Instance()->PrintPerformanceTimers(status_colour);
+		timer_update.PrintOutputToStatusEntry(status_colour,	"            Gameplay update :");
+		SceneManager::Instance()->GetCurrentScene()->PrintPerformanceTimers(status_colour);
+		Game::Instance()->PrintPerformanceTimers(status_colour);//           NetworkUpdate
+		timer_audio.PrintOutputToStatusEntry(status_colour,		"            Audio Update    :");
+	}
 
 	//Physics Debug Drawing options
 	if (Game::Instance()->IsRunning())
@@ -133,15 +162,14 @@ void PrintStatusEntries()
 	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [G] ---");
 	if (draw_debug)
 	{
-		NCLDebug::AddStatusEntry(status_color_debug, "Constraints       : %s [Z] - Tut 3+", (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] - Tut 4", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] - Tut 4+", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] - Tut 5+", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "OCtree            : %s [B]", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
-		//NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Constraints       : %s [Z] ", (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Collision Normals : %s [X] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] ", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "World Partition   : %s [B] ", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
+		NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
 
 		NCLDebug::AddStatusEntry(status_color_debug, "");
 	}
@@ -160,8 +188,8 @@ static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObje
 //    cycling through scenes.
 void HandleKeyboardInputs()
 {
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
-		PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
+	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
+	//	PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
 		GraphicsPipeline::Instance()->SetVsyncEnabled(!GraphicsPipeline::Instance()->GetVsyncEnabled());
@@ -169,44 +197,18 @@ void HandleKeyboardInputs()
 	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
 	uint sceneMax = SceneManager::Instance()->SceneCount();
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_R))
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE))
 	{
 		Game::Instance()->ResetGame();
 		SceneManager::Instance()->JumpToScene(0);
 	}
 		
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_G))
-		show_perf_metrics = !show_perf_metrics;
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
+		show_full_perf_metrics = !show_full_perf_metrics;
 
-	//audio test functionality
-	//TODO remove this when finished testing
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_8)) {	
-		AudioSystem::Instance()->PlayASound(GAME_MUSIC, true, { 4.0f, 0.0f, 0.0f });
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 0.0f, 0.0f, -15.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 15.0f, 0.0f, 0.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { -15.0f, 0.0f, 0.0f });
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-		AudioSystem::Instance()->PlayASound(MENU_MUSIC, false, { 0.0f, 0.0f, 15.0f });
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_7)) {
-		AudioSystem::Instance()->StopAllSounds();
-	}
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_6)) {
-		AudioSystem::Instance()->UnmuteAllSounds();
-	}
-
-
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
+		show_debug = !show_debug;
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
@@ -224,41 +226,15 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
 		drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
 
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
-		//drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_J))
-	{
-		GameObject* spawnSphere = CommonUtils::BuildSphereObject("spawned_sphere",
-			GraphicsPipeline::Instance()->GetCamera()->GetPosition() + GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*2.0f,
-			0.5f,									//Radius
-			true,									//Has Physics Object
-			1.0f / 4.0f,							//Inverse Mass
-			true,									//Has Collision Shape
-			true,									//Dragable by the user
-			DEFAULT_PHYSICS,
-			CommonUtils::GenColor(0.1f, 0.8f));		//Color
-
-
-		spawnSphere->Physics()->SetLinearVelocity(GraphicsPipeline::Instance()->GetCamera()->GetViewDirection().Normalise()*50.0f);
-
-		spawnSphere->Physics()->SetOnCollisionCallback(&ScoreCallbackFunction);
-
-
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spawnSphere);
-	}
-
-	//toggle the camera
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_L)) {
-		SceneManager::Instance()->GetCurrentScene()->ToggleCamera();
-	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
+		drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
 
 	Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
 	Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
 	Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
 	Input::Instance()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
 	Input::Instance()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
-	Input::Instance()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
+	//Input::Instance()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
 	Input::Instance()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
 	//possibly temporary
 	Input::Instance()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
@@ -289,15 +265,16 @@ void HandleGUIMouseButton()
 		float a4 = (Game::Instance()->GetScore(3));
 		GUIsystem::Instance()->UpdateScorebar(a1, a2, a3, a4);
 		//update the weapon bar part of the interface
-		Avatar* p = Game::Instance()->GetPlayer(Game::Instance()->getUserID());
+		Avatar* p = Game::Instance()->GetPlayer(Game::Instance()->GetUserID());
 		GUIsystem::Instance()->SetHasWeapon(p->GetWeaponActive());
 		GUIsystem::Instance()->SetCurrentWeapon(p->GetWeapon());
 		//only needs setting once
 		GUIsystem::Instance()->SetPlayerColour(p->GetColourRGBA().ToVector3());
+		GUIsystem::Instance()->SetWeaponTimer(p->GetPercentageWeaponTimer());
 	}
 
 	fpsCounter++;
-	if (fpsCounter > 5) {
+	if (fpsCounter > 40) {
 		if (Window::GetMouse()->ButtonDown(MOUSE_LEFT))
 		{
 			GUIsystem::Instance()->onMouseButtonPressed(MOUSE_LEFT);
@@ -316,7 +293,6 @@ void HandleGUITextInput()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RETURN)) {
 		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RETURN);
-		GUIsystem::Instance()->SetIsTyping(false);
 		return;
 	}
 	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_SPACE)) {
@@ -338,28 +314,27 @@ void HandleGUITextInput()
 void TestPostProcess()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F1)) {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F2)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::INVERSION);
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F3)) {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F2)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::GRAYSCALE);
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F4)) {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F3)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::SHARPEN);
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F5)) {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::BLUR);
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F6)) {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F4)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::EDGE_DETECTION);
 	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F7)) {
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::BASIC);
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F8)) {
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F5)) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
+	}
+
+	//Test loading Screen
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F6)) {
+		GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::START);
+	}
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F7)) {
+		GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::NOT_LOADING);
 	}
 }
 
@@ -377,8 +352,7 @@ int main()
 	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
 	//Create main game-loop
-	while (Window::GetWindow().UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE) 
-		&& SceneManager::Instance()->GetExitButtonClicked() == false) 
+	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false)
 	{
 		float dt = Window::GetWindow().GetTimer()->GetTimedMS() * 0.001f;	//How many milliseconds since last update?
 																			//Update Performance Timers (Show results every second)
@@ -390,6 +364,7 @@ int main()
 		timer_update.UpdateRealElapsedTime(dt);
 		timer_render.UpdateRealElapsedTime(dt);
 		timer_audio.UpdateRealElapsedTime(dt);
+		timer_gameplay.UpdateRealElapsedTime(dt);
 
 		//Handle GUI mouseCursor
 		HandleGUIMouseCursor();
@@ -419,7 +394,11 @@ int main()
 		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
 		timer_update.EndTimingSection();
 
+
+
+		timer_gameplay.BeginTimingSection();
 		Game::Instance()->Update(dt);
+		timer_gameplay.EndTimingSection();
 
 		//Update Physics	
 		timer_physics.BeginTimingSection();
