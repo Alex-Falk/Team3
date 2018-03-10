@@ -933,11 +933,11 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	//-Alex Falk----------------------------------------------------------//
 	//Score Init - I put this here because score only needs to be initialized if we initialize the path
 	// and because it requires the same size
-	//	if (!scoreBuffer) glGenBuffers(1, &scoreBuffer);
-	//glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
-	//glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * 4, NULL, GL_DYNAMIC_DRAW);
-	//glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, scoreBuffer);
-	//glBindFramebuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+		if (!scoreBuffer) glGenBuffers(1, &scoreBuffer);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint) * 4, NULL, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 0, scoreBuffer);
+	glBindFramebuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
 	//--------------------------------------------------------------------//
 
 	//Color Texture
@@ -983,32 +983,32 @@ void GraphicsPipeline::RecursiveAddToPathRenderLists(RenderNode* node)
 //-Alex Falk----------------------------------------------------------//
 void GraphicsPipeline::CountScore()
 {
-	//ResetScoreBuffer();
+	ResetScoreBuffer();
 
-	//glBindFramebuffer(GL_FRAMEBUFFER, scoreFBO);
-	//glUseProgram(shaders[SHADERTYPE::Score]->GetProgram());
-	//
-	//glBindTexture(GL_TEXTURE_2D, scoreTex);
+	glBindFramebuffer(GL_FRAMEBUFFER, scoreFBO);
+	glUseProgram(shaders[SHADERTYPE::Score]->GetProgram());
+	
+	glBindTexture(GL_TEXTURE_2D, scoreTex);
 
-	//glActiveTexture(GL_TEXTURE0);
-	//glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Score]->GetProgram(), "uPathTex"), 0);
-	//glBindTexture(GL_TEXTURE_2D, pathTex);
+	glActiveTexture(GL_TEXTURE0);
+	glUniform1i(glGetUniformLocation(shaders[SHADERTYPE::Score]->GetProgram(), "uPathTex"), 0);
+	glBindTexture(GL_TEXTURE_2D, pathTex);
 
-	//fullscreenQuad->Draw();
+	fullscreenQuad->Draw();
 
-	//glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
-	//glGetBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, scores);
-	//glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	glGetBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, scores);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
 
-	//glUseProgram(0);
+	glUseProgram(0);
 }
 
 void GraphicsPipeline::ResetScoreBuffer()
 {
-	//glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
-	//GLuint a[4] = { 0,0,0,0 };
-	//glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, a);
-	//glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, scoreBuffer);
+	GLuint a[4] = { 0,0,0,0 };
+	glBufferSubData(GL_ATOMIC_COUNTER_BUFFER, 0, sizeof(GLuint) * 4, a);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
 }
 //--------------------------------------------------------------------//
 

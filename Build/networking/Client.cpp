@@ -454,7 +454,6 @@ void Client::ReceiveMinionUpdate(string data)
 
 	if (minion)
 	{
-		minion = m->GetMinion(minionID);
 		DeadReckonObject(minion, temp, serverConnection->roundTripTime / 2000.0f);
 		minion->SetLife(life);
 	}

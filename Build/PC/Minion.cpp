@@ -115,17 +115,24 @@ void Minion::Update(float dt)
 		}
 		else if (minionBlackboard.GetGoToClosestAlly()) 
 		{
-			physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
-			physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-			physicsNode->SetAcceleration(Behaviours::Pursue(closestFriendlyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
-			isGrounded = false;
+			if (closestFriendlyPlayer)
+			{
+				physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
+				physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
+				physicsNode->SetAcceleration(Behaviours::Pursue(closestFriendlyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
+				isGrounded = false;
+			}
 		}
 		else if (minionBlackboard.GetGoToNearestEnemy()) 
 		{
-			physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
-			physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
-			physicsNode->SetAcceleration(Behaviours::Pursue(closestEnemyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
-			isGrounded = false;
+			if (closestEnemyPlayer)
+			{
+				physicsNode->SetAngularVelocity(Vector3{ 0,0,0 });
+				physicsNode->SetLinearVelocity(Vector3{ 0,0,0 });
+				physicsNode->SetAcceleration(Behaviours::Pursue(closestEnemyPlayer->Physics(), physicsNode, isGrounded, behaviourWeight, behaviourXZMagnitude));
+				isGrounded = false;
+			}
+
 		}
 	}
 	else 
