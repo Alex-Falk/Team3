@@ -12,7 +12,6 @@
 //Scenes
 #include "MainMenu.h"
 #include "SimpleGamePlay.h"
-#include "Stage4.h"
 #include "DataDrivenMap.h"
 
 
