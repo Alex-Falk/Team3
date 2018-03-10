@@ -1,21 +1,34 @@
-/*
-           \\\///
-		  / ~  ~ \
-		(| (.)(.) |)
-.-----.OOOo--C---oOOO.---.
-|                        |
-|   Made By Philip Beck  |
-|      12/02/2018        |
-|                        |
-'-----.oooO--------------'
-      (   )   Oooo.
-       \ (    (   )
-	    \_)    ) /
-	          (_/
+/*               
+                          .,okkkd:.                          
+                       .:x0KOdooxKKkl,.                      
+                   .,oOKKxc'. .. .;oOX0d:.                   
+                ...oKOo;. .;dO00xc.  'cxKO, ..               
+            .,lk0l...  .:oxXMMMMMWOoc'  .. ,O0d:.            
+         .:d0XOo;.     ;c..kMMMMMK;.;:.     'ckKKkc'.        
+      'lkKKxc'  .,.        oWMMMMO.        ''  .:d0KOo;.     
+     '0Wk;. .,loo:.        :NMMMMx.        ,loo:. .,oXNc     
+     ,0X: .lKWMKl.         ,KMMMWo         .;kWWXx' .kNc     
+     '0X; .OMMMMWXx;.      ,0MMMNl       'o0NMMMMN: .kWc     
+     '0X; .k0d0NWMMW0o,..cxKWMMMMXkl,..ckNMMMWKxkK: .kWc     
+     '0X; .kl  ':okKWMNKXWMMMMMMMMMMNKXWWXOdc,. ,O: .kWc     
+     '0X;  ,.      .,oXMMMMMMMMMMMMMMMWk;.      .;. .kNc     
+     .,;.            '0MMMMMMMMMMMMMMMWc             ';.			Alexander Falk & Phillip Beck
+     .lo.            '0MMMMMMMMMMMMMMMWc            .cd,			Game.h
+     '0X: .:,     .,lkNMMMMMMMMMMMMMMMWKo:'.    .c' .OWl     
+     '0X; .ko.':okXWMW0xkXWMMMMMMMMN0xkNMWN0xl;.:O: .OWc     
+     '0X; .OX0NMMMWKx;.  .:xNMMMW0l,.  'lONMMMWKKX: .kWc     
+     '0X: .OMMMMNkc.       '0MMMNc       .;dKWMMMN: .kWc     
+     '0N: .;xKWKc.         ;XMMMWo          'kNXkl. .OWc     
+     .xNKd:. .;loc.        cNMMMMk.       .;ol;. .,lONK;     
+      .'lkKKkl,. .         dWMMWM0'        .  .:d0XOo;.      
+          .:d0X0d,     ,l:;OMMMMMXl;lc.    .ckKKkc'          
+             .,lxc.,c'. .:d0WMMMMXkl,. .;:.'dd:.             
+                  .l0XOo;. .;oooc' .'cxKKx'                  
+                    .,lkKKxc'.  .;oOK0d:.                    
+                        .:d0K000KKkl,.                       
+                           .,cll:.                            
 */
-
-//Extra functionality added by Alex Falk - 12/02/2018
-//Extra functionality about score added by Nikos Fragkas 15/02/2018
+// Controls the game update. Only connection point between the Network and the rest of the game
 
 #pragma once
 #include "Avatar.h"
@@ -42,7 +55,7 @@ public:
 
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
 
-	inline void SetName(string name)					{ userNames[getUserID()] = name; user->UpdateName(); }
+	inline void SetName(string name)					{ userNames[GetUserID()] = name; user->UpdateName(); }
 	inline void SetPlayerName(uint id, string name)		{ userNames[id] = name; }
 
 	inline void SetSize(uint id, float size)			{ avatars[id]->SetLife(size); }
@@ -64,7 +77,7 @@ public:
 
 	inline uint GetPlayerNumber()			{ return playerNumber; }
 	inline uint GetMapIndex()				{ return mapIdx; }
-	inline uint getUserID()					{ return user->GetUserID(); }
+	inline uint GetUserID()					{ return user->GetUserID(); }
 	inline float GetGameLength()			{ return gameLength; }
 	inline float GetTimeLeft()				{ return gameLength - time; }
 	inline float GetTime()					{ return time; }
@@ -81,10 +94,11 @@ public:
 	inline float GetScore(uint id)			{ return teamScores[id]; }
 
 
-	inline void StartGame(uint mapID = 0)	{ gameRunning = true; mapIdx = mapID; user->StartGame(mapID); }
+	inline void StartGame(uint mapID = 0)	{ gameRunning = true; user->StartGame(mapID); mapIdx = mapID;  }
 	inline void StopGame()					{ gameRunning = false; }
 
 	inline bool IsRunning()					{ return gameRunning; }
+	inline bool IsHost()					{ return isHost; }
 
 	//--------------------------------------------------------------------------------------------//
 	// Utility
@@ -94,8 +108,8 @@ public:
 	void ResetGame();
 	void DetermineWinner();
 
-	void ClaimPickup(Pickup * pickup);
-	void ClaimArea(CaptureArea *object);
+	void ClaimPickup(uint i);
+	void Capture(uint i, Colour c);
 
 	void SpawnMinion(MinionBase * minion);
 	void KillMinion(MinionBase * minion);
@@ -121,8 +135,9 @@ private:
 	~Game() 
 	{
 		for (int i = 0; i < 4; i++) {
-			delete avatars[i];
+			SAFE_DELETE(avatars[i]);
 		}
+		SAFE_DELETE(user);
 	};
 
 	//--------------------------------------------------------------------------------------------//
@@ -138,6 +153,7 @@ private:
 	string userNames[4] = { "Player 1","Player 2","Player 3","Player 4" };
 
 	User* user = nullptr;
+	bool isHost = false;
 
 
 	bool gameRunning = false;

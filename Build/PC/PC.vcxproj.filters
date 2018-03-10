@@ -93,13 +93,7 @@
     <ClInclude Include="WeaponPickup.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="TestMap.h">
-      <Filter>Maps\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleGamePlay.h">
-      <Filter>Maps\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Arena.h">
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
@@ -186,13 +180,7 @@
     <ClInclude Include="MultiPaintPool.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
-    <ClInclude Include="Stage4.h">
-      <Filter>Maps\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DataDrivenMap.h">
-      <Filter>Maps\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapOne.h">
       <Filter>Maps\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Particle.h">
@@ -222,9 +210,6 @@
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="SimpleGamePlay.cpp">
-      <Filter>Maps\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestMap.cpp">
       <Filter>Maps\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Map.cpp">
@@ -299,13 +284,7 @@
     <ClCompile Include="MultiPaintPool.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
-    <ClCompile Include="Stage4.cpp">
-      <Filter>Maps\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DataDrivenMap.cpp">
-      <Filter>Maps\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MapOne.cpp">
       <Filter>Maps\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Particle.cpp">

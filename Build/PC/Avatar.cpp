@@ -20,6 +20,7 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"         
 // Nikos Fragkas 05/02/2018
+// Extended by Alex Falk
 
 
 
@@ -304,7 +305,7 @@ void Avatar::Spray()
 		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
 		
 		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 
 		int randPitch;
 		int randYaw;
@@ -323,10 +324,10 @@ void Avatar::Spray()
 			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
 
 			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
-			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 
-			// Send over network
-			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
+			// Alex Falk - Required for networking
+			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
 		}
 	}
 }
@@ -347,8 +348,8 @@ void Avatar::ShootRocket()
 
 		ShootRocket(Physics()->GetPosition(), direction);
 
-		// Send over network
-		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
+		// Alex Falk - Required for networking
+		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 	}
 }
 
@@ -369,10 +370,11 @@ void Avatar::ShootProjectile()
 	}
 }
 
+//-Alex Falk----------------------------------------------------------//
 void Avatar::Spray(Vector3 pos, Vector3 dir)
 {
 	Projectile * spray = new Projectile(col, colour, pos, dir, 0.15f, 5.0f, SPRAY, 1, "Spray");
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 }
 
 void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
@@ -383,14 +385,15 @@ void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
 	
 	projectile->Physics()->SetOrientation(Quaternion(0, sin(angle / 2), 0, cos(angle / 2)));
 	
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
 }
 
 void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
 }
+//--------------------------------------------------------------------//
 
 void Avatar::ManageWeapons() 
 {

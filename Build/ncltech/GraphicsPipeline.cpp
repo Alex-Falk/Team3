@@ -402,6 +402,7 @@ void GraphicsPipeline::UpdateScene(float dt)
 
 	//increment time
 	time += dt;
+	accumTime += dt;
 	NCLDebug::_SetDebugDrawData(
 		projMatrix,
 		viewMatrix,
@@ -428,25 +429,46 @@ void GraphicsPipeline::RenderScene()
 	case NOT_LOADING:
 
 		//Build shadowmaps
+		perfShadow.BeginTimingSection();
 		RenderShadow();
+		perfShadow.EndTimingSection();
+
 
 		//Render scene to screen fbo
+		perfObjects.BeginTimingSection();
 		RenderObject();
+		perfObjects.EndTimingSection();
+
 
 		//render the path to texture
 		RenderPath();
 
 		//post process and present
+		perfPostProcess.BeginTimingSection();
 		RenderPostprocessAndPresent();
+		perfPostProcess.EndTimingSection();
+
 
 		//draw the minimap on screen
-		if (isMainMenu == false) {
-			CountScore();
+		perfScoreandMap.BeginTimingSection();
+
+		if (accumTime > 0.1f)
+		{
+			if (isMainMenu == false) {
+				CountScore();
+			}
+			accumTime = 0.0f;
 		}
 
 		if (GUIsystem::Instance()->GetDrawMiniMap() == true) {
 			DrawMiniMap();
 		}
+
+
+
+		perfScoreandMap.EndTimingSection();
+		
+
 
 		//NCLDEBUG - Text Elements (aliased)
 		if (isMainMenu == false) {
@@ -1002,6 +1024,7 @@ void GraphicsPipeline::DrawMiniMap() {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//add textures
+	glActiveTexture(GL_TEXTURE0);
 	glUseProgram(shaders[SHADERTYPE::MiniMap]->GetProgram());
 	glBindTexture(GL_TEXTURE_2D, pathTex);
 
@@ -1046,7 +1069,7 @@ void GraphicsPipeline::DrawMiniMap() {
 		Avatar* a = Game::Instance()->GetPlayer(i);
 		if (a) {
 			//let the shader know which is the current player
-			if (i == Game::Instance()->getUserID()) {
+			if (i == Game::Instance()->GetUserID()) {
 				glUniform1ui(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "self"), count);
 			}
 			//adding the player's positions
@@ -1072,34 +1095,46 @@ void GraphicsPipeline::DrawMiniMap() {
 	int pickupColours[20];
 	//reset count
 	count = 0;
-	for (int i = 0; i < map->GetPickups().size(); ++i) {
-		Pickup* p = map->GetPickup(i);
-		if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
-			pickupTypes[count] = p->GetPickupType();
-			if (pickupTypes[count] == PickupType::PAINTPOOL) {
-				pickupColours[count] = ((PaintPool*)map->GetPickups()[i])->GetColour();
-			}
-			Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
-			pickupPositions[count * 2] = v.x;
-			pickupPositions[(count * 2) + 1] = v.y;
-			count++;
-		}
-	}
-	//capturable object
-	for (int i = 0; i < map->GetCaptureAreaVector().size(); i++) {
-		//four is one more than the highest number
-		switch (map->GetCaptureAreaVector()[i]->GetType())
-		{
-			case MULTIPAINTPOOL_CAPTURE_AREA:
-			case MINION_CAPTURE_AREA:			pickupTypes[count] = 5;		break;
-			default:							pickupTypes[count] = 4;		break;
-		}
 
-		pickupColours[count] = map->GetCaptureAreaColour(i);
-		Vector2 v = VectorToMapCoord(map->GetCaptureAreaPos(i));
-		pickupPositions[count * 2] = v.x;
-		pickupPositions[(count * 2) + 1] = v.y;
-		count++;
+	vector<GameObject*> gameobjects = map->GetConstantGameObjects();
+
+	for (GameObject * go : gameobjects)
+	{
+		if (go)
+		{
+			if (go->Physics())
+			{
+				switch (go->Physics()->GetType())
+				{
+				case PICKUP:
+				{
+					Pickup* p = static_cast<Pickup*>(go);
+					if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
+						pickupTypes[count] = p->GetPickupType();
+						if (pickupTypes[count] == PickupType::PAINTPOOL) {
+							pickupColours[count] = ((PaintPool*)p)->GetColour();
+						}
+						Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
+						pickupPositions[count * 2] = v.x;
+						pickupPositions[(count * 2) + 1] = v.y;
+						count++;
+					}
+					break;
+				}
+				case PAINTABLE_OBJECT:
+				{
+					CaptureArea * c = static_cast<CaptureArea*>(go);
+					pickupTypes[count] = 4;
+					pickupColours[count] = c->GetColour();
+					Vector2 v = VectorToMapCoord(c->Physics()->GetPosition());
+					pickupPositions[count * 2] = v.x;
+					pickupPositions[(count * 2) + 1] = v.y;
+					count++;
+					break;
+				}
+				}
+			}
+		}
 	}
 
 	glUniform1ui (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);

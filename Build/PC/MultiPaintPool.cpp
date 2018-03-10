@@ -8,7 +8,7 @@
 
 #include "Paintpool.h"
 #include "MultiPaintPool.h"
-
+#include "Game.h"
 
 MultiPaintPool::MultiPaintPool() : CaptureArea()
 {
@@ -29,6 +29,7 @@ void MultiPaintPool::SetColour(Colour c)
 	for (auto itr = pools.begin(); itr != pools.end(); ++itr)
 	{
 		(*itr)->ChangeColour(c);
+		Game::Instance()->Capture((*itr)->GetIdx(), c);
 	}
 }
 

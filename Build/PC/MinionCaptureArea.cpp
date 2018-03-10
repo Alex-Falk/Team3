@@ -24,7 +24,7 @@ MinionCaptureArea::~MinionCaptureArea() {
 void MinionCaptureArea::Update(float dt) {
 	Map * m = static_cast<Map*>(Game::Instance()->GetMap());
 
-	if (Game::Instance()->getUserID() == 0)
+	if (Game::Instance()->GetUserID() == 0)
 	{
 		if (colour != START_COLOUR)
 			currentSpawnTimer += dt;

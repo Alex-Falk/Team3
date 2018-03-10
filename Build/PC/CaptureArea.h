@@ -48,7 +48,7 @@ public:
 
 	virtual void Update(float dt) {}
 
-	bool CheckPlayerCollision(PhysicsNode * p, int index);
+	void CheckPlayerCollision(PhysicsNode * p, int index);
 	bool CheckProjectileCollision(PhysicsNode * p, int index);
 	bool CheckMinionCollision(PhysicsNode * p, int index);
 	

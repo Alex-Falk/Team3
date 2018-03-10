@@ -13,6 +13,7 @@ automatically update the object's world transform based off it's physical
 position/orientation each frame.
 
 *//////////////////////////////////////////////////////////////////////////////
+// Adapted by Alex Falk
 #pragma once
 #include <nclgl\Matrix4.h>
 #include <nclgl\RenderNode.h>
@@ -22,6 +23,7 @@ position/orientation each frame.
 #include <vector>
 #include <functional>
 #include "CommonMeshes.h"
+#include <PC\GamePlay.h>
 
 class Scene;
 class PhysicsEngine;
@@ -48,7 +50,7 @@ public:
 	{
 		RegisterPhysicsToRenderTransformCallback();
 		SetPhysics(physicsNde);
-		physicsNde->SetName(name);
+		//physicsNde->SetName(name);
 	}
 
 	virtual ~GameObject()
@@ -72,6 +74,12 @@ public:
 
 	inline const Scene* GetScene() const	{ return scene; }
 	inline		 Scene* GetScene()			{ return scene; }
+
+	inline uint GetIdx() { return index; }
+	inline void SetIdx(uint i) { index = i; }
+
+	inline bool IsDynamic() { return isDynamic; }
+	inline void SetDynamic(bool d) { isDynamic = d; }
 
 	bool GetDestroy() { return destroy; }
 	void SetToDestroy() { destroy = true; }
@@ -127,7 +135,14 @@ public:
 			if (scene) GraphicsPipeline::Instance()->AddRenderNode(node);
 		}
 	}
-
+	
+	//-Alex Falk----------------------------------------------------------//
+	inline void SetColour(Colour c)
+	{
+		renderNode->SetBaseColor(EnumToVectorColour(c));
+		renderNode->SetChildBaseColor(EnumToVectorColour(c));
+	}
+	//--------------------------------------------------------------------//
 
 	//---------- SOUND (?) ------------>
 
@@ -172,5 +187,9 @@ protected:
 	PhysicsNode*				physicsNode;
 
 	bool						isCollided = false;
+
+	//Alex Falk
 	bool						siblingsCollide = false;
+	uint						index = 0;
+	bool						isDynamic = false;
 };

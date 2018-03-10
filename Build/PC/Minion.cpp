@@ -1,4 +1,5 @@
 //Michael Davis 16/02/2018
+//Adapted and split up by Alex Falk (necessary for Netwokring functionality)
 #include "Minion.h"
 #include "MinionStates.h"
 #include "Game.h" 
@@ -190,15 +191,22 @@ void Minion::ComputeClosestFriendlyPlayer() {
 void Minion::ComputeClosestCaptureArea() {
 	closestCaptureAreaTimer = 0.0f;
 	float minDist = 10000.0f;
-	for (int i = 0; i < ((Map*)SceneManager::Instance()->GetCurrentScene())->GetCaptureAreaVector().size(); i++) {
-		if (((Map*)SceneManager::Instance()->GetCurrentScene())->GetCaptureArea(i)->GetColour() != this->colour) {
-			float dist = (this->physicsNode->GetPosition() - ((Map*)SceneManager::Instance()->GetCurrentScene())->GetCaptureArea(i)->Physics()->GetPosition()).LengthSQ();
-			if (dist < minDist) {
-				closestCaptureArea = ((Map*)SceneManager::Instance()->GetCurrentScene())->GetCaptureArea(i);
-				minDist = dist;
+
+	Scene * m = SceneManager::Instance()->GetCurrentScene();
+	for (GameObject * go : m->GetConstantGameObjects())
+	{
+		if (go->Physics())
+		{
+			if (go->Physics()->GetType() == PAINTABLE_OBJECT)
+			{
+				float dist = (this->physicsNode->GetPosition() - go->Physics()->GetPosition()).LengthSQ();
+				if (dist < minDist) {
+					closestCaptureArea = static_cast<CaptureArea*>(go);
+				}
 			}
 		}
 	}
+
 	if (closestCaptureArea) {
 		if (closestCaptureArea->GetColour() == this->GetColour()) {
 			closestCaptureArea = NULL;
