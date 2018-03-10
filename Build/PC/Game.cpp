@@ -119,7 +119,7 @@ void Game::ResetGame()
 	gameRunning = false;
 	time = 0.0f;
 	GUIsystem::Instance()->SetResult(RESULT::NONE);
-	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
+	//PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 	GUIsystem::Instance()->SetDrawResult(false);
 	//PhysicsEngine::Instance()->SetPaused(false);
 }

@@ -77,6 +77,7 @@ void Map::onConnectToScene()
 }
 
 void Map::OnInitializeScene() {
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 
 	SetMapDimensions(dimensions);
 	
