@@ -19,7 +19,7 @@ class MultiPaintPool : public CaptureArea
 {
 public:
 	MultiPaintPool();
-	MultiPaintPool(Vector3 pos, string unique_name, Vector3 halfdims = { 3.0f, 2.0f, 3.0f }, int scoreValue = 10, Colour colour = START_COLOUR);
+	MultiPaintPool(Vector3 pos, string unique_name, Vector3 halfdims = { 3.0f, 2.0f, 3.0f }, int scoreValue = 100, Colour colour = START_COLOUR);
 
 	void SetColour(Colour c);
 	void AddPool(PaintPool* newPool);
