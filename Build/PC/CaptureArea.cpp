@@ -171,7 +171,7 @@ void CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index)
 		//check if player actually has enough life to take the point
 		if (avatar->GetLife() >= avatar->GetMinLife() + (lifeToTake)) {
 			this->SetColour(avatar->GetColour());
-			Game::Instance()->Capture(this->index, this->colour);
+			Game::Instance()->Capture(this->index, this->colour, this->scoreValue);
 			avatar->ChangeLife(-lifeToTake);
 		}
 		UpdatePercentage();

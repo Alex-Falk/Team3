@@ -45,6 +45,7 @@ in Vertex	{
 	smooth vec3 	 worldPos;
 	smooth vec2 	 texCoord;
 	smooth vec3 	 normal;
+	smooth vec2		 pathTexCoord;
 } IN;
 
 layout(location = 0) out vec4 OutFrag;
@@ -89,11 +90,15 @@ void main(void)	{
 	vec4 texColor  	= texture(uDiffuseTex, IN.texCoord);
 	vec4 color 		= uColor * texColor;
 
-	vec2 coord = vec2(-IN.texCoord.x, -IN.texCoord.y);
-	vec4 pathColor = texture(uPathTex, coord);
 	float isPath = 0;
-	if (pathColor.r > 0 || pathColor.g > 0 || pathColor.b > 0)
-		isPath = 1;
+	vec4 pathColor = vec4(0.0f);
+	vec2 coord = vec2(IN.pathTexCoord.x, IN.pathTexCoord.y);
+	if (coord.x > 0.0f && coord.x < 1.0f && coord.y > 0.0f && coord.y < 1.0f)
+	{
+		pathColor = texture(uPathTex, coord);
+		if (pathColor.r > 0 || pathColor.g > 0 || pathColor.b > 0)
+			isPath = 1;
+	}
 
 //Shadow Calculations
 	vec4 shadowWsPos = vec4(IN.worldPos + normal * NORMAL_BIAS, 1.0f);

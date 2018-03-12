@@ -184,6 +184,7 @@ public:
 	inline void RemoveAllPlayerRenderNode() { playerRenderNodes.clear(); }
 	void InitPath(Vector2 groundSize);
 	inline GLuint& GetPathTex() { return pathTex; }
+	const Vector2& GetGroundSize() const { return groundSize; }
 
 	//GUI
 	void SetIsMainMenu(bool a) { isMainMenu = a; }

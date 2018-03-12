@@ -614,12 +614,15 @@ void GraphicsPipeline::RenderAllObjects(bool isShadowPass, std::function<void(Re
 	{
 		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
 		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			perObjectFunc((*i).first);
 			glCullFace(GL_FRONT);
 			(*i).first->DrawOpenGL(isShadowPass);
 
 			glCullFace(GL_BACK);
 			(*i).first->DrawOpenGL(isShadowPass);
+			glDisable(GL_BLEND);
 		}
 	}
 }
@@ -906,8 +909,8 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	//Color Texture
 	if (!pathTex) glGenTextures(1, &pathTex);
 	glBindTexture(GL_TEXTURE_2D, pathTex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, (GLsizei)(groundSize.x*PIXELPERSIZE), (GLsizei)(groundSize.y*PIXELPERSIZE), 0, GL_RED, GL_UNSIGNED_BYTE, NULL);

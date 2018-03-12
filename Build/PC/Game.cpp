@@ -82,7 +82,7 @@ void Game::Update(float dt)
 		{
 			for (uint i = 0; i < playerNumber; ++i)
 			{
-				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i) + teamAreaScores[i];
+				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i) + captureScores[i];
 			}
 		}
 		//NCLDebug::Log(to_string(gameTime));
@@ -129,10 +129,11 @@ void Game::ClaimPickup(uint i)
 	user->RequestPickup(GetUserID(), i);
 }
 
-void Game::Capture(uint i, Colour c)
+void Game::Capture(uint i, Colour c,int scorevalue)
 {
 	if (IsHost())
 	{
+		captureScores[c] += scorevalue;
 		((Server*)user)->SendAreaCapture(i,c);
 	}
 }
