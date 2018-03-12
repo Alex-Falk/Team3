@@ -334,7 +334,7 @@ void Map::OnUpdateScene(float dt)
 
 	UpdateGUI(dt);
 
-	if (m_AccumTime > 1 / 60.0f)
+	if (m_AccumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
 	{
 		perfMapObjects.BeginTimingSection();
 		for (int i = 0; i < this->mapConstantObjects.size(); ++i)

@@ -103,7 +103,7 @@ void Client::UpdateUser(float dt)
 	if (Game::Instance()->IsRunning() )
 	{
 		accumTime += dt;
-		if (accumTime > 1 / 60.0f)
+		if (accumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
 		{
 			accumTime = 0.0f;
 			Avatar * p = Game::Instance()->GetCurrentAvatar();
@@ -470,6 +470,7 @@ void Client::ReceiveMinionDeath(string data)
 
 	if (m->GetMinion(minionID))
 	{
+		m->GetMinion(minionID)->SetToDestroy();
 		m->RemoveMinion(m->GetMinion(minionID));
 	}
 
