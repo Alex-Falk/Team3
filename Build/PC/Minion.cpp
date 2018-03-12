@@ -27,6 +27,55 @@ Minion::Minion(Colour c, Vector4 RGBA, Vector3 position, const string name) : Mi
 	ComputeClosestFriendlyPlayer();
 	ComputeNewWanderPosition();
 	ComputeClosestCaptureArea();
+
+	Physics()->SetOnCollisionCallback(
+		std::bind(&Minion::MinionCallbackFunction,
+			this,							//Any non-placeholder param will be passed into the function each time it is called
+			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
+			std::placeholders::_2
+		)
+	);
+}
+
+bool Minion::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject)
+{
+	switch (collidingObject->GetType())
+	{
+	case PLAYER:
+		if (!dead) {
+			Avatar* avatar = static_cast<Avatar*>(collidingObject->GetParent());
+			if (avatar->GetColour() != this->colour) {
+				avatar->ChangeLife(-(life / 5));
+			}
+			else avatar->ChangeLife(life / 5);
+			dead = true;
+		}
+		return false;
+	case MINION:
+		if (!dead)
+		{
+			MinionBase* minion = static_cast<MinionBase*>(collidingObject->GetParent());
+			if (minion->GetColour() != this->colour && minion->IsAlive()) {
+				float tempLife = life;
+				ChangeLife(-minion->GetLife());
+				minion->ChangeLife(-(tempLife));
+				return false;
+			}
+		}
+		break;
+	case BIG_NODE:
+	case DEFAULT_PHYSICS: isGrounded = true; ChangeLife(-1); break;
+	case PICKUP: return false;
+	case PAINTABLE_OBJECT:
+		CaptureArea * captureArea = static_cast<CaptureArea*>(collidingObject->GetParent());
+		if (captureArea->GetColour() != this->colour)
+		{
+			dead = true;
+		}
+		isGrounded = true;
+		break;
+	}
+	return true;
 }
 
 Minion::~Minion() {
@@ -160,8 +209,10 @@ void Minion::Update(float dt)
 
 void Minion::ComputeNewWanderPosition() {
 	wanderTimer = 0.0f;
-	float randX = rand() % 80 + -40;
-	float randZ = rand() % 80 + -40;
+	int xDim = (int)((Map*)SceneManager::Instance()->GetCurrentScene())->GetXDimension();
+	int zDim = (int)((Map*)SceneManager::Instance()->GetCurrentScene())->GetYDimension();
+	float randX = (float)((rand() % (xDim*2)) - xDim);
+	float randZ = (float)((rand() % (zDim*2)) - zDim);
 	wanderPosition = Vector3{ randX, 2.5f, randZ };
 }
 

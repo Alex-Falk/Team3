@@ -139,7 +139,7 @@ public:
 	void UpdateFakeProgressBar();
 
 	//Loading Screen textrue translation
-	float translation = 0.01;
+	float translation = 0.01f;
 
 	//Map Problem
 	void MapProblem(uint errorNumber, uint errorLine);

@@ -49,8 +49,8 @@ public:
 	virtual void Update(float dt) {}
 
 	void CheckPlayerCollision(PhysicsNode * p, int index);
-	bool CheckProjectileCollision(PhysicsNode * p, int index);
-	bool CheckMinionCollision(PhysicsNode * p, int index);
+	void CheckProjectileCollision(PhysicsNode * p, int index);
+	void CheckMinionCollision(PhysicsNode * p, int index);
 	
 	//useful for GUI capture bar
 	float GetPercentageCaptured() { return percentageCaptured; } //value between 0 and 1, fill bar this amount

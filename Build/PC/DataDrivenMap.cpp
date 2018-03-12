@@ -200,7 +200,10 @@ void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 	if (Game::Instance()->GetUserID() == 0)
 	{
-		AddGameObject(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8])));
+		AddGameObject(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])),
+			                          object[4], 
+			                          Vector3(stof(object[5]), stof(object[6]), stof(object[7])),
+			                          stoi(object[8])));
 	}
 	else
 	{

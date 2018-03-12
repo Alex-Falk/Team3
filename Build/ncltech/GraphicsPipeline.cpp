@@ -1128,7 +1128,13 @@ void GraphicsPipeline::DrawMiniMap() {
 				case PAINTABLE_OBJECT:
 				{
 					CaptureArea * c = static_cast<CaptureArea*>(go);
-					pickupTypes[count] = 4;
+					switch (c->GetType())
+					{
+						case MULTIPAINTPOOL_CAPTURE_AREA:	pickupTypes[count] = 6;		break;
+						case MINION_CAPTURE_AREA:			pickupTypes[count] = 5;		break;
+						default:							pickupTypes[count] = 4;		break;
+					}
+
 					pickupColours[count] = c->GetColour();
 					Vector2 v = VectorToMapCoord(c->Physics()->GetPosition());
 					pickupPositions[count * 2] = v.x;

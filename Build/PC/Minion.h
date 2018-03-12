@@ -35,6 +35,7 @@ public:
 	Minion();
 	Minion(Colour c, Vector4 RGBA, Vector3 position, const string name = "");
 	
+	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
 	MinionBlackboard* GetMinionBlackBoard() { return &minionBlackboard; }
 
@@ -59,7 +60,7 @@ public:
 		if (closestFriendlyPlayer) return (physicsNode->GetPosition() - closestFriendlyPlayer->Physics()->GetPosition()).LengthSQ();
 		else return detectionRadiusSQ + 1;
 	}
-	float HealthOfClosestFriendly() { if (closestFriendlyPlayer) return closestFriendlyPlayer->GetLife(); }
+	float HealthOfClosestFriendly() { if (closestFriendlyPlayer) return closestFriendlyPlayer->GetLife(); return 100.0f; }
 	float GetAllyHealPursueLimit() { return allyHealPursueLimit; }
 
 	float DistanceToClosestEnemySQ() { 

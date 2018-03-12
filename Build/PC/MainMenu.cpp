@@ -97,7 +97,7 @@ void MainMenu::OnUpdateScene(float dt)
 		TextInputHelper();
 	}
 	
-	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); ++i) {
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i) {
 		temp[i] = Game::Instance()->GetName(i);
 	}
 

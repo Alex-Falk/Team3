@@ -51,6 +51,6 @@ static Vector4 EnumToVectorColour(Colour c)
 		case GREEN:			return GREEN_COLOUR;
 		case BLUE:			return BLUE_COLOUR;
 		case PINK:			return PINK_COLOUR;
-		case START_COLOUR:	return DEFAULT_COLOUR;
+		default:			return DEFAULT_COLOUR;
 	}
 }

@@ -89,58 +89,7 @@ MinionBase::MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string na
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 
 	isGrounded = false;
-
-	Physics()->SetOnCollisionCallback(
-		std::bind(&MinionBase::MinionCallbackFunction,
-			this,							//Any non-placeholder param will be passed into the function each time it is called
-			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
-			std::placeholders::_2
-		)
-	);
 }
-
-bool MinionBase::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
-	if (collidingObject->GetType() == PLAYER) {
-		if (!dead) {
-			if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				((Avatar*)collidingObject->GetParent())->ChangeLife(-(life / 5));
-			}
-			else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);
-			dead = true;
-		}
-		return false;
-	}
-	else if (collidingObject->GetType() == MINION) {
-		if (!dead && ((MinionBase*)(collidingObject->GetParent()))->IsAlive()) {
-			if (((MinionBase*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				float tempLife = life;
-				ChangeLife(-((MinionBase*)collidingObject->GetParent())->GetLife());
-				((MinionBase*)(collidingObject->GetParent()))->ChangeLife(-(tempLife));
-				return false;
-			}
-		}
-		return true;
-	}
-	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
-		isGrounded = true;
-		ChangeLife(-1);
-		return true;
-	}
-	if (collidingObject->GetType() == PAINTABLE_OBJECT)
-	{
-		if (((CaptureArea*)(collidingObject->GetParent()))->GetColour() != this->colour)
-		{
-			dead = true;
-		}
-		isGrounded = true;
-		
-	}
-	if (collidingObject->GetType() == PICKUP) {
-		return false;
-	}
-	return true;
-}
-
 
 void MinionBase::ChangeLife(float l) {
 	life += l;
