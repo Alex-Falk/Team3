@@ -115,6 +115,8 @@ void Minion::RevertState()
 
 void Minion::Update(float dt)
 {
+	MinionBase::Update(dt);
+
 	if (life < minLife) {
 		dead = true;
 	}

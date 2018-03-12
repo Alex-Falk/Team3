@@ -32,6 +32,13 @@
 
 #include "MinionBase.h"
 #include "Game.h"
+#include "ParticleEmitter.h"
+#include "../ncltech/SphereCollisionShape.h"
+#include "CaptureArea.h" 
+#include "Avatar.h"
+#include "../ncltech/SceneManager.h"
+#include "ParticleEmitter.h"
+
 MinionBase::MinionBase()
 {
 	colour = START_COLOUR;
@@ -89,6 +96,22 @@ MinionBase::MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string na
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 
 	isGrounded = false;
+
+	emitter = new ParticleEmitter(256, this->colour, this->Physics()->GetPosition(), { 0.05f,0.05f,0.05f }, { 1.0f, 1.0f, 0.0f }, 10.0f, 10.0f, 5.0f, 50.0f);
+}
+
+MinionBase::~MinionBase()
+{
+	
+}
+
+void MinionBase::OnDetachedFromScene()
+{
+	if (emitter)
+	{
+		SAFE_DELETE(emitter);
+	}
+	
 }
 
 void MinionBase::ChangeLife(float l) {
@@ -119,4 +142,8 @@ void MinionBase::ChangeSize(float newSize) {
 
 void MinionBase::Update(float dt)
 {
+	emitter->SetPos(this->physicsNode->GetPosition());
+	emitter->SetScale(Vector3(size*scale, size * scale, size * scale));
+	emitter->Update(dt);
+
 }

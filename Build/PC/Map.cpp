@@ -382,8 +382,8 @@ void Map::OnUpdateScene(float dt)
 
 	UpdateGUI(dt);
 
-	if (m_AccumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
-	{
+	//if (m_AccumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
+	//{
 		perfMapObjects.BeginTimingSection();
 		for (int i = 0; i < this->mapConstantObjects.size(); ++i)
 		{
@@ -401,7 +401,7 @@ void Map::OnUpdateScene(float dt)
 				mapDynamicObjects[i]->Update(dt);
 			}
 		}
-	}
+	//}
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();

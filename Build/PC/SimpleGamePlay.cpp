@@ -66,7 +66,7 @@ void SimpleGamePlay::AddObjects()
 	mpp->AddPool(cpp3);
 	mpp->AddPool(cpp4);
 
-	ParticleEmitter * e = new ParticleEmitter(RED, { 0.0f, 2.0f, 0.0f }, 20.0f, { 1.0f, 1.0f, 0.0f }, 10.0f, 10.0f, 5.0f, 50.0f);
+	ParticleEmitter * e = new ParticleEmitter(128, RED, { 0.0f, 2.0f, 0.0f }, { 0.1f,0.1f,0.1f }, { 1.0f, 1.0f, 0.0f }, 10.0f, 10.0f, 5.0f, 50.0f);
 	this->AddGameObject(e);
 }
 
