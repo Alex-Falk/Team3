@@ -73,6 +73,7 @@ void Map::onConnectToScene()
 		}
 	}
 	
+	
 	GraphicsPipeline::Instance()->ResetPath();
 }
 
@@ -204,7 +205,7 @@ void Map::BuildGround(Vector2 dimensions) {
 
 void Map::LoadTextures()
 {
-	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
 
 	if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box, TEXTUREDIR"SkyBox\\skyright.jpg", TEXTUREDIR"SkyBox\\skyleft.jpg", TEXTUREDIR"SkyBox\\skytop.jpg",

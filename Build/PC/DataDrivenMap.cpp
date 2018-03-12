@@ -1,49 +1,29 @@
-/*
-                                           .*                                                      
-                               .          #%%                                                      
-                              @#,         .@(         .@#    *&      /@                            
-                              /%.                  & .,,%   % % *@@/,*#%@       (,                 
-                         @%@           #@/ &        @  #*   /(   /#%,% %(      ,@                  
-                      /@ % /,        ,@./% % .@@ @&@%  @@(  ,@ &//(%,@ ,@@      .                  
-                     %,    % %/       &#   @ *,,,@      @  *%.&         ,( #%.                     
-           *#         %     ,.@     /@.,% %*(@.        ,((@&.%%        ,&(#@ %       @@            
-          ,@@      @@%&      %*    %,(%&                               @,@%.%..   %/@@@            
-           .#   /%.&,       ,&&@ /# .%                                      @*(@(%*% ,%.#          
-              #@% .,           @%,&&&.                                        @(@#%,   ,,          
-             .   %            %. &                                                    %.(          
-          #&@    %                           *@@                               ,@*    .@/%&%/      
-          % ,@@@%                          *@*  @@      ,@@@@@@@@@@@@@@@@@@@@@@@@*@#    .@@ /%     
-          @          ,@@@@*               @@@@ ,@@@%    ,@                         &@      *(      
-          &@%        ,@   @*                 @ ,@       ,@ %@%%%%%%%%%%%%%%%%%%&@@@        @@,     
-        ,%           ,@    @*                @ ,@       ,@ %%                  ,@           %      
-       ##@@@@%       ,@ %@  @#               @ ,@       ,@ %%                             *#       
-       %@     @      ,@ %@@  @#              @ ,@       ,@ %%                             #@(@     
-         .@@  @      ,@ %@.@  @*             @ ,@       ,@ %%                              &&.     
-         % @%@*      ,@ %@  @* @#            @ ,@       ,@ %%                            @*@%@   *%
-         &           ,@ %@  .@. @&           @ ,@       ,@ %%             %@*               .&  %%.
-          .#%        ,@ %@    @* &&          @ ,@       ,@ %@@@@@@@@@@@@@@@%*@*          /& @      
-      @, /% ,,       ,@ %@     @. @#         @ ,@       ,@                    @@         %&@       
-      @  %  ,,       ,@ %@      @* @&        @ ,@       ,@ %@@@@@@@@@@@@@@@%#@            /(/@&    
-   #@ &.             ,@ %@       @# &@       @ ,@       ,@ %%             %@             % .%.%    
-   ,@/   &#.         ,@ %@        @* &&      @ ,@       ,@ %%                            ,,,  ,,   
-        ,   %        ,@ %@         @& &&     @ ,@       ,@ %%                               ,%@    
-     /*%,   %        ,@ %@          @& @@    @ ,@       ,@ %%                              &%,     
-    ,(  (@@&         ,@ %@           && #@   @ ,@       ,@ %%                               @      
-    .%               ,@ %@            @# #@  @ ,@       ,@ %%                            ,@,       
-      ,&#            ,@ %@             @@ #@ @ ,@       ,@ %%                            #@@%      
-    #/ *%            ,@ %@              #@ *@@ ,@       ,@ %%                              .%      
-    %                ,@ %@               && #@ ,@       ,@ %%                            #@@@/     
-    #*               ,@ %@                &@ * ,@       ,@ %%                            .,%#@     
-      .@.            ,@ %@                 #@  ,@       ,@ %%                            %(  ,     
-   *@  @           @@@@ %@@@,               *@%&@     *@*    #@                          /%        
- .&/@@&,            @@   #@                             #@*#@*                      &    &         
- .%                   #@@                                 *                              @         
-  @.                                                                                   @,@    
-*/
-
-// Additions by Alex Falk.
-
-
+/*                      (.      ,(,                                        
+                     ,(*       (     ,#/  (%    ,%*.                   
+                 .%(        ,&*#     *( .* .&/ /#%& ,,    ,/             
+               ,@*,,.      %(% %.%#,#%/ /@, /,*(#%(,.&,                  
+               #   ,(&      %,,% ((    ##&&/,      #.##      .         
+       #/    (%(    .%   ,,(%. ,         ,.         %(#*#.  #%&@,        
+        . ,#(/,     #%#.#.%,                           ,(&,, %/.       
+          ,/,        .**,.                               (#,   ,%        
+      .#%  ,,         ,,         #*                       ,#   /&@%%.    
+      %,*%%*                   ##  ##    %@@@@@@@@@@@@@@@@@*##   /#.%    
+      ,*       %, @*          .,&%%&,.   %%(%%%%%%%%%%%%%%%.*#.    #.    
+     ,*        %,  #*           %%%%     %%%%             ,#       *(    
+    ,%*,*#     %,%@*#&          %%%%     %%%%                     ,..    
+    .,., ,,    %,%*&**&         %%%%     %%%%                      .#    
+     ,,#,#.    %,%, &&*@        %%%%     %%%%                    ,%##  ,%
+      #        %,%,  *#.@*      %%%%     %%%%         ,@#          %%.,&*
+    %(#.%.     %,%,   #@ &*     %%%%     %%.,,,,,,,,,,,. @#      ,@,     
+   ,, % %,     %,%,    *& @#    %%%%     %%(%%%%%%%%%%%(*#.       .,,#   
+ .&,(. ,.      %,%,     *@ ##   %%%%     %%%%         .#         %/*#   
+  *#  *&       %,%,      .@.#@  %%%%     %%%%                        /,  
+   .#/         %,%,       .@..@.%%%%     %%%%                     /#*    
+  %%((         %,%,         @#.@@%%%     %%%%                     ,*,    
+  (            %,%,          #* @%%%     %%%%                     (@(    
+    #.         %,%,           #&  %%     %%%%                     *%%,   
+ (* %.       #@%.(@@.          *@@@%   #@@%%@@#                  .#      
+(              #(@*                      @#*&                   */
 #include "DataDrivenMap.h"
 #include "WeaponPickup.h"
 #include "PaintPool.h"
@@ -60,15 +40,21 @@
 void DataDrivenMap::OnInitializeScene()
 {
 	float m_AccumTime = 0;
-	numemptyline = 0;
+	linenum = 0;
+	textID = 0;
 
 	ReadFile();
 
+	for (uint i = 0; i < 10; i++) {
+		BuildTextures(GetObjects(lines[i]));
+	}
+
 	Buildmap();
 
-	for (uint i = 1; i < 5; i++) {
+	for (uint i = 11; i < 15; i++) {
 		BuildObject(GetObjects(lines[i]));
 	}
+
 
 	Map::OnInitializeScene();
 }
@@ -109,12 +95,12 @@ void DataDrivenMap::ReadFile() {
 }
 
 void DataDrivenMap::Buildmap() {
-	BuildObject(GetObjects(lines[0]));
+	BuildObject(GetObjects(lines[10]));
 }
 
 void DataDrivenMap::BuildObjects() {
 
-	int i = 5;
+	int i = linenum;
 	while (i < lines.size())
 	{
 		vector<string>object = GetObjects(lines[i]);
@@ -123,8 +109,16 @@ void DataDrivenMap::BuildObjects() {
 	}
 }
 
+
+void DataDrivenMap::BuildTextures(vector<std::string> object) {
+
+	if (object[0] == "NEW_TEXTURE") {
+		AddTexture(stoi(object[1]), object[2]);
+		linenum++;
+	}
+}
+
 void DataDrivenMap::BuildObject(vector<std::string> object) {
-	numemptyline++;
 	if (object[0] == "CAPTURE_AREA")		AddCaptureAreas(object);
 	else if (object[0] == "CUBE")			AddCuboid(object);
 	else if (object[0] == "PICKUP")			AddPickups(object);
@@ -135,7 +129,8 @@ void DataDrivenMap::BuildObject(vector<std::string> object) {
 	else if (object[0] == "GROUND")			AddGround(object);
 	else if (object[0] == "SPAWN_LOC")		SetSpawnLocation(object);
 	else if (object[0] == "MAP")			BuildMapDimenions(object);
-	else  CoruptedFile(1, numemptyline);
+	else  CoruptedFile(1, linenum);
+	linenum++;
 }
 
 vector<string> DataDrivenMap::GetLines(std::string file) {
@@ -198,10 +193,12 @@ void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 	if (Game::Instance()->GetUserID() == 0)
 	{
-		AddGameObject(new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])),
-			                          object[4], 
-			                          Vector3(stof(object[5]), stof(object[6]), stof(object[7])),
-			                          stoi(object[8])));
+		CaptureArea* ca = new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8]));
+		ca->Physics()->SetInverseMass(stof(object[9]));
+		if (object[10] == "TEXTURE") {
+			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
+		}
+		AddGameObject(ca);
 	}
 	else
 	{
@@ -209,6 +206,10 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 		// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
 		GameObject * ca = CommonUtils::BuildCuboidObject("CA", Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
 		ca->SetColour(Colour(stoi(object[8])));
+		ca->Physics()->SetInverseMass(stof(object[9]));
+		if (object[10] == "TEXTURE") {
+			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
+		}
 		AddGameObject(ca);
 		//--------------------------------------------------------------------//
 	}
@@ -222,6 +223,12 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 		CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[5]), stof(object[6]), stof(object[7])), object[4], Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
 		AddGameObject(capt);
 		static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
+
+		if (object[11] == "TEXTURE") {
+			pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+			capt->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+		}
+
 	}
 	else
 	{
@@ -251,6 +258,11 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 			DEFAULT_PHYSICS,
 			DEFAULT_COLOUR);
 		AddGameObject(ca);
+
+		if (object[11] == "TEXTURE") {
+			pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+		}
 		//--------------------------------------------------------------------//
 	}
 
@@ -269,15 +281,51 @@ void DataDrivenMap::AddCuboid(vector<std::string> object) {
 		DEFAULT_COLOUR);
 
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])),1));
+	if (object[12] == "TEXTURE") {
+		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+	}
+	
 	AddGameObject(cube);
 }
 
 void DataDrivenMap::AddGround(vector<std::string> object) {
 	GameObject* cube = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, 0, true, false, BIG_NODE, DEFAULT_COLOUR, MATERIALTYPE::Ground);
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 1));
+	if (object[12] == "TEXTURE") {
+		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+	}
 	AddGameObject(cube);
 }
 
 void DataDrivenMap::AddMinionAreas(vector<std::string> object) {
-	AddGameObject(new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f,1.5f,1.5f), stoi(object[5])));
+	MinionCaptureArea* mca = new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f, 1.5f, 1.5f), stoi(object[5]));
+	AddGameObject(mca);
+	if (object[6] == "TEXTURE") {
+		mca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[7])]));
+	}
+}
+
+void DataDrivenMap::AddTexture(uint ID, std::string name) {
+	string address = TEXTUREDIR + name;
+	CheckTextID(ID);
+
+	if (!TextureManager::Instance()->LoadTexture(textureID[ID], address, GL_REPEAT, GL_NEAREST))
+	{
+		if (TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+		{}
+		CoruptedFile(2, linenum);
+	}
+}
+
+void  DataDrivenMap::CheckTextID(int textID) {
+	if (textID == 0) textureID[0] = Item_Texture_1;
+	else if (textID == 1) textureID[1] = Item_Texture_2;
+	else if (textID == 2) textureID[2] = Item_Texture_3;
+	else if (textID == 3) textureID[3] = Item_Texture_4;
+	else if (textID == 4) textureID[4] = Item_Texture_5;
+	else if (textID == 5) textureID[5] = Item_Texture_6;
+	else if (textID == 6) textureID[6] = Item_Texture_7;
+	else if (textID == 7) textureID[7] = Item_Texture_8;
+	else if (textID == 8) textureID[8] = Item_Texture_9;
+	else if (textID == 9) textureID[9] = Item_Texture_10;
 }

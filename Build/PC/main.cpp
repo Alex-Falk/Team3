@@ -120,7 +120,7 @@ void Initialize()
 void PrintStatusEntries()
 {
 	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
-	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [0] ---");
+//	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [0] ---");
 	if (!show_debug)
 		return;
 

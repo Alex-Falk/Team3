@@ -1,6 +1,6 @@
 #include "RenderNode.h"
 #include "../nclgl/Material.h"
-
+#include "../ncltech/TextureManager.h"
 #include "../ncltech/GraphicsPipeline.h"
 RenderNode::RenderNode(Mesh*mesh, string name, Vector4 colour)	{
 	awake				= true;
@@ -13,6 +13,7 @@ RenderNode::RenderNode(Mesh*mesh, string name, Vector4 colour)	{
 	distanceFromCamera	= 0.0f;
 	modelScale			= Vector3(1,1,1);
 	smoothness = 0.3f;
+	texture = TextureManager::Instance()->GetTexture(TEXTURETYPE::Ground_Texture);
 	this->name = name;
 }
 

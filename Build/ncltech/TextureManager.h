@@ -41,7 +41,7 @@
 
 enum TEXTURETYPE
 {
-	Checker_Board = 0,
+	Ground_Texture = 0,
 	Sky_Box		  = 1,
 	//minimap stuff (phil 26/02/2018)
 	Paint_Pool	  = 2,
@@ -49,6 +49,18 @@ enum TEXTURETYPE
 	Speed_Pickup  = 4,
 	Jump_Pickup	  = 5,
 	Capture_Point = 6,
+	//Map Textures for Data Driven Map. Don't Change the order. Nikos Fragkas
+	Item_Texture_1,
+	Item_Texture_2,
+	Item_Texture_3,
+	Item_Texture_4,
+	Item_Texture_5,
+	Item_Texture_6,
+	Item_Texture_7,
+	Item_Texture_8,
+	Item_Texture_9,
+	Item_Texture_10,
+	// -----------------------------------------------------------------------
 	Texture_Number,
 };
 

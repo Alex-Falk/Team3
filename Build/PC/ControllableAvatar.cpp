@@ -233,7 +233,7 @@ void ControllableAvatar::MovementState(Movement inputDir, float yaw, float dt)
 		curMove = MOVE_JUMP;
 		if (canJump) {
 			Vector3 vel = Physics()->GetLinearVelocity();
-			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
+			Physics()->SetLinearVelocity(Vector3(vel.x*.9f, jumpImpulse, vel.z*.9f));
 			inAir = true;
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 			canJump = false;
