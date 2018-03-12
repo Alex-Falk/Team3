@@ -42,6 +42,8 @@ private:
 	Map* map;
 	string fileName = "Map4";
 	vector<string> lines;
+	TEXTURETYPE textureID[10];
+	int textID;
 
 	Colour team;
 	PickupType type;
@@ -66,7 +68,9 @@ private:
 	void AddCaptureAreas(vector<std::string> object);
 	void AddMultiPaintPools(vector<std::string> object);
 	void AddMinionAreas(vector<std::string> object);
-	GLuint AddTexture(std::string name);
+	void BuildTextures(vector<std::string> object);
+	void DataDrivenMap::CheckTextID(int textID);
+	void AddTexture(uint ID, std::string name);
 	inline void CoruptedFile(uint errorNumber, uint errorLine){ GUIsystem::Instance()->MapProblem(errorNumber, errorLine); }
 
 public:

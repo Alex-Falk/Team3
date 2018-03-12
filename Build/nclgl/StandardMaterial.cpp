@@ -31,7 +31,7 @@ bool StandardMaterial::Apply()
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "uDiffuseTex"), 0);
-	glBindTexture(GL_TEXTURE_2D, textureManager->GetTexture(TEXTURETYPE::Checker_Board));
+	glBindTexture(GL_TEXTURE_2D, renderNode->GetTexture());
 
 	glUniform3fv(glGetUniformLocation(shader->GetProgram(), "uCameraPos"), 1, (float*)&graphicsPipeline->GetCamera()->GetPosition());
 	glUniform3fv(glGetUniformLocation(shader->GetProgram(), "uAmbientColor"), 1, (float*)&graphicsPipeline->GetAmbientColor());
@@ -78,7 +78,7 @@ bool GroundMaterial::Apply()
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "uDiffuseTex"), 0);
-	glBindTexture(GL_TEXTURE_2D, textureManager->GetTexture(TEXTURETYPE::Checker_Board));
+	glBindTexture(GL_TEXTURE_2D, textureManager->GetTexture(TEXTURETYPE::Ground_Texture));
 
 	glUniform3fv(glGetUniformLocation(shader->GetProgram(), "uCameraPos"), 1, (float*)&graphicsPipeline->GetCamera()->GetPosition());
 	glUniform3fv(glGetUniformLocation(shader->GetProgram(), "uAmbientColor"), 1, (float*)&graphicsPipeline->GetAmbientColor());
