@@ -302,7 +302,6 @@ void Map::UpdateGUI(float dt)
 			GUIsystem::Instance()->playersPosition[i] = Game::Instance()->GetPlayer(i)->GetPosition();
 		}
 	}
-	perfPlayer.EndTimingSection();
 
 	//Loading screen
 	if (isLoading == true) {
@@ -345,6 +344,7 @@ void Map::OnUpdateScene(float dt)
 				mapConstantObjects[i]->Update(dt);
 			}
 		}
+		perfMapObjects.EndTimingSection();
 
 		for (int i = 0; i < this->mapDynamicObjects.size(); ++i)
 		{
@@ -353,8 +353,6 @@ void Map::OnUpdateScene(float dt)
 				mapDynamicObjects[i]->Update(dt);
 			}
 		}
-
-		perfMapObjects.EndTimingSection();
 	}
 
 

@@ -452,7 +452,7 @@ void GraphicsPipeline::RenderScene()
 		//draw the minimap on screen
 		perfScoreandMap.BeginTimingSection();
 
-		if (accumTime > 0.1f)
+		if (accumTime > 1.0f/60.0f)
 		{
 			if (isMainMenu == false) {
 				CountScore();

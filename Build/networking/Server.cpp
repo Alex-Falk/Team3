@@ -234,6 +234,7 @@ void Server::UpdateUser(float dt)
 			accumTime += dt;
 			if (accumTime > 1 / 60.0f)
 			{
+				accumTime = 0.0f;
 				HandleRequests();
 				for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 				{
