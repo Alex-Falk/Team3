@@ -600,5 +600,9 @@ void GUIsystem::MapProblem(uint errorNumber, uint errorLine) {
 		else if (errorNumber == 1) {
 			cout << "File was not writen in apropriate format in line " << to_string(errorLine) << " \n";
 		}
+		else if (errorNumber == 2) {
+			cout << "The texture couldn't be found on line: " << to_string(errorLine) << " \n";
+
+		}
 	}
 }

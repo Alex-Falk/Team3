@@ -38,7 +38,7 @@ private:
 	float m_AccumTime;
 	uint activePickups;
 	uint activeCapture;
-	uint numemptyline;
+	uint linenum;
 	Map* map;
 	string fileName = "Map4";
 	vector<string> lines;
@@ -66,6 +66,7 @@ private:
 	void AddCaptureAreas(vector<std::string> object);
 	void AddMultiPaintPools(vector<std::string> object);
 	void AddMinionAreas(vector<std::string> object);
+	GLuint AddTexture(std::string name);
 	inline void CoruptedFile(uint errorNumber, uint errorLine){ GUIsystem::Instance()->MapProblem(errorNumber, errorLine); }
 
 public:

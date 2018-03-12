@@ -42,7 +42,7 @@ void DataDrivenMap::OnInitializeScene()
 	m_AccumTime = 0;
 	activePickups = 0;
 	activeCapture = 0;
-	numemptyline = 0;
+	linenum = 0;
 
 	ReadFile();
 
@@ -108,7 +108,7 @@ void DataDrivenMap::BuildObjects() {
 }
 
 void DataDrivenMap::BuildObject(vector<std::string> object) {
-	numemptyline++;
+	linenum++;
 	if (object[0] == "CAPTURE_AREA")		AddCaptureAreas(object);
 	else if (object[0] == "CUBE")			AddCuboid(object);
 	else if (object[0] == "PICKUP")			AddPickups(object);
@@ -119,7 +119,7 @@ void DataDrivenMap::BuildObject(vector<std::string> object) {
 	else if (object[0] == "GROUND")			AddGround(object);
 	else if (object[0] == "SPAWN_LOC")		SetSpawnLocation(object);
 	else if (object[0] == "MAP")			BuildMapDimenions(object);
-	else  CoruptedFile(1, numemptyline);
+	else  CoruptedFile(1, linenum);
 }
 
 vector<string> DataDrivenMap::GetLines(std::string file) {
@@ -191,6 +191,8 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 
 	Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, to_string(activePickups));
 	AddPickup(pool);
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+		CoruptedFile(2, linenum);
 	activePickups++;
 	CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[5]), stof(object[6]), stof(object[7])), to_string(activeCapture), Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
 	AddCaptureArea(capt);
@@ -213,4 +215,22 @@ void DataDrivenMap::AddGround(vector<std::string> object) {
 void DataDrivenMap::AddMinionAreas(vector<std::string> object) {
 	AddCaptureArea(new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f,1.5f,1.5f), stoi(object[5])));
 	activeCapture++;
+}
+
+GLuint DataDrivenMap::AddTexture(std::string name) {
+	string address = "../../Data/Textures/" + name;
+	GLuint texture = SOIL_load_OGL_texture(address.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	if (!texture)
+	{
+		string address = "../../Data/Textures/checkerboard.tga";
+		texture = SOIL_load_OGL_texture(address.c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	}
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return texture;
 }
