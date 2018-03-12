@@ -115,8 +115,6 @@ void Minion::RevertState()
 
 void Minion::Update(float dt)
 {
-	//float lifeLoss = (Physics()->GetPosition() - lastPos).LengthSQ();
-	//life -= lifeLoss / (dt * 10);
 	if (life < minLife) {
 		dead = true;
 	}

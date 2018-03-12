@@ -104,13 +104,6 @@ void MinionBase::ChangeLife(float l) {
 void MinionBase::SetLife(float l)
 {
 	life = l;
-	if (life < minLife) {
-		dead = true;
-	}
-	if (life > maxLife) {
-		life = maxLife;
-	}
-
 	size = 0.3f * (life / 50);
 	ChangeSize(size);
 }
@@ -126,15 +119,4 @@ void MinionBase::ChangeSize(float newSize) {
 
 void MinionBase::Update(float dt)
 {
-	
-	if (dead)
-	{
-		this->SetToDestroy();
-		Game::Instance()->KillMinion(this);
-		((Map*)Game::Instance()->GetMap())->RemoveMinion(this);
-		return;
-	}
-
-	size = 0.3f * (life / 50);
-	ChangeSize(size);
 }
