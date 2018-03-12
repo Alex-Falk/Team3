@@ -160,8 +160,10 @@ void Minion::Update(float dt)
 
 void Minion::ComputeNewWanderPosition() {
 	wanderTimer = 0.0f;
-	float randX = rand() % 80 + -40;
-	float randZ = rand() % 80 + -40;
+	int xDim = (int)((Map*)SceneManager::Instance()->GetCurrentScene())->GetXDimension();
+	int zDim = (int)((Map*)SceneManager::Instance()->GetCurrentScene())->GetYDimension();
+	float randX = (rand() % (xDim*2)) - xDim;
+	float randZ = (rand() % (zDim*2)) - zDim;
 	wanderPosition = Vector3{ randX, 2.5f, randZ };
 }
 
