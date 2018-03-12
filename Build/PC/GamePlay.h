@@ -29,6 +29,14 @@ enum WeaponType
 	PAINT_SPRAY, PAINT_PISTOL, AUTO_PAINT_LAUNCHER, PAINT_ROCKET, NUM_OF_WEAPONS
 };
 
+//Name: Nick Bedford
+//Date: 09/03/2018
+//Added CaptureAreaType
+enum CaptureAreaType
+{
+	DEFAULT_CAPTURE_AREA, MULTIPAINTPOOL_CAPTURE_AREA, MINION_CAPTURE_AREA, NUM_OF_CAPTURE_AREA_TYPES
+};
+
 //Game music should always be the last music. So if you add more music, put it before Game music
 enum Audio {
 	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND

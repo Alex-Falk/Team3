@@ -89,6 +89,12 @@ void main(void)	{
 	vec4 texColor  	= texture(uDiffuseTex, IN.texCoord);
 	vec4 color 		= uColor * texColor;
 
+	vec2 coord = vec2(-IN.texCoord.x, -IN.texCoord.y);
+	vec4 pathColor = texture(uPathTex, coord);
+	float isPath = 0;
+	if (pathColor.r > 0 || pathColor.g > 0 || pathColor.b > 0)
+		isPath = 1;
+
 //Shadow Calculations
 	vec4 shadowWsPos = vec4(IN.worldPos + normal * NORMAL_BIAS, 1.0f);
 	
@@ -124,7 +130,7 @@ void main(void)	{
 	
 //Output Final Colour
 	vec3 diffuse  = color.rgb * dFactor * shadow;
-	vec3 specular = specColor * sFactor * shadow * specIntensity;
+	vec3 specular = specColor * sFactor * shadow * specIntensity * isPath;
 	
 	//Combine lighting
 	vec4 finalLightColor;
@@ -132,16 +138,16 @@ void main(void)	{
 	finalLightColor.a 		= color.a;
 
 	vec3 toWPos = normalize(IN.worldPos - uCameraPos);
-	vec4 reflection = texture(cubeTex, reflect(toWPos, normalize(IN.normal)))*smoothness;
-	reflection = reflection * vec4(diffuse,0.0f);
+	vec4 reflection = texture(cubeTex, reflect(toWPos, normalize(IN.normal)));
+	reflection = reflection * vec4(diffuse,0.0f) * isPath;
 	finalLightColor = finalLightColor + reflection;
 
-	vec2 coord = vec2(-IN.texCoord.x, -IN.texCoord.y);
-	vec4 pathColor = texture(uPathTex, coord);
+	
+	
 	vec3 up = vec3(0, 1, 0);
 	vec4 FinalColor;
-	if(length((normal - up)) < 0.1)
-		FinalColor = pathColor + finalLightColor;
+	if (length((normal - up)) < 0.1)
+		FinalColor = mix(finalLightColor, pathColor + finalLightColor * 0.1 + reflection * 0.5, isPath);
 	else
 		FinalColor = finalLightColor;
 	OutFrag = FinalColor;

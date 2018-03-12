@@ -1,3 +1,36 @@
+/*               
+                          .,okkkd:.                          
+                       .:x0KOdooxKKkl,.                      
+                   .,oOKKxc'. .. .;oOX0d:.                   
+                ...oKOo;. .;dO00xc.  'cxKO, ..               
+            .,lk0l...  .:oxXMMMMMWOoc'  .. ,O0d:.            
+         .:d0XOo;.     ;c..kMMMMMK;.;:.     'ckKKkc'.        
+      'lkKKxc'  .,.        oWMMMMO.        ''  .:d0KOo;.     
+     '0Wk;. .,loo:.        :NMMMMx.        ,loo:. .,oXNc     
+     ,0X: .lKWMKl.         ,KMMMWo         .;kWWXx' .kNc     
+     '0X; .OMMMMWXx;.      ,0MMMNl       'o0NMMMMN: .kWc     
+     '0X; .k0d0NWMMW0o,..cxKWMMMMXkl,..ckNMMMWKxkK: .kWc     
+     '0X; .kl  ':okKWMNKXWMMMMMMMMMMNKXWWXOdc,. ,O: .kWc     
+     '0X;  ,.      .,oXMMMMMMMMMMMMMMMWk;.      .;. .kNc     
+     .,;.            '0MMMMMMMMMMMMMMMWc             ';.			Alexander Falk
+     .lo.            '0MMMMMMMMMMMMMMMWc            .cd,			Client.h
+     '0X: .:,     .,lkNMMMMMMMMMMMMMMMWKo:'.    .c' .OWl     
+     '0X; .ko.':okXWMW0xkXWMMMMMMMMN0xkNMWN0xl;.:O: .OWc     
+     '0X; .OX0NMMMWKx;.  .:xNMMMW0l,.  'lONMMMWKKX: .kWc     
+     '0X: .OMMMMNkc.       '0MMMNc       .;dKWMMMN: .kWc     
+     '0N: .;xKWKc.         ;XMMMWo          'kNXkl. .OWc     
+     .xNKd:. .;loc.        cNMMMMk.       .;ol;. .,lONK;     
+      .'lkKKkl,. .         dWMMWM0'        .  .:d0XOo;.      
+          .:d0X0d,     ,l:;OMMMMMXl;lc.    .ckKKkc'          
+             .,lxc.,c'. .:d0WMMMMXkl,. .;:.'dd:.             
+                  .l0XOo;. .;oooc' .'cxKKx'                  
+                    .,lkKKxc'.  .;oOK0d:.                    
+                        .:d0K000KKkl,.                       
+                           .,cll:.                            
+*/
+
+// Additions by Phillip Beck, Nickos Fragkas, Jianfei Zhou
+
 #include "Game.h"
 #include <ncltech\SceneManager.h>
 #include <networking\Client.h>
@@ -11,6 +44,7 @@ void Game::SetServer()
 {
 	if (user) { SAFE_DELETE(user) };
 	user = new Server();
+	isHost = true;
 }
 
 void Game::SetClient(IP ip)
@@ -44,11 +78,11 @@ void Game::Update(float dt)
 	{
 		time += dt;
 
-		if (getUserID() == 0)
+		if (GetUserID() == 0)
 		{
 			for (uint i = 0; i < playerNumber; ++i)
 			{
-				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i) + teamAreaScores[i];
+				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i) + captureScores[i];
 			}
 		}
 		//NCLDebug::Log(to_string(gameTime));
@@ -85,29 +119,33 @@ void Game::ResetGame()
 	gameRunning = false;
 	time = 0.0f;
 	GUIsystem::Instance()->SetResult(RESULT::NONE);
-	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
+	//PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 	GUIsystem::Instance()->SetDrawResult(false);
 	//PhysicsEngine::Instance()->SetPaused(false);
 }
 
-void Game::ClaimPickup(Pickup * pickup)
+void Game::ClaimPickup(uint i)
 {
-	user->RequestPickup(getUserID(), pickup->GetName());
+	user->RequestPickup(GetUserID(), i);
 }
 
-void Game::ClaimArea(CaptureArea * object)
+void Game::Capture(uint i, Colour c,int scorevalue)
 {
-	user->RequestCaptureArea(getUserID(), object->GetName());
+	if (IsHost())
+	{
+		captureScores[c] += scorevalue;
+		((Server*)user)->SendAreaCapture(i,c);
+	}
 }
 
 void Game::SpawnMinion(MinionBase * minion)
 {
 	Map * m = static_cast<Map*>(GetMap());
 
-	//m->AddMinion(minion);
+	m->AddMinion(minion);
 
-	//if (getUserID() == 0)
-	//	((Server*)user)->SendMinionSpawn(m->GetMinionID(minion), minion->GetColour(), minion->Physics()->GetPosition());
+	if (GetUserID() == 0)
+		((Server*)user)->SendMinionSpawn(m->GetMinionID(minion), minion->GetColour(), minion->Physics()->GetPosition());
 
 }
 
@@ -115,11 +153,11 @@ void Game::KillMinion(MinionBase * minion)
 {
 	Map * m = static_cast<Map*>(GetMap());
 
-	//uint minionID = m->GetMinionID(minion);
+	uint minionID = m->GetMinionID(minion);
 
-	if (getUserID() == 0)
+	if (GetUserID() == 0)
 	{
-	/*	((Server*)user)->SendMinionDeath(minionID);*/
+		((Server*)user)->SendMinionDeath(minionID);
 	}
 }
 
@@ -138,7 +176,7 @@ void Game::DetermineWinner() {
 
 	//Determine whether the winner is this user
 	GUIsystem::Instance()->SetDrawResult(true);
-	if (currentWinner == getUserID()) {
+	if (currentWinner == GetUserID()) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
 		GUIsystem::Instance()->SetResult(RESULT::WIN);
 	}

@@ -303,6 +303,7 @@ protected:
 	GLuint		scoreBuffer;
 	uint		scores[4];
 
+	float accumTime = 0.0f;
 	//For minimap
 	float time;
 	//translates a world position into a position for the minimap

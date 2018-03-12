@@ -1,3 +1,35 @@
+/*               
+                          .,okkkd:.                          
+                       .:x0KOdooxKKkl,.                      
+                   .,oOKKxc'. .. .;oOX0d:.                   
+                ...oKOo;. .;dO00xc.  'cxKO, ..               
+            .,lk0l...  .:oxXMMMMMWOoc'  .. ,O0d:.            
+         .:d0XOo;.     ;c..kMMMMMK;.;:.     'ckKKkc'.        
+      'lkKKxc'  .,.        oWMMMMO.        ''  .:d0KOo;.     
+     '0Wk;. .,loo:.        :NMMMMx.        ,loo:. .,oXNc     
+     ,0X: .lKWMKl.         ,KMMMWo         .;kWWXx' .kNc     
+     '0X; .OMMMMWXx;.      ,0MMMNl       'o0NMMMMN: .kWc     
+     '0X; .k0d0NWMMW0o,..cxKWMMMMXkl,..ckNMMMWKxkK: .kWc     
+     '0X; .kl  ':okKWMNKXWMMMMMMMMMMNKXWWXOdc,. ,O: .kWc     
+     '0X;  ,.      .,oXMMMMMMMMMMMMMMMWk;.      .;. .kNc     
+     .,;.            '0MMMMMMMMMMMMMMMWc             ';.			Alexander Falk
+     .lo.            '0MMMMMMMMMMMMMMMWc            .cd,			User.cpp
+     '0X: .:,     .,lkNMMMMMMMMMMMMMMMWKo:'.    .c' .OWl     
+     '0X; .ko.':okXWMW0xkXWMMMMMMMMN0xkNMWN0xl;.:O: .OWc     
+     '0X; .OX0NMMMWKx;.  .:xNMMMW0l,.  'lONMMMWKKX: .kWc     
+     '0X: .OMMMMNkc.       '0MMMNc       .;dKWMMMN: .kWc     
+     '0N: .;xKWKc.         ;XMMMWo          'kNXkl. .OWc     
+     .xNKd:. .;loc.        cNMMMMk.       .;ol;. .,lONK;     
+      .'lkKKkl,. .         dWMMWM0'        .  .:d0XOo;.      
+          .:d0X0d,     ,l:;OMMMMMXl;lc.    .ckKKkc'          
+             .,lxc.,c'. .:d0WMMMMXkl,. .;:.'dd:.             
+                  .l0XOo;. .;oooc' .'cxKKx'                  
+                    .,lkKKxc'.  .;oOK0d:.                    
+                        .:d0K000KKkl,.                       
+                           .,cll:.                            
+*/
+// Base Class for Server and Client with some common features used by both
+
 #include "User.h"
 #include <PC/Game.h>
 User::User()
@@ -33,11 +65,13 @@ void User::ReceiveAvatarUpdate(string data)
 
 	float life = stoi(splitData[4]);
 	bool inAir = stoi(splitData[5]);
-	if (playerID != userID)
+
+	if (!Game::Instance()->IsHost())
 	{
 		Game::Instance()->GetPlayer(playerID)->SetLife(life);
 		Game::Instance()->GetPlayer(playerID)->SetInAir(inAir);
 	}
+
 }
 
 PlayerVector User::ReceiveVector(string data)
@@ -66,7 +100,7 @@ void User::ReceiveWeapon(string data) {
 
 	uint ID = stoi(data.substr(colonPos + 1, firstSemicolonPos));
 
-	if (ID != Game::Instance()->getUserID())
+	if (ID != Game::Instance()->GetUserID())
 	{
 		WeaponType type = static_cast<WeaponType>(stoi(data.substr(firstSemicolonPos + 1, secondSemicolonPos)));
 
@@ -139,7 +173,7 @@ void User::StartGame(uint mapID)
 {
 	SceneManager::Instance()->JumpToScene(mapID);
 	SceneManager::Instance()->GetCurrentScene()->onConnectToScene();
-	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->getUserID())->GetGameObject()->Physics());
+	GraphicsPipeline::Instance()->GetCamera()->SetCenter(Game::Instance()->GetPlayer(Game::Instance()->GetUserID())->GetGameObject()->Physics());
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 }
 

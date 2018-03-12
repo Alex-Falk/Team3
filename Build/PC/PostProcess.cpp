@@ -71,6 +71,14 @@ PostProcess::PostProcess()
 		NCLERROR("Could not link shader: Post Process Shader/BASIC");
 	}
 
+	postProcessShaders[PostProcessType::SOBEL] = new Shader(
+		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
+		SHADERDIR"Post Process/SOBEL.glsl");
+	if (!postProcessShaders[PostProcessType::SOBEL]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Post Process Shader/SOBEL");
+	}
+
 	postProcessShaders[PostProcessType::PERFORMANCE_BLUR] = new Shader(
 		SHADERDIR"SceneRenderer/TechVertexBasic.glsl",
 		SHADERDIR"Post Process/BLUR.glsl");
@@ -200,6 +208,7 @@ void PostProcess::RenderGaussianBlur(int a)
 
 void PostProcess::RenderToBackBuffer()
 {
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, GraphicsPipeline::Instance()->GetWidth(), GraphicsPipeline::Instance()->GetHeight());
 

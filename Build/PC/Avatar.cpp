@@ -20,6 +20,7 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"         
 // Nikos Fragkas 05/02/2018
+// Extended by Alex Falk
 
 
 
@@ -62,6 +63,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	minLife = 20;
 	maxLife = 100;
 	life = maxLife/2;
+	targetLife = maxLife / 2;
 	moveTimer = 0.0f;
 	rollSpeed = 0.2f;
 	
@@ -181,14 +183,12 @@ void Avatar::Update(float dt) {
 	
 	UpdatePickUp(dt);
 
-	if (life > minLife)
+	if (targetLife < minLife)
 	{
-		
-		if (life < minLife)
-		{
-			life = minLife;
-		}
+		targetLife = minLife;
 	}
+	
+	LerpLife(dt);
 
 	curSize = size * (life / 100);
 
@@ -206,6 +206,33 @@ void Avatar::Update(float dt) {
 	}
 
 
+}
+
+void Avatar::LerpLife(float dt)
+{
+	float lifeDif = ((targetLife - life) * dt);
+	
+	if (lifeDif > 0.5f)
+	{
+		life = life + lifeDif * 2;
+	}
+	else if (lifeDif > 0.001f)
+	{
+		life = life + lifeDif;
+	}
+	else
+	{
+		life = life + lifeDif;
+	}
+
+	if (life > maxLife)
+	{
+		life = maxLife;
+	}
+	else if (life < minLife)
+	{
+		life = minLife;
+	}
 }
 
 void Avatar::PickUpBuffActivated()
@@ -270,7 +297,7 @@ void Avatar::Spray()
 	int randYaw;
 	Vector3 direction;
 
-	if (life > minLife + 5.0f)
+	if (targetLife > minLife + 5.0f)
 	{
 		randPitch = rand() % 90;
 		randYaw = rand() % 360;
@@ -278,7 +305,7 @@ void Avatar::Spray()
 		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
 		
 		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 
 		int randPitch;
 		int randYaw;
@@ -297,19 +324,19 @@ void Avatar::Spray()
 			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
 
 			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
-			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 
-			// Send over network
-			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
+			// Alex Falk - Required for networking
+			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
 		}
 	}
 }
 
 void Avatar::ShootRocket()
 {
-	if (life > minLife + 15.0f)
+	if (targetLife > minLife + 15.0f)
 	{
-		life -= 15.0f;
+		targetLife -= 15.0f;
 		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 		float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 
@@ -318,21 +345,19 @@ void Avatar::ShootRocket()
 		}
 
 		Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 30;
-		Projectile* projectile = new Projectile(col, colour, Physics()->GetPosition(), direction, { 0.18f,0.18f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-		projectile->Physics()->SetOrientation(Quaternion::EulerAnglesToQuaternion(pitch, yaw, 0.0f));
 
 		ShootRocket(Physics()->GetPosition(), direction);
 
-		// Send over network
-		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->getUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
+		// Alex Falk - Required for networking
+		Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_ROCKET, Physics()->GetPosition(), direction);
 	}
 }
 
 void Avatar::ShootProjectile()
 {
-	if (life > minLife + 5.0f)
+	if (targetLife > minLife + 5.0f)
 	{
-		life -= 5.0f;
+		targetLife -= 5.0f;
 		float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
 
 		float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
@@ -345,24 +370,30 @@ void Avatar::ShootProjectile()
 	}
 }
 
+//-Alex Falk----------------------------------------------------------//
 void Avatar::Spray(Vector3 pos, Vector3 dir)
 {
 	Projectile * spray = new Projectile(col, colour, pos, dir, 0.15f, 5.0f, SPRAY, 1, "Spray");
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
 }
 
 void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, { 0.2f,0.2f,0.5f }, 5.0f, PROJECTILE, 5, "Rocket");
-	projectile->Physics()->SetOrientation(Quaternion(dir, 0));
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	
+	float angle = atan2(dir.x, dir.z);
+	
+	projectile->Physics()->SetOrientation(Quaternion(0, sin(angle / 2), 0, cos(angle / 2)));
+	
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
 }
 
 void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
-	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile);
+	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
 }
+//--------------------------------------------------------------------//
 
 void Avatar::ManageWeapons() 
 {

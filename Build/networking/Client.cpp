@@ -1,33 +1,34 @@
 /*               
-                          .,okkd:.                          
-                       .:x0KOdoxKKkl,.                      
-                   .,oOKKxc'. . .;oOX0d:.                   
-                ...oKOo;. .;dO0xc.  'cxKO, ..               
-            .,lk0l...  .:oxXMMMMWOoc'  .. ,O0d:.            
-         .:d0XOo;.     ;c..kMMMMK;.;:.     'ckKKkc'.        
-      'lkKKxc'  .,.        oWMMMO.        ''  .:d0KOo;.     
-     '0Wk;. .,loo:.        :NMMMx.        ,loo:. .,oXNc     
-     ,0X: .lKWMKl.         ,KMMWo         .;kWWXx' .kNc     
-     '0X; .OMMMMWXx;.      ,0MMNl       'o0NMMMMN: .kWc     
-     '0X; .k0d0NWMMW0o,..cxKWMMMXkl,..ckNMMMWKxkK: .kWc     
-     '0X; .kl  ':okKWMNKXWMMMMMMMMMNKXWWXOdc,. ,O: .kWc     
-     '0X;  ,.      .,oXMMMMMMMMMMMMMMWk;.      .;. .kNc     
-     .,;.            '0MMMMMMMMMMMMMMWc             ';.			Alexander Falk
-     .lo.            '0MMMMMMMMMMMMMMWc            .cd,			05/02/2018
-     '0X: .:,     .,lkNMMMMMMMMMMMMMMWKo:'.    .c' .OWl     
-     '0X; .ko.':okXWMW0xkXWMMMMMMMN0xkNMWN0xl;.:O: .OWc     
-     '0X; .OX0NMMMWKx;.  .:xNMMW0l,.  'lONMMMWKKX: .kWc     
-     '0X: .OMMMMNkc.       '0MMNc       .;dKWMMMN: .kWc     
-     '0N: .;xKWKc.         ;XMMWo          'kNXkl. .OWc     
-     .xNKd:. .;loc.        cNMMMk.       .;ol;. .,lONK;     
-      .'lkKKkl,. .         dWMWM0'        .  .:d0XOo;.      
-          .:d0X0d,     ,l:;OMMMMXl;lc.    .ckKKkc'          
-             .,lxc.,c'. .:d0WMMMXkl,. .;:.'dd:.             
-                  .l0XOo;. .;ooc' .'cxKKx'                  
-                    .,lkKKxc'. .;oOK0d:.                    
-                        .:d0K00KKkl,.                       
-                           .,cl:.                            
+                          .,okkkd:.                          
+                       .:x0KOdooxKKkl,.                      
+                   .,oOKKxc'. .. .;oOX0d:.                   
+                ...oKOo;. .;dO00xc.  'cxKO, ..               
+            .,lk0l...  .:oxXMMMMMWOoc'  .. ,O0d:.            
+         .:d0XOo;.     ;c..kMMMMMK;.;:.     'ckKKkc'.        
+      'lkKKxc'  .,.        oWMMMMO.        ''  .:d0KOo;.     
+     '0Wk;. .,loo:.        :NMMMMx.        ,loo:. .,oXNc     
+     ,0X: .lKWMKl.         ,KMMMWo         .;kWWXx' .kNc     
+     '0X; .OMMMMWXx;.      ,0MMMNl       'o0NMMMMN: .kWc     
+     '0X; .k0d0NWMMW0o,..cxKWMMMMXkl,..ckNMMMWKxkK: .kWc     
+     '0X; .kl  ':okKWMNKXWMMMMMMMMMMNKXWWXOdc,. ,O: .kWc     
+     '0X;  ,.      .,oXMMMMMMMMMMMMMMMWk;.      .;. .kNc     
+     .,;.            '0MMMMMMMMMMMMMMMWc             ';.			Alexander Falk
+     .lo.            '0MMMMMMMMMMMMMMMWc            .cd,			Client.cpp
+     '0X: .:,     .,lkNMMMMMMMMMMMMMMMWKo:'.    .c' .OWl     
+     '0X; .ko.':okXWMW0xkXWMMMMMMMMN0xkNMWN0xl;.:O: .OWc     
+     '0X; .OX0NMMMWKx;.  .:xNMMMW0l,.  'lONMMMWKKX: .kWc     
+     '0X: .OMMMMNkc.       '0MMMNc       .;dKWMMMN: .kWc     
+     '0N: .;xKWKc.         ;XMMMWo          'kNXkl. .OWc     
+     .xNKd:. .;loc.        cNMMMMk.       .;ol;. .,lONK;     
+      .'lkKKkl,. .         dWMMWM0'        .  .:d0XOo;.      
+          .:d0X0d,     ,l:;OMMMMMXl;lc.    .ckKKkc'          
+             .,lxc.,c'. .:d0WMMMMXkl,. .;:.'dd:.             
+                  .l0XOo;. .;oooc' .'cxKKx'                  
+                    .,lkKKxc'.  .;oOK0d:.                    
+                        .:d0K000KKkl,.                       
+                           .,cll:.                            
 */
+// Clientside of the Game
 
 #include "Client.h"
 #include <PC/Game.h>
@@ -96,17 +97,26 @@ void Client::UpdateUser(float dt)
 	}
 
 	// Send Info to server
-	if (Game::Instance()->IsRunning())
+
+	
+
+	if (Game::Instance()->IsRunning() )
 	{
-		Avatar * p = Game::Instance()->GetCurrentAvatar();
-		SendAvatarUpdate(userID,
-			p->Physics()->GetPosition(),
-			p->Physics()->GetLinearVelocity(),
-			p->Physics()->GetAngularVelocity(),
-			p->Physics()->GetAcceleration(),
-			p->GetLife(),
-			p->IsPlayerInAir()
-		);
+		accumTime += dt;
+		if (accumTime > 1 / 60.0f)
+		{
+			accumTime = 0.0f;
+			Avatar * p = Game::Instance()->GetCurrentAvatar();
+			SendAvatarUpdate(userID,
+				p->Physics()->GetPosition(),
+				p->Physics()->GetLinearVelocity(),
+				p->Physics()->GetAngularVelocity(),
+				p->Physics()->GetAcceleration(),
+				p->GetLife(),
+				p->IsPlayerInAir()
+			);
+		}
+
 	}
 }
 
@@ -158,7 +168,12 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveUserNames(data);
 			break;
 		}
-		case AVATAR_UPDATE:
+		case OBJECT_UPDATE:
+		{
+			ReceiveObjectUpdate(data);
+			break;
+		}
+		case PLAYER_UPDATE:
 		{
 			size_t colonIdx = data.find_first_of(':');
 			size_t semicolonIdx = data.find_first_of(';');
@@ -190,9 +205,9 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			ReceiveRequestResponse(data, PICKUP);
 			break;
 		}
-		case MAP_OBJECT_REQUEST:
+		case MAP_OBJECT_CAPTURE:
 		{
-			ReceiveRequestResponse(data, PAINTABLE_OBJECT);
+			ReceiveAreaCapture(data);
 			break;
 		}
 		case MINION_SPAWN:
@@ -240,7 +255,7 @@ void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angV
 {
 	string data;
 
-	data = to_string(AVATAR_UPDATE) + ":" +
+	data = to_string(PLAYER_UPDATE) + ":" +
 		to_string(ID) + ";" +
 		Vector3ToString(pos) + "," +
 		Vector3ToString(linVel) + "," +
@@ -251,7 +266,6 @@ void Client::SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angV
 
 	ENetPacket* packet = CreatePacket(data);
 	enet_peer_send(serverConnection, 0, packet);
-
 }
 
 void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
@@ -268,25 +282,13 @@ void Client::SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir)
 	enet_peer_send(serverConnection, 0, packet);
 }
 
-void Client::RequestPickup(uint ID, string uniqueName)
+void Client::RequestPickup(uint ID, uint objectID)
 {
 	string data;
 
 	data = to_string(MAP_PICKUP_REQUEST) + ":" +
 		to_string(ID) + ";" +
-		uniqueName;
-
-	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
-	enet_peer_send(serverConnection, 0, packet);
-}
-
-void Client::RequestCaptureArea(uint ID, string uniqueName)
-{
-	string data;
-
-	data = to_string(MAP_OBJECT_REQUEST) + ":" +
-		to_string(ID) + ";" +
-		uniqueName;
+		to_string(objectID);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);
 	enet_peer_send(serverConnection, 0, packet);
@@ -332,16 +334,6 @@ void Client::ReceiveMapIndex(string data)
 {
 	string s = data.substr(data.find_first_of(':') + 1);
 	uint mapIndex = stoi(s);
-
-	//Game::Instance()->LoadLevel(mapIndex);
-}
-
-void Client::ReceiveMapChange(string data)
-{
-	string s = data.substr(data.find_first_of(':') + 1);
-	uint mapIndex = stoi(s);
-
-	//Game::Instance()->LoadLevel(mapIndex);
 }
 
 void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
@@ -362,14 +354,36 @@ void Client::ReceiveRequestResponse(string data,PhysNodeType ptype)
 
 		if (!active)
 		{
-			m->GetPickup(objectID)->SetActive(false);
+			Pickup * pickup = static_cast<Pickup*>(m->GetGameObject(objectID));
+			pickup->SetActive(false);
 			Game::Instance()->GetCurrentAvatar()->PickUpBuffActivated();
 		}
 	}
-	else if (ptype == PAINTABLE_OBJECT)
-	{
-		m->GetCaptureArea(objectID)->SetColour(Colour(playerID));
-	}
+}
+
+void Client::ReceiveObjectUpdate(string data)
+{
+	Map * m = (Map*)Game::Instance()->GetMap();
+
+	size_t colonIdx = data.find_first_of(':');
+	size_t semicolonIdx = data.find_first_of(';');
+
+	uint objectID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+
+	data = data.substr(semicolonIdx + 1);
+
+	vector<string> splitData = split_string(data, ',');
+
+	TempObjData temp;
+
+	temp.pos = InterpretStringVector(splitData[0]);
+	temp.linVel = InterpretStringVector(splitData[1]);
+	temp.angVel = InterpretStringVector(splitData[2]);
+	temp.acc = InterpretStringVector(splitData[3]);
+
+	GameObject * go = SceneManager::Instance()->GetCurrentScene()->GetGameObject(objectID);
+
+	DeadReckonObject(go, temp, serverConnection->roundTripTime / 2000.0f);
 }
 
 //PACKET_TYPE:MINION_ID;COLOUR,posx posy posz
@@ -405,11 +419,11 @@ void Client::ReceiveMinionSpawn(string data)
 	}
 
 	MinionBase * minion = new MinionBase(col, ColourRGB, pos);
-	//if (m->GetMinions()[minionID])
-	//{
-	//	m->GetMinions()[minionID]->SetToDestroy();
-	//}
-	//m->AddMinion(minion, minionID);
+	if (m->GetMinions()[minionID])
+	{
+		m->GetMinions()[minionID]->SetToDestroy();
+	}
+	m->AddMinion(minion, minionID);
 }
 
 // PACKET_TYPE:MINION_ID;COLOUR,posx posy posz,linvx linvy linvz,angvx angvy angvz,accx accy accz,life
@@ -426,25 +440,23 @@ void Client::ReceiveMinionUpdate(string data)
 
 	vector<string> splitData = split_string(data, ',');
 
+	TempObjData temp;
+
 	Colour col = Colour(stoi(splitData[0]));
-	Vector3 pos = InterpretStringVector(splitData[1]);
-	Vector3 linv = InterpretStringVector(splitData[2]);
-	Vector3 angv = InterpretStringVector(splitData[3]);
-	Vector3 acc = InterpretStringVector(splitData[4]);
+	temp.pos = InterpretStringVector(splitData[1]);
+	temp.linVel = InterpretStringVector(splitData[2]);
+	temp.angVel = InterpretStringVector(splitData[3]);
+	temp.acc = InterpretStringVector(splitData[4]);
 	float life = stof(splitData[5]);
 
 
-	//MinionBase * minion = m->GetMinion(minionID);
+	MinionBase * minion = m->GetMinion(minionID);
 
-	//if (minion)
-	//{
-	//	minion = m->GetMinion(minionID);
-	//	minion->Physics()->SetPosition(pos);
-	//	minion->Physics()->SetLinearVelocity(linv);
-	//	minion->Physics()->SetAngularVelocity(angv);
-	//	minion->Physics()->SetAcceleration(acc);
-	//	minion->SetLife(life);
-	//}
+	if (minion)
+	{
+		DeadReckonObject(minion, temp, serverConnection->roundTripTime / 2000.0f);
+		minion->SetLife(life);
+	}
 }
 
 // PACKET_TYPE:MINION_ID
@@ -456,11 +468,48 @@ void Client::ReceiveMinionDeath(string data)
 
 	uint minionID = stoi(data.substr(colonIdx + 1));
 
-	//if (m->GetMinion(minionID))
-	//{
-	//	m->RemoveMinion(m->GetMinion(minionID));
-	//}
+	if (m->GetMinion(minionID))
+	{
+		m->RemoveMinion(m->GetMinion(minionID));
+	}
 
 }
 
+void Client::ReceiveAreaCapture(string data)
+{
+	Scene * m = Game::Instance()->GetMap();
 
+	uint colonIdx = (uint)(data.find_first_of(':'));
+	uint semicolonIdx = (uint)(data.find_first_of(';'));
+
+	uint objectID = stoi(data.substr(colonIdx + 1, semicolonIdx));
+	Colour c = Colour(stoi(data.substr(semicolonIdx + 1)));
+
+	m->GetGameObject(objectID)->SetColour(c);
+}
+
+void Client::DeadReckonObject(GameObject * go, TempObjData data, float dt)
+{
+	Vector3 estimatePos =
+		data.pos +
+		data.linVel * dt +
+		data.acc * 0.5f * dt * dt;
+
+	Vector3 estimateLinVel =
+		data.linVel +
+		data.acc * dt;
+
+	Vector3 estimateAngVel =
+		data.angVel +
+		data.acc * dt;
+
+	Vector3 newPos = LerpVector3(estimatePos, go->Physics()->GetPosition(), lerpFactor);
+	Vector3 newLinVel = LerpVector3(estimateLinVel, go->Physics()->GetLinearVelocity(), lerpFactor);
+	Vector3 newAngVel = LerpVector3(estimateAngVel, go->Physics()->GetAngularVelocity(), lerpFactor);
+	Vector3 newAcc = LerpVector3(data.acc, go->Physics()->GetAcceleration(), lerpFactor);
+
+	go->Physics()->SetPosition(newPos);
+	go->Physics()->SetLinearVelocity(newLinVel);
+	go->Physics()->SetAngularVelocity(newAngVel);
+	go->Physics()->SetAcceleration(newAcc);
+}

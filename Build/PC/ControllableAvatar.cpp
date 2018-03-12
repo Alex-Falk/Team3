@@ -7,7 +7,7 @@
 //  .8P  d88'     8888888888P      Y8888888888     `88b  Y8.
 // d8' .d8'       `Y88888888'      `88888888P'       `8b. `8b
 //.8P .88P            """"            """"            Y88. Y8.
-//88  888                 Nick Bedford                 888  88
+//88  888                 Nick Bedford                 888  88		AND			Nikos Fragkas
 //88  888           ControllableAvatar Class           888  88
 //88  888.        ..       13/02/2018       ..        .888  88
 //`8b `88b,     d8888b.od8bo.      .od8bo.d8888b     ,d88' d8'
@@ -19,6 +19,8 @@
 //          `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"      
+
+// Additions by Alex Falk, Phillip Beck
 
 #include "ControllableAvatar.h"
 #include <ncltech\SphereCollisionShape.h>
@@ -123,16 +125,18 @@ void ControllableAvatar::Update(float dt) {
 	}
 
 
-	if (life > minLife) 
+	if (targetLife > minLife)
 	{
-		life -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
+		targetLife -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
 
-		if (life < minLife)
+		if (targetLife < minLife)
 		{
-			life = minLife;
+			targetLife = minLife;
 		}
 	}
 	
+	LerpLife(dt);
+
 	curSize = size * (life / 100);
 
 	ChangeSize(curSize);
@@ -172,7 +176,7 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 				weapon = ((WeaponPickup*)p)->GetWeaponType();
 			}
 
-			if (Game::Instance()->getUserID() == 0)
+			if (Game::Instance()->GetUserID() == 0)
 			{
 				PickUpBuffActivated(activePickUp);
 				//phil 06/03/2018 so the paint pools don't dissapear on minimap
@@ -180,7 +184,8 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 					p->SetActive(false);
 			}
 
-			Game::Instance()->ClaimPickup(p);
+			// Alex - needed for Networking
+			Game::Instance()->ClaimPickup(p->GetIdx());
 
 		}
 

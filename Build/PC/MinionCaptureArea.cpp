@@ -7,6 +7,7 @@ MinionCaptureArea::MinionCaptureArea() : CaptureArea() {
 	currentSpawnTimer = 0.0f;
 	maxMinions = 2;
 	colour = START_COLOUR;
+	type = MINION_CAPTURE_AREA;
 }
 
 MinionCaptureArea::MinionCaptureArea(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue) : CaptureArea(pos,unique_name,halfdims,scoreValue, col) {
@@ -14,6 +15,7 @@ MinionCaptureArea::MinionCaptureArea(Colour col, string unique_name, Vector3 pos
 	currentSpawnTimer = 0.0f;
 	maxMinions = 10;
 	colour = col;
+	type = MINION_CAPTURE_AREA;
 }
 
 MinionCaptureArea::~MinionCaptureArea() {
@@ -22,7 +24,7 @@ MinionCaptureArea::~MinionCaptureArea() {
 void MinionCaptureArea::Update(float dt) {
 	Map * m = static_cast<Map*>(Game::Instance()->GetMap());
 
-	if (Game::Instance()->getUserID() == 0)
+	if (Game::Instance()->GetUserID() == 0)
 	{
 		if (colour != START_COLOUR)
 			currentSpawnTimer += dt;

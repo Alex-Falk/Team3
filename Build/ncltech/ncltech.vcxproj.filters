@@ -69,9 +69,6 @@
     <ClCompile Include="SphereCollisionShape.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="SoftBody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FixedWorldPartition.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
@@ -139,12 +136,6 @@
     </ClInclude>
     <ClInclude Include="SphereCollisionShape.h">
       <Filter>Header Files\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiGameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SoftBody.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpringConstraint.h">
       <Filter>Header Files</Filter>

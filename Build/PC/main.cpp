@@ -12,7 +12,6 @@
 //Scenes
 #include "MainMenu.h"
 #include "SimpleGamePlay.h"
-#include "Stage4.h"
 #include "DataDrivenMap.h"
 
 
@@ -266,7 +265,7 @@ void HandleGUIMouseButton()
 		float a4 = (Game::Instance()->GetScore(3));
 		GUIsystem::Instance()->UpdateScorebar(a1, a2, a3, a4);
 		//update the weapon bar part of the interface
-		Avatar* p = Game::Instance()->GetPlayer(Game::Instance()->getUserID());
+		Avatar* p = Game::Instance()->GetPlayer(Game::Instance()->GetUserID());
 		GUIsystem::Instance()->SetHasWeapon(p->GetWeaponActive());
 		GUIsystem::Instance()->SetCurrentWeapon(p->GetWeapon());
 		//only needs setting once

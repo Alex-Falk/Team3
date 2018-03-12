@@ -1,3 +1,35 @@
+/*               
+                          .,okkkd:.                          
+                       .:x0KOdooxKKkl,.                      
+                   .,oOKKxc'. .. .;oOX0d:.                   
+                ...oKOo;. .;dO00xc.  'cxKO, ..               
+            .,lk0l...  .:oxXMMMMMWOoc'  .. ,O0d:.            
+         .:d0XOo;.     ;c..kMMMMMK;.;:.     'ckKKkc'.        
+      'lkKKxc'  .,.        oWMMMMO.        ''  .:d0KOo;.     
+     '0Wk;. .,loo:.        :NMMMMx.        ,loo:. .,oXNc     
+     ,0X: .lKWMKl.         ,KMMMWo         .;kWWXx' .kNc     
+     '0X; .OMMMMWXx;.      ,0MMMNl       'o0NMMMMN: .kWc     
+     '0X; .k0d0NWMMW0o,..cxKWMMMMXkl,..ckNMMMWKxkK: .kWc     
+     '0X; .kl  ':okKWMNKXWMMMMMMMMMMNKXWWXOdc,. ,O: .kWc     
+     '0X;  ,.      .,oXMMMMMMMMMMMMMMMWk;.      .;. .kNc     
+     .,;.            '0MMMMMMMMMMMMMMMWc             ';.			Alexander Falk
+     .lo.            '0MMMMMMMMMMMMMMMWc            .cd,			Map.h
+     '0X: .:,     .,lkNMMMMMMMMMMMMMMMWKo:'.    .c' .OWl     
+     '0X; .ko.':okXWMW0xkXWMMMMMMMMN0xkNMWN0xl;.:O: .OWc     
+     '0X; .OX0NMMMWKx;.  .:xNMMMW0l,.  'lONMMMWKKX: .kWc     
+     '0X: .OMMMMNkc.       '0MMMNc       .;dKWMMMN: .kWc     
+     '0N: .;xKWKc.         ;XMMMWo          'kNXkl. .OWc     
+     .xNKd:. .;loc.        cNMMMMk.       .;ol;. .,lONK;     
+      .'lkKKkl,. .         dWMMWM0'        .  .:d0XOo;.      
+          .:d0X0d,     ,l:;OMMMMMXl;lc.    .ckKKkc'          
+             .,lxc.,c'. .:d0WMMMMXkl,. .;:.'dd:.             
+                  .l0XOo;. .;oooc' .'cxKKx'                  
+                    .,lkKKxc'.  .;oOK0d:.                    
+                        .:d0K000KKkl,.                       
+                           .,cll:.                            
+*/
+// General Map Class that serves as a base for Maps - now as a base for the DataDrivenMap.
+
 #pragma once
 #include <ncltech\CommonUtils.h>
 #include <ncltech\TextureManager.h> 
@@ -34,12 +66,6 @@ protected:
 	}
 
 	inline Vector2 GetMapDimensions() { return dimensions; }
-
-	//pickup stuff
-	vector<Pickup*> pickups;
-	//capture areas
-	vector<CaptureArea*> captureAreas;
-	vector<GameObject*> cuboid;
 	
 	static const int maxMinions = 20;
 	MinionBase * minions[maxMinions];
@@ -75,23 +101,9 @@ public:
 
 
 	//--------------------------------------------------------------------------------------------//
-	// Special Objects
+	// Minions - Special Gameobjects
 	//--------------------------------------------------------------------------------------------//
 
-	//-PICKUPS-//
-	void AddPickup(Pickup * p);
-
-	Pickup * GetPickup(int i)					{ return pickups[i]; }
-	vector<Pickup*> GetPickups()				{ return pickups; }
-
-	//-CAPTURE AREAS-//
-	void AddCaptureArea(CaptureArea * ca);
-	CaptureArea * GetCaptureArea(int i)				{ return captureAreas[i]; }
-	Colour GetCaptureAreaColour(uint i)				{ return captureAreas[i]->GetColour(); }
-	Vector3 GetCaptureAreaPos(uint i)				{ return captureAreas[i]->Physics()->GetPosition(); }
-	vector<CaptureArea*> GetCaptureAreaVector()		{ return captureAreas; }
-
-	//-MINIONS-//
 	void AddMinion(MinionBase * m);
 	void AddMinion(MinionBase * m,int location);
 	void RemoveMinion(MinionBase * m);
@@ -101,7 +113,6 @@ public:
 
 	int GetMaxMinions() { return maxMinions; }
 
-	void Addcuboid(GameObject * cube);
 
 	//--------------------------------------------------------------------------------------------//
 	// Updating Avatars

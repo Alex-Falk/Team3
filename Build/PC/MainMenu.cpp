@@ -656,7 +656,7 @@ void MainMenu::onCameraSensitivityChanged()
 
 void MainMenu::onEnableBloomButtonClicked()
 {
-	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 }
 
 void MainMenu::onDisableBloomButtonClicked()

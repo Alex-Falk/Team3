@@ -8,14 +8,16 @@
 
 #include "Paintpool.h"
 #include "MultiPaintPool.h"
-
+#include "Game.h"
 
 MultiPaintPool::MultiPaintPool() : CaptureArea()
 {
+	type = MULTIPAINTPOOL_CAPTURE_AREA;
 }
 
 MultiPaintPool::MultiPaintPool(Vector3 pos, string unique_name, Vector3 halfdims, int scoreValue, Colour colour) : CaptureArea(pos, unique_name, halfdims, scoreValue, colour)
 {
+	type = MULTIPAINTPOOL_CAPTURE_AREA;
 }
 
 void MultiPaintPool::SetColour(Colour c)
@@ -27,6 +29,7 @@ void MultiPaintPool::SetColour(Colour c)
 	for (auto itr = pools.begin(); itr != pools.end(); ++itr)
 	{
 		(*itr)->ChangeColour(c);
+		Game::Instance()->Capture((*itr)->GetIdx(), c,this->scoreValue);
 	}
 }
 
