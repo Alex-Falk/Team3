@@ -122,15 +122,41 @@ void Map::OnInitializeGUI()
 		));
 	
 	timer = static_cast<CEGUI::Titlebar*>(
-		GUIsystem::Instance()->createWidget("OgreTray/Titlebar",
+		GUIsystem::Instance()->createWidget("OgreTray/Title",
 			Vector4(0.45f, 0.00f, 0.10f, 0.05f),
 			Vector4(),
 			"Timer"
 		));
+	timer->setAlpha(0.7);
 	timer->setText("00:00");
 
 	isLoading = true;
 	GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::TRANSITION);
+
+	exit = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.45f, 0.70f, 0.10f, 0.05f),
+			Vector4(),
+			"exit_pause"
+		));
+	exit->setText("EXIT");
+	exit->setAlpha(0.9);
+	exit->disable();
+	exit->setVisible(false);
+	exit->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&Map::OnExitButtonClicked, this));
+
+
+	_continue = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.45f, 0.60f, 0.10f, 0.05f),
+			Vector4(),
+			"continue_pause"
+		));
+	_continue->setText("CONTINUE");
+	_continue->setAlpha(0.9);
+	_continue->disable();
+	_continue->setVisible(false);
+	_continue->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&Map::OnContinueButtonClicked, this));
 }
 
 void Map::BuildGround(Vector2 dimensions) {
@@ -321,6 +347,28 @@ void Map::UpdateGUI(float dt)
 			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
 }
+void Map::showPauseMenu()
+{
+	exit->enable();
+	exit->setVisible(true);
+	_continue->enable();
+	_continue->setVisible(true);
+}
+void Map::OnExitButtonClicked()
+{
+	//TODO: Disconnect
+
+	//Return to MainMenu
+	Game::Instance()->ResetGame();
+	SceneManager::Instance()->JumpToScene(0);
+}
+void Map::OnContinueButtonClicked()
+{
+	exit->disable();
+	exit->setVisible(false);
+	_continue->disable();
+	_continue->setVisible(false);
+}
 //--------------------------------------------------------------------------------------------//
 // Updating Avatars
 //--------------------------------------------------------------------------------------------//
@@ -359,6 +407,10 @@ void Map::OnUpdateScene(float dt)
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_PAUSE)) {
+		showPauseMenu();
+	}
 }
 
 //--------------------------------------------------------------------------------------------//

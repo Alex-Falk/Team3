@@ -26,6 +26,7 @@ void MainMenu::OnInitializeScene()
 	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GUIsystem::Instance()->SetDrawScoreBar(false);
 	GUIsystem::Instance()->SetDrawMiniMap(false);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
 
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
@@ -656,7 +657,7 @@ void MainMenu::onCameraSensitivityChanged()
 
 void MainMenu::onEnableBloomButtonClicked()
 {
-	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
 }
 
 void MainMenu::onDisableBloomButtonClicked()
