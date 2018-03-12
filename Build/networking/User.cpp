@@ -63,7 +63,7 @@ void User::ReceiveAvatarUpdate(string data)
 	temps.angVelocities[playerID] = InterpretStringVector(splitData[2]);
 	temps.accelerations[playerID] = InterpretStringVector(splitData[3]);
 
-	float life = stoi(splitData[4]);
+	float life = (float)stoi(splitData[4]);
 	bool inAir = stoi(splitData[5]);
 
 	if (!Game::Instance()->IsHost())

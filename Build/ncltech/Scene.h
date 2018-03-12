@@ -134,13 +134,13 @@ public:
 
 			if (dynamic)
 			{
-				game_object->SetIdx(mapDynamicObjects.size());
+				game_object->SetIdx((uint)mapDynamicObjects.size());
 				game_object->SetDynamic(true);
 				mapDynamicObjects.push_back(game_object);
 			}
 			else
 			{
-				game_object->SetIdx(mapConstantObjects.size());
+				game_object->SetIdx((uint)mapConstantObjects.size());
 				mapConstantObjects.push_back(game_object);
 			}
 

@@ -53,14 +53,14 @@ void SimpleGamePlay::AddObjects()
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
 	
-	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15, 0.6, -15), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
+	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15.0f, 0.6f, -15.0f), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
 	AddGameObject(mpp);
 	mpp->AddPool(cpp1);
 	mpp->AddPool(cpp2);
 	mpp->AddPool(cpp3);
 	mpp->AddPool(cpp4);
 
-	ParticleEmitter * e = new ParticleEmitter(RED, { 0,2,0 }, 20, { 1,1,0 }, 10,10,5,50);
+	ParticleEmitter * e = new ParticleEmitter(RED, { 0.0f, 2.0f, 0.0f }, 20.0f, { 1.0f, 1.0f, 0.0f }, 10.0f, 10.0f, 5.0f, 50.0f);
 	this->AddGameObject(e);
 }
 

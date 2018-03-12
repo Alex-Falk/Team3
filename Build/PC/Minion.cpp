@@ -162,8 +162,8 @@ void Minion::ComputeNewWanderPosition() {
 	wanderTimer = 0.0f;
 	int xDim = (int)((Map*)SceneManager::Instance()->GetCurrentScene())->GetXDimension();
 	int zDim = (int)((Map*)SceneManager::Instance()->GetCurrentScene())->GetYDimension();
-	float randX = (rand() % (xDim*2)) - xDim;
-	float randZ = (rand() % (zDim*2)) - zDim;
+	float randX = (float)((rand() % (xDim*2)) - xDim);
+	float randZ = (float)((rand() % (zDim*2)) - zDim);
 	wanderPosition = Vector3{ randX, 2.5f, randZ };
 }
 

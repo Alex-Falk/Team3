@@ -57,7 +57,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	SetPhysics(physicsNode);
 	physicsNode->SetName(name);
 	destroy = false;
-	projectileWorth = projWorth;
+	projectileWorth = (float)projWorth;
 
 
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
@@ -115,7 +115,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	SetPhysics(physicsNode);
 	physicsNode->SetName(name);
 	destroy = false;
-	projectileWorth = projWorth;
+	projectileWorth = (float)projWorth;
 
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
