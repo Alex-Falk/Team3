@@ -82,10 +82,8 @@ void DataDrivenMap::AddObjects() {
 void DataDrivenMap::OnUpdateScene(float dt)
 {
 	perfMapObjects.UpdateRealElapsedTime(dt);
+
 	Map::OnUpdateScene(dt);
-
-	perfMapObjects.BeginTimingSection();
-
 }
 
 //--------------------------------------------------------------------------------------------//

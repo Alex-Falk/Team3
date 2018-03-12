@@ -102,8 +102,6 @@ public:
 	//Timers For The Scenes
 	void PrintPerformanceTimers(const Vector4& color)
 	{
-		perfPlayer.PrintOutputToStatusEntry(color,		"              Player Update  :");
-		perfAI.PrintOutputToStatusEntry(color,			"              AI Update      :");
 		perfMapObjects.PrintOutputToStatusEntry(color,	"              Objects Update :");
 	}
 
@@ -301,8 +299,6 @@ protected:
 	SceneUpdateMap				m_UpdateCallbacks;
 
 	// Timing Variables
-	PerfTimer perfPlayer;
-	PerfTimer perfAI;
 	PerfTimer perfMapObjects;
 
 };
