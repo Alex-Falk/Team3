@@ -23,25 +23,10 @@
 #pragma once
 #include "GamePlay.h"
 #include <ncltech\GameObject.h>
-#include <ncltech\CommonUtils.h>
-#include <ncltech\CommonMeshes.h>
-#include <nclgl\PlayerRenderNode.h>
-
-enum Movement {
-	NO_MOVE,
-	MOVE_FORWARD,
-	MOVE_BACKWARD,
-	MOVE_LEFT,
-	MOVE_RIGHT,
-	MOVE_JUMP
-};
-
 
 class Avatar : public GameObject
 {
 protected:
-
-	//GameObject* playerGameObject;		//Pointer to the Player's Gameobject
 
 	Colour col;				    // Colour - Team
 	Vector4 colour;				// The actual colour of the player;
@@ -51,6 +36,7 @@ protected:
 	bool inAir;
 
 	float life;
+	float targetLife;
 	float maxLife;
 	float minLife;
 
@@ -62,8 +48,10 @@ protected:
 	float speed;			    // movement speed
 	float boostedSpeed;
 	float standardSpeed;
-	float maxForce;			// Sets Maximum applied Force 
+	float maxRotationSpeed;			// Sets Maximum applied Force 
 	float shootCooldown;
+
+	float maxVel;
 
 	bool collisionTimerActive;
 	float collisionTimer;
@@ -84,15 +72,14 @@ protected:
 	WeaponType weapon;
 	bool weaponActive = false;
 	float weaponTimer;				// Weapon timer
+	float percWeapTimer;
 	bool shooting;
 
 	Vector3 dirRotation;		//The rotation based on camera
 	float moveTimer;			//Timer used for spining balance
 	float standarSpinSpeed;		//Based on size spin speed.
 	float rollSpeed;			//A variable that increases over time. adds to spin
-	Movement curMove;			//The current movement direction
-	Movement previousMove;		//The previous movement direction
-
+	
 	Vector3 lastPos;		//used to determine distance travelled each frame for life
 
 	uint playerId;
@@ -103,13 +90,12 @@ public:
 	Avatar();
 	Avatar(Vector3 pos, Colour c, uint id = 0, float s = 1.0f); //Build Player using starting possition Colour and size
 
-	//Movement mov;
-	//float controllYaw = 0;
-	//float t = 0;
-
-	virtual void OnAvatarUpdate(float dt);
+	virtual void Update(float dt);
 
 	Vector3 GetPosition() { return Physics()->GetPosition(); }
+
+	void SetWeaponTimer(float x) { weaponTimer = x; }
+	float GetPercentageWeaponTimer() { return weaponTimer / boostactiveTime; }
 
 	float GetMaxLife() { return maxLife; }
 	void SetMaxLife(float x) { maxLife = x; }
@@ -129,24 +115,39 @@ public:
 	
 	Vector4 GetColourRGBA() { return colour; }
 
-	void MovementState(Movement moveDir, float yaw, float dt); // handles the movement of the player.
+	
 
 	void Spray();
 	void ShootRocket();
 	void ShootProjectile();
 
+	void LerpLife(float dt);
+
 	void Spray(Vector3 pos, Vector3 dir);
 	void ShootRocket(Vector3 pos, Vector3 dir);
 	void ShootProjectile(Vector3 pos, Vector3 dir);
 	
-	float GetSize() { return size; }
-	void SetSize(float s) { size = s; }
+	//float GetSize() { return size; }
+	//void SetSize(float s) { size = s; }
 
-	void ChangeLife(float x) { life += x; if (life < minLife) { life = minLife; } else if (life > maxLife) { life = maxLife; }	}
+	void ChangeLife(float x) { 
+		targetLife += x; if (targetLife < minLife) { targetLife = minLife; } else if (targetLife > maxLife) { targetLife = maxLife; }
+	}
 
-	void RestoreLife() { life = maxLife/2; }
-	float GetLife() { return life; }
-	void SetLife(float l) { life = l; }
+	void RestoreLife() { targetLife = maxLife/2; }
+	float GetLife() { return targetLife; }
+	void SetLife(float l) 
+	{
+		targetLife = l; 
+		if (targetLife < minLife) 
+		{ 
+			targetLife = minLife; 
+		}
+		else if (targetLife > maxLife) 
+		{ 
+			targetLife = maxLife; 
+		}
+	}
 
 	virtual void PickUpBuffActivated();
 	virtual void PickUpBuffActivated(PickupType pickType);			//Checks if any pick up is picked up			Nikos 13.20

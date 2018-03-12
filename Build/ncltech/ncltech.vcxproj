@@ -152,7 +152,6 @@
     <ClCompile Include="PhysicsNode.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ScreenPicker.cpp" />
-    <ClCompile Include="SoftBody.cpp" />
     <ClCompile Include="SphereCollisionShape.cpp" />
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
@@ -171,14 +170,12 @@
     <ClInclude Include="GraphicsPipeline.h" />
     <ClInclude Include="Hull.h" />
     <ClInclude Include="Manifold.h" />
-    <ClInclude Include="MultiGameObject.h" />
     <ClInclude Include="NetworkBase.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="PhysicsNode.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ScreenPicker.h" />
-    <ClInclude Include="SoftBody.h" />
     <ClInclude Include="SphereCollisionShape.h" />
     <ClInclude Include="SpringConstraint.h" />
     <ClInclude Include="TextureManager.h" />

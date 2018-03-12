@@ -7,7 +7,7 @@
 //  .8P  d88'     8888888888P      Y8888888888     `88b  Y8.
 // d8' .d8'       `Y88888888'      `88888888P'       `8b. `8b
 //.8P .88P            """"            """"            Y88. Y8.
-//88  888                 Nick Bedford                 888  88
+//88  888                 Nick Bedford                 888  88		AND			Nikos Fragkas
 //88  888           ControllableAvatar Class           888  88
 //88  888.        ..       13/02/2018       ..        .888  88
 //`8b `88b,     d8888b.od8bo.      .od8bo.d8888b     ,d88' d8'
@@ -20,15 +20,14 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"      
 
+// Additions by Alex Falk, Phillip Beck
+
 #include "ControllableAvatar.h"
 #include <ncltech\SphereCollisionShape.h>
 #include <string.h>
 #include "GameInput.h"
 #include "Game.h"
-#include <ncltech\CommonMeshes.h> 
-#include <nclgl\PlayerRenderNode.h> 
-#include <nclgl\common.h> 
-#include "Projectile.h"
+#include <nclgl\PlayerRenderNode.h>
 #include "Pickup.h"
 #include "WeaponPickup.h"
 
@@ -39,6 +38,8 @@
 ControllableAvatar::ControllableAvatar() : Avatar()
 {
 	lifeDrainFactor = 1000;
+	curMove = NO_MOVE;
+	previousMove = NO_MOVE;
 }
 
 ControllableAvatar::~ControllableAvatar()
@@ -48,6 +49,8 @@ ControllableAvatar::~ControllableAvatar()
 ControllableAvatar::ControllableAvatar(Vector3 pos, Colour c, uint id, float s) : Avatar(pos, c, id, s)
 {
 	lifeDrainFactor = 1000;
+	curMove = NO_MOVE;
+	previousMove = NO_MOVE;
 }
 
 
@@ -105,7 +108,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 
 
 // Updates everything on player
-void ControllableAvatar::OnAvatarUpdate(float dt) {
+void ControllableAvatar::Update(float dt) {
 
 	shooting = false;
 
@@ -122,16 +125,18 @@ void ControllableAvatar::OnAvatarUpdate(float dt) {
 	}
 
 
-	if (life > minLife) 
+	if (targetLife > minLife)
 	{
-		life -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
+		targetLife -= dt * (float)min((Physics()->GetLinearVelocity().LengthSQ()) / lifeDrainFactor, 2.0f);
 
-		if (life < minLife)
+		if (targetLife < minLife)
 		{
-			life = minLife;
+			targetLife = minLife;
 		}
 	}
 	
+	LerpLife(dt);
+
 	curSize = size * (life / 100);
 
 	ChangeSize(curSize);
@@ -156,7 +161,9 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 		collisionTimerActive = true;
 		collisionTimer = timeUntilInAir;
 		inAir = false;
-		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		if (collidingObject->GetType() == BIG_NODE) {
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
+		}
 	}
 	else if (collidingObject->GetType() == PICKUP)
 	{
@@ -169,15 +176,16 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 				weapon = ((WeaponPickup*)p)->GetWeaponType();
 			}
 
-			if (Game::Instance()->getUserID() == 0)
+			if (Game::Instance()->GetUserID() == 0)
 			{
 				PickUpBuffActivated(activePickUp);
-				p->SetActive(false);
+				//phil 06/03/2018 so the paint pools don't dissapear on minimap
+				//if(p->GetPickupType() != PickupType::PAINTPOOL)
+					p->SetActive(false);
 			}
-			else
-			{
-				Game::Instance()->ClaimPickup(this, p);
-			}
+
+			// Alex - needed for Networking
+			Game::Instance()->ClaimPickup(p->GetIdx());
 
 		}
 
@@ -186,3 +194,85 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 	return true;
 }
 
+void ControllableAvatar::MovementState(Movement inputDir, float yaw, float dt)
+{
+	Vector3 force;
+	moveTimer += dt;
+	switch (inputDir)
+	{
+	case NO_MOVE: {
+		force = Vector3(0, 0, 0);
+		break;
+	}
+	case MOVE_FORWARD:
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * (standarSpinSpeed);
+		curMove = MOVE_FORWARD;
+		break;
+
+	case MOVE_BACKWARD:
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * (standarSpinSpeed);
+		curMove = MOVE_BACKWARD;
+		break;
+
+	case MOVE_LEFT:
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(-1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, 1) * (standarSpinSpeed);
+		curMove = MOVE_LEFT;
+		break;
+
+	case MOVE_RIGHT:
+		force = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(1, 0, 0) * speed;
+		dirRotation = Matrix3::Rotation(yaw, Vector3(0, 1, 0)) * Vector3(0, 0, -1) * (standarSpinSpeed);
+		curMove = MOVE_RIGHT;
+		break;
+	case MOVE_JUMP: {
+		curMove = MOVE_JUMP;
+		if (canJump) {
+			Vector3 vel = Physics()->GetLinearVelocity();
+			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
+			inAir = true;
+			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
+			canJump = false;
+		}
+		break;
+	}
+	}
+	force.y = 0;
+
+	// Setting Angular Velocity
+	int basicSpinSpeed = 55; //Change this number to change the spin speed
+	if (moveTimer > 2.f) { rollSpeed -= 1; }
+	if (rollSpeed < 0) { rollSpeed = 0; }
+
+	if (curMove != previousMove)
+	{
+		Physics()->SetAngularVelocity(((dirRotation * 3.0f) / (2.0f * life * PI)) * (float)basicSpinSpeed);
+		previousMove = curMove;
+		moveTimer = 0;
+	}
+	else if (curMove == inputDir && inputDir != MOVE_JUMP) {
+		rollSpeed += 1;
+		if (inAir) {
+			if (rollSpeed > maxRotationSpeed) { rollSpeed = maxRotationSpeed; }
+		}
+		else {
+			if (rollSpeed > 20) { rollSpeed = 20; }
+		}
+		Physics()->SetAngularVelocity(((dirRotation * 3) / (2 * life * PI)) * (basicSpinSpeed + rollSpeed));
+	}
+
+	// Setting MoveMent
+	if (inAir)
+	{
+		force = Vector3(0, 0, 0);
+	}
+
+	Physics()->SetForce(force);
+
+	if (Physics()->GetLinearVelocity().Length() > maxVel)
+	{
+		Physics()->SetLinearVelocity(Vector3(Physics()->GetLinearVelocity()).Normalise() * maxVel);
+	}
+}

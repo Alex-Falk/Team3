@@ -201,7 +201,7 @@ public:
 	inline int GetHeight() { return height; }
 	inline Mesh* GetScreenQuad() { return fullscreenQuad; }
 	//Score
-	inline float GetScore(uint i) { return scores[i]; }
+	inline float GetScore(uint i) { return (float)scores[i]; }
 
 	void PrintPerformanceTimers(const Vector4& color)
 	{
@@ -303,6 +303,7 @@ protected:
 	GLuint		scoreBuffer;
 	uint		scores[4];
 
+	float accumTime = 0.0f;
 	//For minimap
 	float time;
 	//translates a world position into a position for the minimap

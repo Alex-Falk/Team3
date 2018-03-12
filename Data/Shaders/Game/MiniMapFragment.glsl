@@ -44,7 +44,7 @@ uniform float angle;
 //time for making the icons grow and shrink
 uniform float time;
 //constants
-uniform const float BASE_POOL_SIZE = 0.05;
+uniform const float BASE_POOL_SIZE = 0.025;
 uniform const float BASE_PICKUP_SIZE = 0.025;
 
 in Vertex {
@@ -103,7 +103,7 @@ vec3 getColour(int i){
 void main()
 {
 	//make the pool increase and decrease in size
-	float poolSize = BASE_POOL_SIZE + (0.01 * sin(time * 3));
+	float poolSize;
 	float pickupSize = BASE_PICKUP_SIZE + (0.005 * sin(time * 2.7));
 	//coords relative to the map rather than the fragment
 	vec2 newCoords = (rotate(IN.texCoord - 0.5, angle) * zoom) + players[self];
@@ -140,9 +140,25 @@ void main()
 		//pickup is a paint pool or capture object (larger and colourable)
 		if(pickupTypes[i] > uint(2)){
 			//TODO pass through the paint pools
+			if (pickupTypes[i] == uint(4))
+			{
+				poolSize = BASE_POOL_SIZE;
+			}
+			else
+			{
+				poolSize = BASE_POOL_SIZE + (0.004 * sin(time * 3));
+			}
 			if(inSquare(pickupPositions[i], newCoords, poolSize)){
 				//use either the pool texture or the capture texture depending on what the "pickup is"
-				vec4 poolColor = drawSquare(pickupPositions[i], newCoords, poolSize, pickupTypes[i] == uint(3) ?  poolTex : captureTex);
+				vec4 poolColor = vec4(1, 1, 1, 1);
+				if (pickupTypes[i] == uint(4))
+				{
+					poolColor.rgb = getColour(pickupColours[i]);
+				}
+				else
+				{
+					poolColor = drawSquare(pickupPositions[i], newCoords, poolSize, pickupTypes[i] == uint(3) ? poolTex : captureTex);
+				}
 				if(!(poolColor.a < 1)){
 					if(poolColor.rgb != vec3(0,0,0)){
 						//TODO make this the actual pool's colour

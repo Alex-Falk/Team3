@@ -20,6 +20,7 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"      
 
+
 #include "Pickup.h"
 #include <ncltech\CuboidCollisionShape.h>
 #include <string.h>
@@ -126,12 +127,10 @@ Pickup::Pickup(Vector3 pos, PickupType type, string unique_name, float respawnTi
 	pnode->SetCollisionShape(pColshape);
 	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
 
-	//this->friendlyName = "Pickup";
 	this->renderNode = rnode;
 	this->physicsNode = pnode;
 	RegisterPhysicsToRenderTransformCallback();
 	SetPhysics(pnode);
-	//pnode->SetName("Pickup");
 
 	Physics()->SetOnCollisionCallback(
 		std::bind(&Pickup::PickupCallbackFunction,

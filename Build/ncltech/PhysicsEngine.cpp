@@ -14,8 +14,8 @@ void PhysicsEngine::SetDefaults()
 	updateRealTimeAccum = 0.0f;
 	gravity = Vector3(0.0f, -9.81f, 0.0f);
 	dampingFactor = 0.998f;
-	limits.minVals = Vector3(-90, -10, -90);
-	limits.maxVals = Vector3(90, 60, 90);
+	limits.minVals = Vector3(-150, -10, -150);
+	limits.maxVals = Vector3(150, 65, 150);
 }
 
 PhysicsEngine::PhysicsEngine()
@@ -384,7 +384,7 @@ LineCollision PhysicsEngine::CastRay(Vector3 origin, Vector3 direction, PhysicsN
 	for (PhysicsNode* obj : physicsNodes)
 	{
 		//objects to be ignored by the ray tracing
-		if (obj->GetType() != BIG_NODE) {
+		if (obj->GetType() != BIG_NODE || obj->GetType() != INVISIBLE_WALL) {
 			continue;
 		}
 		//the vector between the origin and the center of the physics node

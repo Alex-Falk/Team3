@@ -118,7 +118,7 @@ GameObject* CommonUtils::BuildSphereObject(
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
-
+	dummy->SetBoundingRadius(radius);
 	rnode->AddChild(dummy);
 
 	rnode->SetTransform(Matrix4::Translation(pos));
@@ -184,6 +184,7 @@ GameObject* CommonUtils::BuildCuboidObject(
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
+	dummy->SetBoundingRadius(halfdims.Length());
 
 	rnode->AddChild(dummy);
 	
@@ -254,6 +255,7 @@ GameObject* CommonUtils::BuildPlaneObject(
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[matType]);
+	dummy->SetBoundingRadius(halfdims.Length());
 
 	rnode->AddChild(dummy);
 

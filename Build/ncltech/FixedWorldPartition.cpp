@@ -20,9 +20,8 @@
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"  
 #include "FixedWorldPartition.h"
+#include "GameObject.h"
 #include <algorithm>
-#include "MultiGameObject.h"
-
 FixedWorldPartition::FixedWorldPartition(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax, std::vector<PhysicsNode*> * elements)
 {
 	FixedWorldPartition(Vector3(xmin, ymin, zmin), Vector3(xmax, ymax, zmax), elements);
@@ -126,7 +125,7 @@ void FixedWorldPartition::RepartitionWorld(Vector3 mins, Vector3 maxs, std::vect
 
 	for (std::vector<PhysicsNode*>::iterator itr = elements->begin(); itr != elements->end(); ++itr)
 	{
-		if ((*itr)->GetType() == BIG_NODE)
+		if ((*itr)->GetType() == BIG_NODE || (*itr)->GetType() == INVISIBLE_WALL)
 		{
 			bigNodes->push_back((*itr));
 		}
