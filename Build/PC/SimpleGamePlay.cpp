@@ -5,6 +5,7 @@
 #include "MultiPaintPool.h"
 #include "CaptureArea.h"
 #include "ParticleEmitter.h"
+#include "AudioSystem.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
@@ -12,6 +13,11 @@
 void SimpleGamePlay::OnInitializeScene()
 {
 	dimensions = Vector2(100,100);
+	AudioSystem::Instance()->StopAllSounds();
+	AudioSystem::Instance()->Update();
+	AudioSystem::Instance()->PlayASound(GAME_MUSIC, true);
+
+	dimensions = Vector2(35, 50);
 
 	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();

@@ -234,9 +234,9 @@ public:
 	void OnEnableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(true); }
 	void OnDisableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(false); }
 	//Slider function
-	void onMastervolumeChanged();
-	void onGameSoundvolumeChanged();
-	void onMusicvolumeChanged();
+	void onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
+	void onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
+	void onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetMusicVolume(temp); }
 	void onCameraSensitivityChanged();
 	void onEnableBloomButtonClicked();
 	void onDisableBloomButtonClicked();

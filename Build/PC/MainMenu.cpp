@@ -23,6 +23,10 @@ void MainMenu::OnCleanupScene()
 
 void MainMenu::OnInitializeScene()
 {
+	AudioSystem::Instance()->StopAllSounds();
+	AudioSystem::Instance()->Update();
+	AudioSystem::Instance()->PlayASound(MENU_MUSIC, true);
+
 	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GUIsystem::Instance()->SetDrawScoreBar(false);
 	GUIsystem::Instance()->SetDrawMiniMap(false);
@@ -529,10 +533,10 @@ void MainMenu::SetUpOptionMenu()
 		));
 
 	GameSoundsSlider->setMaxValue(1.0f);
-	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetGameSoundsVolume());
 	GameSoundsSlider->setVisible(false);
 	GameSoundsSlider->disable();
-	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetGameSoundsVolume());
 	GameSoundsSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onGameSoundvolumeChanged, this));
 	MusicSlider = static_cast<CEGUI::Slider*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Slider",
@@ -541,10 +545,10 @@ void MainMenu::SetUpOptionMenu()
 			"MusicSlider"
 		));
 	MusicSlider->setMaxValue(1.0f);
-	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMusicVolume());
 	MusicSlider->setVisible(false);
 	MusicSlider->disable();
-	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMusicVolume());
 	MusicSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMusicvolumeChanged, this));
 
 	mastervolumeText = static_cast<CEGUI::Titlebar*>(
