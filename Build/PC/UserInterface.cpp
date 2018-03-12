@@ -166,135 +166,263 @@ void GUIsystem::HideMouseCursor()
 void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 {
 	CEGUI::utf32 codePoint = 46;
-	switch (pressedKey)
-	{
-	case KEYBOARD_A:
-		m_context->injectChar(0x61);
-		break;
-	case KEYBOARD_B:
-		m_context->injectChar(0x62);
-		break;
-	case KEYBOARD_C:
-		m_context->injectChar(0x63);
-		break;
-	case KEYBOARD_D:
-		m_context->injectChar(0x64);
-		break;
-	case KEYBOARD_E:
-		m_context->injectChar(0x65);
-		break;
-	case KEYBOARD_F:
-		m_context->injectChar(0x66);
-		break;
-	case KEYBOARD_G:
-		m_context->injectChar(0x67);
-		break;
-	case KEYBOARD_H:
-		m_context->injectChar(0x68);
-		break;
-	case KEYBOARD_I:
-		m_context->injectChar(0x69);
-		break;
-	case KEYBOARD_J:
-		m_context->injectChar(0x6a);
-		break;
-	case KEYBOARD_K:
-		m_context->injectChar(0x6b);
-		break;
-	case KEYBOARD_L:
-		m_context->injectChar(0x6c);
-		break;
-	case KEYBOARD_M:
-		m_context->injectChar(0x6d);
-		break;
-	case KEYBOARD_N:
-		m_context->injectChar(0x6e);
-		break;
-	case KEYBOARD_O:
-		m_context->injectChar(0x6f);
-		break;
-	case KEYBOARD_P:
-		m_context->injectChar(0x70);
-		break;
-	case KEYBOARD_Q:
-		m_context->injectChar(0x71);
-		break;
-	case KEYBOARD_R:
-		m_context->injectChar(0x72);
-		break;
-	case KEYBOARD_S:
-		m_context->injectChar(0x73);
-		break;
-	case KEYBOARD_T:
-		m_context->injectChar(0x74);
-		break;
-	case KEYBOARD_U:
-		m_context->injectChar(0x75);
-		break;
-	case KEYBOARD_V:
-		m_context->injectChar(0x76);
-		break;
-	case KEYBOARD_W:
-		m_context->injectChar(0x77);
-		break;
-	case KEYBOARD_X:
-		m_context->injectChar(0x78);
-		break;
-	case KEYBOARD_Y:
-		m_context->injectChar(0x79);
-		break;
-	case KEYBOARD_Z:
-		m_context->injectChar(0x7a);
-		break;
-	case KEYBOARD_PERIOD:
-		m_context->injectChar(0x2e);
-		break;
-	case KEYBOARD_0:
-		m_context->injectChar(0x30);
-		break;
-	case KEYBOARD_1:
-		m_context->injectChar(0x31);
-		break;
-	case KEYBOARD_2:
-		m_context->injectChar(0x32);
-		break;
-	case KEYBOARD_3:
-		m_context->injectChar(0x33);
-		break;
-	case KEYBOARD_4:
-		m_context->injectChar(0x34);
-		break;
-	case KEYBOARD_5:
-		m_context->injectChar(0x35);
-		break;
-	case KEYBOARD_6:
-		m_context->injectChar(0x36);
-		break;
-	case KEYBOARD_7:
-		m_context->injectChar(0x37);
-		break;
-	case KEYBOARD_8:
-		m_context->injectChar(0x38);
-		break;
-	case KEYBOARD_9:
-		m_context->injectChar(0x39);
-		break;
-	case KEYBOARD_BACK:
-		m_context->injectKeyDown(CEGUI::Key::Backspace);
-		m_context->injectKeyUp(CEGUI::Key::Backspace);
-		break;
-	case KEYBOARD_F8:
-		m_context->injectChar(0x3a);
-		break;
-	case 23:
-		m_context->injectChar(0x20);
-		break;
-	case KEYBOARD_RETURN:
-		isTyping = false;
-		sendInfo = true;
-		break;
-	default:
-		break;
+	if (isCapsLocked == false) {
+		switch (pressedKey)
+		{
+		case KEYBOARD_A:
+			m_context->injectChar(0x61);
+			break;
+		case KEYBOARD_B:
+			m_context->injectChar(0x62);
+			break;
+		case KEYBOARD_C:
+			m_context->injectChar(0x63);
+			break;
+		case KEYBOARD_D:
+			m_context->injectChar(0x64);
+			break;
+		case KEYBOARD_E:
+			m_context->injectChar(0x65);
+			break;
+		case KEYBOARD_F:
+			m_context->injectChar(0x66);
+			break;
+		case KEYBOARD_G:
+			m_context->injectChar(0x67);
+			break;
+		case KEYBOARD_H:
+			m_context->injectChar(0x68);
+			break;
+		case KEYBOARD_I:
+			m_context->injectChar(0x69);
+			break;
+		case KEYBOARD_J:
+			m_context->injectChar(0x6a);
+			break;
+		case KEYBOARD_K:
+			m_context->injectChar(0x6b);
+			break;
+		case KEYBOARD_L:
+			m_context->injectChar(0x6c);
+			break;
+		case KEYBOARD_M:
+			m_context->injectChar(0x6d);
+			break;
+		case KEYBOARD_N:
+			m_context->injectChar(0x6e);
+			break;
+		case KEYBOARD_O:
+			m_context->injectChar(0x6f);
+			break;
+		case KEYBOARD_P:
+			m_context->injectChar(0x70);
+			break;
+		case KEYBOARD_Q:
+			m_context->injectChar(0x71);
+			break;
+		case KEYBOARD_R:
+			m_context->injectChar(0x72);
+			break;
+		case KEYBOARD_S:
+			m_context->injectChar(0x73);
+			break;
+		case KEYBOARD_T:
+			m_context->injectChar(0x74);
+			break;
+		case KEYBOARD_U:
+			m_context->injectChar(0x75);
+			break;
+		case KEYBOARD_V:
+			m_context->injectChar(0x76);
+			break;
+		case KEYBOARD_W:
+			m_context->injectChar(0x77);
+			break;
+		case KEYBOARD_X:
+			m_context->injectChar(0x78);
+			break;
+		case KEYBOARD_Y:
+			m_context->injectChar(0x79);
+			break;
+		case KEYBOARD_Z:
+			m_context->injectChar(0x7a);
+			break;
+		case KEYBOARD_PERIOD:
+			m_context->injectChar(0x2e);
+			break;
+		case KEYBOARD_0:
+			m_context->injectChar(0x30);
+			break;
+		case KEYBOARD_1:
+			m_context->injectChar(0x31);
+			break;
+		case KEYBOARD_2:
+			m_context->injectChar(0x32);
+			break;
+		case KEYBOARD_3:
+			m_context->injectChar(0x33);
+			break;
+		case KEYBOARD_4:
+			m_context->injectChar(0x34);
+			break;
+		case KEYBOARD_5:
+			m_context->injectChar(0x35);
+			break;
+		case KEYBOARD_6:
+			m_context->injectChar(0x36);
+			break;
+		case KEYBOARD_7:
+			m_context->injectChar(0x37);
+			break;
+		case KEYBOARD_8:
+			m_context->injectChar(0x38);
+			break;
+		case KEYBOARD_9:
+			m_context->injectChar(0x39);
+			break;
+		case KEYBOARD_BACK:
+			m_context->injectKeyDown(CEGUI::Key::Backspace);
+			m_context->injectKeyUp(CEGUI::Key::Backspace);
+			break;
+		case KEYBOARD_SPACE:
+			m_context->injectChar(0x20);
+			break;
+		case KEYBOARD_RETURN:
+			isTyping = false;
+			sendInfo = true;
+			break;
+		default:
+			break;
+		}
+	}
+	else {
+		switch (pressedKey)
+		{
+		case KEYBOARD_A:
+			m_context->injectChar(0x41);
+			break;
+		case KEYBOARD_B:
+			m_context->injectChar(0x42);
+			break;
+		case KEYBOARD_C:
+			m_context->injectChar(0x43);
+			break;
+		case KEYBOARD_D:
+			m_context->injectChar(0x44);
+			break;
+		case KEYBOARD_E:
+			m_context->injectChar(0x45);
+			break;
+		case KEYBOARD_F:
+			m_context->injectChar(0x46);
+			break;
+		case KEYBOARD_G:
+			m_context->injectChar(0x47);
+			break;
+		case KEYBOARD_H:
+			m_context->injectChar(0x48);
+			break;
+		case KEYBOARD_I:
+			m_context->injectChar(0x49);
+			break;
+		case KEYBOARD_J:
+			m_context->injectChar(0x4a);
+			break;
+		case KEYBOARD_K:
+			m_context->injectChar(0x4b);
+			break;
+		case KEYBOARD_L:
+			m_context->injectChar(0x4c);
+			break;
+		case KEYBOARD_M:
+			m_context->injectChar(0x4d);
+			break;
+		case KEYBOARD_N:
+			m_context->injectChar(0x4e);
+			break;
+		case KEYBOARD_O:
+			m_context->injectChar(0x4f);
+			break;
+		case KEYBOARD_P:
+			m_context->injectChar(0x50);
+			break;
+		case KEYBOARD_Q:
+			m_context->injectChar(0x51);
+			break;
+		case KEYBOARD_R:
+			m_context->injectChar(0x52);
+			break;
+		case KEYBOARD_S:
+			m_context->injectChar(0x53);
+			break;
+		case KEYBOARD_T:
+			m_context->injectChar(0x54);
+			break;
+		case KEYBOARD_U:
+			m_context->injectChar(0x55);
+			break;
+		case KEYBOARD_V:
+			m_context->injectChar(0x56);
+			break;
+		case KEYBOARD_W:
+			m_context->injectChar(0x57);
+			break;
+		case KEYBOARD_X:
+			m_context->injectChar(0x58);
+			break;
+		case KEYBOARD_Y:
+			m_context->injectChar(0x59);
+			break;
+		case KEYBOARD_Z:
+			m_context->injectChar(0x5a);
+			break;
+		case KEYBOARD_PERIOD:
+			m_context->injectChar(0x2e);
+			break;
+		case KEYBOARD_0:
+			m_context->injectChar(0x30);
+			break;
+		case KEYBOARD_1:
+			m_context->injectChar(0x31);
+			break;
+		case KEYBOARD_2:
+			m_context->injectChar(0x32);
+			break;
+		case KEYBOARD_3:
+			m_context->injectChar(0x33);
+			break;
+		case KEYBOARD_4:
+			m_context->injectChar(0x34);
+			break;
+		case KEYBOARD_5:
+			m_context->injectChar(0x35);
+			break;
+		case KEYBOARD_6:
+			m_context->injectChar(0x36);
+			break;
+		case KEYBOARD_7:
+			m_context->injectChar(0x37);
+			break;
+		case KEYBOARD_8:
+			m_context->injectChar(0x38);
+			break;
+		case KEYBOARD_9:
+			m_context->injectChar(0x39);
+			break;
+		case KEYBOARD_BACK:
+			m_context->injectKeyDown(CEGUI::Key::Backspace);
+			m_context->injectKeyUp(CEGUI::Key::Backspace);
+			break;
+		case KEYBOARD_SPACE:
+			m_context->injectChar(0x20);
+			break;
+		case KEYBOARD_RETURN:
+			isTyping = false;
+			sendInfo = true;
+			break;
+		default:
+			break;
+		}
 	}
 }
 

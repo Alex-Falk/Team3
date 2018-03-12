@@ -165,6 +165,9 @@ public:
 	inline RESULT GetResult() { return result; }
 	inline void SetDrawResult(bool drawResult) { this->drawResult = drawResult; }
 	inline bool GetDrawResult() { return this->drawResult; }
+	inline void SetIsCapsLocked(bool isCapsLocked) { this->isCapsLocked = isCapsLocked; }
+	inline bool GetIsCapsLocked() { return isCapsLocked; }
+
 	void SetUpResultText();
 	void DrawWinLostText();
 protected:
@@ -211,4 +214,7 @@ protected:
 	RESULT result;
 	bool drawResult = false;
 	CEGUI::Titlebar* ResultText;
+
+	//Pause Menu
+	bool isCapsLocked = false;
 };

@@ -261,6 +261,8 @@ void HandleKeyboardInputs()
 //	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
+
+//GUI interation function - Jeffery 12/03/2018
 void HandleGUIMouseCursor()
 {
 	Vector2 absPos;
@@ -316,6 +318,10 @@ void HandleGUITextInput()
 		GUIsystem::Instance()->HandleTextInput(KEYBOARD_BACK);
 		return;
 	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_CAPITAL)) {
+		GUIsystem::Instance()->SetIsCapsLocked(!GUIsystem::Instance()->GetIsCapsLocked());
+		return;
+	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
 		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
 			GUIsystem::Instance()->HandleTextInput(static_cast<KeyboardKeys>(i));
@@ -324,6 +330,7 @@ void HandleGUITextInput()
 	}
 }
 
+//Post process test - Jeffery 
 void TestPostProcess()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F1)) {
