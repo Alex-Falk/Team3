@@ -201,7 +201,7 @@ void CaptureArea::CheckMinionCollision(PhysicsNode * p, int index)
 			}
 			if (playerScores[index] >= lifeReq) {
 				this->SetColour(minion->GetColour());
-				Game::Instance()->Capture(this->index, this->colour);
+				Game::Instance()->Capture(this->index, this->colour,this->scoreValue);
 			}
 		}	
 		UpdatePercentage();
@@ -234,7 +234,7 @@ void CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index)
 			}
 			if (playerScores[index] >= lifeReq) {
 				this->SetColour(projectile->GetColour());
-				Game::Instance()->Capture(this->index, this->colour);
+				Game::Instance()->Capture(this->index, this->colour,this->scoreValue);
 			}
 		}
 		UpdatePercentage();
