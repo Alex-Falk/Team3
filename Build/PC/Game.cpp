@@ -119,6 +119,7 @@ void Game::ResetGame()
 	gameRunning = false;
 	time = 0.0f;
 	GUIsystem::Instance()->SetResult(RESULT::NONE);
+	GUIsystem::Instance()->SetHasWeapon(false);
 	//PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 	GUIsystem::Instance()->SetDrawResult(false);
 	//PhysicsEngine::Instance()->SetPaused(false);
