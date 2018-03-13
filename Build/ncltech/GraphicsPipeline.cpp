@@ -249,6 +249,10 @@ void GraphicsPipeline::LoadShaders()
 		NCLERROR("Could not link shader: Score");
 	}
 
+	shaders[SHADERTYPE::ParticleCompute] = new Shader(SHADERDIR"Compute/computeParticles.glsl");
+	if (!shaders[SHADERTYPE::ParticleCompute]->LinkProgram()) {
+		NCLERROR("Could not link shader: Particle Compute shader");
+	}
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -263,6 +267,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::SkyBox] = nullptr;
 	materials[MATERIALTYPE::MiniMap] = nullptr;
 	materials[MATERIALTYPE::Score] = nullptr;
+	materials[MATERIALTYPE::ParticleCompute] = nullptr;
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)

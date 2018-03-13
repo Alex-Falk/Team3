@@ -152,7 +152,7 @@ void main(void)	{
 	vec3 up = vec3(0, 1, 0);
 	vec4 FinalColor;
 	if (length((normal - up)) < 0.1)
-		FinalColor = mix(finalLightColor, pathColor + finalLightColor * 0.1 + reflection * 0.5, isPath);
+		FinalColor = mix(finalLightColor, pathColor * shadow + pathColor * 0.4 + finalLightColor * 0.2 + reflection * 0.5, isPath);
 	else
 		FinalColor = finalLightColor;
 	OutFrag = FinalColor;

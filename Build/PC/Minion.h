@@ -4,6 +4,8 @@
 #include "MinionBase.h"
 #include "MinionBlackboard.h"
 #include "State.h"
+#include "CaptureArea.h" 
+#include "Avatar.h"
 
 
 class Minion : public MinionBase {

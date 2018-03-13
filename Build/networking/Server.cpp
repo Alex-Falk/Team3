@@ -259,11 +259,13 @@ void Server::UpdateUser(float dt)
 
 				for (GameObject * go : m->GetConstantGameObjects())
 				{
-					if (go->Physics()->GetInverseMass() > 0.01f)
+					if (go->Physics())
 					{
-						SendObjectUpdate(go);
+						if (go->Physics()->GetInverseMass() > 0.01f)
+						{
+							SendObjectUpdate(go);
+						}
 					}
-					
 				}
 
 				MinionBase ** minions = m->GetMinions();
