@@ -79,7 +79,7 @@ float DoShadowTest(vec3 tsShadow, int tsLayer, vec2 pix)
 			for (float x = -1.5f; x <= 1.5f; x += 1.0f)
 				shadow += texture(uShadowTex, tCoord + vec4(pix.x * x, pix.y * y, 0, 0));
 			
-		return shadow / 16.0f;
+		return shadow / 8.0f;
 	}
 }
 
@@ -106,7 +106,7 @@ void main(void)	{
 			break;
 		}
 	}
-	
+	shadow = clamp(shadow, 0.2f, 1.0f);
 //Lighting Calculations
 	vec3 viewDir 		= normalize(uCameraPos - IN.worldPos);
 	vec3 halfDir 		= normalize(viewDir - uLightDirection);
