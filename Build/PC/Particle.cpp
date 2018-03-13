@@ -39,7 +39,7 @@ Particle::Particle(Colour col, Vector3 pos, Vector3 vel, Vector3 size, float lif
 
 	RGB = EnumToVectorColour(col).ToVector3();
 
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), "Particle", EnumToVectorColour(col));
+	RenderNode* dummy = new PlayerRenderNode(Mesh::GenerateQuad(), "Particle", EnumToVectorColour(col));
 	dummy->SetTransform(Matrix4::Scale(size));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
