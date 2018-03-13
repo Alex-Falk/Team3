@@ -283,7 +283,7 @@ void DataDrivenMap::AddCuboid(vector<std::string> object) {
 
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])),1));
 	if (object[12] == "TEXTURE") {
-		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
 	}
 	
 	AddGameObject(cube);
@@ -292,7 +292,7 @@ void DataDrivenMap::AddCuboid(vector<std::string> object) {
 void DataDrivenMap::AddGround(vector<std::string> object) {
 	GameObject* cube = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, 0, true, false, BIG_NODE, DEFAULT_COLOUR, MATERIALTYPE::Ground);
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 1));
-	if (object[12] == "TEXTURE") {
+	if (object[11] == "TEXTURE") {
 		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
 	}
 	AddGameObject(cube);

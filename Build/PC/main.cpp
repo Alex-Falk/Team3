@@ -1,4 +1,3 @@
-
 #include <enet\enet.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
@@ -207,8 +206,10 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
 		show_full_perf_metrics = !show_full_perf_metrics;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0)) {
 		show_debug = !show_debug;
+		NCLDebug::printLOG = !NCLDebug::printLOG;
+	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
