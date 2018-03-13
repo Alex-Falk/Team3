@@ -80,11 +80,9 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 
 	
 	MovementState(move, yaw, dt);
-
-
-
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+	
+	//TODO: DELETE THIS ONCE ALL DEBUGGING STOPS
+	/*if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
 		NCLDebug::Log("Pistol Activated");
 		weapon = PAINT_PISTOL;
 	}
@@ -99,7 +97,7 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
 		NCLDebug::Log("Auto Activated");
 		weapon = AUTO_PAINT_LAUNCHER;
-	}
+	}*/
 
 	if (Input::Instance()->GetInput(SHOOT))
 	{
