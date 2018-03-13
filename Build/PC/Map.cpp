@@ -114,6 +114,7 @@ void Map::OnInitializeGUI()
 {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 	GUIsystem::Instance()->drawPlayerName = true;
+	GUIsystem::Instance()->SetIsTyping(false);
 	GUIsystem::Instance()->SetDrawMiniMap(true);
 	lifeBar = static_cast<CEGUI::ProgressBar*>(
 		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",

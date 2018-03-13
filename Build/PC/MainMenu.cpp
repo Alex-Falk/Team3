@@ -531,7 +531,7 @@ void MainMenu::onIPinputClicked()
 
 void MainMenu::OnClientNameClicked()
 {
-	clientName.editbox->setText("");
+	//clientName.editbox->setText("");
 	GUIsystem::Instance()->SetIsTyping(true);
 	GUIsystem::Instance()->currentType = "ClientName";
 }

@@ -335,6 +335,14 @@ void HandleGUITextInput()
 		GUIsystem::Instance()->SetIsCapsLocked(!GUIsystem::Instance()->GetIsCapsLocked());
 		return;
 	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_LEFT);
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RIGHT);
+		return;
+	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
 		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
 			GUIsystem::Instance()->HandleTextInput(static_cast<KeyboardKeys>(i));

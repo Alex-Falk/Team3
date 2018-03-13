@@ -251,13 +251,13 @@ public:
 	void onMap4selected();
 	void onHostNameConfirmed();
 	void OnUserNameClicked() {
-		userName.editbox->setText("");
+		//userName.editbox->setText("");
 		GUIsystem::Instance()->SetIsTyping(true);
 		GUIsystem::Instance()->currentType = "UserName";
 	}
 	void OnCostomMapClicked()
 	{
-		customMap.editbox->setText("");
+		//customMap.editbox->setText("");
 		GUIsystem::Instance()->SetIsTyping(true);
 		GUIsystem::Instance()->currentType = "customMap";
 	}

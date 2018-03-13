@@ -282,9 +282,20 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		case KEYBOARD_9:
 			m_context->injectChar(0x39);
 			break;
+		case KEYBOARD_LEFT:
+			m_context->injectKeyDown(CEGUI::Key::ArrowLeft);
+			m_context->injectKeyUp(CEGUI::Key::ArrowLeft);
+			break;
+		case KEYBOARD_RIGHT:
+			m_context->injectKeyDown(CEGUI::Key::ArrowRight);
+			m_context->injectKeyUp(CEGUI::Key::ArrowRight);
+			break;
 		case KEYBOARD_BACK:
 			m_context->injectKeyDown(CEGUI::Key::Backspace);
 			m_context->injectKeyUp(CEGUI::Key::Backspace);
+			break;
+		case KEYBOARD_SEPARATOR:
+			m_context->injectChar(0x3a);
 			break;
 		case KEYBOARD_SPACE:
 			m_context->injectChar(0x20);
@@ -410,6 +421,17 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 			break;
 		case KEYBOARD_9:
 			m_context->injectChar(0x39);
+			break;
+		case KEYBOARD_LEFT:
+			m_context->injectKeyDown(CEGUI::Key::ArrowLeft);
+			m_context->injectKeyUp(CEGUI::Key::ArrowLeft);
+			break;
+		case KEYBOARD_RIGHT:
+			m_context->injectKeyDown(CEGUI::Key::ArrowRight);
+			m_context->injectKeyUp(CEGUI::Key::ArrowRight);
+			break;
+		case KEYBOARD_SEPARATOR:
+			m_context->injectChar(0x3a);
 			break;
 		case KEYBOARD_BACK:
 			m_context->injectKeyDown(CEGUI::Key::Backspace);
