@@ -311,8 +311,7 @@ void DataDrivenMap::AddTexture(uint ID, std::string name) {
 
 	if (!TextureManager::Instance()->LoadTexture(textureID[ID], address, GL_REPEAT, GL_NEAREST))
 	{
-		if (TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
-		{}
+		TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST);
 		CoruptedFile(2, linenum);
 	}
 }
