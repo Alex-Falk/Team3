@@ -102,10 +102,10 @@ void Initialize()
 	InitialiseAudioFiles();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!", "MainMenu"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "Map4"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "map1"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map2"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map3"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map2"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	
@@ -333,6 +333,14 @@ void HandleGUITextInput()
 	}
 	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_CAPITAL)) {
 		GUIsystem::Instance()->SetIsCapsLocked(!GUIsystem::Instance()->GetIsCapsLocked());
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_LEFT);
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RIGHT);
 		return;
 	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
