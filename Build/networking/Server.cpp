@@ -75,7 +75,7 @@ string Win32_PrintAllAdapterIPAddresses()
 			IP_ADDR_STRING* cIpAddress = &cAdapter->IpAddressList;
 			while (cIpAddress != NULL)
 			{
-				printf("\t - Listening for connections on %s:%u\n", cIpAddress->IpAddress.String, 1234);
+				//printf("\t - Listening for connections on %s:%u\n", cIpAddress->IpAddress.String, 1234);
 				ip = cIpAddress->IpAddress.String;
 				cIpAddress = cIpAddress->Next;
 			}
@@ -93,7 +93,7 @@ Server::Server() {
 	{
 
 		server = new NetworkBase();
-		printf("Server Initiated\n");
+		//printf("Server Initiated\n");
 
 		server->Initialize(1234, 32);
 		ip = Win32_PrintAllAdapterIPAddresses();
@@ -140,11 +140,11 @@ void Server::UpdateUser(float dt)
 			{
 			case ENET_EVENT_TYPE_CONNECT:
 			{
-				printf(" - New Client Connected\n");
+				//printf(" - New Client Connected\n");
 				if (Game::Instance()->IsRunning())
 				{
 					enet_peer_disconnect(evnt.peer, 0);
-					cout << clientIPAddress[0];
+					//cout << clientIPAddress[0];
 				}
 				else
 				{
@@ -212,7 +212,7 @@ void Server::UpdateUser(float dt)
 			}
 			case ENET_EVENT_TYPE_DISCONNECT:
 			{
-				printf(" - Client %d has disconnected.\n", evnt.peer->incomingPeerID + 1);
+				//printf(" - Client %d has disconnected.\n", evnt.peer->incomingPeerID + 1);
 				for (uint i = 0; i < connectedIDs.size(); ++i)
 				{
 					if (connectedIDs[i] - 1 == evnt.peer->incomingPeerID)
