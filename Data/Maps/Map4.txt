@@ -1,13 +1,13 @@
-NEW_TEXTURE 0 PaintPool.png   //Texture with ID 0
-NEW_TEXTURE 1 PaintPool.png   //Texture with ID 1
-NEW_TEXTURE 2 PaintPool.png   //Texture with ID 2
-NEW_TEXTURE 3 PaintPool.png   //Texture with ID 3
-NEW_TEXTURE 4 PaintPool.png   //Texture with ID 4
-NEW_TEXTURE 5 SprayIcon.png   //Texture with ID 5
-NEW_TEXTURE 6 PaintPool.png   //Texture with ID 6
-NEW_TEXTURE 7 PaintPool.png   //Texture with ID 7
-NEW_TEXTURE 8 PaintPool.png   //Texture with ID 8
-NEW_TEXTURE 9 PaintPool.png   //Texture with ID 9
+NEW_TEXTURE 0 Bricks.jpg 	//Texture with ID 0
+NEW_TEXTURE 1 Dirt.jpg 	//Texture with ID 1
+NEW_TEXTURE 2 Grass.jpg 	//Texture with ID 2
+NEW_TEXTURE 3 Grovel.jpg 	//Texture with ID 3
+NEW_TEXTURE 4 Metal.jpg 	//Texture with ID 4
+NEW_TEXTURE 5 Road.jpg 	//Texture with ID 5
+NEW_TEXTURE 6 Water.jpg 	//Texture with ID 6
+NEW_TEXTURE 7 Wood.jpg 	//Texture with ID 7
+NEW_TEXTURE 8 PaintPool.jpg 	//Texture with ID 8
+NEW_TEXTURE 9 PaintPool.jpg 	//Texture with ID 9
 MAP 100 100        //Ground Dimensions 
 SPAWN_LOC 0 75 1 75     //Spawn Position 1 x y z 
 SPAWN_LOC 1 -75 1 -75   //Spawn Position 2 x y z 
@@ -35,25 +35,25 @@ MINION_AREA -95 1 75 minionspawn 50
 MINION_AREA -95 1 -95 minionspawn 50
 MINION_AREA -95 1 -75 minionspawn 50
 //base minions
-MINION_AREA -70 3 70 minionspawn 50
-MINION_AREA -70 3 -70 minionspawn 50
-MINION_AREA 70 3 -70 minionspawn 50
-MINION_AREA 70 3 70 minionspawn 50
+MINION_AREA -70 3 70 minionspawn 50 TEXTURE 0
+MINION_AREA -70 3 -70 minionspawn 50 TEXTURE 0
+MINION_AREA 70 3 -70 minionspawn 50 TEXTURE 0
+MINION_AREA 70 3 70 minionspawn 50 TEXTURE 0
 //building capture areas
-CAPTURE_AREA 10 6 10 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA 10 6 -10 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA 5 6 -10 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA -5 6 -10 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA 5 6 10 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA -5 6 10 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA -10 6 10 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA -10 6 -10 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA 30 6 30 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA 30 6 -30 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA 35 6 -30 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA -35 6 -30 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA 35 6 30 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA -35 6 30 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA -30 6 30 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA -30 6 -30 capturearea 2 6 2 1000 0 TEXTURE 5
-CAPTURE_AREA 0 16 0 capturearea 2 16 2 2000 0 TEXTURE 5
+CAPTURE_AREA 10 6 10 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA 10 6 -10 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA 5 6 -10 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA -5 6 -10 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA 5 6 10 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA -5 6 10 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA -10 6 10 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA -10 6 -10 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA 30 6 30 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA 30 6 -30 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA 35 6 -30 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA -35 6 -30 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA 35 6 30 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA -35 6 30 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA -30 6 30 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA -30 6 -30 capturearea 2 6 2 1000 0 TEXTURE 4
+CAPTURE_AREA 0 16 0 capturearea 2 16 2 2000 0 TEXTURE 4
