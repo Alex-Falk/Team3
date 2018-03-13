@@ -1099,9 +1099,9 @@ void GraphicsPipeline::DrawMiniMap() {
 	//get the current map
 	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
 	//int array for pickup type
-	uint pickupTypes[20];
-	float pickupPositions[40];
-	int pickupColours[20];
+	uint pickupTypes[50];
+	float pickupPositions[50];
+	int pickupColours[50];
 	//reset count
 	count = 0;
 
