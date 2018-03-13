@@ -1,4 +1,3 @@
-
 #include <enet\enet.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
@@ -102,11 +101,11 @@ void Initialize()
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
 
-	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!", "MainMenu"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "Map4"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	
@@ -199,74 +198,80 @@ static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObje
 //  - Handles all program wide keyboard inputs for
 //    things such toggling the physics engine and 
 //    cycling through scenes.
-void HandleKeyboardInputs()
+void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 {
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
-	//	PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
-		GraphicsPipeline::Instance()->SetVsyncEnabled(!GraphicsPipeline::Instance()->GetVsyncEnabled());
-
-	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
-	uint sceneMax = SceneManager::Instance()->SceneCount();
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE))
+	if (handleKeyBoard)
 	{
-		if (Game::Instance()->IsRunning())
+		//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
+		//	PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+			GraphicsPipeline::Instance()->SetVsyncEnabled(!GraphicsPipeline::Instance()->GetVsyncEnabled());
+
+		uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
+		uint sceneMax = SceneManager::Instance()->SceneCount();
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE))
 		{
-			((Map*)Game::Instance()->GetMap())->showPauseMenu();
-		}
-		else
-		{
-			Game::Instance()->ResetGame();
-			SceneManager::Instance()->JumpToScene(0);
+			if (Game::Instance()->IsRunning())
+			{
+				((Map*)Game::Instance()->GetMap())->showPauseMenu();
+			}
+			else
+			{
+				Game::Instance()->ResetGame();
+				SceneManager::Instance()->JumpToScene(0);
+			}
+
 		}
 
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
+			show_full_perf_metrics = !show_full_perf_metrics;
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
+			show_debug = !show_debug;
+
+		uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
+			drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
+			drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+			drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+			drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
+			drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
+			drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
+	
+		Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
+		Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
+		Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
+		Input::Instance()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
+		Input::Instance()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
+		//Input::Instance()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
+		Input::Instance()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
+		//possibly temporary
+		Input::Instance()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
+		Input::Instance()->SetInput(CAMERA_DOWN, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
+		PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
 	}
-		
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
-		show_full_perf_metrics = !show_full_perf_metrics;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
-		show_debug = !show_debug;
-
-	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
-		drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
-		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
-		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
-		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
-		drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
-		drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
-
-	Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
-	Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
-	Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
-	Input::Instance()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
-	Input::Instance()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
-	//Input::Instance()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
-	Input::Instance()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
-	//possibly temporary
-	Input::Instance()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
-	Input::Instance()->SetInput(CAMERA_DOWN, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
 
 	//mouse input
-	Input::Instance()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
-	Input::Instance()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
+	if (handleMouse)
+	{
+		Input::Instance()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
+		Input::Instance()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
+	}
 
-	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
-//	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
+	//	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
 
@@ -408,7 +413,7 @@ int main()
 
 		//Handle Keyboard Inputs
 		if (GUIsystem::Instance()->GetIsTyping() == false) {
-			HandleKeyboardInputs();
+			HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
 		}
 		else {
 			//Handle User Typing input

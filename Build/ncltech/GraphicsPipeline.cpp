@@ -32,6 +32,8 @@
 #include <PC\PaintPool.h>
 #include<PC\CaptureArea.h>
 
+#define MAX_NUMBER_OF_OBJECTS 50
+
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
 	, camera(new Camera())
@@ -1099,9 +1101,9 @@ void GraphicsPipeline::DrawMiniMap() {
 	//get the current map
 	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
 	//int array for pickup type
-	uint pickupTypes[20];
-	float pickupPositions[40];
-	int pickupColours[20];
+	uint pickupTypes[MAX_NUMBER_OF_OBJECTS];
+	float pickupPositions[MAX_NUMBER_OF_OBJECTS*2];
+	int pickupColours[MAX_NUMBER_OF_OBJECTS];
 	//reset count
 	count = 0;
 
@@ -1153,9 +1155,9 @@ void GraphicsPipeline::DrawMiniMap() {
 	}
 
 	glUniform1ui (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
-	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
-	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
-	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
+	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), MAX_NUMBER_OF_OBJECTS, pickupTypes);
+	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), MAX_NUMBER_OF_OBJECTS*2, pickupPositions);
+	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), MAX_NUMBER_OF_OBJECTS, pickupColours);
 
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);

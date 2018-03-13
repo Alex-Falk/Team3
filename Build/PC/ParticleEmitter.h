@@ -55,16 +55,34 @@ protected:
 	vec3 * velocities;
 
 	Colour c;
+	Vector4 RGB;
 	Vector3 pos;
 	Vector3 scale;
 	Vector3 direction;
+	float rate;
+	float lifeTime;
+	bool isDeleting = true;
+
+	float particleLifeTime;
+	float particleMaxDist;
 
 	Shader * shader;
 
 	float timer;
 
 public:
-	ParticleEmitter(uint numParticles, Colour c, Vector3 pos, Vector3 scale = { 0.1f,0.1f,0.1f }, Vector3 direction = { 0,1,0 }, float spreadYaw = 10.0f, float spreadPitch = 10.0f, float particleLife = 5.0f, float particleMaxDist = 10.0f);
+	ParticleEmitter(
+		uint numParticles, 
+		Colour c, 
+		Vector3 pos, 
+		float rate = (1.0f / 60.0f), 
+		float lifetime = 0.0f, 
+		Vector3 scale = { 0.1f,0.1f,0.1f }, 
+		Vector3 direction = { 0,1,0 }, 
+		float spreadYaw = 10.0f, 
+		float spreadPitch = 10.0f, 
+		float particleLife = 5.0f, 
+		float particleMaxDist = 10.0f);
 	~ParticleEmitter();
 
 	void SetPos(Vector3 pos) { this->pos = pos; }

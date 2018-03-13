@@ -94,6 +94,10 @@ void DataDrivenMap::ReadFile() {
 	}
 }
 
+
+//--------------------------------------------------------------------------------------------//
+// Data Driven Map Functions
+//--------------------------------------------------------------------------------------------//
 void DataDrivenMap::Buildmap() {
 	BuildObject(GetObjects(lines[10]));
 }
@@ -142,9 +146,6 @@ vector<string> DataDrivenMap::GetLines(std::string file) {
 vector<string> DataDrivenMap::GetObjects(std::string line) {
 	vector<string> object;
 	object = split(line, ' ');
-	//if (object[0] == "\n" && object[0] == "//")
-	//	numemptyline++;
-	//else
 	return object;
 }
 
@@ -204,9 +205,16 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 	{
 		//-Alex Falk----------------------------------------------------------//
 		// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
-		GameObject * ca = CommonUtils::BuildCuboidObject("CA", Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
-		ca->SetColour(Colour(stoi(object[8])));
-		ca->Physics()->SetInverseMass(stof(object[9]));
+		GameObject * ca = CommonUtils::BuildCuboidObject(
+			"CA", 
+			Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
+			Vector3(stof(object[5]), stof(object[6]), stof(object[7])),
+			true,
+			stof(object[9]),
+			true,
+			false,
+			DEFAULT_PHYSICS,
+			DEFAULT_COLOUR);
 		if (object[10] == "TEXTURE") {
 			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
 		}
@@ -282,7 +290,7 @@ void DataDrivenMap::AddCuboid(vector<std::string> object) {
 
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])),1));
 	if (object[12] == "TEXTURE") {
-		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
 	}
 	
 	AddGameObject(cube);
@@ -291,7 +299,7 @@ void DataDrivenMap::AddCuboid(vector<std::string> object) {
 void DataDrivenMap::AddGround(vector<std::string> object) {
 	GameObject* cube = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, 0, true, false, BIG_NODE, DEFAULT_COLOUR, MATERIALTYPE::Ground);
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 1));
-	if (object[12] == "TEXTURE") {
+	if (object[11] == "TEXTURE") {
 		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
 	}
 	AddGameObject(cube);
@@ -311,8 +319,8 @@ void DataDrivenMap::AddTexture(uint ID, std::string name) {
 
 	if (!TextureManager::Instance()->LoadTexture(textureID[ID], address, GL_REPEAT, GL_NEAREST))
 	{
-		TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST);
 		CoruptedFile(2, linenum);
+		TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST);
 	}
 }
 
