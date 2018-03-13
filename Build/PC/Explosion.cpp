@@ -1,6 +1,9 @@
 #include "Explosion.h"
 #include "Minion.h"
+#include "ParticleEmitter.h"
+#include "Game.h"
 //Michael Davis 26/02/2018
+
 
 Explosion::Explosion() : Projectile() {
 
@@ -14,10 +17,17 @@ Explosion::Explosion(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 veloc
 			std::placeholders::_2
 		)
 	);
+
+	//-Alex Falk----------------------------------------------------------//
+	// Particle Effect on rocket explosion
+	e = new ParticleEmitter(128, this->colour, Physics()->GetPosition(), 0.0f, 1.0f, { 0.05f,0.05f,0.05f }, { 0,10,0 },45,45, 5,4);
+	Game::Instance()->GetMap()->AddGameObject(e,1);
+	//--------------------------------------------------------------------//
+
 }
 
 Explosion::~Explosion() {
-
+	e = nullptr;
 }
 
 bool Explosion::ExplosionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
