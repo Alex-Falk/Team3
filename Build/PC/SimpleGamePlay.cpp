@@ -38,6 +38,19 @@ void SimpleGamePlay::AddObjects()
 
 	BuildGround(dimensions);
 
+	GameObject* ground = CommonUtils::BuildCuboidObject(
+		"Ground",
+		Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
+		Vector3(dimensions.x, 1.0f, dimensions.y),		// Scale
+		true,
+		0.0f,
+		true,
+		false,								// Dragable By User
+		BIG_NODE,
+		Vector4(0.6f, 0.6f, 0.6f, 1.0f),
+		MATERIALTYPE::Ground);	// Colour
+	this->AddGameObject(ground);
+
 	// PICKUPS 
 	AddGameObject(new PaintPool(Vector3(0, 0.6f, 0), RED,"0"));
 	AddGameObject(new WeaponPickup(Vector3(20, 1.5, 20), PAINT_SPRAY, "1", 5.0f));
@@ -58,7 +71,14 @@ void SimpleGamePlay::AddObjects()
 	// CAPTUREAREAS
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
-	
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "2", { 0,1.5f,-25 }, { 0.5f,0.5f,0.5f }, 10));
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "3", { 0,1.5f,-20 }, { 0.5f,0.5f,0.5f }, 10));
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "4", { 0,1.5f,-15 }, { 0.5f,0.5f,0.5f }, 10));
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "5", { 0,1.5f,-10 }, { 0.5f,0.5f,0.5f }, 10));
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "6", { 0,1.5f,-5 }, { 0.5f,0.5f,0.5f }, 10));
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "6", { 0,1.5f,0 }, { 0.5f,0.5f,0.5f }, 10));
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "6", { 0,1.5f,5 }, { 0.5f,0.5f,0.5f }, 10));
+
 	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15.0f, 0.6f, -15.0f), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
 	AddGameObject(mpp);
 	mpp->AddPool(cpp1);

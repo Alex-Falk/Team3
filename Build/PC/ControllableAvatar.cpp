@@ -109,6 +109,19 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 // Updates everything on player
 void ControllableAvatar::Update(float dt) {
 
+	if (this->Physics()->GetPosition().y <= -10.0f)
+	{
+		this->Physics()->SetPosition(((Map*)Game::Instance()->GetMap())->GetSpawnPos(this->col));
+		this->Physics()->SetForce(Vector3(0, 0, 0));
+		this->Physics()->SetLinearVelocity(Vector3(0, 0, 0));
+		this->Physics()->SetAngularVelocity(Vector3(0, 0, 0));
+	}
+
+	if (targetLife < minLife)
+	{
+		targetLife = minLife;
+	}
+
 	shooting = false;
 
 	ProcessAvatarInput(dt);

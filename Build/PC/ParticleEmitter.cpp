@@ -59,6 +59,10 @@ ParticleEmitter::ParticleEmitter(
 
 	RGB = EnumToVectorColour(c);
 
+	positions = new vec3[numParticles];
+	velocities = new vec3[numParticles];
+	startingVels = new vec3[numParticles];
+
 	if (lifetime < 0.01f)
 	{
 		isDeleting = false;
@@ -82,51 +86,54 @@ ParticleEmitter::ParticleEmitter(
 	}
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
+
 	glGenBuffers(1, &velSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, velSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, particleNum * sizeof(vec3), NULL, GL_STATIC_DRAW);
-
+	
 	vec3 *vels = (vec3*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), bufMask);
 
-	if (rate < 0.0001f)
+	int randPitch;
+	int randYaw;
+
+	for (uint i = 0; i < particleNum; ++i)
 	{
-		int randPitch;
-		int randYaw;
+		
+		vels[i].x = 0;
+		vels[i].y = 0;
+		vels[i].z = 0;
+		vels[i].buff = 1.0f;
 
-		for (uint i = 0; i < particleNum; ++i)
-		{
-
-
-			randPitch = rand() % 90;
-			randYaw = rand() % 360;
-			Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction;
-			
-			vels[i].x = dir.x;
-			vels[i].y = dir.y;
-			vels[i].z = dir.z;
-			vels[i].buff = 1.0f;
-			
-			Particle * p = new Particle(c, pos, { vels[i].x,vels[i].y,vels[i].z }, scale);
-
-			particles.push_back(p);
-		}
-	}
-	else
-	{
-		for (uint i = 0; i < particleNum; ++i)
-		{
-			vels[i].x = 0.0f;
-			vels[i].y = 0.0f;
-			vels[i].z = 0.0f;
-			vels[i].buff = 1.0f;
-		}
+		Particle * p = new Particle(c, pos, { 0, 10, 0}, scale);
+		particles.push_back(p);
 	}
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 
-	positions = new vec3[numParticles];
-	velocities = new vec3[numParticles];
+
+	glGenBuffers(1, &startVelSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, startVelSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, particleNum * sizeof(vec3), NULL, GL_STATIC_DRAW);
+
+	vec3 *startvels = (vec3*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), bufMask);
+
+
+	for (uint i = 0; i < particleNum; ++i)
+	{
+		randPitch = rand() % 90;
+		randYaw = rand() % 360;
+		Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction;
+
+		startvels[i].x = dir.x;
+		startvels[i].y = dir.y;
+		startvels[i].z = dir.z;
+		startvels[i].buff = 1.0f;		
+	}
+
+	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
 
 	shader = GraphicsPipeline::Instance()->GetShader(SHADERTYPE::ParticleCompute);
+	
 }
 
 ParticleEmitter::~ParticleEmitter()
@@ -167,21 +174,21 @@ void ParticleEmitter::Update(float dt)
 	int randYaw;
 
 
-	if (rate >= 0.0001f)
-	{
-		timer += dt;
-		if (timer > rate)
-		{
-			if ((uint)particles.size() < particleNum - 1)
-			{
-				randPitch = rand() % 90;
-				randYaw = rand() % 360;
-				Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction;
-				particles.push_back(new Particle(c, pos, dir, scale));
-			}
-			timer = 0.0f;
-		}
-	}
+	//if (rate >= 0.0001f)
+	//{
+	//	timer += dt;
+	//	if (timer > rate)
+	//	{
+	//		if ((uint)particles.size() < particleNum - 1)
+	//		{
+	//			randPitch = rand() % 90;
+	//			randYaw = rand() % 360;
+	//			Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction;
+	//			particles.push_back(new Particle(c, pos, dir, scale));
+	//		}
+	//		timer = 0.0f;
+	//	}
+	//}
 
 	if (isDeleting)
 	{
@@ -196,10 +203,13 @@ void ParticleEmitter::Update(float dt)
 	{
 		glUseProgram(shader->GetProgram());
 		glUniform1fv(glGetUniformLocation(shader->GetProgram(), "dt"), 1, &dt);
+		glUniform1fv(glGetUniformLocation(shader->GetProgram(), "maxDist"), 1, &particleMaxDist);
+		glUniform3fv(glGetUniformLocation(shader->GetProgram(), "startPos"), 1, (float*)&pos);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, posSBO);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, velSBO);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, startVelSBO);
 
-		glDispatchCompute(particleNum / 2, 2, 1);
+		glDispatchCompute(particleNum, 1, 1);
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 		glUseProgram(0);
 
@@ -211,42 +221,18 @@ void ParticleEmitter::Update(float dt)
 		glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), velocities);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
-		float dist = particleMaxDist + 1.0f;
-		float alpha;
-
 		for (uint i = 0; i < particles.size(); ++i)
 		{
 			if (particles[i])
 			{
 				particles[i]->SetPos({ positions[i].x,positions[i].y,positions[i].z });
 
-				if (particleMaxDist > 0.1f)
+				particles[i]->Render()->SetChildColor(Vector4(RGB.x, RGB.y, RGB.z, positions[i].buff));
+				particles[i]->Render()->SetChildBaseColor(Vector4(RGB.x, RGB.y, RGB.z, positions[i].buff));
+
+				if (velocities[i].buff >= 0.9f)
 				{
-					dist = (particles[i]->GetPos() - this->pos).Length();
-					alpha = max((1.0f - (dist / particleMaxDist)), 0.0f);
-
-					particles[i]->Render()->SetChildColor(Vector4(RGB.x, RGB.y, RGB.z, alpha));
-					particles[i]->Render()->SetChildBaseColor(Vector4(RGB.x, RGB.y, RGB.z, alpha));
-				}				
-
-				if (particles[i]->GetPos().y <= 0.0f || dist >= particleMaxDist)
-				{
-					positions[i].x = pos.x;
-					positions[i].y = pos.y;
-					positions[i].z = pos.z;
-					positions[i].buff = 1;
-
-					randPitch = rand() % 90;
-					randYaw = rand() % 360;
-					Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction * 1;
-
-					velocities[i].x = dir.x;
-					velocities[i].y = dir.y;
-					velocities[i].z = dir.z;
-					velocities[i].buff = 1;
-
 					particles[i]->SetScale(scale);
-
 					if (rate < 0.0001f)
 					{
 						SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(particles[i]);
@@ -256,13 +242,13 @@ void ParticleEmitter::Update(float dt)
 			}
 		}
 
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, posSBO);
-		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), positions);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, posSBO);
+		//glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), positions);
+		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, velSBO);
-		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), velocities);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, velSBO);
+		//glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), velocities);
+		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 	}
 	
 }

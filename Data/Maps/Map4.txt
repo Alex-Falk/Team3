@@ -1,4 +1,4 @@
-NEW_TEXTURE 0 PaintPool.png   //Texture with ID 0
+NEW_TEXTURE 0 Grovel.png   //Texture with ID 0
 NEW_TEXTURE 1 PaintPool.png   //Texture with ID 1
 NEW_TEXTURE 2 PaintPool.png   //Texture with ID 2
 NEW_TEXTURE 3 PaintPool.png   //Texture with ID 3
@@ -21,10 +21,10 @@ PAINT_POOL 50 1 -50 BLUE bluepool
 PAINT_POOL -50 1 50 PINK pinkpool
 MULTI_POOL 10 1 0 pool 10 7.5 0 2 2 2
 //arenawalls
-CUBE 100 5 0 wall 1 5 100 0 0 0 0
-CUBE -100 5 0 wall 1 5 100 0 0 0 0
-CUBE 0 5 100 wall 100 5 0 0 0 0 0
-CUBE 0 5 -100 wall 100 5 0 0 0 0 0
+GROUND 100 5 0 wall 1 5 100 0 0 0 0
+GROUND -100 5 0 wall 1 5 100 0 0 0 0
+GROUND 0 5 100 wall 100 5 0 0 0 0 0
+GROUND 0 5 -100 wall 100 5 0 0 0 0 0
 //wall minions
 MINION_AREA 95 1 -95 minionspawn 50
 MINION_AREA 95 1 -75 minionspawn 50
