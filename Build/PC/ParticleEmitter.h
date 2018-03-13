@@ -57,15 +57,19 @@ protected:
 	Colour c;
 	Vector3 pos;
 	Vector3 scale;
+	Vector3 direction;
 
 	Shader * shader;
 
+	float timer;
+
 public:
-	ParticleEmitter(uint numParticles, Colour c, Vector3 pos, Vector3 scale = { 0.1f,0.1f,0.1f }, Vector3 direction = { 0,1,0 }, float spreadYaw = 45.0f, float spreadPitch = 45.0f, float particleLife = 5.0f, float particleMaxDist = 10.0f);
+	ParticleEmitter(uint numParticles, Colour c, Vector3 pos, Vector3 scale = { 0.1f,0.1f,0.1f }, Vector3 direction = { 0,1,0 }, float spreadYaw = 10.0f, float spreadPitch = 10.0f, float particleLife = 5.0f, float particleMaxDist = 10.0f);
 	~ParticleEmitter();
 
 	void SetPos(Vector3 pos) { this->pos = pos; }
 	void SetScale(Vector3 scale) { this->scale = scale; }
+	void SetDirection(Vector3 dir) { this->direction = dir; }
 	virtual void Update(float dt);
 
 	virtual void OnDetachedFromScene();

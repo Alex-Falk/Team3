@@ -97,7 +97,7 @@ MinionBase::MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string na
 
 	isGrounded = false;
 
-	emitter = new ParticleEmitter(256, this->colour, this->Physics()->GetPosition(), { 0.05f,0.05f,0.05f }, { 1.0f, 1.0f, 0.0f }, 10.0f, 10.0f, 5.0f, 50.0f);
+	emitter = new ParticleEmitter(128, this->colour, this->Physics()->GetPosition(), { 0.05f,0.05f,0.05f }, { 1.0f, 1.0f, 0.0f }, 5.0f, 5.0f, 5.0f, 50.0f);
 }
 
 MinionBase::~MinionBase()
@@ -144,6 +144,8 @@ void MinionBase::Update(float dt)
 {
 	emitter->SetPos(this->physicsNode->GetPosition());
 	emitter->SetScale(Vector3(size*scale, size * scale, size * scale));
+	Vector3 dir = Physics()->GetLinearVelocity();
+	emitter->SetDirection(-dir.Normalise());
 	emitter->Update(dt);
 
 }

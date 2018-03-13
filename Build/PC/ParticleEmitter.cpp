@@ -48,6 +48,7 @@ ParticleEmitter::ParticleEmitter(
 	this->pos = pos;
 	this->c = c;
 	this->scale = scale;
+	this->direction = direction;
 
 	glGenBuffers(1, &posSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, posSBO);
@@ -83,12 +84,12 @@ ParticleEmitter::ParticleEmitter(
 
 
 
-	for (uint i = 0; i < particleNum; ++i)
-	{
-		Particle * p = new Particle(c, pos, { vels[i].x,vels[i].y,vels[i].z }, scale);
+	//for (uint i = 0; i < particleNum; ++i)
+	//{
+	//	Particle * p = nullptr;//new Particle(c, pos, { vels[i].x,vels[i].y,vels[i].z }, scale);
 
-		particles.push_back(p);
-	}
+	particles.push_back(nullptr);
+	//}
 
 	positions = new vec3[numParticles];
 	velocities = new vec3[numParticles];
@@ -155,7 +156,21 @@ void ParticleEmitter::Update(float dt)
 	int randPitch;
 	int randYaw;
 
-	for (uint i = 0; i < particleNum; ++i)
+
+	timer += dt;
+	if (timer > 1.0f/60.0f)
+	{
+		if ((uint)particles.size() < particleNum - 1)
+		{
+			randPitch	= rand() % 90;
+			randYaw		= rand() % 360;
+			Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction * 1;
+			particles.push_back(new Particle(c, pos, dir, scale));
+		}
+		timer = 0.0f;
+	}
+
+	for (uint i = 0; i < particles.size(); ++i)
 	{
 		if (particles[i])
 		{
@@ -166,14 +181,16 @@ void ParticleEmitter::Update(float dt)
 				positions[i].x = pos.x;
 				positions[i].y = pos.y;
 				positions[i].z = pos.z;
+				positions[i].buff = 1;
 
 				randPitch = rand() % 90;
 				randYaw = rand() % 360;
-				Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 1;
+				Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction * 1;
 
 				velocities[i].x = dir.x;
 				velocities[i].y = dir.y;
 				velocities[i].z = dir.z;
+				velocities[i].buff = 1;
 
 				particles[i]->SetScale(scale);
 			}
