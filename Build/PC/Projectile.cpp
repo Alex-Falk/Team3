@@ -10,6 +10,7 @@
 #include "Particle.h"
 #include "AudioSystem.h"
 
+
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;
 	projectileWorth = 0;
@@ -149,21 +150,6 @@ void Projectile::Explode() {
 	int randPitch;
 	int randYaw;
 	
-	//-Alex Falk----------------------------------------------------------//
-	// Particle Effect on rocket explosion
-	for (uint i = 0; i < 100; ++i)
-	{
-		randPitch = rand() % 180;
-		randYaw = rand() % 360;
-
-		Vector3 direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
-		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, { 0.05f,0.05f,0.05f }, 5.0f, 3.0f);
-
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle,1);
-	}
-	//--------------------------------------------------------------------//
-
-
 	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 3.0f, 5.0f, SPRAY, 4, "Spray");
 	explosion->UnregisterPhysicsToRenderTransformCallback();
 	explosion->Render()->SetTransform(Matrix4::Translation(Vector3{ 1000.f,1000.f,1000.f }));

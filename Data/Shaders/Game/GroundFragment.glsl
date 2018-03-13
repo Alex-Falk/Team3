@@ -145,14 +145,14 @@ void main(void)	{
 	vec3 toWPos = normalize(IN.worldPos - uCameraPos);
 	vec4 reflection = texture(cubeTex, reflect(toWPos, normalize(IN.normal)));
 	reflection = reflection * vec4(diffuse,0.0f) * isPath;
-	finalLightColor = finalLightColor + reflection;
+	finalLightColor = finalLightColor;
 
 	
 	
 	vec3 up = vec3(0, 1, 0);
 	vec4 FinalColor;
-	if (length((normal - up)) < 0.1)
-		FinalColor = mix(finalLightColor, pathColor * shadow + pathColor * 0.4 + finalLightColor * 0.2 + reflection * 0.5, isPath);
+	if (length((normal - up)) < 0.9)
+		FinalColor = mix(finalLightColor, pathColor * shadow + pathColor * 0.4 + finalLightColor * 0.2 + reflection, isPath);
 	else
 		FinalColor = finalLightColor;
 	OutFrag = FinalColor;

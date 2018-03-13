@@ -54,8 +54,8 @@ class Scene
 {
 public:
 
-	Scene(const std::string& friendly_name)	//Called once at program start - all scene initialization should be done in 'OnInitializeScene'
-		: m_SceneName(friendly_name)
+	Scene(const std::string& friendly_name, const std::string& MapName)	//Called once at program start - all scene initialization should be done in 'OnInitializeScene'
+		: m_SceneName(friendly_name), mapName(MapName)
 	{}; 
 
 	~Scene()
@@ -63,7 +63,6 @@ public:
 		DeleteAllGameObjects();
 		m_UpdateCallbacks.clear();
 	}
-
 
 	// Called when scene is being activated, and will begin being rendered/updated. 
 	//	 - Initialize objects/physics here
@@ -290,7 +289,9 @@ protected:
 
 		mapDynamicObjects.clear();
 	}
-
+	
+	void SetMapName(std::string name) { mapName = name; }
+	std::string GetMapName() { return mapName; }
 
 protected:
 	std::string					m_SceneName;
@@ -298,6 +299,7 @@ protected:
 	std::vector<GameObject*>	mapDynamicObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
 
+	string mapName;
 	// Timing Variables
 	PerfTimer perfMapObjects;
 

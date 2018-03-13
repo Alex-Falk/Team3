@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Avatar.h"
 #include "MainMenu.h"
+#include "DataDrivenMap.h"
 
 string temp[4] = { "", "", "", "" };
 
