@@ -205,9 +205,16 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 	{
 		//-Alex Falk----------------------------------------------------------//
 		// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
-		GameObject * ca = CommonUtils::BuildCuboidObject("CA", Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])));
-		ca->SetColour(Colour(stoi(object[8])));
-		ca->Physics()->SetInverseMass(stof(object[9]));
+		GameObject * ca = CommonUtils::BuildCuboidObject(
+			"CA", 
+			Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
+			Vector3(stof(object[5]), stof(object[6]), stof(object[7])),
+			true,
+			stof(object[9]),
+			true,
+			false,
+			DEFAULT_PHYSICS,
+			DEFAULT_COLOUR);
 		if (object[10] == "TEXTURE") {
 			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
 		}
