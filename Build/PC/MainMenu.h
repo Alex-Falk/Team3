@@ -178,6 +178,7 @@ private:
 	CEGUI::Titlebar* ipText;
 	inputBox IpInputBox;
 	inputBox userName;
+	inputBox customMap;
 	CEGUI::PushButton* ComfirmHostName;
 	//3.1 Map text
 	CEGUI::Titlebar* Map1Text;
@@ -253,6 +254,12 @@ public:
 		userName.editbox->setText("");
 		GUIsystem::Instance()->SetIsTyping(true);
 		GUIsystem::Instance()->currentType = "UserName";
+	}
+	void OnCostomMapClicked()
+	{
+		customMap.editbox->setText("");
+		GUIsystem::Instance()->SetIsTyping(true);
+		GUIsystem::Instance()->currentType = "customMap";
 	}
 	void onLobbyMenuBackButtonClicked();
 	

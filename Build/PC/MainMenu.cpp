@@ -76,8 +76,13 @@ void MainMenu::TextInputHelper()
 			Game::Instance()->SetName(clientName.editbox->getText().c_str());
 			GUIsystem::Instance()->SetIsTyping(false);
 		}
+		else if(GUIsystem::Instance()->currentType == "customMap"){
+			//TODO:set next map name here
+
+
+			GUIsystem::Instance()->SetIsTyping(false);
+		}
 		else {
-			//Currently ip input is handled in MainMenu.cpp
 			return;
 		}
 		GUIsystem::Instance()->sendInfo = false;
@@ -200,7 +205,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map1Text"
 		));
-	Map1Text->setText("MAP1: xxxxxxxx");
+	Map1Text->setText("MAP1: Dong Li's bedroom");
 
 	Map2Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -208,7 +213,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map2Text"
 		));
-	Map2Text->setText("MAP2: xxxxxxxx");
+	Map2Text->setText("MAP2: Urban Science Building");
 
 	Map3Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -216,7 +221,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map3Text"
 		));
-	Map3Text->setText("MAP3: xxxxxxxx");
+	Map3Text->setText("MAP3: 404 not found");
 
 	Map4Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -224,8 +229,19 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map4Text"
 		));
-	Map4Text->setText("MAP4: xxxxxxxx");
+	Map4Text->setText("MAP4: give this a fcking name");
 	
+	customMap.editbox = static_cast<CEGUI::Editbox*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
+			Vector4(0.65f, 0.85f, 0.2f, 0.05f),
+			Vector4(),
+			"customMap"
+		));
+	customMap.type = "customMap";
+	customMap.editbox->setText("Type Data driven map name");
+	customMap.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnCostomMapClicked, this));
+	GUIsystem::Instance()->editboxes.push_back(customMap);
+
 	userName.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
 			Vector4(0.40f, 0.60f, 0.2f, 0.05f),
@@ -328,6 +344,9 @@ void MainMenu::HideLobby()
 	userName.editbox->setVisible(false);
 	userName.editbox->disable();
 
+	customMap.editbox->setVisible(false);
+	customMap.editbox->disable();
+
 	Map1Rbutton->setVisible(false);
 	Map1Rbutton->disable();
 
@@ -394,6 +413,9 @@ void MainMenu::ShowLobbyMenuServer()
 
 	userName.editbox->setVisible(true);
 	userName.editbox->enable();
+
+	customMap.editbox->setVisible(true);
+	customMap.editbox->enable();
 
 	Map1Rbutton->setVisible(true);
 	Map1Rbutton->enable();
