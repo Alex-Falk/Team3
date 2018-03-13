@@ -86,7 +86,7 @@ void Game::Update(float dt)
 			}
 		}
 
-		if (PhysicsEngine::Instance()->IsPaused() && time > gameLength)
+		if (IsHost() && PhysicsEngine::Instance()->IsPaused() && time > gameLength)
 		{
 			ResetGame();
 			SceneManager::Instance()->JumpToScene(0);
@@ -119,6 +119,12 @@ void Game::ResetGame()
 		user->Disconnect();
 		delete user;
 		user = nullptr;
+	}
+
+	for (uint i = 0; i < 4; ++i)
+	{
+		teamScores[i] = 0;
+		userNames[i] = "Player " + to_string(i);
 	}
 
 	enet_deinitialize();
