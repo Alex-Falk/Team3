@@ -40,7 +40,7 @@ private:
 	uint activeCapture;
 	uint linenum;
 	Map* map;
-	string fileName = "Map4";
+	string fileName;
 	vector<string> lines;
 	TEXTURETYPE textureID[10];
 	int textID;
@@ -77,8 +77,9 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
-	DataDrivenMap(const std::string& friendly_name) :
-		Map(friendly_name)
+	DataDrivenMap(const std::string& friendly_name, std::string filename = "Map4") :
+		Map(friendly_name),
+		fileName(filename)
 	{
 	}
 

@@ -103,7 +103,7 @@ void Initialize()
 	InitialiseAudioFiles();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels","Map2"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));

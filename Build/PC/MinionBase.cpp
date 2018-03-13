@@ -53,12 +53,13 @@ MinionBase::MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string na
 	RenderNode * rnode = new RenderNode();
 	PhysicsNode * pnode = new PhysicsNode();
 
-	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), name, RGBA);
+	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), name, Vector4(RGBA.x, RGBA.y, RGBA.z, 0.0f));
 	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
 
-	rnode->GetChild()->SetBaseColor(RGBA);
+	rnode->GetChild()->SetBaseColor(Vector4(RGBA.x,RGBA.y,RGBA.z,0.0f));
+
 	rnode->SetTransform(Matrix4::Translation(position));
 
 	pnode->SetBoundingRadius(size);
