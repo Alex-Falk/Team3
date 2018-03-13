@@ -337,6 +337,8 @@ void MainMenu::onHostNameConfirmed()
 
 void MainMenu::HideLobby()
 {
+	Game::Instance()->ResetGame();
+
 	ipText->setVisible(false);
 	ipText->disable();
 
@@ -385,6 +387,7 @@ void MainMenu::HideLobby()
 
 void MainMenu::onLobbyMenuBackButtonClicked()
 {
+	Game::Instance()->ResetGame();
 	HideLobby();
 	ShowMainMenu();
 }
@@ -760,7 +763,7 @@ void MainMenu::onConnectButtonClicked()
 void MainMenu::OndisconnectButtonClicked()
 {
 	//TODO:disconnect from lobby
-	Game::Instance()->GetUser()->Disconnect();
+	Game::Instance()->ResetGame();
 	HideWaitingInfo();
 	ShowConnectionMenu();
 }
