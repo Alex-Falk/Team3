@@ -58,8 +58,8 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
-	SimpleGamePlay(const std::string& friendly_name) :
-		Map(friendly_name)
+	SimpleGamePlay(const std::string& friendly_name, const std::string& mapName) :
+		Map(friendly_name, mapName)
 	{
 	}
 

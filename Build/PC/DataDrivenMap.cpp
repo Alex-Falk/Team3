@@ -94,6 +94,10 @@ void DataDrivenMap::ReadFile() {
 	}
 }
 
+
+//--------------------------------------------------------------------------------------------//
+// Data Driven Map Functions
+//--------------------------------------------------------------------------------------------//
 void DataDrivenMap::Buildmap() {
 	BuildObject(GetObjects(lines[10]));
 }
@@ -142,9 +146,6 @@ vector<string> DataDrivenMap::GetLines(std::string file) {
 vector<string> DataDrivenMap::GetObjects(std::string line) {
 	vector<string> object;
 	object = split(line, ' ');
-	//if (object[0] == "\n" && object[0] == "//")
-	//	numemptyline++;
-	//else
 	return object;
 }
 

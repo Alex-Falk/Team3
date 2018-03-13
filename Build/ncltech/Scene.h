@@ -54,7 +54,7 @@ class Scene
 {
 public:
 
-	Scene(const std::string& friendly_name)	//Called once at program start - all scene initialization should be done in 'OnInitializeScene'
+	Scene(const std::string& friendly_name, const std::string& MapName)	//Called once at program start - all scene initialization should be done in 'OnInitializeScene'
 		: m_SceneName(friendly_name)
 	{}; 
 
