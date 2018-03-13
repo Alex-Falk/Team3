@@ -47,12 +47,14 @@ protected:
 
 	GLuint posSBO;
 	GLuint velSBO;
+	GLuint startVelSBO;
 
 	uint particleNum;
 	vector<Particle*> particles;
 
 	vec3 * positions;
 	vec3 * velocities;
+	vec3 * startingVels;
 
 	Colour c;
 	Vector4 RGB;

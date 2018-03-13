@@ -1,4 +1,4 @@
-NEW_TEXTURE 0 PaintPool.png 	//Texture with ID 0
+NEW_TEXTURE 0 Metal.jpg
 NEW_TEXTURE 1 PaintPool.png 	//Texture with ID 1
 NEW_TEXTURE 2 PaintPool.png 	//Texture with ID 2
 NEW_TEXTURE 3 PaintPool.png 	//Texture with ID 3
@@ -8,18 +8,38 @@ NEW_TEXTURE 6 PaintPool.png 	//Texture with ID 6
 NEW_TEXTURE 7 PaintPool.png 	//Texture with ID 7
 NEW_TEXTURE 8 PaintPool.png 	//Texture with ID 8
 NEW_TEXTURE 9 PaintPool.png 	//Texture with ID 9
-MAP 100 100  			//Ground Dimensions 
-SPAWN_LOC 0 92 24 98		//Spawn Position 1 x y z 
-SPAWN_LOC 1 94 24 98	 	//Spawn Position 2 x y z 
-SPAWN_LOC 2 96 24 98 		//Spawn Position 3 x y z 
-SPAWN_LOC 3 98 24 98 		//Spawn Position 4 x y z 
-GROUND 95 0 55 ground 5 10 50 -10 0 0
-GROUND 101 0 55 ground 1 20 50 0 0 0
-GROUND 93 0 101 ground 7 20 1 0 0 0
-WEAPON_PICKUP 92 5 10 PAINT_PISTOL weapon 10 TEXTURE 2
-WEAPON_PICKUP 94 5 10 PAINT_PISTOL weapon 10 TEXTURE 2
-WEAPON_PICKUP 96 5 10 PAINT_PISTOL weapon 10 TEXTURE 2
-WEAPON_PICKUP 98 5 10 PAINT_PISTOL weapon 10 TEXTURE 2
-CAPTURE_AREA 70 15 95 captureArea 5 1 5 500 0
-MULTI_POOL 50 16 95 pool 50 15 95 5 1 5
-CAPTURE_AREA 30 15 95 captureArea 5 1 5 500 0
+MAP 50 50 					//Ground Dimensions 
+SPAWN_LOC 0 -4 5 -48		//Spawn Position 1 x y z 
+SPAWN_LOC 1 -2 5 -48	 	//Spawn Position 2 x y z 
+SPAWN_LOC 2 2 5 -48 		//Spawn Position 3 x y z 
+SPAWN_LOC 3 4 5 -48 		//Spawn Position 4 x y z 
+GROUND 45 0 27 ground 5 5 25 -10 0 0	//Ramp 1
+GROUND -45 0 27 ground 5 5 25 -10 0 0	//Ramp 2
+GROUND 51 5 25 ground 1 5 25 0 0 0		//Wall for Ramp1
+GROUND -51 5 25 ground 1 5 25 0 0 0		//Wall for Ramp2
+GROUND 0 10 51.2 ground 51 5 1 0 0 0	//Wall for HighGround
+GROUND 0 5 25 ground 40 4 25 0 0 0		//High Ground
+GROUND 0 0 -20 ground 50 1 30 0 0 0	
+GROUND 0 8.5 -25 ground 5 0.5 25 0 0 0	//Upper Platform ground
+CUBE 0 1.1 -25 ground 8 0.01 25 0 0 0 0 TEXTURE 0
+CAPTURE_AREA 1 9.5 0 box 1 1 1 10 5 0 0 0
+CAPTURE_AREA 3 9.5 0 box 1 1 1 10 5 0 0 0
+CAPTURE_AREA -1 9.5 0 box 1 1 1 10 5 0 0 0
+CAPTURE_AREA -3 9.5 0 box 1 1 1 10 5 0 0 0
+CAPTURE_AREA 1 10.5 0 box 1 1 1 10 5 0 0 0
+CAPTURE_AREA 3 10.5 0 box 1 1 1 10 5 0 0 0
+CAPTURE_AREA -1 10.5 0 box 1 1 1 10 5 0 0 0
+CAPTURE_AREA -3 10.5 0 box 1 1 1 10 5 0 0 0
+WEAPON_PICKUP 42 5 10 PAINT_PISTOL weapon 10 TEXTURE 2
+PICKUP 44 5 10 JUMP_BOOST jump TEXTURE 2
+WEAPON_PICKUP 46 5 10 PAINT_PISTOL weapon 10 TEXTURE 2
+PICKUP 48 5 10 SPEED_BOOST speed TEXTURE 2
+WEAPON_PICKUP -42 5 10 PAINT_PISTOL weapon 10 TEXTURE 2
+PICKUP -44 5 10 JUMP_BOOST jump TEXTURE 2
+WEAPON_PICKUP -46 5 10 PAINT_PISTOL weapon 10 TEXTURE 2
+PICKUP -48 5 10 SPEED_BOOST speed TEXTURE 2
+MULTI_POOL 0 1 -45 pool 0 9 -45 2 1 2
+PAINT_POOL -10 8.6 45 RED redpool
+PAINT_POOL -20 8.6 45 BLUE redpool
+PAINT_POOL 10 8.6 45 GREEN redpool
+PAINT_POOL 20 8.6 45 PINK redpool

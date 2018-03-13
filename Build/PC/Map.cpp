@@ -161,18 +161,18 @@ void Map::OnInitializeGUI()
 }
 
 void Map::BuildGround(Vector2 dimensions) {
-	GameObject* ground = CommonUtils::BuildCuboidObject(
-		"Ground",
-		Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
-		Vector3(dimensions.x, 1.0f, dimensions.y),		// Scale
-		true,
-		0.0f,
-		true,
-		false,								// Dragable By User
-		BIG_NODE,
-		Vector4(0.6f, 0.6f, 0.6f, 1.0f),
-		MATERIALTYPE::Ground);	// Colour
-	this->AddGameObject(ground);
+	//GameObject* ground = CommonUtils::BuildCuboidObject(
+	//	"Ground",
+	//	Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
+	//	Vector3(dimensions.x, 1.0f, dimensions.y),		// Scale
+	//	true,
+	//	0.0f,
+	//	true,
+	//	false,								// Dragable By User
+	//	BIG_NODE,
+	//	Vector4(0.6f, 0.6f, 0.6f, 1.0f),
+	//	MATERIALTYPE::Ground);	// Colour
+	//this->AddGameObject(ground);
 
 	GameObject* upWall = CommonUtils::InvisibleWall(
 		"UpWall",
