@@ -1,4 +1,3 @@
-
 #include <enet\enet.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
@@ -102,11 +101,11 @@ void Initialize()
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
 
-	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
+	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!", "MainMenu"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "Map4"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	
@@ -228,8 +227,10 @@ void HandleKeyboardInputs()
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
 		show_full_perf_metrics = !show_full_perf_metrics;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0)) {
 		show_debug = !show_debug;
+		NCLDebug::printLOG = !NCLDebug::printLOG;
+	}
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))

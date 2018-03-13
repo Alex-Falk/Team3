@@ -76,7 +76,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
 	//--------------------------------------------------------------------------------------------//
-	Map(const std::string& friendly_name) : Scene(friendly_name) {}
+	Map(const std::string& friendly_name, const std::string& mapName) : Scene(friendly_name, mapName) {}
 	virtual ~Map();
 
 	virtual void OnCleanupScene();

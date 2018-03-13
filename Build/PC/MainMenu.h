@@ -206,8 +206,8 @@ private:
 	//User chosen map
 	int nextMapID = 1;
 public:
-	MainMenu(const std::string& friendly_name)
-		: Scene(friendly_name) {}
+	MainMenu(const std::string& friendly_name, const std::string& mapName)
+		: Scene(friendly_name, mapName) {}
 	~MainMenu();
 
 	//Scene functions

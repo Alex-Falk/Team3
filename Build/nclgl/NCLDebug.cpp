@@ -329,94 +329,103 @@ void NCLDebug::AddStatusEntry(const Vector4& color, const std::string text, ...)
 
 
 //Log
+bool NCLDebug::printLOG;
 void NCLDebug::AddLogEntry(const Vector3& color, const std::string& text)
 {
-	time_t now = time(0);
-	tm ltm;
-	localtime_s(&ltm, &now);
+	if (false) {
+		time_t now = time(0);
+		tm ltm;
+		localtime_s(&ltm, &now);
 
-	time_t secondsSinceEpoch = time(NULL);
-	tm brokenTime;
-	string prepend;
-	if (!localtime_s(&brokenTime, &secondsSinceEpoch))
-	{
-		char buf[80];
-		strftime(buf, sizeof(buf), "[%T] ", &brokenTime);
-		prepend = string(buf);
-	}
+		time_t secondsSinceEpoch = time(NULL);
+		tm brokenTime;
+		string prepend;
+		if (!localtime_s(&brokenTime, &secondsSinceEpoch))
+		{
+			char buf[80];
+			strftime(buf, sizeof(buf), "[%T] ", &brokenTime);
+			prepend = string(buf);
+		}
 
-	LogEntry le;
-	le.text = prepend + text;
-	le.color = Vector4(color.x, color.y, color.z, 1.0f);
+		LogEntry le;
+		le.text = prepend + text;
+		le.color = Vector4(color.x, color.y, color.z, 1.0f);
 
-	g_vLogEntries.push_back(le);	
-	if (g_vLogOffsetIdx == int(g_vLogEntries.size()) - 2)
-	{
-		g_vLogOffsetIdx++;
-	}
+		g_vLogEntries.push_back(le);
+		if (g_vLogOffsetIdx == int(g_vLogEntries.size()) - 2)
+		{
+			g_vLogOffsetIdx++;
+		}
 
-	std::cout << le.text << std::endl;
+		std::cout << le.text << std::endl;
 
 #ifdef LOG_OUTPUT_FILE_ENABLED
-	if (!g_vOutLogFile)
-	{
-		if (fopen_s(&g_vOutLogFile, LOG_OUTPUT_FILE, "w"))
-			g_vOutLogFile = NULL;
-	}
-	if (g_vOutLogFile)
-	{
-		fputs(le.text.c_str(), g_vOutLogFile);
-		fputs("\r\n", g_vOutLogFile);
-		fflush(g_vOutLogFile);
-	}
+		if (!g_vOutLogFile)
+		{
+			if (fopen_s(&g_vOutLogFile, LOG_OUTPUT_FILE, "w"))
+				g_vOutLogFile = NULL;
+		}
+		if (g_vOutLogFile)
+		{
+			fputs(le.text.c_str(), g_vOutLogFile);
+			fputs("\r\n", g_vOutLogFile);
+			fflush(g_vOutLogFile);
+		}
 #endif
+	}
 }
 
 void NCLDebug::Log(const Vector3& color, const std::string text, ...)
 {
-	va_list args;
-	va_start(args, text);
+	if (false) {
+		va_list args;
+		va_start(args, text);
 
-	char buf[1024];
-	int needed = vsnprintf_s(buf, 1023, _TRUNCATE, text.c_str(), args);
-	va_end(args);
+		char buf[1024];
+		int needed = vsnprintf_s(buf, 1023, _TRUNCATE, text.c_str(), args);
+		va_end(args);
 
-	int length = (needed < 0) ? 1024 : needed;
-	AddLogEntry(color, std::string(buf, (size_t)length));
+		int length = (needed < 0) ? 1024 : needed;
+		AddLogEntry(color, std::string(buf, (size_t)length));
+	}
 }
 
 void NCLDebug::Log(const std::string text, ...)
 {
-	va_list args;
-	va_start(args, text);
+	if (false) {
+		va_list args;
+		va_start(args, text);
 
-	char buf[1024];
-	int needed = vsnprintf_s(buf, 1023, _TRUNCATE, text.c_str(), args);
-	va_end(args);
+		char buf[1024];
+		int needed = vsnprintf_s(buf, 1023, _TRUNCATE, text.c_str(), args);
+		va_end(args);
 
-	int length = (needed < 0) ? 1024 : needed;
-	AddLogEntry(Vector3(0.4f, 1.0f, 0.6f), std::string(buf, (size_t)length));
+		int length = (needed < 0) ? 1024 : needed;
+		AddLogEntry(Vector3(0.4f, 1.0f, 0.6f), std::string(buf, (size_t)length));
+	}
 }
 
 void NCLDebug::LogE(const char* filename, int linenumber, const std::string text, ...)
 {
-	//Error Format:
-	//<text>
-	//		-> <line number> : <file name> 
+	if (false) {
+		//Error Format:
+		//<text>
+		//		-> <line number> : <file name> 
 
-	va_list args;
-	va_start(args, text);
+		va_list args;
+		va_start(args, text);
 
-	char buf[1024];
-	int needed = vsnprintf_s(buf, 1023, _TRUNCATE, text.c_str(), args);
-	va_end(args);
+		char buf[1024];
+		int needed = vsnprintf_s(buf, 1023, _TRUNCATE, text.c_str(), args);
+		va_end(args);
 
-	int length = (needed < 0) ? 1024 : needed;
+		int length = (needed < 0) ? 1024 : needed;
 
-	Log(Vector3(1.0f, 0.25f, 0.25f), "[ERROR] %s:%d", filename, linenumber);
-	AddLogEntry(Vector3(1.0f, 0.5f, 0.5f), "\t \x01 \"" + std::string(buf, (size_t)length) + "\"");
+		Log(Vector3(1.0f, 0.25f, 0.25f), "[ERROR] %s:%d", filename, linenumber);
+		AddLogEntry(Vector3(1.0f, 0.5f, 0.5f), "\t \x01 \"" + std::string(buf, (size_t)length) + "\"");
 
-	std::cout << std::endl;
+		std::cout << std::endl;
+	}
 }
 
 
