@@ -125,7 +125,7 @@ void Game::ResetGame()
 	{
 		teamScores[i] = 0;
 		captureScores[i] = 0;
-		userNames[i] = "Player " + to_string(i);
+		userNames[i] = "Player " + to_string(i+1);
 	}
 
 	enet_deinitialize();
