@@ -8,6 +8,7 @@
 #include <ncltech/SceneManager.h>
 #include "Projectile.h"
 #include "Particle.h"
+#include "AudioSystem.h"
 
 Projectile::Projectile() : GameObject() {
 	colour = START_COLOUR;
@@ -57,7 +58,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	SetPhysics(physicsNode);
 	physicsNode->SetName(name);
 	destroy = false;
-	projectileWorth = projWorth;
+	projectileWorth = (float)projWorth;
 
 
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
@@ -115,7 +116,7 @@ Projectile::Projectile(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 vel
 	SetPhysics(physicsNode);
 	physicsNode->SetName(name);
 	destroy = false;
-	projectileWorth = projWorth;
+	projectileWorth = (float)projWorth;
 
 	GraphicsPipeline::Instance()->AddPlayerRenderNode(dummy);
 	((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
@@ -150,13 +151,13 @@ void Projectile::Explode() {
 	
 	//-Alex Falk----------------------------------------------------------//
 	// Particle Effect on rocket explosion
-	for (uint i = 0; i < 60; ++i)
+	for (uint i = 0; i < 100; ++i)
 	{
 		randPitch = rand() % 180;
 		randYaw = rand() % 360;
 
 		Vector3 direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
-		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, 0.05f, 5.0f, 3.0f);
+		Particle * particle = new Particle(this->colour, this->Physics()->GetPosition(), direction*0.4f, { 0.05f,0.05f,0.05f }, 5.0f, 3.0f);
 
 		SceneManager::Instance()->GetCurrentScene()->AddGameObject(particle,1);
 	}
@@ -167,6 +168,7 @@ void Projectile::Explode() {
 	explosion->UnregisterPhysicsToRenderTransformCallback();
 	explosion->Render()->SetTransform(Matrix4::Translation(Vector3{ 1000.f,1000.f,1000.f }));
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(explosion,1);
+	AudioSystem::Instance()->PlayASound(EXPLOSION_SOUND, false, Physics()->GetPosition(), { 0,0,0 });
 	
 	//move above the arena so we don't see the sphere for the frame it exists
 	Physics()->SetPosition(Physics()->GetPosition() + Vector3{ 0,200,0 }); 

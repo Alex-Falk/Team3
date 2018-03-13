@@ -64,8 +64,20 @@ void Quit(bool error = false, const std::string &reason = "") {
 
 //initialise all audio files
 void InitialiseAudioFiles() {
-	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
-	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+	//TODO get actual audio files
+	//TODO place the remaining sounds
+	AudioSystem::Instance()->Create2DStream(MENU_MUSIC, SOUNDSDIR"menuMusic.mp3");
+	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, SOUNDSDIR"gameMusic.mp3");
+	AudioSystem::Instance()->Create3DSound(JUMP_SOUND, SOUNDSDIR"jumpSound.mp3", 5.0f, 80.0f);//need placement
+	AudioSystem::Instance()->Create3DSound(ROCKET_FLYING_SOUND, SOUNDSDIR"singing.wav",10.0f, 80.0f);
+	AudioSystem::Instance()->Create3DSound(EXPLOSION_SOUND, SOUNDSDIR"explosionSound.mp3", 5.0f, 80.0f);	
+	AudioSystem::Instance()->Create3DSound(PROJECTILE_LAUNCH_SOUND, SOUNDSDIR"projectileLaunchSound.mp3", 10.0f, 80.0f);
+	AudioSystem::Instance()->Create2DSound(MENU_CHOICE_SOUND, SOUNDSDIR"menuChoiceSound.mp3");//need placement
+	AudioSystem::Instance()->Create3DSound(ROLLING_SOUND, SOUNDSDIR"rollingSound.mp3", 5.0f, 80.0f);//need placement
+	AudioSystem::Instance()->Create3DSound(PICKUP_COLLECTED_SOUND, SOUNDSDIR"pickupCollectedSound.mp3", 5.0f, 80.0f);
+	AudioSystem::Instance()->Create2DSound(TIMER_RUNOUT_SOUND, SOUNDSDIR"timerRunoutSound.mp3");//need placement
+	AudioSystem::Instance()->Create2DSound(VICTORY_SOUND, SOUNDSDIR"victorySound.mp3");//need placement
+	AudioSystem::Instance()->Create3DSound(CAPTURE_AREA_SOUND, SOUNDSDIR"captureAreaSound.mp3", 5.0f, 80.0f);//need placement
 }
 
 // Program Initialise
@@ -86,6 +98,8 @@ void Initialize()
 	
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
+	AudioSystem::Instance();
+	InitialiseAudioFiles();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!", "MainMenu"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "Map4"));
@@ -94,8 +108,7 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever", "Dongli's Angels!"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
-	AudioSystem::Instance();
-	InitialiseAudioFiles();
+	
 
 	GUIsystem::Instance()->SetUpLoadingScreen();
 }
@@ -198,8 +211,16 @@ void HandleKeyboardInputs()
 
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE))
 	{
-		Game::Instance()->ResetGame();
-		SceneManager::Instance()->JumpToScene(0);
+		if (Game::Instance()->IsRunning())
+		{
+			((Map*)Game::Instance()->GetMap())->showPauseMenu();
+		}
+		else
+		{
+			Game::Instance()->ResetGame();
+			SceneManager::Instance()->JumpToScene(0);
+		}
+
 	}
 		
 
@@ -249,6 +270,8 @@ void HandleKeyboardInputs()
 //	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
+
+//GUI interation function - Jeffery 12/03/2018
 void HandleGUIMouseCursor()
 {
 	Vector2 absPos;
@@ -304,6 +327,10 @@ void HandleGUITextInput()
 		GUIsystem::Instance()->HandleTextInput(KEYBOARD_BACK);
 		return;
 	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_CAPITAL)) {
+		GUIsystem::Instance()->SetIsCapsLocked(!GUIsystem::Instance()->GetIsCapsLocked());
+		return;
+	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
 		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
 			GUIsystem::Instance()->HandleTextInput(static_cast<KeyboardKeys>(i));
@@ -312,6 +339,7 @@ void HandleGUITextInput()
 	}
 }
 
+//Post process test - Jeffery 
 void TestPostProcess()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F1)) {

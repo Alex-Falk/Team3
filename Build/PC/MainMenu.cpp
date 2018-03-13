@@ -23,9 +23,14 @@ void MainMenu::OnCleanupScene()
 
 void MainMenu::OnInitializeScene()
 {
+	AudioSystem::Instance()->StopAllSounds();
+	AudioSystem::Instance()->Update();
+	AudioSystem::Instance()->PlayASound(MENU_MUSIC, true);
+
 	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GUIsystem::Instance()->SetDrawScoreBar(false);
 	GUIsystem::Instance()->SetDrawMiniMap(false);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
 
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
@@ -97,7 +102,7 @@ void MainMenu::OnUpdateScene(float dt)
 		TextInputHelper();
 	}
 	
-	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); ++i) {
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i) {
 		temp[i] = Game::Instance()->GetName(i);
 	}
 
@@ -529,10 +534,10 @@ void MainMenu::SetUpOptionMenu()
 		));
 
 	GameSoundsSlider->setMaxValue(1.0f);
-	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetGameSoundsVolume());
 	GameSoundsSlider->setVisible(false);
 	GameSoundsSlider->disable();
-	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetGameSoundsVolume());
 	GameSoundsSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onGameSoundvolumeChanged, this));
 	MusicSlider = static_cast<CEGUI::Slider*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Slider",
@@ -541,10 +546,10 @@ void MainMenu::SetUpOptionMenu()
 			"MusicSlider"
 		));
 	MusicSlider->setMaxValue(1.0f);
-	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMusicVolume());
 	MusicSlider->setVisible(false);
 	MusicSlider->disable();
-	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMusicVolume());
 	MusicSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMusicvolumeChanged, this));
 
 	mastervolumeText = static_cast<CEGUI::Titlebar*>(
@@ -656,7 +661,7 @@ void MainMenu::onCameraSensitivityChanged()
 
 void MainMenu::onEnableBloomButtonClicked()
 {
-	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
 }
 
 void MainMenu::onDisableBloomButtonClicked()

@@ -127,6 +127,7 @@ enum SHADERTYPE
 	SkyBox				= 6,
 	MiniMap				= 7,
 	Score				= 8,
+	ParticleCompute		= 9,
 	Shader_Number,
 };
 
@@ -176,6 +177,7 @@ public:
 	inline GLuint& GetShadowTex() { return shadowTex; }
 
 	inline Shader** GetAllShaders() { return shaders; }
+	inline Shader* GetShader(SHADERTYPE type) { return shaders[type]; }
 	inline Material** GetAllMaterials() { return materials; }
 
 	inline void AddPlayerRenderNode(RenderNode* playerRenderNode){ playerRenderNodes.push_back(playerRenderNode); }
@@ -184,6 +186,7 @@ public:
 	inline void RemoveAllPlayerRenderNode() { playerRenderNodes.clear(); }
 	void InitPath(Vector2 groundSize);
 	inline GLuint& GetPathTex() { return pathTex; }
+	const Vector2& GetGroundSize() const { return groundSize; }
 
 	//GUI
 	void SetIsMainMenu(bool a) { isMainMenu = a; }

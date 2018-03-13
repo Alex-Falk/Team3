@@ -99,6 +99,7 @@ bool GroundMaterial::Apply()
 	glActiveTexture(GL_TEXTURE5);
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "uPathTex"), 5);
 	glBindTexture(GL_TEXTURE_2D, graphicsPipeline->GetPathTex());
+	glUniform2f(glGetUniformLocation(shader->GetProgram(), "uGroundSize"), graphicsPipeline->GetGroundSize().x, graphicsPipeline->GetGroundSize().y);
 
 	glUniform1f(glGetUniformLocation(shader->GetProgram(), "smoothness"), renderNode->GetSmoothness());
 	glActiveTexture(GL_TEXTURE6);

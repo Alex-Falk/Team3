@@ -138,8 +138,6 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	);
 
 	playerId = id;
-	
-
 }
 
 bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {

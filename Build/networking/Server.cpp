@@ -98,6 +98,7 @@ Server::Server() {
 		server->Initialize(1234, 32);
 		ip = Win32_PrintAllAdapterIPAddresses();
 		userID = 0;
+		lerpFactor = 0.6f;
 		timer.GetTimedMS();
 
 		freeIDs = { 3,2,1 };
@@ -232,7 +233,7 @@ void Server::UpdateUser(float dt)
 		if (Game::Instance()->IsRunning())
 		{
 			accumTime += dt;
-			if (accumTime > 1 / 60.0f)
+			if (accumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
 			{
 				accumTime = 0.0f;
 				HandleRequests();
@@ -258,11 +259,13 @@ void Server::UpdateUser(float dt)
 
 				for (GameObject * go : m->GetConstantGameObjects())
 				{
-					if (go->Physics()->GetInverseMass() > 0.01f)
+					if (go->Physics())
 					{
-						SendObjectUpdate(go);
+						if (go->Physics()->GetInverseMass() > 0.01f)
+						{
+							SendObjectUpdate(go);
+						}
 					}
-					
 				}
 
 				MinionBase ** minions = m->GetMinions();

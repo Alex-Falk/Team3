@@ -32,6 +32,13 @@
 
 #include "MinionBase.h"
 #include "Game.h"
+#include "ParticleEmitter.h"
+#include "../ncltech/SphereCollisionShape.h"
+#include "CaptureArea.h" 
+#include "Avatar.h"
+#include "../ncltech/SceneManager.h"
+#include "ParticleEmitter.h"
+
 MinionBase::MinionBase()
 {
 	colour = START_COLOUR;
@@ -90,57 +97,22 @@ MinionBase::MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string na
 
 	isGrounded = false;
 
-	Physics()->SetOnCollisionCallback(
-		std::bind(&MinionBase::MinionCallbackFunction,
-			this,							//Any non-placeholder param will be passed into the function each time it is called
-			std::placeholders::_1,			//The placeholders correlate to the expected parameters being passed to the callback
-			std::placeholders::_2
-		)
-	);
+	emitter = new ParticleEmitter(128, this->colour, this->Physics()->GetPosition(), { 0.05f,0.05f,0.05f }, { 1.0f, 1.0f, 0.0f }, 5.0f, 5.0f, 5.0f, 50.0f);
 }
 
-bool MinionBase::MinionCallbackFunction(PhysicsNode * self, PhysicsNode * collidingObject) {
-	if (collidingObject->GetType() == PLAYER) {
-		if (!dead) {
-			if (((Avatar*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				((Avatar*)collidingObject->GetParent())->ChangeLife(-(life / 5));
-			}
-			else ((Avatar*)(collidingObject->GetParent()))->ChangeLife(life / 5);
-			dead = true;
-		}
-		return false;
-	}
-	else if (collidingObject->GetType() == MINION) {
-		if (!dead && ((MinionBase*)(collidingObject->GetParent()))->IsAlive()) {
-			if (((MinionBase*)(collidingObject->GetParent()))->GetColour() != this->colour) {
-				float tempLife = life;
-				ChangeLife(-((MinionBase*)collidingObject->GetParent())->GetLife());
-				((MinionBase*)(collidingObject->GetParent()))->ChangeLife(-(tempLife));
-				return false;
-			}
-		}
-		return true;
-	}
-	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
-		isGrounded = true;
-		ChangeLife(-1);
-		return true;
-	}
-	if (collidingObject->GetType() == PAINTABLE_OBJECT)
+MinionBase::~MinionBase()
+{
+	
+}
+
+void MinionBase::OnDetachedFromScene()
+{
+	if (emitter)
 	{
-		if (((CaptureArea*)(collidingObject->GetParent()))->GetColour() != this->colour)
-		{
-			dead = true;
-		}
-		isGrounded = true;
-		
+		SAFE_DELETE(emitter);
 	}
-	if (collidingObject->GetType() == PICKUP) {
-		return false;
-	}
-	return true;
+	
 }
-
 
 void MinionBase::ChangeLife(float l) {
 	life += l;
@@ -155,13 +127,6 @@ void MinionBase::ChangeLife(float l) {
 void MinionBase::SetLife(float l)
 {
 	life = l;
-	if (life < minLife) {
-		dead = true;
-	}
-	if (life > maxLife) {
-		life = maxLife;
-	}
-
 	size = 0.3f * (life / 50);
 	ChangeSize(size);
 }
@@ -177,15 +142,10 @@ void MinionBase::ChangeSize(float newSize) {
 
 void MinionBase::Update(float dt)
 {
-	
-	if (dead)
-	{
-		this->SetToDestroy();
-		Game::Instance()->KillMinion(this);
-		((Map*)Game::Instance()->GetMap())->RemoveMinion(this);
-		return;
-	}
+	emitter->SetPos(this->physicsNode->GetPosition());
+	emitter->SetScale(Vector3(size*scale, size * scale, size * scale));
+	Vector3 dir = Physics()->GetLinearVelocity();
+	emitter->SetDirection(-dir.Normalise());
+	emitter->Update(dt);
 
-	size = 0.3f * (life / 50);
-	ChangeSize(size);
 }

@@ -39,7 +39,7 @@ enum CaptureAreaType
 
 //Game music should always be the last music. So if you add more music, put it before Game music
 enum Audio {
-	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND
+	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND, ROCKET_FLYING_SOUND, EXPLOSION_SOUND, PROJECTILE_LAUNCH_SOUND, MENU_CHOICE_SOUND, ROLLING_SOUND, PICKUP_COLLECTED_SOUND, TIMER_RUNOUT_SOUND, VICTORY_SOUND, CAPTURE_AREA_SOUND
 };
 
 //Function to get the vector 4 colour of an enum 
@@ -51,6 +51,6 @@ static Vector4 EnumToVectorColour(Colour c)
 		case GREEN:			return GREEN_COLOUR;
 		case BLUE:			return BLUE_COLOUR;
 		case PINK:			return PINK_COLOUR;
-		case START_COLOUR:	return DEFAULT_COLOUR;
+		default:			return DEFAULT_COLOUR;
 	}
 }

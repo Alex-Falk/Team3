@@ -54,6 +54,8 @@ protected:
 	// UI Elements in the scene
 	CEGUI::ProgressBar* lifeBar;
 	CEGUI::Titlebar* timer;
+	CEGUI::PushButton* exit;
+	CEGUI::PushButton* _continue;
 	//--------------------------------------------------------------------------------------------//
 
 	//--------------------------------------------------------------------------------------------//
@@ -124,6 +126,11 @@ public:
 
 	//Jeffery 06/03/2018 for updating playername and position for GUI rendering
 	void UpdateGUI(float dt);
+
+	//J 12/03 for pause Menu
+	void showPauseMenu();
+	void OnExitButtonClicked();
+	void OnContinueButtonClicked();
 
 	float temp_fps = 0;
 	bool isLoading = false;
