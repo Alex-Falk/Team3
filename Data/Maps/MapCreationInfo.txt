@@ -1,9 +1,48 @@
-// How to add pool: PAINT_POOL x y z colour name
-// colours: RED, GREEN, BLUE, PINK
-// How to add multi-pool: MULTI_POOL x y z (for the pool)
-// x y z (pos) name dx dy dz (half dimensions) 
-// How to add pickup: PICKUP x y z type(SPEED_BOOST, JUMP_BOOST) 
-// name
-// How to add weapon: WEAPON_PICKUP x y z type name respawnTime
-// types: PAINT_SPRAY, PAINT_PISTOL, AUTO_PAINT_LAUNCHER, PAINT_ROCKET
-// how add minion area: MINION_AREA 
+Do not Change the order of Textures, Map, or Spawn locations.
+
+To add textures change the name to the one you want to load.
+
+Map dimensions and Spawn locations are pretty much self explanatory.
+
+
+How to add Ground: GROUND x y z (for position) name x y z (for dimensions) x y z (for angles)
+{
+GROUND 90 3 90 ground 10 2 10 0 0 0
+}
+
+How to add pool: PAINT_POOL x y z colour name (optional) TEXTURE id 
+colour: RED, GREEN, BLUE, PINK
+{
+PAINT_POOL 85 1 85 RED redpool TEXTURE 3 
+}
+
+How to add multi-pool: MULTI_POOL x y z (for the pool) x y z (pos) name dx dy dz (half dimensions) (optional) TEXTURE id id
+{
+MULTI_POOL 0 1 0 pool 0 3 0 2 2 2 TEXTURE 3 5 
+}
+
+How to add pickup: PICKUP x y z type(SPEED_BOOST, JUMP_BOOST name (optional) TEXTURE id
+{
+PICKUP 40 1 0 SPEED_BOOST speed TEXTURE 9 
+}
+
+How to add weapon: WEAPON_PICKUP x y z type name respawnTime (optional) TEXTURE id
+types: PAINT_SPRAY, PAINT_PISTOL, AUTO_PAINT_LAUNCHER, PAINT_ROCKET 
+{
+WEAPON_PICKUP 0 1 -70 PAINT_PISTOL weapon 10 TEXTURE 2
+}
+
+How to add cubes: CUBE x y z (pos) name x y z (halfdim) i (inverse mass) x y z (angles) (optional) TEXTURE id
+{
+CUBE -55.1 5 54.7 wall 5 2 5 0 45 0 0 TEXTURE 1
+}
+
+How to add Capture areas: x y z (pos) name x y z (half dim) score InverseMass  (optional) TEXTURE id
+{
+CAPTURE_AREA 70 4 -70 captureArea 2 2 2 1000 1 TEXTURE 8
+}
+
+How add minion area: MINION_AREA x y z (pos) name score (optional) TEXTURE id
+{
+MINION_AREA 70 3 70 minionspawn 50 TEXTURE 6 
+}
