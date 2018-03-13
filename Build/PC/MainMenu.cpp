@@ -78,10 +78,23 @@ void MainMenu::TextInputHelper()
 			GUIsystem::Instance()->SetIsTyping(false);
 		}
 		else if(GUIsystem::Instance()->currentType == "customMap"){
-			//TODO:set next map name here
+			////TODO:set next map name here
+			//Map1Rbutton->disable();
+			//Map2Rbutton->disable();
+			//Map3Rbutton->disable();
+			//Map4Rbutton->disable();
+			nextMapID = 4;
+			string temp = customMap.editbox->getText().c_str();
+			SetMapName(temp);
 
-
-			GUIsystem::Instance()->SetIsTyping(false);
+			//int temp = 0;
+			//for (Scene* a : SceneManager::Instance()->m_vpAllScenes) {
+			//	if (a->GetMapName() == customMap.editbox->getText().c_str()) {
+			//		nextMapID = temp;
+			//	}
+			//	temp++;
+			//}
+			//GUIsystem::Instance()->SetIsTyping(false);
 		}
 		else {
 			return;

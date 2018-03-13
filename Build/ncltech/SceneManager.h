@@ -55,13 +55,13 @@ public:
 	void SetExitButtonClicked(bool a) { isExitButtonClicked = a; }
 	bool GetExitButtonClicked() { return isExitButtonClicked; }
 
+	std::vector<Scene*> m_vpAllScenes;
 protected:
 	SceneManager();
 	virtual ~SceneManager();
 
 protected:
 	uint				m_SceneIdx;
-	std::vector<Scene*> m_vpAllScenes;
 	Scene*				scene; //Current Scene
 	bool				isExitButtonClicked = false;
 };

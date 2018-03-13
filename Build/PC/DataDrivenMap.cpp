@@ -42,6 +42,7 @@ void DataDrivenMap::OnInitializeScene()
 	float m_AccumTime = 0;
 	linenum = 0;
 	textID = 0;
+	fileName = GetMapName();
 
 	ReadFile();
 

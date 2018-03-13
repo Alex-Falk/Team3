@@ -163,6 +163,8 @@ void GUIsystem::HideMouseCursor()
 	m_context->getMouseCursor().hide();
 }
 
+//Add arrow keys
+
 void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 {
 	CEGUI::utf32 codePoint = 46;
