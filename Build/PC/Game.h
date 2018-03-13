@@ -51,7 +51,6 @@ public:
 	//--------------------------------------------------------------------------------------------//
 
 	inline void SetScore(uint id, int score)			{ teamScores[id] = (float)score; }
-	inline void SetAreaScores(uint id, int score)		{ teamAreaScores[id] = (float)score; }
 
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
 
@@ -109,7 +108,7 @@ public:
 	void DetermineWinner();
 
 	void ClaimPickup(uint i);
-	void Capture(uint i, Colour c);
+	void Capture(uint i, Colour c,int scoreValue);
 
 	void SpawnMinion(MinionBase * minion);
 	void KillMinion(MinionBase * minion);
@@ -148,7 +147,7 @@ private:
 	uint mapIdx;
 
 	float teamScores[4];
-	float teamAreaScores[4];
+	float captureScores[4];
 	Avatar* avatars[4];
 	string userNames[4] = { "Player 1","Player 2","Player 3","Player 4" };
 

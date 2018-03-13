@@ -29,18 +29,18 @@
                            .,cll:.                            
 */
 
-#include <ncltech\SceneManager.h>
+#include "Game.h"
 #include "Particle.h"
 #include <nclgl\Camera.h>
 
-Particle::Particle(Colour col, Vector3 pos, Vector3 vel, float size, float lifeTime, float maxDist, string name)
+Particle::Particle(Colour col, Vector3 pos, Vector3 vel, Vector3 size, float lifeTime, float maxDist, string name)
 {
 	RenderNode * rnode = new RenderNode();
 
 	RGB = EnumToVectorColour(col).ToVector3();
 
 	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), "Particle", EnumToVectorColour(col));
-	dummy->SetTransform(Matrix4::Scale(Vector3(size, size, size)));
+	dummy->SetTransform(Matrix4::Scale(size));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
 	rnode->AddChild(dummy);
 
@@ -54,15 +54,33 @@ Particle::Particle(Colour col, Vector3 pos, Vector3 vel, float size, float lifeT
 	this->maxDist = maxDist;
 
 	renderNode = rnode;
+
+	Game::Instance()->GetMap()->AddGameObject(this,1);
 }
 
-void Particle::Update(float dt)
+void Particle::SetPos(Vector3 pos)
 {
-	velocity += Vector3(0, -9.81f, 0) * dt;
-	position += velocity * dt;	
-	lifeTime -= dt;
+	position = pos;
+	renderNode->SetTransform(Matrix4::Translation(pos));
+}
 
-	float dist = (spawnPos - position).Length();
+void Particle::SetScale(Vector3 scale)
+{
+	renderNode->GetChild()->SetTransform(Matrix4::Scale(scale));
+}
+
+void Particle::OnDetachedFromScene()
+{
+
+}
+
+//void Particle::Update(float dt)
+//{
+	//velocity += Vector3(0, -9.81f, 0) * dt;
+	//position += velocity * dt;	
+	//lifeTime -= dt;
+
+	//float dist = (spawnPos - position).Length();
 
 	//float alpha = max((1.0f - (dist / 10.0f)), 0.0f);
 
@@ -70,10 +88,10 @@ void Particle::Update(float dt)
 	//renderNode->SetChildBaseColor(Vector4(RGB.x, RGB.y, RGB.z, 0.1f));
 	//renderNode->SetColor(Vector4(RGB.x, RGB.y, RGB.z, 0.1f));
 	//renderNode->SetBaseColor(Vector4(RGB.x, RGB.y, RGB.z, 0.1f));
-	renderNode->SetTransform(Matrix4::Translation(position));
+	//renderNode->SetTransform(Matrix4::Translation(position));
 
-	if (dist > maxDist || lifeTime <= 0)
-	{
-		SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
-	}	
-}
+	//if (dist > maxDist || lifeTime <= 0)
+	//{
+	//	SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
+	//}	
+//}

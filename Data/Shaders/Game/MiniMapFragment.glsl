@@ -1,17 +1,17 @@
 /*
            \\\///
-	     	  / ~  ~ \
-	     	(| (.)(.) |)
+	      / ~  ~ \
+		(| (.)(.) |)
 .-----.OOOo--C---oOOO.---.
 |                        |
 |   Made By Philip Beck  |
 |      20/02/2018        |
 |                        |
-'-----.oooO--------------'
-      (   )   Oooo.
-       \ (    (   )
-	     \_)    ) /
-	           (_/
+'----.oooO---------------'
+     (   ) ( ) ( )   Oooo.
+      \ (	 | |	 (	  )
+	   \_)   | |	  ) /
+			  U	     (_/
 */
 
 #version 150 core
@@ -121,20 +121,6 @@ void main()
 		}
 	}
 
-	//gives the players a colour
-	//the powers are multiplied by zoom so they don't change size depending on how far out the zoom is
-  for(int i = 0; i < int(playerCount); i++){
-    float dist = pow(abs(newCoords.x - players[i].x),2) + pow(abs(newCoords.y - players[i].y),2);
-		vec3 colour = getColour(colours[i]);
-		//0.02^2
-		if(dist < pow(0.02 * zoom,2)){
-      FragColor.rgb = colour/3;
-    }
-    else if(dist < pow(0.025 * zoom, 2)){
-      FragColor.rgb = colour;
-    }
-  }
-
 	//draw pickups
 	for(int i = 0; i < int(pickupCount); i++){
 		//pickup is a paint pool or capture object (larger and colourable)
@@ -195,6 +181,21 @@ void main()
 			}
 		}
 	}
+
+	//gives the players a colour
+	//the powers are multiplied by zoom so they don't change size depending on how far out the zoom is
+	for (int i = 0; i < int(playerCount); i++) {
+		float dist = pow(abs(newCoords.x - players[i].x), 2) + pow(abs(newCoords.y - players[i].y), 2);
+		vec3 colour = getColour(colours[i]);
+		//0.02^2
+		if (dist < pow(0.02 * zoom, 2)) {
+			FragColor.rgb = colour / 3;
+		}
+		else if (dist < pow(0.025 * zoom, 2)) {
+			FragColor.rgb = colour;
+		}
+	}
+
 	//set alpha
 	FragColor.a = opacity;
 }

@@ -112,6 +112,9 @@ public:
 	float GetSmoothness() { return smoothness; }
 	void SetSmoothness(float smoothness) { this->smoothness = smoothness; }
 
+	GLuint GetTexture() { return texture; }
+	void SetTexture(int tex) { texture = tex; }
+
 protected:
 
 	void RecursiveSetMaterial(Material* mat, RenderNode* renderNode);
@@ -131,6 +134,7 @@ protected:
 	bool		isCollided = false;
 	bool		cullFaces = true;
 	string		name;
+	GLuint		texture;
 	std::vector<RenderNode*>		children;
 
 protected :

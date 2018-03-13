@@ -20,6 +20,16 @@ Shader::Shader(string vFile, string fFile, string gFile) {
 	SetDefaultAttributes();
 }
 
+Shader::Shader(string compute) {
+	NCLDebug::Log("Loading Shader:");
+	program = glCreateProgram();
+	objects[SHADER_COMPUTE] = GenerateShader(compute, GL_COMPUTE_SHADER);
+	glAttachShader(program, objects[SHADER_COMPUTE]);
+
+	//SetDefaultAttributes();
+}
+
+
 Shader::~Shader(void) {
 	for (int i = 0; i < 3; ++i) {
 		glDetachShader(program, objects[i]);

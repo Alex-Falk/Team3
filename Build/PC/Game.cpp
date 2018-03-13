@@ -1,4 +1,4 @@
-/*               
+ /*               
                           .,okkkd:.                          
                        .:x0KOdooxKKkl,.                      
                    .,oOKKxc'. .. .;oOX0d:.                   
@@ -82,23 +82,30 @@ void Game::Update(float dt)
 		{
 			for (uint i = 0; i < playerNumber; ++i)
 			{
-				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i) + teamAreaScores[i];
+				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i) + captureScores[i];
 			}
 		}
 		//NCLDebug::Log(to_string(gameTime));
 
-
-		if (time > gameLength) {
+		if (PhysicsEngine::Instance()->IsPaused() && time > gameLength)
+		{
+			ResetGame();
+			SceneManager::Instance()->JumpToScene(0);
+		}
+		else if (time > gameLength) {
+			
 			DetermineWinner();
-			//StopGame();
-			//PhysicsEngine::Instance()->SetPaused(true);
-			time = 0.0f;
+			
+			PhysicsEngine::Instance()->SetPaused(true);
+			time = gameLength - 10.0f;
 		}
 	}
 }
 
 void Game::ResetGame()
 {
+	PhysicsEngine::Instance()->SetPaused(false);
+
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 	{
 		if (avatars[i])
@@ -119,6 +126,7 @@ void Game::ResetGame()
 	gameRunning = false;
 	time = 0.0f;
 	GUIsystem::Instance()->SetResult(RESULT::NONE);
+	GUIsystem::Instance()->SetHasWeapon(false);
 	//PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 	GUIsystem::Instance()->SetDrawResult(false);
 	//PhysicsEngine::Instance()->SetPaused(false);
@@ -129,10 +137,11 @@ void Game::ClaimPickup(uint i)
 	user->RequestPickup(GetUserID(), i);
 }
 
-void Game::Capture(uint i, Colour c)
+void Game::Capture(uint i, Colour c,int scorevalue)
 {
 	if (IsHost())
 	{
+		captureScores[c] += scorevalue;
 		((Server*)user)->SendAreaCapture(i,c);
 	}
 }

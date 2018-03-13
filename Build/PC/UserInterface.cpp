@@ -105,7 +105,7 @@ void GUIsystem::Draw()
 	//Render score bar
 	if (drawScorebar == true) {
 		glUseProgram(scorebarShader->GetProgram());
-		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0, 0.86, 0)) * Matrix4::Scale(Vector3(0.4, 0.03, 0));
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.0f, 0.88f, 0.0f)) * Matrix4::Scale(Vector3(0.4f, 0.03f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
@@ -134,7 +134,7 @@ void GUIsystem::Draw()
 		for (int i = 0; i < 4; i++) {
 			if (playerNames[i] != "") {
 				//draw
-				playersPosition[i].y += 0.7;
+				playersPosition[i].y += 0.7f;
 				NCLDebug::DrawTextWs(playersPosition[i], 25.0f, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), playerNames[i]);
 			}
 			else {
@@ -591,7 +591,7 @@ void GUIsystem::DrawStartLoadingScreen()
 
 void GUIsystem::UpdateFakeProgressBar()
 {
-	progressBarValue += 0.04;
+	progressBarValue += 0.04f;
 	if (progressBarValue > 1) {
 		progressBarValue = 0;
 	}
@@ -655,7 +655,7 @@ void GUIsystem::SetUpLoadingScreen()
 void GUIsystem::DrawWeaponIcon(){
 	if (hasWeapon) {
 		glUseProgram(weaponShader->GetProgram());
-		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.9, -0.9, 0)) * Matrix4::Scale(Vector3(0.1, 0.1, 0));
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.9f, -0.9f, 0.0f)) * Matrix4::Scale(Vector3(0.1f, 0.1f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(weaponShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
 		glUniform1fv(glGetUniformLocation(weaponShader->GetProgram(), "timer"), 1, (float*)&weaponTimer);
 		glUniform3fv(glGetUniformLocation(weaponShader->GetProgram(), "playerColour"), 1, (float*)&playerColour);
@@ -721,12 +721,14 @@ void GUIsystem::SetUpResultText()
 }
 
 void GUIsystem::MapProblem(uint errorNumber, uint errorLine) {
-	for (int i = 0; i < 50; i++) {
-		if (errorNumber == 0) {
-			cout << "File was corrupted";
-		}
-		else if (errorNumber == 1) {
-			cout << "File was not writen in apropriate format in line " << to_string(errorLine) << " \n";
-		}
+	if (errorNumber == 0) {
+		cout << "File was corrupted";
+	}
+	else if (errorNumber == 1) {
+		cout << "File was not writen in apropriate format in line " << to_string(errorLine) << " \n";
+	}
+	else if (errorNumber == 2) {
+		cout << "The texture couldn't be found on line: " << to_string(errorLine) << " \n";
+
 	}
 }

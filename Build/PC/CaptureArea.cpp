@@ -129,28 +129,20 @@ void CaptureArea::SetType(CaptureAreaType newType)
 
 bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
 {
+	switch(collidingObject->GetType())
 	{
-		if (collidingObject->GetType() == PLAYER)
-		{
-			CheckPlayerCollision(collidingObject, Game::Instance()->GetUserID());
-		}
-		else if (collidingObject->GetType() == PROJECTILE || collidingObject->GetType() == SPRAY)
-		{
-			if (CheckProjectileCollision(collidingObject, Game::Instance()->GetUserID())) return true;
-		}
-		else if (collidingObject->GetType() == MINION)
-		{
-			if (CheckMinionCollision(collidingObject, Game::Instance()->GetUserID())) return true;
-		}
+		case PLAYER:		CheckPlayerCollision(collidingObject, Game::Instance()->GetUserID());		break;
+		case PROJECTILE:
+		case SPRAY:			CheckProjectileCollision(collidingObject, Game::Instance()->GetUserID());	break;
+		case MINION:		CheckMinionCollision(collidingObject, Game::Instance()->GetUserID());		break;
 	}
-
-
+	
 	//Return true to enable collision resolution
 	return true;
 
 }
 //----------------------------------------------------------------------------------------------//
-#pragma region AlexFalk
+//  AlexFalk
 
 void CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) 
 {
@@ -171,88 +163,85 @@ void CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index)
 		//check if player actually has enough life to take the point
 		if (avatar->GetLife() >= avatar->GetMinLife() + (lifeToTake)) {
 			this->SetColour(avatar->GetColour());
-			Game::Instance()->Capture(this->index, this->colour);
+			Game::Instance()->Capture(this->index, this->colour, this->scoreValue);
 			avatar->ChangeLife(-lifeToTake);
 		}
 		UpdatePercentage();
 	}
 }
-#pragma endregion AlexFalk
 //----------------------------------------------------------------------------------------------//
 
-bool CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) {
-	if (Game::Instance()->GetPlayer(index)) {
-		if (this->GetColour() == ((Minion*)p->GetParent())->GetColour() || Game::Instance()->GetPlayer(index)->GetColour() != ((Minion*)p->GetParent())->GetColour()) {
-			return false;
-		}
-		else {
-			float lifeToTake = ((Minion*)p->GetParent())->GetLife() / 10;
-			((Minion*)p->GetParent())->ChangeLife(-50);
-			//take the amount of life of the minion from whoever is currently capturing the area
-			for (int i = 0; i < 4; i++) {
-				if (playerScores[i] > 0 && i != index) {
-					float tempLifeToTake = lifeToTake;
-					lifeToTake -= playerScores[i];
-					playerScores[i] -= tempLifeToTake;
-					if (playerScores[i] <= 0) {
-						this->SetColour(START_COLOUR);
-					}
+//----------------------------------------------------------------------------------------------//
+// Nick
+void CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) 
+{
+	Minion* minion = static_cast<Minion*>(p->GetParent());
+	
+	if (this->GetColour() != minion->GetColour()) {
+		
+		float lifeToTake = ((Minion*)p->GetParent())->GetLife() / 10;
+		minion->ChangeLife(-50);
+		//take the amount of life of the minion from whoever is currently capturing the area
+		for (int i = 0; i < 4; i++) {
+			if (playerScores[i] > 0 && i != index) {
+				float tempLifeToTake = lifeToTake;
+				lifeToTake -= playerScores[i];
+				playerScores[i] -= tempLifeToTake;
+				if (playerScores[i] <= 0) {
+					this->SetColour(START_COLOUR);
 				}
 			}
-			//if area has been set to neutral, add remaining life of minion to the player
-			if (lifeToTake > 0) {
-				for (int i = 0; i < 4; i++) {
-					if (i == index) {
-						playerScores[index] += lifeToTake;
-					}
-				}
-				if (playerScores[index] >= lifeReq) {
-					this->SetColour(((Minion*)p->GetParent())->GetColour());
-					//Game::Instance()->ClaimArea(this->GetIdx());
-				}
-			}	
-			UpdatePercentage();
-			return true;
 		}
+		//if area has been set to neutral, add remaining life of minion to the player
+		if (lifeToTake > 0) {
+			for (int i = 0; i < 4; i++) {
+				if (i == index) {
+					playerScores[index] += lifeToTake;
+				}
+			}
+			if (playerScores[index] >= lifeReq) {
+				this->SetColour(minion->GetColour());
+				Game::Instance()->Capture(this->index, this->colour,this->scoreValue);
+			}
+		}	
+		UpdatePercentage();
 	}
-	return false;
 }
 
-bool CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index) {
-	if (Game::Instance()->GetPlayer(index)) {
-		if (Game::Instance()->GetPlayer(index)->GetColour() != ((Projectile*)p->GetParent())->GetColour()) {
-			return false;
+void CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index) 
+{
+	Projectile* projectile = static_cast<Projectile*>(p->GetParent());
+
+	if (this->GetColour() != projectile->GetColour()) 
+	{
+		float lifeToTake = projectile->GetProjectileWorth();
+		for (int i = 0; i < 4; i++) {
+			if (playerScores[i] > 0 && i != index) {
+				float tempLifeToTake = lifeToTake;
+				lifeToTake -= playerScores[i];
+				playerScores[i] -= tempLifeToTake;
+				if (playerScores[i] <= 0) {
+					this->SetColour(START_COLOUR);
+				}
+			}
 		}
-		else {
-			float lifeToTake = ((Projectile*)p->GetParent())->GetProjectileWorth();
+		if (lifeToTake > 0) {
 			for (int i = 0; i < 4; i++) {
-				if (playerScores[i] > 0 && i != index) {
-					float tempLifeToTake = lifeToTake;
-					lifeToTake -= playerScores[i];
-					playerScores[i] -= tempLifeToTake;
-					if (playerScores[i] <= 0) {
-						this->SetColour(START_COLOUR);
-					}
+				if (i == index) {
+					playerScores[index] += lifeToTake;
+					projectile->SetToDestroy();
 				}
 			}
-			if (lifeToTake > 0) {
-				for (int i = 0; i < 4; i++) {
-					if (i == index) {
-						playerScores[index] += lifeToTake;
-						((Projectile*)p->GetParent())->SetToDestroy();
-					}
-				}
-				if (playerScores[index] >= lifeReq) {
-					this->SetColour(((Projectile*)p->GetParent())->GetColour());
-					//Game::Instance()->ClaimArea(this->GetIdx());
-				}
+			if (playerScores[index] >= lifeReq) {
+				this->SetColour(projectile->GetColour());
+				Game::Instance()->Capture(this->index, this->colour,this->scoreValue);
 			}
-			UpdatePercentage();
-			return true;
 		}
+		UpdatePercentage();
 	}
-	return false;
+
 }
+//----------------------------------------------------------------------------------------------//
 
 void CaptureArea::UpdatePercentage() {
 	bool updated = false;

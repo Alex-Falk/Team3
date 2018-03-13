@@ -13,7 +13,7 @@ protected:
 
 public:
 	MinionCaptureArea();
-	MinionCaptureArea(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue);
+	MinionCaptureArea(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue = 100);
 	
 	void SetMaxMinions(int mm) {maxMinions = mm;}
 	int GetMaxMinions() { return maxMinions; }

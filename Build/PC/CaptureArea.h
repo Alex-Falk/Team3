@@ -28,7 +28,7 @@ class CaptureArea : public GameObject
 {
 public:
 	CaptureArea();
-	CaptureArea(Vector3 pos, string unique_name, Vector3 halfdims = { 3.0f, 0.5f, 3.0f }, int scoreValue = 1000, Colour colour = START_COLOUR);
+	CaptureArea(Vector3 pos, string unique_name, Vector3 halfdims = { 3.0f, 0.5f, 3.0f }, int scoreValue = 100, Colour colour = START_COLOUR);
 
 	//Example of member callback ('this' parameter is bound at bind time)
 	virtual bool CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
@@ -49,8 +49,8 @@ public:
 	virtual void Update(float dt) {}
 
 	void CheckPlayerCollision(PhysicsNode * p, int index);
-	bool CheckProjectileCollision(PhysicsNode * p, int index);
-	bool CheckMinionCollision(PhysicsNode * p, int index);
+	void CheckProjectileCollision(PhysicsNode * p, int index);
+	void CheckMinionCollision(PhysicsNode * p, int index);
 	
 	//useful for GUI capture bar
 	float GetPercentageCaptured() { return percentageCaptured; } //value between 0 and 1, fill bar this amount

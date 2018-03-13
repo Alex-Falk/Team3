@@ -30,6 +30,7 @@
 #include <nclgl\PlayerRenderNode.h>
 #include "Pickup.h"
 #include "WeaponPickup.h"
+#include "AudioSystem.h"
 
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
@@ -170,6 +171,7 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 		Pickup * p = (Pickup*)(collidingObject->GetParent());
 		if (p->GetActive())
 		{
+			AudioSystem::Instance()->PlayASound(PICKUP_COLLECTED_SOUND, false, physicsNode->GetPosition());
 			activePickUp = p->GetPickupType();
 			if (activePickUp == WEAPON)
 			{
@@ -231,7 +233,7 @@ void ControllableAvatar::MovementState(Movement inputDir, float yaw, float dt)
 		curMove = MOVE_JUMP;
 		if (canJump) {
 			Vector3 vel = Physics()->GetLinearVelocity();
-			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
+			Physics()->SetLinearVelocity(Vector3(vel.x*.9f, jumpImpulse, vel.z*.9f));
 			inAir = true;
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 			canJump = false;

@@ -73,6 +73,7 @@ void Map::onConnectToScene()
 		}
 	}
 	
+	
 	GraphicsPipeline::Instance()->ResetPath();
 }
 
@@ -204,7 +205,7 @@ void Map::BuildGround(Vector2 dimensions) {
 
 void Map::LoadTextures()
 {
-	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
 
 	if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box, TEXTUREDIR"SkyBox\\skyright.jpg", TEXTUREDIR"SkyBox\\skyleft.jpg", TEXTUREDIR"SkyBox\\skytop.jpg",
@@ -328,7 +329,6 @@ void Map::UpdateGUI(float dt)
 			GUIsystem::Instance()->playersPosition[i] = Game::Instance()->GetPlayer(i)->GetPosition();
 		}
 	}
-	perfPlayer.EndTimingSection();
 
 	//Loading screen
 	if (isLoading == true) {
@@ -383,8 +383,8 @@ void Map::OnUpdateScene(float dt)
 
 	UpdateGUI(dt);
 
-	if (m_AccumTime > 1 / 60.0f)
-	{
+	//if (m_AccumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
+	//{
 		perfMapObjects.BeginTimingSection();
 		for (int i = 0; i < this->mapConstantObjects.size(); ++i)
 		{
@@ -393,6 +393,7 @@ void Map::OnUpdateScene(float dt)
 				mapConstantObjects[i]->Update(dt);
 			}
 		}
+		perfMapObjects.EndTimingSection();
 
 		for (int i = 0; i < this->mapDynamicObjects.size(); ++i)
 		{
@@ -401,9 +402,7 @@ void Map::OnUpdateScene(float dt)
 				mapDynamicObjects[i]->Update(dt);
 			}
 		}
-
-		perfMapObjects.EndTimingSection();
-	}
+	//}
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();

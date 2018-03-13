@@ -102,8 +102,6 @@ public:
 	//Timers For The Scenes
 	void PrintPerformanceTimers(const Vector4& color)
 	{
-		perfPlayer.PrintOutputToStatusEntry(color,		"              Player Update  :");
-		perfAI.PrintOutputToStatusEntry(color,			"              AI Update      :");
 		perfMapObjects.PrintOutputToStatusEntry(color,	"              Objects Update :");
 	}
 
@@ -134,13 +132,13 @@ public:
 
 			if (dynamic)
 			{
-				game_object->SetIdx(mapDynamicObjects.size());
+				game_object->SetIdx((uint)mapDynamicObjects.size());
 				game_object->SetDynamic(true);
 				mapDynamicObjects.push_back(game_object);
 			}
 			else
 			{
-				game_object->SetIdx(mapConstantObjects.size());
+				game_object->SetIdx((uint)mapConstantObjects.size());
 				mapConstantObjects.push_back(game_object);
 			}
 
@@ -301,8 +299,6 @@ protected:
 	SceneUpdateMap				m_UpdateCallbacks;
 
 	// Timing Variables
-	PerfTimer perfPlayer;
-	PerfTimer perfAI;
 	PerfTimer perfMapObjects;
 
 };
