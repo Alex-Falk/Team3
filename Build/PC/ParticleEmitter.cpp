@@ -173,23 +173,6 @@ void ParticleEmitter::Update(float dt)
 	int randPitch;
 	int randYaw;
 
-
-	//if (rate >= 0.0001f)
-	//{
-	//	timer += dt;
-	//	if (timer > rate)
-	//	{
-	//		if ((uint)particles.size() < particleNum - 1)
-	//		{
-	//			randPitch = rand() % 90;
-	//			randYaw = rand() % 360;
-	//			Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction;
-	//			particles.push_back(new Particle(c, pos, dir, scale));
-	//		}
-	//		timer = 0.0f;
-	//	}
-	//}
-
 	if (isDeleting)
 	{
 		lifeTime -= dt;
@@ -241,14 +224,5 @@ void ParticleEmitter::Update(float dt)
 				}
 			}
 		}
-
-		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, posSBO);
-		//glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), positions);
-		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-
-		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, velSBO);
-		//glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), velocities);
-		//glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
-	}
-	
+	}	
 }
