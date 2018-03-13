@@ -222,9 +222,12 @@ void Server::UpdateUser(float dt)
 					}
 				}
 
-				GraphicsPipeline::Instance()->RemovePlayerRenderNode((Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1))->Render()->GetChild());
-				SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
-				Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
+				if (Game::Instance()->IsRunning())
+				{
+					GraphicsPipeline::Instance()->RemovePlayerRenderNode((Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1))->Render()->GetChild());
+					SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
+					Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
+				}
 				break;
 			}
 			}
@@ -408,9 +411,9 @@ void Server::SendPlayerNames()
 	string data;
 
 	data = to_string(PLAYER_NAME) + ":" +
-		Game::Instance()->GetName(0) + " " +
-		Game::Instance()->GetName(1) + " " +
-		Game::Instance()->GetName(2) + " " +
+		Game::Instance()->GetName(0) + "," +
+		Game::Instance()->GetName(1) + "," +
+		Game::Instance()->GetName(2) + "," +
 		Game::Instance()->GetName(3);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);

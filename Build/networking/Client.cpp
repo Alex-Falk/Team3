@@ -309,7 +309,7 @@ void Client::ReceiveNumberUsers(string data)
 void Client::ReceiveUserNames(string data)
 {
 	string s = data.substr(data.find_first_of(':') + 1);
-	vector<string> splitData = split_string(s, ' ');
+	vector<string> splitData = split_string(s, ',');
 
 	for (uint i = 0; i < 4; ++i)
 	{

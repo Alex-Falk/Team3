@@ -85,7 +85,6 @@ void Game::Update(float dt)
 				teamScores[i] = GraphicsPipeline::Instance()->GetScore(i) + captureScores[i];
 			}
 		}
-		//NCLDebug::Log(to_string(gameTime));
 
 		if (PhysicsEngine::Instance()->IsPaused() && time > gameLength)
 		{
