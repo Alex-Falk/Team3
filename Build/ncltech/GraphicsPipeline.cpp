@@ -1100,7 +1100,7 @@ void GraphicsPipeline::DrawMiniMap() {
 	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
 	//int array for pickup type
 	uint pickupTypes[50];
-	float pickupPositions[50];
+	float pickupPositions[100];
 	int pickupColours[50];
 	//reset count
 	count = 0;
@@ -1153,9 +1153,9 @@ void GraphicsPipeline::DrawMiniMap() {
 	}
 
 	glUniform1ui (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
-	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
-	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
-	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
+	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 50, pickupTypes);
+	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 100, pickupPositions);
+	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 50, pickupColours);
 
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
