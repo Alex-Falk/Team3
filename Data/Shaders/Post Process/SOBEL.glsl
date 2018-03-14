@@ -57,8 +57,18 @@ void main(void)
 	
 	vec4 sobel = sqrt(pow((sobel_edge_h * sobel_edge_h),vec4(2)) + pow((sobel_edge_v * sobel_edge_v),vec4(2)));
 
-	col = pow(col, vec3(invGammaCorrection));
+	vec4 finalCol = vec4((col - sobel.rgb), 1.0);
 
-	OutFrag = vec4((col - sobel.rgb), 1.0);
+	finalCol = pow(finalCol, vec4(invGammaCorrection));
+
+	if (sobel.r > 0.1 || sobel.g > 0.1 || sobel.b > 0.1)
+	{
+		OutFrag = vec4(0,0,0,1);
+	}
+	else 
+	{
+		OutFrag = finalCol;
+	}
+	
 	
 }

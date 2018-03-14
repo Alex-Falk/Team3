@@ -40,6 +40,5 @@ public:
 private:
 
 	Colour colour;
-
 };
 

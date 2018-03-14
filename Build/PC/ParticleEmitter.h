@@ -90,6 +90,7 @@ public:
 	void SetPos(Vector3 pos) { this->pos = pos; }
 	void SetScale(Vector3 scale) { this->scale = scale; }
 	void SetDirection(Vector3 dir) { this->direction = dir; }
+	void SetColour(Colour c);
 	virtual void Update(float dt);
 
 	virtual void OnDetachedFromScene();

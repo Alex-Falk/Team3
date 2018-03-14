@@ -20,7 +20,19 @@ Explosion::Explosion(Colour col, const Vector4& RGBA, Vector3 pos, Vector3 veloc
 
 	//-Alex Falk----------------------------------------------------------//
 	// Particle Effect on rocket explosion
-	e = new ParticleEmitter(128, this->colour, Physics()->GetPosition(), 0.0f, 1.0f, { 0.05f,0.05f,0.05f }, { 0,10,0 },45,45, 5,4);
+	e = new ParticleEmitter(
+		128, 
+		this->colour, 
+		Physics()->GetPosition(), 
+		0.0f, 
+		1.0f, 
+		{ 0.05f,0.05f,0.05f }, 
+		{ 0,10,0 },
+		360,
+		90, 
+		5,
+		4);
+
 	Game::Instance()->GetMap()->AddGameObject(e,1);
 	//--------------------------------------------------------------------//
 

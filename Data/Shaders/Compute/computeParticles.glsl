@@ -27,14 +27,14 @@ void main()
 
 	vec3 v = velocities[index].xyz;
 
-	if (abs(v.x) <= 0.0001f, abs(v.y) <= 0.0001f, abs(v.z) <= 0.0001f)
+	if (abs(v.x) <= 0.0001f && abs(v.y) <= 0.0001f && abs(v.z) <= 0.0001f)
 	{
 		v = startVelocities[index].xyz;
 	}
 
 	vec3 p = positions[index].xyz;
 
-	v += vec3(0,-4.00f, 0) * dt;
+	v += vec3(0,-4.0f, 0) * dt;
 	p += v * dt;
 
 	vec3 diff = (p-startPos);

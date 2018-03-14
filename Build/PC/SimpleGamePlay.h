@@ -53,7 +53,7 @@ class SimpleGamePlay : public Map
 private:
 	float m_AccumTime = 0;
 	Vector2 dimensions;
-
+	float dicks;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup

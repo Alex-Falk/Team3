@@ -118,7 +118,6 @@ void PaintPool::ChangeSize(Vector3 newSize)
 
 void PaintPool::Update(float dt)
 {
-
 }
 
 PaintPool::~PaintPool()

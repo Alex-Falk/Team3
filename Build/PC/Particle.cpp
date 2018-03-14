@@ -76,6 +76,14 @@ void Particle::OnDetachedFromScene()
 
 }
 
+void Particle::SetColour(Colour c)
+{
+	this->colour = c;
+	this->RGB = EnumToVectorColour(c).ToVector3();
+	renderNode->SetBaseColor(EnumToVectorColour(c));
+	renderNode->SetChildBaseColor(EnumToVectorColour(c));
+}
+
 //void Particle::Update(float dt)
 //{
 	//velocity += Vector3(0, -9.81f, 0) * dt;

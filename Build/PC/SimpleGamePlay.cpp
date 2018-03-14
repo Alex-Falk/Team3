@@ -75,9 +75,9 @@ void SimpleGamePlay::AddObjects()
 	//AddGameObject(new MinionCaptureArea(START_COLOUR, "3", { 0,1.5f,-20 }, { 0.5f,0.5f,0.5f }, 10));
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "4", { 0,1.5f,-15 }, { 0.5f,0.5f,0.5f }, 10));
 	//AddGameObject(new MinionCaptureArea(START_COLOUR, "5", { 0,1.5f,-10 }, { 0.5f,0.5f,0.5f }, 10));
-	//AddGameObject(new MinionCaptureArea(START_COLOUR, "6", { 0,1.5f,-5 }, { 0.5f,0.5f,0.5f }, 10));
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "6", { 0,1.5f,-5 }, { 0.5f,0.5f,0.5f }, 10));
 	//AddGameObject(new MinionCaptureArea(START_COLOUR, "6", { 0,1.5f,0 }, { 0.5f,0.5f,0.5f }, 10));
-	//AddGameObject(new MinionCaptureArea(START_COLOUR, "6", { 0,1.5f,5 }, { 0.5f,0.5f,0.5f }, 10));
+	AddGameObject(new MinionCaptureArea(START_COLOUR, "6", { 0,1.5f,5 }, { 0.5f,0.5f,0.5f }, 10));
 
 	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15.0f, 0.6f, -15.0f), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
 	AddGameObject(mpp);
@@ -86,8 +86,9 @@ void SimpleGamePlay::AddObjects()
 	mpp->AddPool(cpp3);
 	mpp->AddPool(cpp4);
 
-	ParticleEmitter * e = new ParticleEmitter(128, RED, { 0.0f, 4.0f, 0.0f }, (1/60.0f), 0, { 0.1f,0.1f,0.1f }, { 1.0f, 1.0f, 0.0f }, 10.0f, 10.0f, 5.0f, 50.0f);
-	this->AddGameObject(e);
+
+
+	//this->AddGameObject(e);
 }
 
 //--------------------------------------------------------------------------------------------//
