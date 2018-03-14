@@ -158,12 +158,21 @@ vector<string> DataDrivenMap::GetObjects(std::string line) {
 }
 
 void DataDrivenMap::BuildMapDimenions(vector<std::string> object) {
-	Map::SetMapDimensions(Vector2(stof(object[1]), stof(object[2])));
-	BuildGround(Vector2(stof(object[1]), stof(object[2])));
+	if (object.size() == 3){
+		Map::SetMapDimensions(Vector2(stof(object[1]), stof(object[2])));
+		BuildGround(Vector2(stof(object[1]), stof(object[2])));
+	}
+	else {
+		CoruptedFile(1, linenum);
+	}
 }
 
 void DataDrivenMap::SetSpawnLocation(vector<std::string> object) {
-	sPotision[stoi(object[1])] = Vector3(stof(object[2]), stof(object[3]), stof(object[4]));
+	if (object.size() > 5)
+		CoruptedFile(1, linenum);
+	else {
+		sPotision[stoi(object[1])] = Vector3(stof(object[2]), stof(object[3]), stof(object[4]));
+	}
 }
 
 void DataDrivenMap::SetSpawnLocations() {
@@ -175,154 +184,188 @@ void DataDrivenMap::SetSpawnLocations() {
 }
 
 void DataDrivenMap::AddPaintPools(vector<std::string> object) {
-
-	if (object[4] == "RED")		team = RED;
-	if (object[4] == "GREEN")	team = GREEN;
-	if (object[4] == "BLUE")	team = BLUE;
-	if (object[4] == "PINK")	team = PINK;
-	PaintPool* pp = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, object[5]);
-	if (object[6] == "TEXTURE") {
-		pp->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[7])]));
+	if (object.size() == 6 || object.size() == 8){
+		if (object[4] == "RED")		team = RED;
+		if (object[4] == "GREEN")	team = GREEN;
+		if (object[4] == "BLUE")	team = BLUE;
+		if (object[4] == "PINK")	team = PINK;
+		PaintPool* pp = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, object[5]);
+		if (object[6] == "TEXTURE") {
+			pp->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[7])]));
+		}
+		AddGameObject(pp);
 	}
-	
-	AddGameObject(pp);
+	else {
+		CoruptedFile(1, linenum);
+	}
 }
 
 void DataDrivenMap::AddPickups(vector<std::string> object) {
-
-	if (object[4] == "SPEED_BOOST")		type = SPEED_BOOST;
-	if (object[4] == "JUMP_BOOST")		type = JUMP_BOOST;
-	AddGameObject(new Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, object[5]));
+	if (object.size() != 6 )
+		CoruptedFile(1, linenum);
+	else {
+		if (object[4] == "SPEED_BOOST")		type = SPEED_BOOST;
+		if (object[4] == "JUMP_BOOST")		type = JUMP_BOOST;
+		AddGameObject(new Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, object[5]));
+	}
 }
 
 void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
-
-	if (object[4] == "PAINT_SPRAY")			weapType = PAINT_SPRAY;
-	if (object[4] == "PAINT_PISTOL")		weapType = PAINT_PISTOL;
-	if (object[4] == "AUTO_PAINT_LAUNCHER")	weapType = AUTO_PAINT_LAUNCHER;
-	if (object[4] == "PAINT_ROCKET")		weapType = PAINT_ROCKET;
-	AddGameObject(new WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, object[5] , stof(object[6])));
+	if (object.size() != 7)
+		CoruptedFile(1, linenum);
+	else {
+		if (object[4] == "PAINT_SPRAY")			weapType = PAINT_SPRAY;
+		if (object[4] == "PAINT_PISTOL")		weapType = PAINT_PISTOL;
+		if (object[4] == "AUTO_PAINT_LAUNCHER")	weapType = AUTO_PAINT_LAUNCHER;
+		if (object[4] == "PAINT_ROCKET")		weapType = PAINT_ROCKET;
+		AddGameObject(new WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, object[5], stof(object[6])));
+	}
 }
 
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
-	if (Game::Instance()->GetUserID() == 0)
-	{
-		CaptureArea* ca = new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8]));
-		ca->Physics()->SetInverseMass(stof(object[9]));
-		if (object[10] == "TEXTURE") {
-			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
+	if (object.size() == 10 || object.size() == 12) {
+		if (Game::Instance()->GetUserID() == 0)
+		{
+			CaptureArea* ca = new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8]));
+			ca->Physics()->SetInverseMass(stof(object[9]));
+			if (object[10] == "TEXTURE") {
+				ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
+			}
+			AddGameObject(ca);
 		}
-		AddGameObject(ca);
+		else
+		{
+			//-Alex Falk----------------------------------------------------------//
+			// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
+			GameObject * ca = CommonUtils::BuildCuboidObject(
+				"CA",
+				Vector3(stof(object[1]), stof(object[2]), stof(object[3])),
+				Vector3(stof(object[5]), stof(object[6]), stof(object[7])),
+				true,
+				stof(object[9]),
+				true,
+				false,
+				DEFAULT_PHYSICS,
+				DEFAULT_COLOUR);
+			if (object[10] == "TEXTURE") {
+				ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
+			}
+			AddGameObject(ca);
+			//--------------------------------------------------------------------//
+		}
 	}
-	else
-	{
-		//-Alex Falk----------------------------------------------------------//
-		// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
-		GameObject * ca = CommonUtils::BuildCuboidObject(
-			"CA", 
-			Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
-			Vector3(stof(object[5]), stof(object[6]), stof(object[7])),
-			true,
-			stof(object[9]),
-			true,
-			false,
-			DEFAULT_PHYSICS,
-			DEFAULT_COLOUR);
-		if (object[10] == "TEXTURE") {
-			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
-		}
-		AddGameObject(ca);
-		//--------------------------------------------------------------------//
+	else {
+		CoruptedFile(1, linenum);
 	}
 }
 
 void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
-	if (Game::Instance()->GetUserID() == 0)
-	{
-		Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, object[4]);
-		AddGameObject(pool);
-		CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[5]), stof(object[6]), stof(object[7])), object[4], Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
-		AddGameObject(capt);
-		static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
+	if (object.size() == 11 || object.size() == 14) {
+		if (Game::Instance()->GetUserID() == 0)
+		{
+			Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, object[4]);
+			AddGameObject(pool);
+			CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[5]), stof(object[6]), stof(object[7])), object[4], Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
+			AddGameObject(capt);
+			static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
 
-		if (object[11] == "TEXTURE") {
-			pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
-			capt->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+			if (object[11] == "TEXTURE") {
+				pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+				capt->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+			}
+
 		}
+		else
+		{
+			//-Alex Falk----------------------------------------------------------//
+			// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
+			GameObject * pool = CommonUtils::BuildCuboidObject(
+				object[4],
+				Vector3(stof(object[1]), stof(object[2]), stof(object[3])),
+				Vector3(3, 0.5, 3),
+				true,
+				0.0f,
+				false,
+				false,
+				DEFAULT_PHYSICS,
+				DEFAULT_COLOUR);
 
+			AddGameObject(pool);
+
+			GameObject * ca = CommonUtils::BuildCuboidObject(
+				object[4],
+				Vector3(stof(object[5]), stof(object[6]), stof(object[7])),
+				Vector3(stof(object[8]), stof(object[9]), stof(object[10])),
+				true,
+				0.0f,
+				true,
+				false,
+				DEFAULT_PHYSICS,
+				DEFAULT_COLOUR);
+			AddGameObject(ca);
+
+			if (object[11] == "TEXTURE") {
+				pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+				ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+			}
+			//--------------------------------------------------------------------//
+		}
 	}
-	else
-	{
-		//-Alex Falk----------------------------------------------------------//
-		// Clientside only spawns normal gameobjects, rather than Pickup/Capturearea 
-		GameObject * pool = CommonUtils::BuildCuboidObject(
-			object[4], 
-			Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
-			Vector3(3, 0.5, 3),
-			true,
-			0.0f,
-			false,
-			false,
-			DEFAULT_PHYSICS,
-			DEFAULT_COLOUR);
-
-		AddGameObject(pool);
-
-		GameObject * ca = CommonUtils::BuildCuboidObject(
-			object[4], 
-			Vector3(stof(object[5]), stof(object[6]), stof(object[7])), 
-			Vector3(stof(object[8]), stof(object[9]), stof(object[10])),
-			true,
-			0.0f,
-			true, 
-			false, 
-			DEFAULT_PHYSICS,
-			DEFAULT_COLOUR);
-		AddGameObject(ca);
-
-		if (object[11] == "TEXTURE") {
-			pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
-			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
-		}
-		//--------------------------------------------------------------------//
+	else {
+		CoruptedFile(1, linenum);
 	}
 
 }
 
 void DataDrivenMap::AddCuboid(vector<std::string> object) {
-	GameObject* cube =  CommonUtils::BuildCuboidObject(
-		object[4],
-		Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
-		Vector3(stof(object[5]), stof(object[6]), stof(object[7])), 
-		true, 
-		stof(object[8]), 
-		true, 
-		false, 
-		DEFAULT_PHYSICS, 
-		DEFAULT_COLOUR);
+	if (object.size() == 12 || object.size() == 14) {
+		GameObject* cube = CommonUtils::BuildCuboidObject(
+			object[4],
+			Vector3(stof(object[1]), stof(object[2]), stof(object[3])),
+			Vector3(stof(object[5]), stof(object[6]), stof(object[7])),
+			true,
+			stof(object[8]),
+			true,
+			false,
+			DEFAULT_PHYSICS,
+			DEFAULT_COLOUR);
 
-	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])),1));
-	if (object[12] == "TEXTURE") {
-		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+		cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])), 1));
+		if (object[12] == "TEXTURE") {
+			cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+		}
+
+		AddGameObject(cube);
 	}
-	
-	AddGameObject(cube);
+	else {
+		CoruptedFile(1, linenum);
+	}
 }
 
 void DataDrivenMap::AddGround(vector<std::string> object) {
-	GameObject* cube = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, 0, true, false, BIG_NODE, DEFAULT_COLOUR, MATERIALTYPE::Ground);
-	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 1));
-	if (object[11] == "TEXTURE") {
-		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+	if (object.size() == 11 || object.size() == 13) {
+		GameObject* cube = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, 0, true, false, BIG_NODE, DEFAULT_COLOUR, MATERIALTYPE::Ground);
+		cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 1));
+		if (object[11] == "TEXTURE") {
+			cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+		}
+		AddGameObject(cube);
 	}
-	AddGameObject(cube);
+	else {
+		CoruptedFile(1, linenum);
+	}
 }
 
 void DataDrivenMap::AddMinionAreas(vector<std::string> object) {
-	MinionCaptureArea* mca = new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f, 1.5f, 1.5f), stoi(object[5]));
-	AddGameObject(mca);
-	if (object[6] == "TEXTURE") {
-		mca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[7])]));
+	if (object.size() == 6 || object.size() == 8) {
+		MinionCaptureArea* mca = new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f, 1.5f, 1.5f), stoi(object[5]));
+		if (object[6] == "TEXTURE") {
+			mca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[7])]));
+		}
+		AddGameObject(mca);
+	}
+	else {
+		CoruptedFile(1, linenum);
 	}
 }
 
