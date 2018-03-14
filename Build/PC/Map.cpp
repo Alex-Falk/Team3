@@ -129,7 +129,7 @@ void Map::OnInitializeGUI()
 			Vector4(),
 			"Timer"
 		));
-	timer->setAlpha(0.7);
+	timer->setAlpha(0.7f);
 	timer->setText("00:00");
 
 	isLoading = true;
@@ -142,7 +142,7 @@ void Map::OnInitializeGUI()
 			"exit_pause"
 		));
 	exit->setText("EXIT");
-	exit->setAlpha(0.9);
+	exit->setAlpha(0.9f);
 	exit->disable();
 	exit->setVisible(false);
 	exit->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&Map::OnExitButtonClicked, this));
@@ -155,7 +155,7 @@ void Map::OnInitializeGUI()
 			"continue_pause"
 		));
 	_continue->setText("CONTINUE");
-	_continue->setAlpha(0.9);
+	_continue->setAlpha(0.9f);
 	_continue->disable();
 	_continue->setVisible(false);
 	_continue->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&Map::OnContinueButtonClicked, this));

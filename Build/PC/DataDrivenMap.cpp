@@ -200,7 +200,7 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 			stof(object[9]),
 			object[4], 
 			Vector3(stof(object[5]), stof(object[6]), stof(object[7])), 
-			stof(object[8]));
+			stoi(object[8]));
 		if (object[10] == "TEXTURE") {
 			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
 		}
