@@ -156,7 +156,7 @@ void Server::UpdateUser(float dt)
 
 						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 						SendConnectionID(freeIDs[freeIDs.size() - 1]);
-						enet_peer_timeout(evnt.peer, 800000, 800000, 800000);
+						enet_peer_timeout(evnt.peer, 800, 800, 800);
 						evnt.peer->pingInterval = 100;
 						freeIDs.pop_back();
 						SendPlayerNames();
