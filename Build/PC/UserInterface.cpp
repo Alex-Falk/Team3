@@ -774,6 +774,8 @@ string GUIsystem::GetWinMessage() {
 		return "YOU JUST\nPULLED A\nCHARLIE SHEEN";
 	case 5:
 		return "YOU ARE\nVICTORIOUS!";
+	case 6:
+		return "ANNIHILATION!";
 	default:
 		return "YOU ARE VICTORIOUS!!";
 	}
@@ -793,6 +795,8 @@ string GUIsystem::GetLoseMessage() {
 		return "CODE 404:\nWINNER NOT\nFOUND";
 	case 5:
 		return "THOU HAST\nBEEN SHAMED!";
+	case 6:
+		return "IT'S ALL\nOGRE NOW...";
 	default:
 		return "YOU ARE LOSE!!";
 	}
