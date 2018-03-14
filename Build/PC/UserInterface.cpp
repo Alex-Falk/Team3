@@ -35,6 +35,8 @@ GUIsystem::GUIsystem()
 	glBindTexture(GL_TEXTURE_2D, 0);
 	currentWeapon = 0;
 	hasWeapon = false;
+
+	message = rand() % 5;
 }
 
 GUIsystem::~GUIsystem()
@@ -700,10 +702,11 @@ void GUIsystem::DrawWinLostText()
 	if (drawResult == true) {
 		switch (result) {
 		case WIN:
-			ResultText->setText("WINNER WINNER\n DONGLI DINNER");
+			//off brand bird species
+			ResultText->setText(GetWinMessage());
 			break;
 		case LOST:
-			ResultText->setText("Advertising spaces\n for rent");
+			ResultText->setText(GetLoseMessage());
 			break;
 		case NONE:
 			break;
@@ -754,5 +757,43 @@ void GUIsystem::MapProblem(uint errorNumber, uint errorLine) {
 	else if (errorNumber == 2) {
 		cout << "The texture couldn't be found on line: " << to_string(errorLine) << " \n";
 
+	}
+}
+
+string GUIsystem::GetWinMessage() {
+	switch (message) {
+	case 0:
+		return "GET YOUR COAT\nYOU'VE WON!!!";
+	case 1:
+		return "A WINNER IS YOU!";
+	case 2:
+		return "WINNER WINNER\nPOULTRY DINNER";
+	case 3:
+		return "YOUR WINNER";
+	case 4:
+		return "YOU JUST\nPULLED A\nCHARLIE SHEEN";
+	case 5:
+		return "YOU ARE\nVICTORIOUS!";
+	default:
+		return "YOU ARE VICTORIOUS!!";
+	}
+}
+
+string GUIsystem::GetLoseMessage() {
+	switch (message) {
+	case 0:
+		return "YOU DIED...";
+	case 1:
+		return "YOUR PRINCESS\nIS IN\nANOTHER\nCASTLE";
+	case 2:
+		return "TRY HARD";
+	case 3:
+		return "NOTHIN\nPERSONNEL\nKID";
+	case 4:
+		return "CODE 404:\nWINNER NOT\nFOUND";
+	case 5:
+		return "THOU HAST\nBEEN SHAMED!";
+	default:
+		return "YOU ARE LOSE!!";
 	}
 }

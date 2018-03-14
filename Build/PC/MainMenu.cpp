@@ -219,7 +219,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map1Text"
 		));
-	Map1Text->setText("MAP1: Dong Li's bedroom");
+	Map1Text->setText("MAP1: Phil's boudoir");
 
 	Map2Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -263,7 +263,7 @@ void MainMenu::SetUpLobby()
 			"userName"
 		));
 	userName.type = "UserName";
-	userName.editbox->setText("Dong Li");
+	userName.editbox->setText("Phil-sama");
 	userName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnUserNameClicked, this));
 	GUIsystem::Instance()->editboxes.push_back(userName);
 
@@ -502,7 +502,7 @@ void MainMenu::SetUpconnectionMenu()
 			Vector4(),
 			"Client Name"
 		));
-	clientName.editbox->setText("Dong Li");
+	clientName.editbox->setText("Phil Sama");
 	clientName.type = "ClientName";
 	clientName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnClientNameClicked, this));
 	GUIsystem::Instance()->editboxes.push_back(clientName);

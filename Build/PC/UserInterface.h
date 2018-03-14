@@ -165,6 +165,7 @@ public:
 	inline RESULT GetResult() { return result; }
 	inline void SetDrawResult(bool drawResult) { this->drawResult = drawResult; }
 	inline bool GetDrawResult() { return this->drawResult; }
+	inline void RandomizeMessage() { message = rand() % 6; }
 	inline void SetIsCapsLocked(bool isCapsLocked) { this->isCapsLocked = isCapsLocked; }
 	inline bool GetIsCapsLocked() { return isCapsLocked; }
 
@@ -217,4 +218,9 @@ protected:
 
 	//Pause Menu
 	bool isCapsLocked = false;
+
+	//PHIL'S PHILTHY CODE 14/03/2018
+	string GetWinMessage();
+	string GetLoseMessage();
+	int message;
 };

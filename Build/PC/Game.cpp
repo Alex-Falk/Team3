@@ -189,6 +189,7 @@ void Game::DetermineWinner() {
 
 	//Determine whether the winner is this user
 	GUIsystem::Instance()->SetDrawResult(true);
+	GUIsystem::Instance()->RandomizeMessage();
 	if (currentWinner == GetUserID()) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
 		GUIsystem::Instance()->SetResult(RESULT::WIN);
