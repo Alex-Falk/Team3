@@ -6,6 +6,7 @@
 #include "CaptureArea.h"
 #include "ParticleEmitter.h"
 #include "AudioSystem.h"
+#include "LaunchPad.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
@@ -59,6 +60,8 @@ void SimpleGamePlay::AddObjects()
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
 	
+	AddGameObject(new LaunchPad(Vector3(20.0f, 2.0f, -20.0f), Vector3(2, 1, 2), "poo"));
+
 	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15.0f, 0.6f, -15.0f), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
 	AddGameObject(mpp);
 	mpp->AddPool(cpp1);

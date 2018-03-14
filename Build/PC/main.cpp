@@ -102,7 +102,7 @@ void Initialize()
 	InitialiseAudioFiles();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu", "MainMenu"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 1", "map1"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("",""));//new DataDrivenMap("Map 1", "map1"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 2", "map2"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 3", "map3"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 4", "PhilsMap"));

@@ -58,7 +58,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 	maxRotationSpeed = 20;
 
-	maxVel = 20.0f;
+	maxVel = 40.0f;
 
 	minLife = 20;
 	maxLife = 100;
