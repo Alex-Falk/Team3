@@ -191,7 +191,7 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 		return false;
 	}
 
-	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS) {
+	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == PAINTABLE_OBJECT) {
 		if (projectileWorth >= 5 && !exploded) Explode();
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 		destroy = true;

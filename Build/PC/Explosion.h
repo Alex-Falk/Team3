@@ -14,4 +14,5 @@ public:
 	virtual ~Explosion();
 protected:
 	ParticleEmitter * e;
+	float darn;
 };

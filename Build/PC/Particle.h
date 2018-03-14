@@ -49,6 +49,7 @@ public:
 	Vector3 GetPos() { return position; }
 	void SetPos(Vector3 pos);
 	void SetScale(Vector3 scale);
+	virtual void SetColour(Colour c);
 
 	virtual void OnDetachedFromScene();
 	//virtual void Update(float dt);

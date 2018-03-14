@@ -95,7 +95,7 @@
 //   currently results in shadows using up 256MB of space. Which is quite alot,
 //   but also currently the only potentially memory sensitive thing we do in this 
 //   renderer so it's fine.
-#define SHADOWMAP_SIZE 4096
+#define SHADOWMAP_SIZE 8192
 
 
 #define SHADOW_PROJ_FAR      50.0f			//Can see for 50m - setting this too far really hurts shadow quality as they attempt to cover the entirety of the view frustum

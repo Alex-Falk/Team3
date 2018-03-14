@@ -95,7 +95,8 @@ ParticleEmitter::ParticleEmitter(
 
 	int randPitch;
 	int randYaw;
-
+	float randScale;
+	Vector3 velScale;
 	for (uint i = 0; i < particleNum; ++i)
 	{
 		
@@ -119,9 +120,10 @@ ParticleEmitter::ParticleEmitter(
 
 	for (uint i = 0; i < particleNum; ++i)
 	{
-		randPitch = rand() % 90;
-		randYaw = rand() % 360;
-		Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * direction;
+		randPitch = (rand() % (int)spreadPitch*2) - spreadPitch;
+		randYaw = rand() % (int)spreadYaw;
+		randScale = (rand() % 5) / 100.0f;
+		Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * (direction + (direction*randScale));
 
 		startvels[i].x = dir.x;
 		startvels[i].y = dir.y;
@@ -130,7 +132,6 @@ ParticleEmitter::ParticleEmitter(
 	}
 
 	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-
 
 	shader = GraphicsPipeline::Instance()->GetShader(SHADERTYPE::ParticleCompute);
 	
@@ -166,6 +167,11 @@ void ParticleEmitter::OnDetachedFromScene()
 
 	}
 	particles.clear();
+}
+
+void ParticleEmitter::SetColour(Colour c)
+{
+	this->RGB = EnumToVectorColour(c);
 }
 
 void ParticleEmitter::Update(float dt)
@@ -216,6 +222,7 @@ void ParticleEmitter::Update(float dt)
 				if (velocities[i].buff >= 0.9f)
 				{
 					particles[i]->SetScale(scale);
+					particles[i]->SetPos({ 0,0,0 });
 					if (rate < 0.0001f)
 					{
 						SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(particles[i]);
