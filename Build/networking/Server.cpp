@@ -202,11 +202,7 @@ void Server::UpdateUser(float dt)
 					enet_host_broadcast(server->m_pNetwork, 0, packet);
 					break;
 				}
-				case MAP_PICKUP_REQUEST:
-				{
-					ReceiveRequest(data,PICKUP);
-					break;
-				}
+				case MAP_PICKUP_REQUEST:	ReceiveRequest(data,PICKUP); break;
 				}
 				break;
 			}

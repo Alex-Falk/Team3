@@ -33,6 +33,7 @@
 #include "Particle.h"
 #include <nclgl\Camera.h>
 
+//TODO simplify this, possibly just remove this and do it in particle emitter
 Particle::Particle(Colour col, Vector3 pos, Vector3 vel, Vector3 size, float lifeTime, float maxDist, string name)
 {
 	RenderNode * rnode = new RenderNode();

@@ -29,6 +29,7 @@
                            .,cll:.                            
 */
 // General Map Class that serves as a base for Maps - now as a base for the DataDrivenMap.
+// Extended by J. Zhou and N. Fragkas
 #include <ncltech\CommonUtils.h>
 #include "Pickup.h"
 #include "CaptureArea.h"
@@ -50,6 +51,7 @@ Map::~Map()
 //--------------------------------------------------------------------------------------------//
 // Initialization
 //--------------------------------------------------------------------------------------------//
+// Done when the game is actually started, needs to be after initialization and after initial network setup
 void Map::onConnectToScene()
 {
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
@@ -77,6 +79,7 @@ void Map::onConnectToScene()
 	GraphicsPipeline::Instance()->ResetPath();
 }
 
+// Done when the scene is loaded
 void Map::OnInitializeScene() {
 	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 
@@ -105,10 +108,6 @@ void Map::OnInitializeScene() {
 
 	
 }
-
-//--------------------------------------------------------------------------------------------//
-// Updating CaptureAreas Score
-//--------------------------------------------------------------------------------------------//
 
 void Map::OnInitializeGUI()
 {
@@ -161,19 +160,8 @@ void Map::OnInitializeGUI()
 	_continue->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&Map::OnContinueButtonClicked, this));
 }
 
+// Builds Invisible walls - Nikos Fragkas
 void Map::BuildGround(Vector2 dimensions) {
-	//GameObject* ground = CommonUtils::BuildCuboidObject(
-	//	"Ground",
-	//	Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
-	//	Vector3(dimensions.x, 1.0f, dimensions.y),		// Scale
-	//	true,
-	//	0.0f,
-	//	true,
-	//	false,								// Dragable By User
-	//	BIG_NODE,
-	//	Vector4(0.6f, 0.6f, 0.6f, 1.0f),
-	//	MATERIALTYPE::Ground);	// Colour
-	//this->AddGameObject(ground);
 
 	GameObject* upWall = CommonUtils::InvisibleWall(
 		"UpWall",
@@ -261,10 +249,11 @@ void Map::TransferAndUpdateTimer()
 	}
 }
 
-//void Map::AddCaptureArea(CaptureArea * ca) {
-//	captureAreas.push_back(ca);
-//	AddGameObject(ca);
-//}
+
+//--------------------------------------------------------------------------------------------//
+// Minions
+//--------------------------------------------------------------------------------------------//
+
 
 void Map::AddMinion(MinionBase * m)
 {
@@ -317,7 +306,7 @@ uint Map::GetMinionID(MinionBase * m)
 
 
 //--------------------------------------------------------------------------------------------//
-// Updating Avatars
+// Updating GUI
 //--------------------------------------------------------------------------------------------//
 void Map::UpdateGUI(float dt)
 {
@@ -357,8 +346,6 @@ void Map::showPauseMenu()
 }
 void Map::OnExitButtonClicked()
 {
-	//TODO: Disconnect
-
 	//Return to MainMenu
 	Game::Instance()->ResetGame();
 	SceneManager::Instance()->JumpToScene(0);
@@ -371,7 +358,7 @@ void Map::OnContinueButtonClicked()
 	_continue->setVisible(false);
 }
 //--------------------------------------------------------------------------------------------//
-// Updating Avatars
+// Updating Scene
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {

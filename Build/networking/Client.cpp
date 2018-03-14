@@ -151,26 +151,13 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			Game::Instance()->StartGame(mapID);
 			break;
 		}
-		case NUMBER_USERS:
-		{
-			ReceiveNumberUsers(data);
-			break;
-		}
+		case NUMBER_USERS:		ReceiveNumberUsers(data);				break;
+		case PLAYER_NAME:		ReceiveUserNames(data);					break;
 		case CONNECTION_ID:
 		{
 			userID = stoi(data.substr(data.find_first_of(':') + 1));
 			NCLDebug::Log("Connection ID recieved");
 			SendUsername();
-			break;
-		}
-		case PLAYER_NAME:
-		{
-			ReceiveUserNames(data);
-			break;
-		}
-		case OBJECT_UPDATE:
-		{
-			ReceiveObjectUpdate(data);
 			break;
 		}
 		case PLAYER_UPDATE:
@@ -185,54 +172,19 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 				DeadReckon(playerID, serverConnection->roundTripTime / 2000.0f);
 			break;
 		}
-		case PLAYER_SCORES:
-		{
-			ReceiveScores(data);
-			break;
-		}
-		case PLAYER_WEAPON:
-		{
-			ReceiveWeapon(data);
-			break;
-		}
-		case MAP_INDEX:
-		{
-			ReceiveMapIndex(data);
-			break;
-		}
-		case MAP_PICKUP_REQUEST:
-		{
-			ReceiveRequestResponse(data, PICKUP);
-			break;
-		}
-		case MAP_OBJECT_CAPTURE:
-		{
-			ReceiveAreaCapture(data);
-			break;
-		}
-		case MINION_SPAWN:
-		{
-			ReceiveMinionSpawn(data);
-			break;
-		}
-		case MINION_UPDATE:
-		{
-			ReceiveMinionUpdate(data);
-			break;
-		}
-		case MINION_DEATH:
-		{
-			ReceiveMinionDeath(data);
-			break;
-		}
+		case OBJECT_UPDATE:		ReceiveObjectUpdate(data);				break;
+		case PLAYER_SCORES:		ReceiveScores(data);					break;
+		case PLAYER_WEAPON:		ReceiveWeapon(data);					break;
+		case MAP_INDEX:			ReceiveMapIndex(data);					break;
+		case MAP_PICKUP_REQUEST:ReceiveRequestResponse(data, PICKUP);	break;
+		case MAP_OBJECT_CAPTURE:ReceiveAreaCapture(data);				break;
+		case MINION_SPAWN:		ReceiveMinionSpawn(data);				break;
+		case MINION_UPDATE:		ReceiveMinionUpdate(data);				break;
+		case MINION_DEATH:		ReceiveMinionDeath(data);				break;
 		}
 		break;
 	}
-	case ENET_EVENT_TYPE_DISCONNECT:
-	{
-		destroy = true;
-		break;
-	}
+	case ENET_EVENT_TYPE_DISCONNECT:	destroy = true;		break;
 	}
 }
 
