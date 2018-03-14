@@ -29,6 +29,7 @@ public:
 	void Update(float dt);
 private:
 	float power;
+	float s;
 };
 
 #endif

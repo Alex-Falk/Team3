@@ -53,10 +53,10 @@ LaunchPad::LaunchPad(Vector3 pos, Vector3 halfDims, string unique_name, float po
 
 bool LaunchPad::LaunchPadCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
 	if (collidingObject->GetInverseMass() > 0) {
-		collidingObject->SetLinearVelocity((collidingObject->GetLinearVelocity() * 1.5) + Vector3(0, 80, 0));
-		Vector3 scale = Render()->GetModelScale();
+		collidingObject->SetLinearVelocity(collidingObject->GetLinearVelocity() +  Vector3(0, 5, 0));
+		//Vector3 scale = Render()->GetModelScale();
 	}
-	return false;
+	return true;
 }
 
 void LaunchPad::Update(float dt) {
