@@ -40,7 +40,8 @@ public:
 	//Jump to scene name
 	void JumpToScene(const std::string& friendly_name);
 
-
+	void SetMapName(std::string name)	{ mapName = name; }
+	std::string GetMapName()			{ return mapName; }
 
 
 	//Get currently active scene (returns NULL if no scenes yet added)
@@ -61,6 +62,7 @@ protected:
 	virtual ~SceneManager();
 
 protected:
+	std::string			mapName;
 	uint				m_SceneIdx;
 	Scene*				scene; //Current Scene
 	bool				isExitButtonClicked = false;
