@@ -227,6 +227,8 @@ void Server::UpdateUser(float dt)
 					GraphicsPipeline::Instance()->RemovePlayerRenderNode((Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1))->Render()->GetChild());
 					SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
 					Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
+					Game::Instance()->SetPlayerName(evnt.peer->incomingPeerID + 1, "");
+					SendPlayerNames();
 				}
 				break;
 			}
