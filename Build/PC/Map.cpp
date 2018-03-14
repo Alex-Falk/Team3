@@ -224,6 +224,8 @@ void Map::LoadTextures()
 		NCLERROR("Texture not loaded");
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Capture_Point, TEXTUREDIR"capture.png", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Change_Color_Mask, TEXTUREDIR"mask.png", GL_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
 
 }
 

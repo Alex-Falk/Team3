@@ -257,7 +257,7 @@ void GraphicsPipeline::LoadShaders()
 	}
 
 	shaders[SHADERTYPE::ParticleRender] = new Shader(
-		SHADERDIR"SceneRender/EmptyVertex.glsl",
+		SHADERDIR"Common/EmptyVertex.glsl",
 		SHADERDIR"Common/ColorFragment.glsl"
 	);
 	if (!shaders[SHADERTYPE::ParticleRender]->LinkProgram())
@@ -265,14 +265,15 @@ void GraphicsPipeline::LoadShaders()
 		NCLERROR("Could not link shader: Particle Renderer");
 	}
 
-	shaders[SHADERTYPE::ParticleRender] = new Shader(
+	shaders[SHADERTYPE::ChangeColorObject] = new Shader(
 		SHADERDIR"Game/ChangeColorVertex.glsl",
 		SHADERDIR"Game/ChangeColorFragment.glsl"
 	);
-	if (!shaders[SHADERTYPE::ParticleRender]->LinkProgram())
+	if (!shaders[SHADERTYPE::ChangeColorObject]->LinkProgram())
 	{
 		NCLERROR("Could not link shader: Change Color Object");
 	}
+	
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -435,6 +436,9 @@ void GraphicsPipeline::UpdateScene(float dt)
 		projMatrix,
 		viewMatrix,
 		camera->GetPosition());
+
+	for (RenderNode* node : allNodes)
+		node->Update(dt); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
 }
 
 void GraphicsPipeline::RenderScene()
@@ -442,8 +446,7 @@ void GraphicsPipeline::RenderScene()
 	//Build World Transforms
 	// - Most scene objects will probably end up being static, so we really should only be updating
 	//   modelMatrices for objects (and their children) who have actually moved since last frame
-	for (RenderNode* node : allNodes)
-		node->Update(0.0f); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
+
 
 							//Build Transparent/Opaque Renderlists
 	BuildAndSortRenderLists();

@@ -5,7 +5,8 @@ ChangeColorRenderNode::ChangeColorRenderNode(Mesh * m, string name, Vector4 colo
 {
 	maxTime = 3.0f;
 	dt = maxTime;
-	currentColorPercentage = 1.0f;
+	currentColorPercent = 1.0f;
+	priviousColor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 
@@ -13,15 +14,15 @@ ChangeColorRenderNode::~ChangeColorRenderNode()
 {
 }
 
-void ChangeColorRenderNode::StartChangeColor(Vector4 priviousColor)
+void ChangeColorRenderNode::StartChangeColor()
 {
-
-	cout << "change color" << endl;
+	dt = 0.0f;
+	priviousColor = baseColor;
 }
 
 void ChangeColorRenderNode::Update(float msec)
 {
 	RenderNode::Update(msec);
 	dt += msec;
-	currentColorPercentage = min(dt / maxTime, 1.0f);
+	currentColorPercent = min(dt / maxTime, 1.0f);
 }

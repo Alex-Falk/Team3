@@ -19,6 +19,7 @@
 #include "StandardMaterial.h"
 #include "../ncltech/GraphicsPipeline.h"
 #include "../ncltech/TextureManager.h"
+#include "../nclgl/ChangeColorRenderNode.h"
 bool StandardMaterial::Apply()
 {
 
@@ -113,7 +114,7 @@ bool ChangeColorMaterial::Apply()
 {
 	GraphicsPipeline* graphicsPipeline = GraphicsPipeline::Instance();
 	TextureManager* textureManager = TextureManager::Instance();
-	Shader* shader = graphicsPipeline->GetAllShaders()[SHADERTYPE::Forward_Lighting];
+	Shader* shader = graphicsPipeline->GetAllShaders()[SHADERTYPE::ChangeColorObject];
 
 	glUseProgram(shader->GetProgram());
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "uProjViewMtx"), 1, GL_FALSE, (float*)&graphicsPipeline->GetProjViewMtx());
@@ -142,5 +143,11 @@ bool ChangeColorMaterial::Apply()
 
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "uModelMtx"), 1, GL_FALSE, (float*)&renderNode->GetWorldTransform());
 	glUniform4fv(glGetUniformLocation(shader->GetProgram(), "uColor"), 1, (float*)&renderNode->GetColor());
+	glUniform4fv(glGetUniformLocation(shader->GetProgram(), "uPriviousColor"), 1, (float*)&static_cast<ChangeColorRenderNode*>(renderNode)->GetPriviousColor());
+	glUniform1f(glGetUniformLocation(shader->GetProgram(), "uCurrentColorPercent"), static_cast<ChangeColorRenderNode*>(renderNode)->GetCurrentColorPercent());
+	glActiveTexture(GL_TEXTURE7);
+	glUniform1i(glGetUniformLocation(shader->GetProgram(), "uMaskTex"), 7);
+	glBindTexture(GL_TEXTURE_2D, textureManager->GetTexture(TEXTURETYPE::Change_Color_Mask));
+
 	return true;
 }

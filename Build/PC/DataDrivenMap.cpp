@@ -201,8 +201,11 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 			object[4], 
 			Vector3(stof(object[5]), stof(object[6]), stof(object[7])), 
 			stof(object[8]));
-		if (object[10] == "TEXTURE") {
-			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
+		if (object.size() >= 11)
+		{
+			if (object[10] == "TEXTURE") {
+				ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
+			}
 		}
 		AddGameObject(ca);
 	}
@@ -216,7 +219,7 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 
 		RenderNode* dummy = new ChangeColorRenderNode(mesh, "Cube", DEFAULT_COLOUR);
 		dummy->SetTransform(Matrix4::Scale(halfdims));
-		dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
+		dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
 		dummy->SetBoundingRadius(halfdims.Length());
 
 		rnode->AddChild(dummy);
@@ -274,9 +277,12 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 
 		static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
 
-		if (object[11] == "TEXTURE") {
-			pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
-			capt->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+		if (object.size() >= 12)
+		{
+			if (object[11] == "TEXTURE") {
+				pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+				capt->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+			}
 		}
 
 	}
@@ -309,9 +315,12 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 			DEFAULT_COLOUR);
 		AddGameObject(ca);
 
-		if (object[11] == "TEXTURE") {
-			pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
-			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+		if (object.size() >= 12)
+		{
+			if (object[11] == "TEXTURE") {
+				pool->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+				ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+			}
 		}
 		//--------------------------------------------------------------------//
 	}
@@ -331,18 +340,24 @@ void DataDrivenMap::AddCuboid(vector<std::string> object) {
 		DEFAULT_COLOUR);
 
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[9]), stof(object[10]), stof(object[11])),1));
-	if (object[12] == "TEXTURE") {
-		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+
+	if (object.size() >= 13)
+	{
+		if (object[12] == "TEXTURE") {
+			cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[13])]));
+		}
 	}
-	
 	AddGameObject(cube);
 }
 
 void DataDrivenMap::AddGround(vector<std::string> object) {
 	GameObject* cube = CommonUtils::BuildCuboidObject(object[4], Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), true, 0, true, false, BIG_NODE, DEFAULT_COLOUR, MATERIALTYPE::Ground);
 	cube->Physics()->SetOrientation(Quaternion::AxisAngleToQuaterion(Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 1));
-	if (object[11] == "TEXTURE") {
-		cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+	if (object.size() >= 12)
+	{
+		if (object[11] == "TEXTURE") {
+			cube->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[12])]));
+		}
 	}
 	AddGameObject(cube);
 }
@@ -350,8 +365,12 @@ void DataDrivenMap::AddGround(vector<std::string> object) {
 void DataDrivenMap::AddMinionAreas(vector<std::string> object) {
 	MinionCaptureArea* mca = new MinionCaptureArea(START_COLOUR, to_string(activeCapture), Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(1.5f, 1.5f, 1.5f), stoi(object[5]));
 	AddGameObject(mca);
-	if (object[6] == "TEXTURE") {
-		mca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[7])]));
+
+	if (object.size() >= 7)
+	{
+		if (object[6] == "TEXTURE") {
+			mca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[7])]));
+		}
 	}
 }
 

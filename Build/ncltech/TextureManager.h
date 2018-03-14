@@ -49,6 +49,7 @@ enum TEXTURETYPE
 	Speed_Pickup  = 4,
 	Jump_Pickup	  = 5,
 	Capture_Point = 6,
+	Change_Color_Mask = 7,
 	//Map Textures for Data Driven Map. Don't Change the order. Nikos Fragkas
 	Item_Texture_1,
 	Item_Texture_2,

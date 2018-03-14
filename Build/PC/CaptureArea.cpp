@@ -49,7 +49,7 @@ CaptureArea::CaptureArea(Vector3 posit, float invmass, string unique_name, Vecto
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
-	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
 
 	rnode->AddChild(dummy);
 
@@ -114,8 +114,8 @@ void CaptureArea::SetColour(Colour c)
 		case START_COLOUR:	paintColour = DEFAULT_COLOUR;	playerScores[0] = 0;		playerScores[1] = 0;		playerScores[2] = 0;		playerScores[3] = 0;		break;
 	}
 
-	Render()->SetChildBaseColor(paintColour);
 	static_cast<ChangeColorRenderNode*>(Render()->GetChild())->StartChangeColor();
+	Render()->SetChildBaseColor(paintColour);
 }
 
 CaptureAreaType CaptureArea::GetType()

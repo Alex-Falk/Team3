@@ -12,7 +12,7 @@ in Vertex{
 
 out vec4 OutFrag;
 
-const float reduceFactor = 1f;
+const float reduceFactor = 1.0f;
 
 void main(void) {
 	float invGammaCorrection = 1.0 / uGammaCorrection;

@@ -44,8 +44,8 @@ uniform float angle;
 //time for making the icons grow and shrink
 uniform float time;
 //constants
-uniform const float BASE_POOL_SIZE = 0.025;
-uniform const float BASE_PICKUP_SIZE = 0.025;
+const float BASE_POOL_SIZE = 0.025;
+const float BASE_PICKUP_SIZE = 0.025;
 
 in Vertex {
 	vec2 texCoord;

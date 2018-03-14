@@ -7,7 +7,7 @@
 ___________)______________          _____
 |                         \          \ U \__      _______
 |        Yesheng Su        \__________\   \/_______\___\_____________
-|        10/02/2018        /          < /_/   ..................... ^`-._
+|        17/03/2018        /          < /_/   ..................... ^`-._
 |_________________________/            `-----------,----,--------------'
 					  )                          _/____/_
 -.                .    ):::::::::::::::::::::::::::::.::..:... ..  .
@@ -24,7 +24,10 @@ ___________)______________          _____
 uniform float		smoothness;
 uniform samplerCube	cubeTex;
 uniform sampler2D  	uDiffuseTex;
+uniform float		uCurrentColorPercent;
+uniform vec4		uPriviousColor;
 uniform vec4		uColor;
+uniform sampler2D	uMaskTex;
 
 //Constant Per Frame
 uniform vec3  		uCameraPos;
@@ -84,9 +87,16 @@ float DoShadowTest(vec3 tsShadow, int tsLayer, vec2 pix)
 }
 
 void main(void)	{
+
+	float mask = texture(uMaskTex, IN.texCoord).r;
+	mask = mask+(uCurrentColorPercent);
+	mask = min(mask,1.0f);
+	vec4 objectColor = mix(uPriviousColor, uColor, mask);
+
+
 	vec3 normal 	= normalize(IN.normal);
 	vec4 texColor  	= texture(uDiffuseTex, IN.texCoord);
-	vec4 color 		= uColor * texColor;
+	vec4 color 		= objectColor * texColor;
 
 //Shadow Calculations
 	vec4 shadowWsPos = vec4(IN.worldPos + normal * NORMAL_BIAS, 1.0f);
