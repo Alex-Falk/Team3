@@ -229,28 +229,60 @@ void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
 			show_full_perf_metrics = !show_full_perf_metrics;
 
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
-			show_debug = !show_debug;
-
 		uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
-			drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+		
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
+		{
+			show_debug = !show_debug;
+			if (!show_debug)
+			{
+				if (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_BOUNDING)
+				{ 
+					drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
+				}
+			}
+		}
+		
+		if (show_debug)
+		{
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
+				drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
 
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
-			drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
+				drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
 
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
-			drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+				drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
 
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
-			drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+				drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
 
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
-			drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
+				drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
 
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
-			drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
-	
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
+				drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
+		}
 		Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
 		Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
 		Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
@@ -417,7 +449,7 @@ int main()
 		PrintStatusEntries();
 
 		//Test Post Process
-		TestPostProcess();
+		//TestPostProcess();
 
 		if (!SceneManager::Instance()->GetCurrentSceneIndex())
 		{
