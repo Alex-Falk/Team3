@@ -157,6 +157,7 @@
     <ClInclude Include="AudioSystem.h" />
     <ClInclude Include="Avatar.h" />
     <ClInclude Include="Behaviours.h" />
+    <ClInclude Include="LaunchPad.h" />
     <ClInclude Include="MinionBase.h" />
     <ClInclude Include="CaptureArea.h" />
     <ClInclude Include="ControllableAvatar.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="Behaviours.cpp" />
     <ClCompile Include="CaptureArea.cpp" />
     <ClCompile Include="DataDrivenMap.cpp" />
+    <ClCompile Include="LaunchPad.cpp" />
     <ClCompile Include="MinionBase.cpp" />
     <ClCompile Include="MinionStateCaptureZone.cpp" />
     <ClCompile Include="MinionStateChaseEnemyPlayer.cpp" />

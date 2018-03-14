@@ -189,6 +189,9 @@
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Gameplay\Header</Filter>
     </ClInclude>
+    <ClInclude Include="LaunchPad.h">
+      <Filter>Gameplay\Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -291,6 +294,9 @@
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
     <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Gameplay\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="LaunchPad.cpp">
       <Filter>Gameplay\Source</Filter>
     </ClCompile>
   </ItemGroup>
