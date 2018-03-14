@@ -265,7 +265,7 @@ void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 	}
 
 	//mouse input
-	if (handleMouse)
+	if (handleMouse && GraphicsPipeline::Instance()->GetIsMainMenu()==false)
 	{
 		Input::Instance()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
 		Input::Instance()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
@@ -420,13 +420,19 @@ int main()
 		TestPostProcess();
 
 		//Handle Keyboard Inputs
-		if (GUIsystem::Instance()->GetIsTyping() == false) {
-			HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+		if (GUIsystem::Instance()->GetIsPaused() == false && 
+			GUIsystem::Instance()->GetCurrentLoadingScreen() == NOT_LOADING &&
+			GUIsystem::Instance()->GetResult() == NONE) 
+		{
+			if (GUIsystem::Instance()->GetIsTyping() == false) {
+				HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+			}
+			else {
+				//Handle User Typing input
+				HandleGUITextInput();
+			}
 		}
-		else {
-			//Handle User Typing input
-			HandleGUITextInput();
-		}
+		
 
 		timer_total.BeginTimingSection();
 

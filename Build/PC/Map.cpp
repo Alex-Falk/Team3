@@ -354,6 +354,8 @@ void Map::showPauseMenu()
 	exit->setVisible(true);
 	_continue->enable();
 	_continue->setVisible(true);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
+	GUIsystem::Instance()->SetIsPaused(true);
 }
 void Map::OnExitButtonClicked()
 {
@@ -362,6 +364,8 @@ void Map::OnExitButtonClicked()
 	//Return to MainMenu
 	Game::Instance()->ResetGame();
 	SceneManager::Instance()->JumpToScene(0);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	GUIsystem::Instance()->SetIsPaused(false);
 }
 void Map::OnContinueButtonClicked()
 {
@@ -369,6 +373,8 @@ void Map::OnContinueButtonClicked()
 	exit->setVisible(false);
 	_continue->disable();
 	_continue->setVisible(false);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	GUIsystem::Instance()->SetIsPaused(false);
 }
 //--------------------------------------------------------------------------------------------//
 // Updating Avatars
