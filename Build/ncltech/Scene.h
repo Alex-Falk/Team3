@@ -68,7 +68,7 @@ public:
 	//	 - Initialize objects/physics here
 	virtual void OnInitializeScene()	{ 
 		PhysicsEngine::Instance()->ResetWorldPartition();
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+		//PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 	}
 
 	// Called when scene is being swapped and will no longer be rendered/updated 

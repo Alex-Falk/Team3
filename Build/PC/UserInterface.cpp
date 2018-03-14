@@ -297,6 +297,9 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		case KEYBOARD_SEPARATOR:
 			m_context->injectChar(0x3a);
 			break;
+		case KEYBOARD_COMMA:
+			m_context->injectChar(0x3a);
+			break;
 		case KEYBOARD_SPACE:
 			m_context->injectChar(0x20);
 			break;
@@ -430,7 +433,7 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 			m_context->injectKeyDown(CEGUI::Key::ArrowRight);
 			m_context->injectKeyUp(CEGUI::Key::ArrowRight);
 			break;
-		case KEYBOARD_SEPARATOR:
+		case KEYBOARD_COMMA:
 			m_context->injectChar(0x3a);
 			break;
 		case KEYBOARD_BACK:
@@ -742,6 +745,19 @@ void GUIsystem::SetUpResultText()
 		));
 	ResultText->disable();
 	ResultText->setVisible(false);
+}
+
+void GUIsystem::LimitTextLength()
+{
+	if (isTyping == true) {
+		for (int i = 0; i < editboxes.size(); ++i) {
+			string temp = editboxes[i].editbox->getText().c_str();
+			if (temp.length() > 20) {
+				temp.assign(temp, 0, 20);
+				editboxes[i].editbox->setText(temp);
+			}
+		}
+	}
 }
 
 void GUIsystem::MapProblem(uint errorNumber, uint errorLine) {

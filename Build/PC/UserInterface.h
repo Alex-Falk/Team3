@@ -173,6 +173,9 @@ public:
 
 	inline bool GetIsPaused() { return isPaused; }
 	inline void SetIsPaused(bool isPaused) { this->isPaused = isPaused; }
+
+	//Limit text length in main menu
+	void LimitTextLength();
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
