@@ -118,6 +118,8 @@ void main(void)	{
 			break;
 		}
 	}
+
+	shadow = clamp(shadow, 0.2f, 1.0f);
 	
 //Lighting Calculations
 	vec3 viewDir 		= normalize(uCameraPos - IN.worldPos);

@@ -80,7 +80,7 @@ public:
 	DataDrivenMap(const std::string& friendly_name, const std::string& mapName) :
 		Map(friendly_name, mapName),
 		fileName(GetMapName())
-	{ }
+	{	}
 
 	~DataDrivenMap() {
 

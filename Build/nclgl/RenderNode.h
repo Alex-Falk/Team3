@@ -81,8 +81,11 @@ public:
 	void			SetMesh(Mesh*m)				{mesh = m;}
 	Mesh*			GetMesh()					{return mesh;}
 
-	void			SetCulling(bool b) { cullFaces = b; }
-	bool			IsCulling() { return cullFaces; }
+	void			SetCulling(bool b)			{ cullFaces = b; }
+	bool			IsCulling()					{ return cullFaces; }
+
+	void			SetHasShadow(bool b)		{ hasShadow = b; }
+	bool			HasShadow()					{ return hasShadow; }
 
 	RenderNode*		GetChildWithName(string s);
 
@@ -133,6 +136,7 @@ protected:
 	bool		awake;
 	bool		isCollided = false;
 	bool		cullFaces = true;
+	bool		hasShadow = true;
 	string		name;
 	GLuint		texture;
 	std::vector<RenderNode*>		children;

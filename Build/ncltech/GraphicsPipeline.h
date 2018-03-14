@@ -128,6 +128,7 @@ enum SHADERTYPE
 	MiniMap				= 7,
 	Score				= 8,
 	ParticleCompute		= 9,
+	ParticleRender		= 10,
 	Shader_Number,
 };
 
@@ -210,6 +211,7 @@ public:
 	{
 		perfShadow.PrintOutputToStatusEntry(color,		"              Shadows        :");
 		perfObjects.PrintOutputToStatusEntry(color,		"              Objects        :");
+		perfPath.PrintOutputToStatusEntry(color,		"              Path           :");
 		perfPostProcess.PrintOutputToStatusEntry(color, "              PostProcess    :");
 		perfScoreandMap.PrintOutputToStatusEntry(color, "              Score & Map    :");
 	}
@@ -319,6 +321,7 @@ protected:
 	//--------------------------------------------------------------------------------------------//	
 	PerfTimer perfShadow;
 	PerfTimer perfObjects;
+	PerfTimer perfPath;
 	PerfTimer perfPostProcess;
 	PerfTimer perfScoreandMap;
 };

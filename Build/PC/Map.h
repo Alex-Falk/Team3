@@ -101,6 +101,7 @@ public:
 	inline float GetXDimension() { return dimensions.x; }
 	inline float GetYDimension() { return dimensions.y; }
 
+	inline Vector3 GetSpawnPos(Colour c) { return spawnPositions[c]; }
 
 	//--------------------------------------------------------------------------------------------//
 	// Minions - Special Gameobjects
@@ -117,7 +118,7 @@ public:
 
 
 	//--------------------------------------------------------------------------------------------//
-	// Updating Avatars
+	// Updating
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 

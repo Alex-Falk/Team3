@@ -271,7 +271,8 @@ public:
 	}
 
 	virtual void OnInitializeGUI(){}
-
+	void SetMapName(std::string name) { mapName = name; }
+	std::string GetMapName() { return mapName; }
 protected:
 	// Delete all contained Objects
 	//    - This is the default action upon firing OnCleanupScene()
@@ -290,8 +291,8 @@ protected:
 		mapDynamicObjects.clear();
 	}
 	
-	void SetMapName(std::string name) { mapName = name; }
-	std::string GetMapName() { return mapName; }
+
+
 
 protected:
 	std::string					m_SceneName;

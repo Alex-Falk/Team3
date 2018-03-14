@@ -40,3 +40,9 @@ class GroundMaterial : public Material
 public:
 	virtual	bool Apply();
 };
+
+class BasicMaterial : public Material
+{
+public:
+	virtual bool Apply();
+};

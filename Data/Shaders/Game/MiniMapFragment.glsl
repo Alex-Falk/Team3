@@ -29,10 +29,10 @@ uniform int colours[4];
 //pickups etc, 20 is a random quite high number and can
 //be changed to be the exact maximum number of pickups in the future
 uniform uint pickupCount;
-uniform uint pickupTypes[20];
-uniform vec2 pickupPositions[20];
+uniform uint pickupTypes[50];
+uniform vec2 pickupPositions[50];
 //this wont be used for all pickups
-uniform int pickupColours[20];
+uniform int pickupColours[50];
 
 uniform float opacity;
 //which player is the one to center the map on

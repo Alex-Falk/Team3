@@ -170,6 +170,9 @@ public:
 
 	void SetUpResultText();
 	void DrawWinLostText();
+
+	inline bool GetIsPaused() { return isPaused; }
+	inline void SetIsPaused(bool isPaused) { this->isPaused = isPaused; }
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -215,6 +218,8 @@ protected:
 	bool drawResult = false;
 	CEGUI::Titlebar* ResultText;
 
-	//Pause Menu
 	bool isCapsLocked = false;
+
+	//Pause controller
+	bool isPaused = false;
 };

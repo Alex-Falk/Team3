@@ -124,7 +124,8 @@ void Game::ResetGame()
 	for (uint i = 0; i < 4; ++i)
 	{
 		teamScores[i] = 0;
-		userNames[i] = "Player " + to_string(i);
+		captureScores[i] = 0;
+		userNames[i] = "Player " + to_string(i+1);
 	}
 
 	enet_deinitialize();
@@ -132,9 +133,7 @@ void Game::ResetGame()
 	time = 0.0f;
 	GUIsystem::Instance()->SetResult(RESULT::NONE);
 	GUIsystem::Instance()->SetHasWeapon(false);
-	//PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 	GUIsystem::Instance()->SetDrawResult(false);
-	//PhysicsEngine::Instance()->SetPaused(false);
 }
 
 void Game::ClaimPickup(uint i)

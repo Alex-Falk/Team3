@@ -181,6 +181,15 @@ void Avatar::Update(float dt) {
 	
 	UpdatePickUp(dt);
 
+	// Hard Reset if player falls off the map
+	if (this->Physics()->GetPosition().y <= -10.0f)
+	{
+		this->Physics()->SetPosition(((Map*)Game::Instance()->GetMap())->GetSpawnPos(this->col));
+		this->Physics()->SetForce(Vector3(0, 0, 0));
+		this->Physics()->SetLinearVelocity(Vector3(0, 0, 0));
+		this->Physics()->SetAngularVelocity(Vector3(0, 0, 0));
+	}
+
 	if (targetLife < minLife)
 	{
 		targetLife = minLife;

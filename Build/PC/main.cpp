@@ -102,10 +102,10 @@ void Initialize()
 	InitialiseAudioFiles();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!", "MainMenu"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "Map4"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "Map3"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "Map2"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "Map4"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "map1"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map2"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map3"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map2"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	
@@ -265,7 +265,7 @@ void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 	}
 
 	//mouse input
-	if (handleMouse)
+	if (handleMouse && GraphicsPipeline::Instance()->GetIsMainMenu()==false)
 	{
 		Input::Instance()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
 		Input::Instance()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
@@ -333,6 +333,14 @@ void HandleGUITextInput()
 	}
 	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_CAPITAL)) {
 		GUIsystem::Instance()->SetIsCapsLocked(!GUIsystem::Instance()->GetIsCapsLocked());
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_LEFT);
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RIGHT);
 		return;
 	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
@@ -412,13 +420,19 @@ int main()
 		TestPostProcess();
 
 		//Handle Keyboard Inputs
-		if (GUIsystem::Instance()->GetIsTyping() == false) {
-			HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+		if (GUIsystem::Instance()->GetIsPaused() == false && 
+			GUIsystem::Instance()->GetCurrentLoadingScreen() == NOT_LOADING &&
+			GUIsystem::Instance()->GetResult() == NONE) 
+		{
+			if (GUIsystem::Instance()->GetIsTyping() == false) {
+				HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+			}
+			else {
+				//Handle User Typing input
+				HandleGUITextInput();
+			}
 		}
-		else {
-			//Handle User Typing input
-			HandleGUITextInput();
-		}
+		
 
 		timer_total.BeginTimingSection();
 

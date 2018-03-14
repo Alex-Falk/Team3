@@ -32,6 +32,8 @@
 #include <PC\PaintPool.h>
 #include<PC\CaptureArea.h>
 
+#define MAX_NUMBER_OF_OBJECTS 50
+
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
 	, camera(new Camera())
@@ -253,6 +255,16 @@ void GraphicsPipeline::LoadShaders()
 	if (!shaders[SHADERTYPE::ParticleCompute]->LinkProgram()) {
 		NCLERROR("Could not link shader: Particle Compute shader");
 	}
+
+	shaders[SHADERTYPE::ParticleRender] = new Shader(
+		SHADERDIR"SceneRender/EmptyVertex.glsl",
+		SHADERDIR"Common/ColorFragment.glsl"
+	);
+
+	if (!shaders[SHADERTYPE::ParticleRender]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Particle Renderer");
+	}
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -268,6 +280,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::MiniMap] = nullptr;
 	materials[MATERIALTYPE::Score] = nullptr;
 	materials[MATERIALTYPE::ParticleCompute] = nullptr;
+	materials[MATERIALTYPE::ParticleRender] = new StandardMaterial();
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -396,6 +409,7 @@ void GraphicsPipeline::UpdateScene(float dt)
 	// Update Timers
 	perfShadow.UpdateRealElapsedTime(dt);
 	perfObjects.UpdateRealElapsedTime(dt);
+	perfPath.UpdateRealElapsedTime(dt);
 	perfPostProcess.UpdateRealElapsedTime(dt);
 	perfScoreandMap.UpdateRealElapsedTime(dt);
 
@@ -444,9 +458,10 @@ void GraphicsPipeline::RenderScene()
 		RenderObject();
 		perfObjects.EndTimingSection();
 
-
 		//render the path to texture
+		perfPath.BeginTimingSection();
 		RenderPath();
+		perfPath.EndTimingSection();
 
 		//post process and present
 		perfPostProcess.BeginTimingSection();
@@ -599,24 +614,41 @@ void GraphicsPipeline::RecursiveAddToRenderLists(RenderNode* node)
 void GraphicsPipeline::RenderAllObjects(bool isShadowPass, std::function<void(RenderNode*)> perObjectFunc)
 {
 	// sort render opaque order
-	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
-	{
-		perObjectFunc((*i).first);
-		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
-		else { glDisable(GL_CULL_FACE); }
-		(*i).first->DrawOpenGL(isShadowPass);
-	}
 
 	if (isShadowPass)
 	{
+		return;
+		for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
+		{
+			perObjectFunc((*i).first);
+			if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
+			else { glDisable(GL_CULL_FACE); }
+
+			if ((*i).first->HasShadow()) {
+				(*i).first->DrawOpenGL(isShadowPass);
+			}
+			
+		}
+
 		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
 		{
 			perObjectFunc((*i).first);
-			(*i).first->DrawOpenGL(isShadowPass);
+
+			if ((*i).first->HasShadow()) {
+				(*i).first->DrawOpenGL(isShadowPass);
+			}
 		}
 	}
 	else
 	{
+		for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
+		{
+			perObjectFunc((*i).first);
+			if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
+			else { glDisable(GL_CULL_FACE); }
+			(*i).first->DrawOpenGL(isShadowPass);
+		}
+		
 		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
 		{
 			glEnable(GL_BLEND);
@@ -698,11 +730,13 @@ void GraphicsPipeline::RenderShadow()
 	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i) {
 		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
 		else { glDisable(GL_CULL_FACE); }
-		(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
+		if ((*i).first->HasShadow())
+			(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
 	}
 	for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i) {
 		Material* mat = (*i).first->GetMaterial();
-		(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
+		if ((*i).first->HasShadow())
+			(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
 	}
 }
 
@@ -1099,9 +1133,9 @@ void GraphicsPipeline::DrawMiniMap() {
 	//get the current map
 	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
 	//int array for pickup type
-	uint pickupTypes[50];
-	float pickupPositions[50];
-	int pickupColours[50];
+	uint pickupTypes[MAX_NUMBER_OF_OBJECTS];
+	float pickupPositions[MAX_NUMBER_OF_OBJECTS*2];
+	int pickupColours[MAX_NUMBER_OF_OBJECTS];
 	//reset count
 	count = 0;
 
@@ -1153,9 +1187,9 @@ void GraphicsPipeline::DrawMiniMap() {
 	}
 
 	glUniform1ui (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
-	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
-	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
-	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
+	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), MAX_NUMBER_OF_OBJECTS, pickupTypes);
+	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), MAX_NUMBER_OF_OBJECTS*2, pickupPositions);
+	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), MAX_NUMBER_OF_OBJECTS, pickupColours);
 
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
