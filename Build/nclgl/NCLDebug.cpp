@@ -269,11 +269,11 @@ void NCLDebug::DrawTextWs(const Vector3& pos, const float font_size, const TextA
 	va_list args;
 	va_start(args, text);
 
-	char buf[1024];
-	int needed = vsnprintf_s(buf, 1023, _TRUNCATE, text.c_str(), args);
+	char buf[21];
+	int needed = vsnprintf_s(buf, 20, _TRUNCATE, text.c_str(), args);
 	va_end(args);
 
-	int length = (needed < 0) ? 1024 : needed;
+	int length = (needed < 0) ? 21 : needed;
 
 	std::string formatted_text = std::string(buf, (size_t)length);
 

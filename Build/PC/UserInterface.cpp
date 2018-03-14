@@ -1,3 +1,4 @@
+#include "Game.h"
 #include <PC/UserInterface.h>
 
 
@@ -129,18 +130,13 @@ void GUIsystem::Draw()
 	//draw weapon icon
 	DrawWeaponIcon();
 
-	if (drawPlayerName == true) {
+	if (drawPlayerName) {
 		//Draw player names
 		for (int i = 0; i < 4; i++) {
-			if (playerNames[i] != "") {
+			if (Game::Instance()->GetPlayer(i)) {
 				//draw
 				playersPosition[i].y += 0.7f;
 				NCLDebug::DrawTextWs(playersPosition[i], 25.0f, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), playerNames[i]);
-			}
-			else {
-				//Cuz there will be no player afterwards
-				break;
-				//TODO: test for multi-players
 			}
 		}
 	}
