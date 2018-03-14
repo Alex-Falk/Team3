@@ -33,10 +33,10 @@
 
 CaptureArea::CaptureArea()
 {
-	CaptureArea({ 0,0,0 },"CAPTUREAREA");
+	CaptureArea({ 0,0,0 },0.0f,"CAPTUREAREA");
 }
 
-CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
+CaptureArea::CaptureArea(Vector3 posit, float invmass, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
 {
 	Vector3 pos = posit;
 	friendlyName = unique_name;
@@ -60,7 +60,7 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 
 	pnode = new PhysicsNode();
 	pnode->SetPosition(pos);
-	pnode->SetInverseMass(0.0f);
+	pnode->SetInverseMass(invmass);
 	pnode->SetName(unique_name);
 	pnode->SetType(PAINTABLE_OBJECT);
 
@@ -77,7 +77,7 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 
 	CollisionShape* pColshape = new CuboidCollisionShape(halfdims);
 	pnode->SetCollisionShape(pColshape);
-	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
+	pnode->SetInverseInertia(pColshape->BuildInverseInertia(invmass));
 	this->renderNode = rnode;
 	this->physicsNode = pnode;
 RegisterPhysicsToRenderTransformCallback();

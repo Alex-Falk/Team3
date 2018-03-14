@@ -195,8 +195,12 @@ void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 	if (Game::Instance()->GetUserID() == 0)
 	{
-		CaptureArea* ca = new CaptureArea(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), object[4], Vector3(stof(object[5]), stof(object[6]), stof(object[7])), stof(object[8]));
-		ca->Physics()->SetInverseMass(stof(object[9]));
+		CaptureArea* ca = new CaptureArea(
+			Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
+			stof(object[9]),
+			object[4], 
+			Vector3(stof(object[5]), stof(object[6]), stof(object[7])), 
+			stof(object[8]));
 		if (object[10] == "TEXTURE") {
 			ca->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[11])]));
 		}
@@ -229,8 +233,14 @@ void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 	{
 		Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, object[4]);
 		AddGameObject(pool);
-		CaptureArea* capt = new MultiPaintPool(Vector3(stof(object[5]), stof(object[6]), stof(object[7])), object[4], Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 0);
+
+		CaptureArea* capt = new MultiPaintPool(
+			Vector3(stof(object[5]), stof(object[6]), stof(object[7])), 
+			object[4], 
+			Vector3(stof(object[8]), stof(object[9]), stof(object[10])), 
+			0);
 		AddGameObject(capt);
+
 		static_cast<MultiPaintPool*>(capt)->AddPool(static_cast<PaintPool*>(pool));
 
 		if (object[11] == "TEXTURE") {

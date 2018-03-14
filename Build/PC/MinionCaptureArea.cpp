@@ -10,7 +10,7 @@ MinionCaptureArea::MinionCaptureArea() : CaptureArea() {
 	type = MINION_CAPTURE_AREA;
 }
 
-MinionCaptureArea::MinionCaptureArea(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue) : CaptureArea(pos,unique_name,halfdims,scoreValue, col) {
+MinionCaptureArea::MinionCaptureArea(Colour col, string unique_name, Vector3 pos, Vector3 halfdims, int scoreValue) : CaptureArea(pos,0,unique_name,halfdims,scoreValue, col) {
 	spawnTimer = 5.0f;
 	currentSpawnTimer = 0.0f;
 	maxMinions = 10;

@@ -15,7 +15,7 @@ MultiPaintPool::MultiPaintPool() : CaptureArea()
 	type = MULTIPAINTPOOL_CAPTURE_AREA;
 }
 
-MultiPaintPool::MultiPaintPool(Vector3 pos, string unique_name, Vector3 halfdims, int scoreValue, Colour colour) : CaptureArea(pos, unique_name, halfdims, scoreValue, colour)
+MultiPaintPool::MultiPaintPool(Vector3 pos, string unique_name, Vector3 halfdims, int scoreValue, Colour colour) : CaptureArea(pos, 0, unique_name, halfdims, scoreValue, colour)
 {
 	type = MULTIPAINTPOOL_CAPTURE_AREA;
 }
