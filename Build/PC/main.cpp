@@ -419,6 +419,15 @@ int main()
 		//Test Post Process
 		TestPostProcess();
 
+		if (!SceneManager::Instance()->GetCurrentSceneIndex())
+		{
+			GraphicsPipeline::Instance()->GetCamera()->acceptMouseInput = false;
+		}
+		else
+		{
+			GraphicsPipeline::Instance()->GetCamera()->acceptMouseInput = true;
+		}
+
 		//Handle Keyboard Inputs
 		if (GUIsystem::Instance()->GetIsTyping() == false) {
 			HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);

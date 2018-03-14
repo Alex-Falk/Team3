@@ -138,6 +138,8 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	);
 
 	playerId = id;
+	((PlayerRenderNode*)dummy)->SetIsInAir(true);
+	inAir = true;
 }
 
 bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
