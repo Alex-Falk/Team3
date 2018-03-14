@@ -42,7 +42,7 @@ void DataDrivenMap::OnInitializeScene()
 	float m_AccumTime = 0;
 	linenum = 0;
 	textID = 0;
-	fileName = GetMapName();
+	LoadMapName();
 
 	ReadFile();
 
@@ -59,7 +59,14 @@ void DataDrivenMap::OnInitializeScene()
 
 	Map::OnInitializeScene();
 }
-
+void DataDrivenMap::LoadMapName() {
+	if (mapName == "CustomMap") {
+		fileName = SceneManager::Instance()->GetMapName();
+	}
+	else {
+		fileName = mapName;
+	}
+}
 
 void DataDrivenMap::AddObjects() {
 	BuildObjects();

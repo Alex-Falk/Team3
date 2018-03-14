@@ -41,6 +41,7 @@ private:
 	uint linenum;
 	Map* map;
 	string fileName;
+	string mapName;
 	vector<string> lines;
 	TEXTURETYPE textureID[10];
 	int textID;
@@ -71,6 +72,7 @@ private:
 	void BuildTextures(vector<std::string> object);
 	void DataDrivenMap::CheckTextID(int textID);
 	void AddTexture(uint ID, std::string name);
+	void LoadMapName();
 	inline void CoruptedFile(uint errorNumber, uint errorLine){ GUIsystem::Instance()->MapProblem(errorNumber, errorLine); }
 
 public:
@@ -79,7 +81,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	DataDrivenMap(const std::string& friendly_name, const std::string& mapName) :
 		Map(friendly_name, mapName),
-		fileName(GetMapName())
+		mapName(mapName)
 	{	}
 
 	~DataDrivenMap() {

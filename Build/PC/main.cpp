@@ -105,7 +105,7 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels", "map1"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map2"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map3"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "map4"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - The Best Game Ever", "CustomMap"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	

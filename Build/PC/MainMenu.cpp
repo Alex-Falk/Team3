@@ -83,9 +83,8 @@ void MainMenu::TextInputHelper()
 			//Map2Rbutton->disable();
 			//Map3Rbutton->disable();
 			//Map4Rbutton->disable();
-			nextMapID = 4;
 			string temp = customMap.editbox->getText().c_str();
-			SetMapName(temp);
+			SceneManager::Instance()->SetMapName(temp);
 
 			//int temp = 0;
 			//for (Scene* a : SceneManager::Instance()->m_vpAllScenes) {
