@@ -231,7 +231,6 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 	case ENET_EVENT_TYPE_DISCONNECT:
 	{
 		destroy = true;
-
 		break;
 	}
 	}
@@ -314,7 +313,7 @@ void Client::ReceiveUserNames(string data)
 	for (uint i = 0; i < 4; ++i)
 	{
 		if (userID != i)
-			Game::Instance()->SetPlayerName(i+1, splitData[i]);
+			Game::Instance()->SetPlayerName(i, splitData[i]);
 	}
 	
 }

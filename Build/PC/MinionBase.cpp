@@ -99,6 +99,7 @@ MinionBase::MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string na
 	isGrounded = false;
 
 	emitter = new ParticleEmitter(32, this->colour, this->Physics()->GetPosition(), (1.0f/60.0f),0, { 0.1f,0.1f,0.1f }, { 0.0f, -1.0f, 0.0f }, 5.0f, 5.0f, 5.0f, 50.0f);
+	dummy->SetHasShadow(false);
 }
 
 MinionBase::~MinionBase()

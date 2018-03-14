@@ -711,12 +711,15 @@ void MainMenu::onDisableBloomButtonClicked()
 void MainMenu::onCreateGameClicked()
 {
 	
-	if (!Game::Instance()->GetUser())
+	if (Game::Instance()->GetUser())
 	{
-		Game::Instance()->SetServer();
-		ipText->setText("Your IP: \n" + Game::Instance()->GetUser()->GetIP());
-		createButton->disable();
+		Game::Instance()->ResetGame();
 	}
+
+	Game::Instance()->SetServer();
+	ipText->setText("Your IP: \n" + Game::Instance()->GetUser()->GetIP());
+	createButton->disable();
+
 	HideMainMenu();
 	ShowLobbyMenuServer();
 }
