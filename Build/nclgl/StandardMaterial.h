@@ -46,3 +46,9 @@ class BasicMaterial : public Material
 public:
 	virtual bool Apply();
 };
+
+class ChangeColorMaterial : public Material
+{
+public :
+	virtual bool Apply();
+};

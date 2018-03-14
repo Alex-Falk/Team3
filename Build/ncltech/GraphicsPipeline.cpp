@@ -260,10 +260,18 @@ void GraphicsPipeline::LoadShaders()
 		SHADERDIR"SceneRender/EmptyVertex.glsl",
 		SHADERDIR"Common/ColorFragment.glsl"
 	);
-
 	if (!shaders[SHADERTYPE::ParticleRender]->LinkProgram())
 	{
 		NCLERROR("Could not link shader: Particle Renderer");
+	}
+
+	shaders[SHADERTYPE::ParticleRender] = new Shader(
+		SHADERDIR"Game/ChangeColorVertex.glsl",
+		SHADERDIR"Game/ChangeColorFragment.glsl"
+	);
+	if (!shaders[SHADERTYPE::ParticleRender]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Change Color Object");
 	}
 }
 
@@ -281,6 +289,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::Score] = nullptr;
 	materials[MATERIALTYPE::ParticleCompute] = nullptr;
 	materials[MATERIALTYPE::ParticleRender] = new StandardMaterial();
+	materials[MATERIALTYPE::ChangeColorObject] = new ChangeColorMaterial();
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)

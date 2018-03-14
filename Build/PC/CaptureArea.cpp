@@ -30,7 +30,7 @@
 #include "Projectile.h"
 #include "Minion.h"
 #include "CaptureArea.h"
-
+#include <nclgl\ChangeColorRenderNode.h>
 CaptureArea::CaptureArea()
 {
 	CaptureArea({ 0,0,0 },0.0f,"CAPTUREAREA");
@@ -45,7 +45,7 @@ CaptureArea::CaptureArea(Vector3 posit, float invmass, string unique_name, Vecto
 	this->colour = colour;
 
 	RenderNode* rnode = new RenderNode();
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), unique_name,paintColour);
+	RenderNode* dummy = new ChangeColorRenderNode(CommonMeshes::Cube(), unique_name,paintColour);
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
@@ -115,6 +115,7 @@ void CaptureArea::SetColour(Colour c)
 	}
 
 	Render()->SetChildBaseColor(paintColour);
+	static_cast<ChangeColorRenderNode*>(Render()->GetChild())->StartChangeColor();
 }
 
 CaptureAreaType CaptureArea::GetType()

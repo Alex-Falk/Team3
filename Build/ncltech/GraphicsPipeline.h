@@ -129,6 +129,7 @@ enum SHADERTYPE
 	Score				= 8,
 	ParticleCompute		= 9,
 	ParticleRender		= 10,
+	ChangeColorObject   = 11,
 	Shader_Number,
 };
 
