@@ -308,29 +308,31 @@ void Avatar::Spray()
 
 	if (targetLife > minLife + 5.0f)
 	{
-		randPitch = rand() % 90;
-		randYaw = rand() % 360;
-
-		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
-		
-		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
-
 		int randPitch;
 		int randYaw;
+		int randSpeed;
 		Vector3 direction;
 
-		for (int i = 0; i < 10; ++i)
+		targetLife -= 5.0f;
+
+		for (int i = 0; i < 40; ++i)
 		{
-			randPitch = rand() % 90;
-			randYaw = rand() % 360;
+			randPitch = (rand() % 20) - 10;
+			randYaw = (rand() % 20) - 10;
+			randSpeed = (rand() % 10) - 5;
 
-			float a = (float)(rand() % 10);
-			float b = (float)(rand() % 10);
-			float c = (float)(rand() % 10);
+			float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+			float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 
-			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
-			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
+			if (canJump && pitch < 0) {
+				pitch = 0.0f;
+			}
+
+			direction = 
+				Matrix3::Rotation(pitch + (float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * 
+				Matrix3::Rotation(yaw + (float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * 
+				Vector3(0.0f, 0.0f, -1.0f) * 
+				(50 + randSpeed);
 
 			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
