@@ -127,7 +127,7 @@ public:
 	inline bool GetDrawMiniMap() { return drawMiniMap; }
 	inline void SetPlayerColour(Vector3 c) { playerColour = c; }
 	inline void SetWeaponTimer(float t) { weaponTimer = t; }
-
+	inline void SetLoadingBar(float f) { loadingProgress->setProgress(f); }
 	//Getter Setter of isLoading boolean
 	inline LoadingScreenType GetCurrentLoadingScreen() { return currentLoadingScreen; }
 	inline void SetLoadingScreen(LoadingScreenType currentType) { currentLoadingScreen = currentType; }
