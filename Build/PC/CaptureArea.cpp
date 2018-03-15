@@ -97,6 +97,7 @@ Physics()->SetOnCollisionCallback(
 	UpdatePercentage();
 	currentlyCapturing = RED;
 	type = DEFAULT_CAPTURE_AREA;
+	pnode->SetElasticity(0.05f);
 }
 
 void CaptureArea::SetColour(Colour c)
