@@ -468,14 +468,7 @@ int main()
 			GraphicsPipeline::Instance()->GetCamera()->acceptMouseInput = true;
 		}
 
-		//Handle Keyboard Inputs
-		if (GUIsystem::Instance()->GetIsTyping() == false) {
-			HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
-		}
-		else
-		{
-			GraphicsPipeline::Instance()->GetCamera()->acceptMouseInput = true;
-		}
+
 
 		//Handle Keyboard Inputs
 		if (GUIsystem::Instance()->GetIsPaused() == false && 
@@ -488,6 +481,17 @@ int main()
 			else {
 				//Handle User Typing input
 				HandleGUITextInput();
+			}
+		}
+		else
+		{
+			//Handle Keyboard Inputs
+			if (GUIsystem::Instance()->GetIsTyping() == false) {
+				HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+			}
+			else
+			{
+				GraphicsPipeline::Instance()->GetCamera()->acceptMouseInput = true;
 			}
 		}
 		
