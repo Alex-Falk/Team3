@@ -104,7 +104,7 @@ void Initialize()
 	InitialiseAudioFiles();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("Dong Li's El BLOOB", "MainMenu"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "Map1"));
+	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("Dong Li's El BLOOB", "Map1"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "map2"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "map3"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 4", "PhilsMap"));

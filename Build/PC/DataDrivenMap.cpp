@@ -198,7 +198,7 @@ void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
 }
 
 void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
-	if (Game::Instance()->GetUserID() == 0)
+	if (Game::Instance()->IsHost() || true)
 	{
 		CaptureArea* ca = new CaptureArea(
 			Vector3(stof(object[1]), stof(object[2]), stof(object[3])), 
@@ -265,7 +265,7 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 }
 
 void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
-	if (Game::Instance()->GetUserID() == 0)
+	if (Game::Instance()->IsHost() || true)
 	{
 		PaintPool* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, object[4]);
 		AddGameObject(pool);
