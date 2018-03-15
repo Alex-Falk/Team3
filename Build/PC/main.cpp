@@ -225,13 +225,9 @@ void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 
 		}
 
-
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
-			show_full_perf_metrics = !show_full_perf_metrics;
-
 		uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 		
-		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
+		if (Input::Instance()->GetInput(DEBUGKEY))
 		{
 			show_debug = !show_debug;
 			if (!show_debug)
@@ -264,7 +260,7 @@ void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 		}
 		
 		if (show_debug)
-		{
+		{			
 			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
 				drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
 
@@ -282,13 +278,33 @@ void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 
 			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
 				drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
+
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+				NCLDebug::Log("Pistol Activated");
+				Game::Instance()->GetCurrentAvatar()->SetWeapon(PAINT_PISTOL);
+			}
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+				NCLDebug::Log("Rocket Activated");
+				Game::Instance()->GetCurrentAvatar()->SetWeapon(PAINT_ROCKET);
+			}
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+				NCLDebug::Log("Spray Activated");
+				Game::Instance()->GetCurrentAvatar()->SetWeapon(PAINT_SPRAY);
+			}
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+				NCLDebug::Log("Auto Activated");
+				Game::Instance()->GetCurrentAvatar()->SetWeapon(AUTO_PAINT_LAUNCHER);
+			}
+
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
+				show_full_perf_metrics = !show_full_perf_metrics;
 		}
 		Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
 		Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
 		Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
 		Input::Instance()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
 		Input::Instance()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
-		//Input::Instance()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
+		Input::Instance()->SetInput(DEBUGKEY, Window::GetKeyboard()->KeyTriggered(KEYBOARD_0));
 		Input::Instance()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
 		//possibly temporary
 		Input::Instance()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
