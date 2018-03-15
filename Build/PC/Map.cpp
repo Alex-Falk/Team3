@@ -214,7 +214,10 @@ void Map::LoadTextures()
 		NCLERROR("Texture not loaded");
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Change_Color_Mask, TEXTUREDIR"mask2.png", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
-
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::WaterDUDV, TEXTUREDIR"waterDUDV.png", GL_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Water, TEXTUREDIR"Water.jpg", GL_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
 }
 
 void Map::SetSpawnLocations()

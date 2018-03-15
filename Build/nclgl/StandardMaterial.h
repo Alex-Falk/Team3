@@ -52,3 +52,9 @@ class ChangeColorMaterial : public Material
 public :
 	virtual bool Apply();
 };
+
+class ColorPoolMaterial : public Material
+{
+public:
+	virtual bool Apply();
+};
