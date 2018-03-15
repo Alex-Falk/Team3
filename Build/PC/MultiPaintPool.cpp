@@ -27,7 +27,6 @@ void MultiPaintPool::SetColour(Colour c)
 	for (auto itr = pools.begin(); itr != pools.end(); ++itr)
 	{
 		(*itr)->ChangeColour(c);
-		Game::Instance()->Capture((*itr)->GetIdx(), c,this->scoreValue);
 	}
 }
 
