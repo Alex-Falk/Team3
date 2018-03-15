@@ -26,7 +26,7 @@ AudioSystem::AudioSystem() {
 
 	masterVolume = 0.5f;
 	gameSoundsVolume = 0.5f;
-	musicVolume = 0.5f;
+	musicVolume = 0.3f;
 
 	result = audioSystem->init(numChannels, FMOD_INIT_3D_RIGHTHANDED, NULL);
 	myfile << "Audio System initialised: " << result << std::endl;
@@ -198,6 +198,10 @@ void AudioSystem::StopSound(int index, int delay) {
 //stop all sounds, not pause
 void AudioSystem::StopAllSounds() {
 	result = masterGroup->stop();
+	for (int i = 0; i < numChannels;i++) {
+		freeChannels[i].object = NULL;
+		freeChannels->isChannelPlaying = false;
+	}
 }
 
 void AudioSystem::StopAllFinishedSounds() {

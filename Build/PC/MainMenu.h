@@ -225,13 +225,13 @@ public:
 
 	//Clicked function
 	//1. MainMenu buttons
-	void onOptionButtonClicked() { HideMainMenu(); ShowOptionMenu1(); }
-	void onButtonClicked() { SceneManager::Instance()->JumpToScene(); }
+	void onOptionButtonClicked() { HideMainMenu(); ShowOptionMenu1(); PlayMenuChoiceSound(); }
+	void onButtonClicked() { SceneManager::Instance()->JumpToScene(); PlayMenuChoiceSound(); }
 	void onCreateGameClicked();
-	void onJoinGameClicked() { HideMainMenu(); ShowConnectionMenu(); }
+	void onJoinGameClicked() { HideMainMenu(); ShowConnectionMenu(); PlayMenuChoiceSound(); }
 
 	//2. Option Menu buttons
-	void OnOptionMenuBackClicked() { ShowMainMenu(); HideOptionMenu(); }
+	void OnOptionMenuBackClicked() { ShowMainMenu(); HideOptionMenu(); PlayMenuChoiceSound(); }
 	void OnEnableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(true); }
 	void OnDisableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(false); }
 	//Slider function
@@ -242,7 +242,7 @@ public:
 	void onEnableBloomButtonClicked();
 	void onDisableBloomButtonClicked();
 
-
+	void PlayMenuChoiceSound();
 	//3. create game menu buttons
 	void onStartGameClicked();
 	void onMap1selected();

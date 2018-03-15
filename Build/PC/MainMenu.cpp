@@ -335,6 +335,10 @@ void MainMenu::onHostNameConfirmed()
 	
 }
 
+void MainMenu::PlayMenuChoiceSound() {
+	AudioSystem::Instance()->PlayASound(MENU_CHOICE_SOUND, false);
+}
+
 void MainMenu::HideLobby()
 {
 	Game::Instance()->ResetGame();
@@ -390,6 +394,7 @@ void MainMenu::onLobbyMenuBackButtonClicked()
 	Game::Instance()->ResetGame();
 	HideLobby();
 	ShowMainMenu();
+	PlayMenuChoiceSound();
 }
 void MainMenu::onMap1selected()
 {
@@ -524,6 +529,7 @@ void MainMenu::OnConnectMenuBackButtonClicked()
 {
 	HideConnectionMenu();
 	ShowMainMenu();
+	PlayMenuChoiceSound();
 }
 
 void MainMenu::onIPinputClicked()
@@ -722,6 +728,7 @@ void MainMenu::onCreateGameClicked()
 
 	HideMainMenu();
 	ShowLobbyMenuServer();
+	PlayMenuChoiceSound();
 }
 
 void MainMenu::onConnectButtonClicked()
@@ -761,6 +768,7 @@ void MainMenu::onConnectButtonClicked()
 	}
 	HideConnectionMenu();
 	ShowWaitingInfo();
+	PlayMenuChoiceSound();
 }
 
 void MainMenu::OndisconnectButtonClicked()
@@ -769,6 +777,7 @@ void MainMenu::OndisconnectButtonClicked()
 	Game::Instance()->ResetGame();
 	HideWaitingInfo();
 	ShowConnectionMenu();
+	PlayMenuChoiceSound();
 }
 
 void MainMenu::ShowMainMenu()
@@ -927,7 +936,7 @@ void MainMenu::ShowOptionMenu1()
 
 void MainMenu::onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
 void MainMenu::onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
-void MainMenu::onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
+void MainMenu::onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetMusicVolume(temp); }
 
 void MainMenu::Quit() {
 	SceneManager::Instance()->SetExitButtonClicked(true);

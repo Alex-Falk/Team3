@@ -38,7 +38,7 @@ public:
 	inline Colour GetColour() { return colour; }
 	~PaintPool();
 private:
-
+	float soundCooldown;
 	Colour colour;
 };
 

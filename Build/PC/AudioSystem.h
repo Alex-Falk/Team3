@@ -69,13 +69,19 @@ public:
 	void Update(Vector3 cameraPos, Vector3 cameraForward, Vector3 cameraUp, float dt);
 	void Update();
 
+	uint GetSoundLength(int i){
+		uint length = NULL;
+		sounds[i]->getLength(&length, FMOD_TIMEUNIT_MS);
+		return length;
+	}
+
 	//destructor
 	~AudioSystem();
 
 private:
 	//amount of sounds in the game
-	const static int numSounds = 12;
-	const static int numChannels = 32;
+	const static int numSounds = 13;
+	const static int numChannels = 64;
 
 	//system that handles sounds and channels
 	FMOD::System * audioSystem;

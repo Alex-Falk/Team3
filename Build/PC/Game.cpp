@@ -36,6 +36,7 @@
 #include <networking\Client.h>
 #include <networking\Server.h>
 #include "Minion.h"
+#include "AudioSystem.h"
 //--------------------------------------------------------------------------------------------//
 // Setters
 //--------------------------------------------------------------------------------------------//
@@ -204,10 +205,12 @@ void Game::DetermineWinner() {
 	if (currentWinner == GetUserID()) {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
 		GUIsystem::Instance()->SetResult(RESULT::WIN);
+		AudioSystem::Instance()->PlayASound(VICTORY_SOUND, false);
 	}
 	else {
 		PostProcess::Instance()->SetPostProcessType(PostProcessType::GRAYSCALE);
 		GUIsystem::Instance()->SetResult(RESULT::LOST);
+		AudioSystem::Instance()->PlayASound(LOSS_SOUND, false);
 	}
 	GUIsystem::Instance()->drawPlayerName = false;
 }
