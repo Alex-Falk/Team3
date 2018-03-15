@@ -133,6 +133,10 @@ void GUIsystem::Draw()
 	glEnable(GL_DEPTH_TEST);
 
 	//Render score bar
+	
+	//draw weapon icon
+	DrawWeaponIcon();
+
 	if (drawScorebar == true) {
 		float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
 		glUseProgram(scorebarShader->GetProgram());
@@ -142,6 +146,7 @@ void GUIsystem::Draw()
 		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uGammaCorrection"),
 			GraphicsPipeline::Instance()->GetGammaCorrection());
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "translation"), GraphicsPipeline::Instance()->GetTotalTime()*0.1);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uNumSuperSamples"), superSamples);
 		glUniform2f(glGetUniformLocation(scorebarShader->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
 		glActiveTexture(GL_TEXTURE0);
@@ -156,10 +161,9 @@ void GUIsystem::Draw()
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
 		scorebar->Draw();
 		glUseProgram(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glActiveTexture(0);
 	}
-
-	//draw weapon icon
-	DrawWeaponIcon();
 
 	if (drawPlayerName) {
 		//Draw player names
@@ -713,7 +717,7 @@ void GUIsystem::DrawWeaponIcon(){
 		glUniformMatrix4fv(glGetUniformLocation(weaponShader->GetProgram(), "modelMatrix"), 1, GL_FALSE, (float*)&modelMatrix);
 		glUniform1fv(glGetUniformLocation(weaponShader->GetProgram(), "timer"), 1, (float*)&weaponTimer);
 		glUniform3fv(glGetUniformLocation(weaponShader->GetProgram(), "playerColour"), 1, (float*)&playerColour);
-		//displays the weapom the user has equipped
+		//displays the weapom the user has equippe
 		glBindTexture(GL_TEXTURE_2D, weaponTextures[currentWeapon]);
 		weaponIcon->Draw();
 		glUseProgram(0);
