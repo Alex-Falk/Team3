@@ -72,25 +72,25 @@ void main(void)	{
 		finalColor.g -= 0.8;
 		finalColor.b -= 0.8;
 		finalColor.r += 0.95;
-		gl_FragColor = finalColor;
+		FragColor = finalColor;
 	}
 	else if (IN.temp_position.x >= a1 && IN.temp_position.x < a2) {
 		finalColor.r -= 0.8;
 		finalColor.b -= 0.8;
 		finalColor.g += 0.95;
-		gl_FragColor = finalColor;
+		FragColor = finalColor;
 	}
 	else if (IN.temp_position.x >= a2 && IN.temp_position.x < a3) {
 		finalColor.r -= 0.8;
 		finalColor.g -= 0.8;
 		finalColor.b += 0.95;
-		gl_FragColor = finalColor;
+		FragColor = finalColor;
 	}
 	else if (IN.temp_position.x >= a3 && IN.temp_position.x <= a4) {
 		finalColor.r += 0.15;
 		finalColor.g += 0.15;
 		finalColor.b -= 0.8;
-		gl_FragColor = finalColor;
+		FragColor = finalColor;
 	}
 	else {
 		FragColor = vec4(0, 0, 0, 1);
