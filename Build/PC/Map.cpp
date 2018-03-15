@@ -123,9 +123,18 @@ void Map::OnInitializeGUI()
 			"lifeBar"
 		));
 	
+	background = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("TaharezLook/Menubar",
+			Vector4(0.295f, 0.04f, 0.41f, 0.04f),
+			Vector4(),
+			"lifebarBackground"
+		));
+	background->setAlpha(1);
+	background->setText("00:00");
+
 	timer = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.45f, 0.00f, 0.10f, 0.05f),
+			Vector4(0.45f, 0.00f, 0.10f, 0.03f),
 			Vector4(),
 			"Timer"
 		));

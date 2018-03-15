@@ -189,9 +189,11 @@ protected:
 	float mouseSensitivity;
 	bool isTyping;
 
+	//Score bar
 	Mesh* scorebar;
 	Shader* scorebarShader;
 	bool drawScorebar = false;
+	GLuint scorebarTexture;
 
 	bool drawMiniMap = false;
 
