@@ -45,16 +45,26 @@ struct vec3 {
 class ParticleEmitter : public GameObject {
 protected:
 
+	//--------------------------------------------------------------------------------------------//
+	// Compute shader specific variables
+	//--------------------------------------------------------------------------------------------//
+
 	GLuint posSBO;
 	GLuint velSBO;
 	GLuint startVelSBO;
 
-	uint particleNum;
-	vector<Particle*> particles;
-
 	vec3 * positions;
 	vec3 * velocities;
 	vec3 * startingVels;
+
+	Shader * shader;
+
+	//--------------------------------------------------------------------------------------------//
+	// other variables
+	//--------------------------------------------------------------------------------------------//
+
+	uint particleNum;
+	vector<Particle*> particles;
 
 	Colour c;
 	Vector4 RGB;
@@ -68,11 +78,14 @@ protected:
 	float particleLifeTime;
 	float particleMaxDist;
 
-	Shader * shader;
-
 	float timer;
 
 public:
+
+	//--------------------------------------------------------------------------------------------//
+	// Constructor, Deconstructor and General functions
+	//--------------------------------------------------------------------------------------------//
+
 	ParticleEmitter(
 		uint numParticles, 
 		Colour c, 

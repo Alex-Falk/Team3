@@ -66,7 +66,7 @@ void Game::Update(float dt)
 { 
 	perfNetwork.UpdateRealElapsedTime(updateTimestep);
 
-
+	// If there is a network user, update it
 	if (user)
 	{
 		perfNetwork.BeginTimingSection();
@@ -74,6 +74,7 @@ void Game::Update(float dt)
 		perfNetwork.EndTimingSection();
 	}
 
+	// If the game is currently running, update timer and scores
 	if (gameRunning)
 	{
 		time += dt;
@@ -86,11 +87,13 @@ void Game::Update(float dt)
 			}
 		}
 
+		// Stop the game - only the host does it, and once the host closes the clients get kicked to the menu as well
 		if (IsHost() && PhysicsEngine::Instance()->IsPaused() && time > gameLength)
 		{
 			ResetGame();
 			SceneManager::Instance()->JumpToScene(0);
 		}
+		// find a winnter to the game, reset timer to 10 seconds
 		else if (time > gameLength) {
 			
 			DetermineWinner();
@@ -105,6 +108,7 @@ void Game::ResetGame()
 {
 	PhysicsEngine::Instance()->SetPaused(false);
 
+	// delete all avatars
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 	{
 		if (avatars[i])
@@ -114,6 +118,7 @@ void Game::ResetGame()
 		}
 
 	}
+	// disconnect and delete the user
 	if (user)
 	{
 		user->Disconnect();
@@ -121,6 +126,7 @@ void Game::ResetGame()
 		user = nullptr;
 	}
 
+	// reset scores
 	for (uint i = 0; i < 4; ++i)
 	{
 		teamScores[i] = 0;
@@ -128,19 +134,24 @@ void Game::ResetGame()
 		userNames[i] = "Player " + to_string(i+1);
 	}
 
+	// deinitialize enet and reset variables
 	enet_deinitialize();
 	gameRunning = false;
 	time = 0.0f;
+
+	//reset GUI
 	GUIsystem::Instance()->SetResult(RESULT::NONE);
 	GUIsystem::Instance()->SetHasWeapon(false);
 	GUIsystem::Instance()->SetDrawResult(false);
 }
 
+// connects pickup request to network, not done directly to avoid the rest of the game needing to know of any network functionality
 void Game::ClaimPickup(uint i)
 {
 	user->RequestPickup(GetUserID(), i);
 }
 
+// connects area capture to network (only done by the host)
 void Game::Capture(uint i, Colour c,int scorevalue)
 {
 	if (IsHost())
@@ -150,31 +161,32 @@ void Game::Capture(uint i, Colour c,int scorevalue)
 	}
 }
 
+// Add a minion to the map and send it across the network
 void Game::SpawnMinion(MinionBase * minion)
 {
 	Map * m = static_cast<Map*>(GetMap());
 
 	m->AddMinion(minion);
 
-	if (GetUserID() == 0)
+	if (IsHost())
 		((Server*)user)->SendMinionSpawn(m->GetMinionID(minion), minion->GetColour(), minion->Physics()->GetPosition());
 
 }
 
+// Remove the minion from the map and send it over the network
 void Game::KillMinion(MinionBase * minion)
 {
 	Map * m = static_cast<Map*>(GetMap());
 
 	uint minionID = m->GetMinionID(minion);
 
-	if (GetUserID() == 0)
+	if (IsHost())
 	{
 		((Server*)user)->SendMinionDeath(minionID);
 	}
 }
 
-
-
+// Find user with highest score
 void Game::DetermineWinner() {
 	int currentWinner = 0;
 	float currentWinnerScore = 0;
