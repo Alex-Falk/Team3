@@ -32,6 +32,7 @@
 #include <nclgl\Lexer.h>
 #include <ncltech\CommonUtils.h>
 #include "MinionCaptureArea.h"
+#include "LaunchPad.h"
 
 
 //--------------------------------------------------------------------------------------------//
@@ -138,6 +139,7 @@ void DataDrivenMap::BuildObject(vector<std::string> object) {
 	else if (object[0] == "PAINT_POOL")		AddPaintPools(object);
 	else if (object[0] == "MULTI_POOL")		AddMultiPaintPools(object);
 	else if (object[0] == "MINION_AREA")	AddMinionAreas(object);
+	else if (object[0] == "LAUNCH_PAD")		AddLaunchPad(object);
 	else if (object[0] == "GROUND")			AddGround(object);
 	else if (object[0] == "SPAWN_LOC")		SetSpawnLocation(object);
 	else if (object[0] == "MAP")			BuildMapDimenions(object);
@@ -168,10 +170,11 @@ void DataDrivenMap::BuildMapDimenions(vector<std::string> object) {
 }
 
 void DataDrivenMap::SetSpawnLocation(vector<std::string> object) {
-	if (object.size() > 5)
-		CoruptedFile(1, linenum);
-	else {
+	if (object.size() == 5) {
 		sPotision[stoi(object[1])] = Vector3(stof(object[2]), stof(object[3]), stof(object[4]));
+	}
+	else {
+		CoruptedFile(1, linenum);
 	}
 }
 
@@ -201,24 +204,26 @@ void DataDrivenMap::AddPaintPools(vector<std::string> object) {
 }
 
 void DataDrivenMap::AddPickups(vector<std::string> object) {
-	if (object.size() != 6 )
-		CoruptedFile(1, linenum);
-	else {
+	if (object.size() == 6) {
 		if (object[4] == "SPEED_BOOST")		type = SPEED_BOOST;
 		if (object[4] == "JUMP_BOOST")		type = JUMP_BOOST;
 		AddGameObject(new Pickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), type, object[5]));
 	}
+	else {
+		CoruptedFile(1, linenum);
+	}
 }
 
 void DataDrivenMap::AddWeaponPickups(vector<std::string> object) {
-	if (object.size() != 7)
-		CoruptedFile(1, linenum);
-	else {
+	if (object.size() == 7) {
 		if (object[4] == "PAINT_SPRAY")			weapType = PAINT_SPRAY;
 		if (object[4] == "PAINT_PISTOL")		weapType = PAINT_PISTOL;
 		if (object[4] == "AUTO_PAINT_LAUNCHER")	weapType = AUTO_PAINT_LAUNCHER;
 		if (object[4] == "PAINT_ROCKET")		weapType = PAINT_ROCKET;
 		AddGameObject(new WeaponPickup(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), weapType, object[5], stof(object[6])));
+	}
+	else {
+		CoruptedFile(1, linenum);
 	}
 }
 
@@ -369,6 +374,19 @@ void DataDrivenMap::AddMinionAreas(vector<std::string> object) {
 	}
 }
 
+void DataDrivenMap::AddLaunchPad(vector<std::string> object) {
+	if (object.size() == 8 || object.size() == 10) {
+		LaunchPad* lp = new LaunchPad(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), Vector3(stof(object[5]), stof(object[6]), stof(object[7])), object[4]);
+		if (object[8] == "TEXTURE") {
+			lp->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[9])]));
+		}
+		AddGameObject(lp);
+	}
+	else {
+		CoruptedFile(1, linenum);
+	}
+}
+
 void DataDrivenMap::AddTexture(uint ID, std::string name) {
 	string address = TEXTUREDIR + name;
 	CheckTextID(ID);
@@ -379,6 +397,7 @@ void DataDrivenMap::AddTexture(uint ID, std::string name) {
 		TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST);
 	}
 }
+
 
 void  DataDrivenMap::CheckTextID(int textID) {
 	if (textID == 0) textureID[0] = Item_Texture_1;

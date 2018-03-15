@@ -69,6 +69,7 @@ private:
 	void AddCaptureAreas(vector<std::string> object);
 	void AddMultiPaintPools(vector<std::string> object);
 	void AddMinionAreas(vector<std::string> object);
+	void AddLaunchPad(vector<std::string> object);
 	void BuildTextures(vector<std::string> object);
 	void DataDrivenMap::CheckTextID(int textID);
 	void AddTexture(uint ID, std::string name);
