@@ -22,19 +22,92 @@
 #include "PaintPool.h"
 #include <string.h>
 #include "Avatar.h"
-
+#include <ncltech\GraphicsPipeline.h>
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
 
-PaintPool::PaintPool() : Pickup()
+PaintPool::PaintPool()
 {
 }
 
-PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respawnTime) : Pickup(pos, PAINTPOOL, unique_name, respawnTime)
+PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respawnTime)
 {
-	ChangeColour(colour);
-	ChangeSize({3, 0.5, 3});
+	Vector3 halfdims = Vector3(3, 0.5, 3);
+
+	friendlyName = unique_name;
+	this->colour = colour;
+
+	RenderNode* rnode = new RenderNode();
+	Mesh * m = Mesh::GeneratePlane(2, 2);
+	m->type = GL_PATCHES;
+	//m->GenerateNormals();
+	//m->GenerateTangents();
+	//m->ClearBuffers();
+	//m->BufferData();
+	Vector4 col = EnumToVectorColour(colour);
+	col.w = 0.7f;
+	RenderNode* dummy = new RenderNode(m, "PickUp", col);
+	dummy->SetCulling(false);
+	dummy->SetTransform(Matrix4::Translation(Vector3(-halfdims.x,0.7f,-halfdims.z)) * Matrix4::Scale(halfdims) * Matrix4::Rotation(angle, Vector3(1, 0, 0)));
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ColorPool]);
+	rnode->AddChild(dummy);
+
+	RenderNode* dummy2 = new ChangeColorRenderNode(CommonMeshes::Cube(), "lower", EnumToVectorColour(colour));
+	dummy2->SetTransform(Matrix4::Translation(Vector3(0.0f, 0.3f, -halfdims.z)) * Matrix4::Scale(Vector3(3.0f,0.6f,0.05f)));
+	dummy2->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
+	rnode->AddChild(dummy2);
+
+	RenderNode* dummy3 = new ChangeColorRenderNode(CommonMeshes::Cube(), "lower", EnumToVectorColour(colour));
+	dummy3->SetTransform(Matrix4::Translation(Vector3(0.0f, 0.3f, halfdims.z)) * Matrix4::Scale(Vector3(3.0f, 0.6f, 0.05f)));
+	dummy3->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
+	rnode->AddChild(dummy3);
+
+	RenderNode* dummy4 = new ChangeColorRenderNode(CommonMeshes::Cube(), "lower", EnumToVectorColour(colour));
+	dummy4->SetTransform(Matrix4::Translation(Vector3(-halfdims.x, 0.3f, 0.0f)) * Matrix4::Scale(Vector3(0.05f, 0.6f, 3.0f)));
+	dummy4->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
+	rnode->AddChild(dummy4);
+
+	RenderNode* dummy5 = new ChangeColorRenderNode(CommonMeshes::Cube(), "lower", EnumToVectorColour(colour));
+	dummy5->SetTransform(Matrix4::Translation(Vector3(halfdims.x, 0.3f, 0.0f)) * Matrix4::Scale(Vector3(0.05f, 0.6f, 3.0f)));
+	dummy5->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
+	rnode->AddChild(dummy5);
+
+	RenderNode* dummy6 = new ChangeColorRenderNode(CommonMeshes::Cube(), "lower", EnumToVectorColour(colour));
+	dummy6->SetTransform(Matrix4::Translation(Vector3(0, 0.4f, 0.0f)) * Matrix4::Scale(Vector3(3.0f, 0.2f, 3.0f)));
+	dummy6->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
+	rnode->AddChild(dummy6);
+
+	//rnode->SetCulling(true);
+	rnode->SetTransform(Matrix4::Translation(pos));
+	rnode->SetBoundingRadius(Vector3(3.0f, 0.5f, 3.0f).Length());
+
+	PhysicsNode* pnode = NULL;
+
+	pnode = new PhysicsNode();
+	pnode->SetPosition(pos);
+	pnode->SetInverseMass(0.0f);
+	pnode->SetType(PICKUP);
+	pnode->SetName(unique_name);
+
+	float x = halfdims.x*2.0f;
+	float y = halfdims.y*2.0f;
+	float z = halfdims.z*2.0f;
+	float a;
+	if (x >= y && x >= z) { a = x; }
+	else if (y > x && y >= z) { a = y; }
+	else { a = z; }
+
+	pnode->SetBoundingRadius(a * sqrt(3.0f) / 2.0f);
+
+	CollisionShape* pColshape = new CuboidCollisionShape(halfdims);
+	pnode->SetCollisionShape(pColshape);
+	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
+
+	this->renderNode = rnode;
+	this->physicsNode = pnode;
+	RegisterPhysicsToRenderTransformCallback();
+	SetPhysics(pnode);
 	
 	Physics()->SetOnCollisionCallback(
 		std::bind(&PaintPool::PickupCallbackFunction,
@@ -68,8 +141,17 @@ bool PaintPool::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* colliding
 
 void PaintPool::ChangeColour(Colour newColour)
 {
-	Render()->SetChildBaseColor(EnumToVectorColour(newColour));
+	Vector4 newCol = EnumToVectorColour(newColour);
+	newCol.w = 0.7f;
 
+	Render()->GetChild()->SetBaseColor(newCol);
+
+	for (auto itr = Render()->GetChildIteratorStart()+1; itr != Render()->GetChildIteratorEnd(); ++itr)
+	{
+		static_cast<ChangeColorRenderNode*>((*itr))->StartChangeColor();
+		(*itr)->SetBaseColor(EnumToVectorColour(newColour));
+		
+	}
 	colour = newColour;
 }
 

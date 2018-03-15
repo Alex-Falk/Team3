@@ -50,6 +50,8 @@ GraphicsPipeline::GraphicsPipeline()
 	, scoreFBO(NULL)
 	,time(0.0f)
 {
+
+	totalTime = 0;
 	for (int i = 0; i < 2; ++i) {
 		screenTexColor[i] = NULL;
 	}
@@ -70,7 +72,7 @@ GraphicsPipeline::GraphicsPipeline()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	sceneBoundingRadius = 30.f; ///Approx based on scene contents
+	sceneBoundingRadius = 80.0f;	 ///Approx based on scene contents
 
 	camera->SetPosition(Vector3(0.0f, 10.0f, 15.0f));
 	camera->SetYaw(0.f);
@@ -147,7 +149,7 @@ void GraphicsPipeline::InitializeDefaults()
 
 	backgroundColor = Vector3(0.8f, 0.8f, 0.8f);
 	ambientColor = Vector3(0.2f, 0.2f, 0.2f);
-	lightDirection = Vector3(1.0f, -1.0f, 0.0f); lightDirection.Normalise();
+	lightDirection = Vector3(0.8f, -1.0f, 0.5f); lightDirection.Normalise();
 	specularFactor = 96.0f;
 
 	numSuperSamples = 4;
@@ -273,6 +275,19 @@ void GraphicsPipeline::LoadShaders()
 	{
 		NCLERROR("Could not link shader: Change Color Object");
 	}
+
+	shaders[SHADERTYPE::ColorPool] = new Shader(
+		SHADERDIR"watertes/water_tess_vert.glsl",
+		SHADERDIR"watertes/water_tess_frag.glsl",
+		SHADERDIR"watertes/water_tess_ctrl.glsl",
+		SHADERDIR"watertes/water_tess_eval.glsl",
+		SHADERDIR"watertes/water_tess_geom.glsl"
+	);
+
+	if (!shaders[SHADERTYPE::ColorPool]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: color Pool Object");
+	}
 	
 }
 
@@ -291,6 +306,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::ParticleCompute] = nullptr;
 	materials[MATERIALTYPE::ParticleRender] = new StandardMaterial();
 	materials[MATERIALTYPE::ChangeColorObject] = new ChangeColorMaterial();
+	materials[MATERIALTYPE::ColorPool] = new ColorPoolMaterial();
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -413,6 +429,8 @@ void GraphicsPipeline::DebugRender()
 
 void GraphicsPipeline::UpdateScene(float dt)
 {
+	totalTime += dt;
+
 	//update all of the camera stuff
 	camera->UpdateCamara(dt);
 

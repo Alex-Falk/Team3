@@ -267,7 +267,7 @@ void DataDrivenMap::AddCaptureAreas(vector<std::string> object) {
 void DataDrivenMap::AddMultiPaintPools(vector<std::string> object) {
 	if (Game::Instance()->GetUserID() == 0)
 	{
-		Pickup* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, object[4]);
+		PaintPool* pool = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), START_COLOUR, object[4]);
 		AddGameObject(pool);
 
 		CaptureArea* capt = new MultiPaintPool(

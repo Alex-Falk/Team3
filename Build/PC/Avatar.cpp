@@ -97,9 +97,13 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 		default:			colour = DEFAULT_COLOUR;	name = "DEFAULT_PLAYER";	break;
 	}
 
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Avatartex, TEXTUREDIR"avatartex.png", GL_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
+
 	RenderNode* rnode = new RenderNode();
 	float radius = s;
 	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), name, colour);
+	dummy->SetTexture(TextureManager::Instance()->GetTexture(TEXTURETYPE::Avatartex));
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);

@@ -41,15 +41,18 @@
 
 enum TEXTURETYPE
 {
-	Ground_Texture = 0,
-	Sky_Box		  = 1,
+	Ground_Texture		= 0,
+	Sky_Box				= 1,
 	//minimap stuff (phil 26/02/2018)
-	Paint_Pool	  = 2,
-	Gun_Pickup	  = 3,
-	Speed_Pickup  = 4,
-	Jump_Pickup	  = 5,
-	Capture_Point = 6,
-	Change_Color_Mask = 7,
+	Paint_Pool			= 2,
+	Gun_Pickup			= 3,
+	Speed_Pickup		= 4,
+	Jump_Pickup			= 5,
+	Capture_Point		= 6,
+	Change_Color_Mask	= 7,
+	WaterDUDV			= 8,
+	Water				= 9,
+	Avatartex			= 10,
 	//Map Textures for Data Driven Map. Don't Change the order. Nikos Fragkas
 	Item_Texture_1,
 	Item_Texture_2,
