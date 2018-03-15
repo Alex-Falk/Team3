@@ -22,7 +22,7 @@
 #include "PaintPool.h"
 #include <string.h>
 #include "Avatar.h"
-
+#include <ncltech\GraphicsPipeline.h>
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
@@ -43,6 +43,8 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 			std::placeholders::_2
 		)
 	);
+
+	Render()->GetChild()->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ColorPool]);
 }
 
 bool PaintPool::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
@@ -96,7 +98,7 @@ void PaintPool::ChangeColour(Colour newColour)
 		paintColour = DEFAULT_COLOUR;
 		break;
 	}
-
+	paintColour.w = 0.5f;
 	Render()->SetChildBaseColor(paintColour);
 
 	colour = newColour;
