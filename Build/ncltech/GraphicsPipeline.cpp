@@ -277,9 +277,13 @@ void GraphicsPipeline::LoadShaders()
 	}
 
 	shaders[SHADERTYPE::ColorPool] = new Shader(
-		SHADERDIR"Game/ColorPoolVertex.glsl",
-		SHADERDIR"Game/ColorPoolFragment.glsl"
+		SHADERDIR"watertes/water_tess_vert.glsl",
+		SHADERDIR"watertes/water_tess_frag.glsl",
+		SHADERDIR"watertes/water_tess_ctrl.glsl",
+		SHADERDIR"watertes/water_tess_eval.glsl",
+		SHADERDIR"watertes/water_tess_geom.glsl"
 	);
+
 	if (!shaders[SHADERTYPE::ColorPool]->LinkProgram())
 	{
 		NCLERROR("Could not link shader: color Pool Object");

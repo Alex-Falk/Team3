@@ -117,6 +117,7 @@ bool ChangeColorMaterial::Apply()
 	Shader* shader = graphicsPipeline->GetAllShaders()[SHADERTYPE::ChangeColorObject];
 
 	glUseProgram(shader->GetProgram());
+	glPatchParameteri(GL_PATCH_VERTICES, 4);
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "uProjViewMtx"), 1, GL_FALSE, (float*)&graphicsPipeline->GetProjViewMtx());
 
 	glActiveTexture(GL_TEXTURE0);
@@ -159,6 +160,7 @@ bool ColorPoolMaterial::Apply()
 	Shader* shader = graphicsPipeline->GetAllShaders()[SHADERTYPE::ColorPool];
 
 	glUseProgram(shader->GetProgram());
+	glPatchParameteri(GL_PATCH_VERTICES, 4);
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "uProjViewMtx"), 1, GL_FALSE, (float*)&graphicsPipeline->GetProjViewMtx());
 
 	glActiveTexture(GL_TEXTURE0);
@@ -190,6 +192,6 @@ bool ColorPoolMaterial::Apply()
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "dudvMap"), 7);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureManager::Instance()->GetTexture(TEXTURETYPE::WaterDUDV));
 
-	glUniform1f(glGetUniformLocation(shader->GetProgram(), "moveFactor"), graphicsPipeline->GetTotalTime()*0.1);
+	glUniform1f(glGetUniformLocation(shader->GetProgram(), "moveFactor"), graphicsPipeline->GetTotalTime());
 	return true;
 }

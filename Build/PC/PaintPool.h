@@ -23,7 +23,7 @@
 
 #include "Pickup.h"
 
-class PaintPool : public Pickup
+class PaintPool : public GameObject
 {
 public:
 	PaintPool();
@@ -40,5 +40,6 @@ public:
 private:
 
 	Colour colour;
+	float angle = 90.0f;
 };
 
