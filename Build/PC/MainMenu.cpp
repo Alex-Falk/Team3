@@ -78,15 +78,15 @@ void MainMenu::TextInputHelper()
 			Game::Instance()->SetName(clientName.editbox->getText().c_str());
 			GUIsystem::Instance()->SetIsTyping(false);
 		}
-		else if(GUIsystem::Instance()->currentType == "customMap"){
+		//else if(GUIsystem::Instance()->currentType == "customMap"){
 			////TODO:set next map name here
 			//Map1Rbutton->disable();
 			//Map2Rbutton->disable();
 			//Map3Rbutton->disable();
 			//Map4Rbutton->disable();
-			nextMapID = 4;
-			string temp = customMap.editbox->getText().c_str();
-			SetMapName(temp);
+			//nextMapID = 4;
+			//string temp = customMap.editbox->getText().c_str();
+			//SetMapName(temp);
 
 			//int temp = 0;
 			//for (Scene* a : SceneManager::Instance()->m_vpAllScenes) {
@@ -96,7 +96,7 @@ void MainMenu::TextInputHelper()
 			//	temp++;
 			//}
 			//GUIsystem::Instance()->SetIsTyping(false);
-		}
+		//}
 		else {
 			return;
 		}
@@ -249,16 +249,16 @@ void MainMenu::SetUpLobby()
 		));
 	Map4Text->setText("MAP4: River");
 	
-	customMap.editbox = static_cast<CEGUI::Editbox*>(
-		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
-			Vector4(0.65f, 0.85f, 0.2f, 0.05f),
-			Vector4(),
-			"customMap"
-		));
-	customMap.type = "customMap";
-	customMap.editbox->setText("Type Data driven map name");
-	customMap.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnCostomMapClicked, this));
-	GUIsystem::Instance()->editboxes.push_back(customMap);
+	//customMap.editbox = static_cast<CEGUI::Editbox*>(
+	//	GUIsystem::Instance()->createWidget("OgreTray/Editbox",
+	//		Vector4(0.65f, 0.85f, 0.2f, 0.05f),
+	//		Vector4(),
+	//		"customMap"
+	//	));
+	//customMap.type = "customMap";
+	//customMap.editbox->setText("Type Data driven map name");
+	//customMap.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnCostomMapClicked, this));
+	//GUIsystem::Instance()->editboxes.push_back(customMap);
 
 	userName.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
@@ -368,8 +368,8 @@ void MainMenu::HideLobby()
 	userName.editbox->setVisible(false);
 	userName.editbox->disable();
 
-	customMap.editbox->setVisible(false);
-	customMap.editbox->disable();
+	//customMap.editbox->setVisible(false);
+	//customMap.editbox->disable();
 
 	Map1Rbutton->setVisible(false);
 	Map1Rbutton->disable();
@@ -440,8 +440,8 @@ void MainMenu::ShowLobbyMenuServer()
 	userName.editbox->setVisible(true);
 	userName.editbox->enable();
 
-	customMap.editbox->setVisible(true);
-	customMap.editbox->enable();
+	//customMap.editbox->setVisible(true);
+	//customMap.editbox->enable();
 
 	Map1Rbutton->setVisible(true);
 	Map1Rbutton->enable();

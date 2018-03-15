@@ -41,7 +41,6 @@ protected:
 	float minLife;
 
 	float size;					//Player size
-	float curSize;
 	float jumpImpulse;    	    // Jump Power
 	float standardJumpImpulse;
 	float boostedJumpImpulse;

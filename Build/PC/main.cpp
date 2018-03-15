@@ -87,7 +87,7 @@ void InitialiseAudioFiles() {
 void Initialize()
 {
 	//Initialise the Window
-	if (!Window::Initialise("Game Technologies", 1920, 1080, true))
+	if (!Window::Initialise("Game Technologies", 1280, 720, false))
 		Quit(true, "Window failed to initialise!");
 
 	//Initialize Renderer
@@ -103,10 +103,10 @@ void Initialize()
 	InitialiseAudioFiles();
 
 	SceneManager::Instance()->EnqueueScene(new MainMenu("Dong Li's El BLOOB", "MainMenu"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "Philsmap"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "map2"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "PhilsMap"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "map1"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 4", "map4"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 4", "map2"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	GUIsystem::Instance()->SetUpLoadingScreen();

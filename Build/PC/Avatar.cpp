@@ -204,9 +204,7 @@ void Avatar::Update(float dt) {
 	
 	LerpLife(dt);
 
-	curSize = size * (life / 100);
-
-	ChangeSize(curSize);
+	ChangeSize(size * (life / 100));
 
 	if (collisionTimerActive)
 	{
