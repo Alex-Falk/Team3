@@ -29,9 +29,12 @@ uniform float player2;
 uniform float player3;
 uniform float player4;
 uniform sampler2D DiffuseTex;
+uniform sampler2D dudvTex;
 uniform float	uGammaCorrection;
 uniform float	uNumSuperSamples;
 uniform vec2 	uSinglepixel;
+
+const float waveStrength = 0.02;
 
 in Vertex{
 	vec4 temp_position;
@@ -46,8 +49,12 @@ void main(void)	{
 	vec4 player3Color = vec4(0, 0, 1, 0.6);
 	vec4 player4Color = vec4(0.5, 0.5, 0.5, 0.6);
 
-	vec3 color = vec3(0.0f);
-	color = texture(DiffuseTex, IN.texCoord).xyz;
+	//calculate texture coords based on dudv map
+	vec2 normalTexCoords = vec2(IN.texCoord.x, IN.texCoord.y);
+	vec2 distortion1 = (texture(dudvTex, vec2(IN.texCoord.x, IN.texCoord.y)).rg * 2.0 - 1.0) * waveStrength;
+	vec2 finalTexCoords = normalTexCoords + distortion1;
+
+	vec3 color = texture(DiffuseTex, IN.texCoord).xyz;
 
 	float a1 = player1;
 	float a2 = player2;
@@ -69,21 +76,21 @@ void main(void)	{
 	vec4 finalColor = vec4(color, 1.0);
 
 	if (IN.temp_position.x < a1) {
-		finalColor.g -= 0.8;
-		finalColor.b -= 0.8;
-		finalColor.r += 0.95;
+		finalColor.g -= 0.7;
+		finalColor.b -= 0.7;
+		finalColor.r += 0.75;
 		FragColor = finalColor;
 	}
 	else if (IN.temp_position.x >= a1 && IN.temp_position.x < a2) {
-		finalColor.r -= 0.8;
-		finalColor.b -= 0.8;
-		finalColor.g += 0.95;
+		finalColor.r -= 0.7;
+		finalColor.b -= 0.7;
+		finalColor.g += 0.75;
 		FragColor = finalColor;
 	}
 	else if (IN.temp_position.x >= a2 && IN.temp_position.x < a3) {
-		finalColor.r -= 0.8;
-		finalColor.g -= 0.8;
-		finalColor.b += 0.95;
+		finalColor.r -= 0.7;
+		finalColor.g -= 0.7;
+		finalColor.b += 0.75;
 		FragColor = finalColor;
 	}
 	else if (IN.temp_position.x >= a3 && IN.temp_position.x <= a4) {

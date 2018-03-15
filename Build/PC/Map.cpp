@@ -123,8 +123,8 @@ void Map::OnInitializeGUI()
 		));
 	
 	background = static_cast<CEGUI::Titlebar*>(
-		GUIsystem::Instance()->createWidget("TaharezLook/Menubar",
-			Vector4(0.295f, 0.04f, 0.41f, 0.04f),
+		GUIsystem::Instance()->createWidget("OgreTray/Menubar",
+			Vector4(0.292f, 0.04f, 0.415f, 0.04f),
 			Vector4(),
 			"lifebarBackground"
 		));

@@ -195,6 +195,7 @@ protected:
 	Shader* scorebarShader;
 	bool drawScorebar = false;
 	GLuint scorebarTexture;
+	GLuint scorebarDUDV;
 
 	bool drawMiniMap = false;
 

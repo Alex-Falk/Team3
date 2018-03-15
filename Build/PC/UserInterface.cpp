@@ -16,7 +16,13 @@ GUIsystem::GUIsystem()
 		NCLERROR("Load scoreBar shader failed");
 	}
 	scorebarTexture = SOIL_load_OGL_texture(TEXTUREDIR"scorebartexture.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	scorebarDUDV = SOIL_load_OGL_texture(TEXTUREDIR"waterDUDV.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
 	glBindTexture(GL_TEXTURE_2D, scorebarTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, scorebarDUDV);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -141,6 +147,9 @@ void GUIsystem::Draw()
 		glActiveTexture(GL_TEXTURE0);
 		glUniform1i(glGetUniformLocation(scorebarShader->GetProgram(), "DiffuseTex"), 0);
 		glBindTexture(GL_TEXTURE_2D, scorebarTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glUniform1i(glGetUniformLocation(scorebarShader->GetProgram(), "dudvTex"), 1);
+		glBindTexture(GL_TEXTURE_2D, scorebarDUDV);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
