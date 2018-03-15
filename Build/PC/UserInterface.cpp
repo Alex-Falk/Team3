@@ -607,7 +607,7 @@ void GUIsystem::DrawTransitionLoadingScreen()
 	glEnable(GL_DEPTH_TEST);
 
 	glUseProgram(0);
-	UpdateFakeProgressBar();
+	//UpdateFakeProgressBar();
 }
 
 void GUIsystem::DrawStartLoadingScreen()

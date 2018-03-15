@@ -41,7 +41,8 @@ public:
 	void JumpToScene(const std::string& friendly_name);
 
 
-
+	bool GetLoading() { return isLoading; }
+	void SetLoading(bool b) { isLoading = b; }
 
 	//Get currently active scene (returns NULL if no scenes yet added)
 	inline Scene* GetCurrentScene()			{ return scene; }
@@ -56,6 +57,9 @@ public:
 	bool GetExitButtonClicked() { return isExitButtonClicked; }
 
 	std::vector<Scene*> m_vpAllScenes;
+
+	void SetLoadBar(float f);
+
 protected:
 	SceneManager();
 	virtual ~SceneManager();
@@ -64,4 +68,6 @@ protected:
 	uint				m_SceneIdx;
 	Scene*				scene; //Current Scene
 	bool				isExitButtonClicked = false;
+	bool				isLoading = false;
+	bool				firstTimeBoot = true;	
 };
