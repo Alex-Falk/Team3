@@ -139,7 +139,7 @@ bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* co
 	}
 	
 	//Return true to enable collision resolution
-	return true;
+	return (this->GetType() == MINION_CAPTURE_AREA) ? false : true;
 
 }
 //----------------------------------------------------------------------------------------------//
