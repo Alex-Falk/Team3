@@ -54,6 +54,7 @@ protected:
 	// UI Elements in the scene
 	CEGUI::ProgressBar* lifeBar;
 	CEGUI::Titlebar* timer;
+	CEGUI::Titlebar* background;
 	CEGUI::PushButton* exit;
 	CEGUI::PushButton* _continue;
 	//--------------------------------------------------------------------------------------------//

@@ -38,7 +38,7 @@ public:
 	inline Colour GetColour() { return colour; }
 	~PaintPool();
 private:
-
+	Vector4 paintColour;
 	Colour colour;
 	float angle = 90.0f;
 };

@@ -171,6 +171,12 @@ public:
 
 	void SetUpResultText();
 	void DrawWinLostText();
+
+	inline bool GetIsPaused() { return isPaused; }
+	inline void SetIsPaused(bool isPaused) { this->isPaused = isPaused; }
+
+	//Limit text length in main menu
+	void LimitTextLength();
 protected:
 	static CEGUI::OpenGL3Renderer* m_renderer;
 	CEGUI::GUIContext* m_context = NULL;
@@ -184,9 +190,12 @@ protected:
 	float mouseSensitivity;
 	bool isTyping;
 
+	//Score bar
 	Mesh* scorebar;
 	Shader* scorebarShader;
 	bool drawScorebar = false;
+	GLuint scorebarTexture;
+	GLuint scorebarDUDV;
 
 	bool drawMiniMap = false;
 
@@ -216,11 +225,13 @@ protected:
 	bool drawResult = false;
 	CEGUI::Titlebar* ResultText;
 
-	//Pause Menu
 	bool isCapsLocked = false;
 
 	//PHIL'S PHILTHY CODE 14/03/2018
 	string GetWinMessage();
 	string GetLoseMessage();
 	int message;
+
+	//Pause controller
+	bool isPaused = false;
 };

@@ -8,12 +8,26 @@ GUIsystem::GUIsystem()
 {
 	Init(CEGUIDIR);
 
+	//Scorebar
 	scorebar = Mesh::GenerateQuad();
 	scorebarShader = new Shader(SHADERDIR"UI/ScorebarVertex.glsl",
 		SHADERDIR"UI/ScorebarFragment.glsl");
 	if (!scorebarShader->LinkProgram()) {
 		NCLERROR("Load scoreBar shader failed");
 	}
+	scorebarTexture = SOIL_load_OGL_texture(TEXTUREDIR"scorebartexture.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	scorebarDUDV = SOIL_load_OGL_texture(TEXTUREDIR"waterDUDV.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+	glBindTexture(GL_TEXTURE_2D, scorebarTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, scorebarDUDV);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	//phil 28/02/2018
 	//weapon icon
@@ -23,6 +37,7 @@ GUIsystem::GUIsystem()
 	if (!weaponShader->LinkProgram()) {
 		NCLERROR("Linking weapon shader failed :(");
 	}
+
 	//load icons
 	weaponTextures[0] = SOIL_load_OGL_texture(TEXTUREDIR"SprayIcon.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
 	weaponTextures[1] = SOIL_load_OGL_texture(TEXTUREDIR"PistolIcon.png", SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
@@ -105,18 +120,6 @@ void GUIsystem::Reset()
 
 void GUIsystem::Draw()
 {
-	//Render score bar
-	if (drawScorebar == true) {
-		glUseProgram(scorebarShader->GetProgram());
-		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.0f, 0.88f, 0.0f)) * Matrix4::Scale(Vector3(0.4f, 0.03f, 0.0f));
-		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
-		scorebar->Draw();
-		glUseProgram(0);
-	}
 	//Render normal UI
 	glUseProgram(0);
 	glActiveTexture(GL_TEXTURE0);
@@ -131,6 +134,35 @@ void GUIsystem::Draw()
 
 	//draw weapon icon
 	DrawWeaponIcon();
+
+
+	//Render score bar
+	if (drawScorebar == true) {
+		float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
+		glUseProgram(scorebarShader->GetProgram());
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.0f, 0.88f, 0.0f)) * Matrix4::Scale(Vector3(0.40f, 0.03f, 0.0f));
+		Matrix4 textureMatrix;
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "textureMatrix"), 1, GL_FALSE, (float*)&textureMatrix);
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uGammaCorrection"),
+			GraphicsPipeline::Instance()->GetGammaCorrection());
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "moveFactor"), GraphicsPipeline::Instance()->GetTotalTime()*0.1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uNumSuperSamples"), superSamples);
+		glUniform2f(glGetUniformLocation(scorebarShader->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(glGetUniformLocation(scorebarShader->GetProgram(), "DiffuseTex"), 0);
+		glBindTexture(GL_TEXTURE_2D, scorebarTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glUniform1i(glGetUniformLocation(scorebarShader->GetProgram(), "dudvTex"), 1);
+		glBindTexture(GL_TEXTURE_2D, scorebarDUDV);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
+		scorebar->Draw();
+		glUseProgram(0);
+	}
+
 
 	if (drawPlayerName) {
 		//Draw player names
@@ -295,6 +327,9 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 		case KEYBOARD_SEPARATOR:
 			m_context->injectChar(0x3a);
 			break;
+		case KEYBOARD_COMMA:
+			m_context->injectChar(0x3a);
+			break;
 		case KEYBOARD_SPACE:
 			m_context->injectChar(0x20);
 			break;
@@ -428,7 +463,7 @@ void GUIsystem::HandleTextInput(KeyboardKeys pressedKey)
 			m_context->injectKeyDown(CEGUI::Key::ArrowRight);
 			m_context->injectKeyUp(CEGUI::Key::ArrowRight);
 			break;
-		case KEYBOARD_SEPARATOR:
+		case KEYBOARD_COMMA:
 			m_context->injectChar(0x3a);
 			break;
 		case KEYBOARD_BACK:
@@ -741,6 +776,19 @@ void GUIsystem::SetUpResultText()
 		));
 	ResultText->disable();
 	ResultText->setVisible(false);
+}
+
+void GUIsystem::LimitTextLength()
+{
+	if (isTyping == true) {
+		for (int i = 0; i < editboxes.size(); ++i) {
+			string temp = editboxes[i].editbox->getText().c_str();
+			if (temp.length() > 20) {
+				temp.assign(temp, 0, 20);
+				editboxes[i].editbox->setText(temp);
+			}
+		}
+	}
 }
 
 void GUIsystem::MapProblem(uint errorNumber, uint errorLine) {
