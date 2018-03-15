@@ -177,6 +177,7 @@ void DataDrivenMap::AddPaintPools(vector<std::string> object) {
 	if (object[4] == "GREEN")	team = GREEN;
 	if (object[4] == "BLUE")	team = BLUE;
 	if (object[4] == "PINK")	team = PINK;
+	if (object[4] == "START_COLOUR")	team = START_COLOUR;
 	PaintPool* pp = new PaintPool(Vector3(stof(object[1]), stof(object[2]), stof(object[3])), team, object[5]);
 	if (object[6] == "TEXTURE") {
 		pp->Render()->GetChild()->SetTexture(TextureManager::Instance()->GetTexture(textureID[stoi(object[7])]));

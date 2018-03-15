@@ -91,7 +91,7 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 	pnode = new PhysicsNode();
 	pnode->SetPosition(pos);
 	pnode->SetInverseMass(0.0f);
-	pnode->SetType(PICKUP);
+	pnode->SetType(PAINTPOOL_PHYS_NODE);
 	pnode->SetName(unique_name);
 
 	float x = halfdims.x*2.0f;
@@ -121,7 +121,6 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 		)
 	);
 
-	Physics()->SetType(PAINTPOOL_PHYS_NODE);
 	soundCooldown = 0;
 }
 

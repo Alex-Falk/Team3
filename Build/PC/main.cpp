@@ -87,7 +87,7 @@ void InitialiseAudioFiles() {
 void Initialize()
 {
 	//Initialise the Window
-	if (!Window::Initialise("Game Technologies", 1440, 900, false))
+	if (!Window::Initialise("Game Technologies", 1920, 1080, true))
 		Quit(true, "Window failed to initialise!");
 
 	//Initialize Renderer
