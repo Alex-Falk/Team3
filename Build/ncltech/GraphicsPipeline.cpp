@@ -515,8 +515,6 @@ void GraphicsPipeline::RenderScene()
 		}
 
 		perfScoreandMap.EndTimingSection();
-		
-
 
 		//NCLDEBUG - Text Elements (aliased)
 		if (isMainMenu == false) {

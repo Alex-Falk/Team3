@@ -13,6 +13,8 @@
 #include "SimpleGamePlay.h"
 #include "DataDrivenMap.h"
 
+#include "windows.h"
+#include "psapi.h"
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -108,8 +110,6 @@ void Initialize()
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 4", "PhilsMap"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
-	
-
 	GUIsystem::Instance()->SetUpLoadingScreen();
 }
 
@@ -123,38 +123,28 @@ void PrintStatusEntries()
 	if (!show_debug)
 		return;
 
-	////Print Engine Options
-	//NCLDebug::AddStatusEntry(status_colour_header, "NCLTech Settings");
-	//NCLDebug::AddStatusEntry(status_colour, "     Physics Engine: %s (Press P to toggle)", PhysicsEngine::Instance()->IsPaused() ? "Paused  " : "Enabled ");
-	//NCLDebug::AddStatusEntry(status_colour, "     Monitor V-Sync: %s (Press V to toggle)", GraphicsPipeline::Instance()->GetVsyncEnabled() ? "Enabled " : "Disabled");
-	//NCLDebug::AddStatusEntry(status_colour, "");
+	PROCESS_MEMORY_COUNTERS pmc;
+	BOOL result = GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
 
-	////Print Current Scene Name
-	//NCLDebug::AddStatusEntry(status_colour_header, "[%d/%d]: %s",
-	//	SceneManager::Instance()->GetCurrentSceneIndex() + 1,
-	//	SceneManager::Instance()->SceneCount(),
-	//	SceneManager::Instance()->GetCurrentScene()->GetSceneName().c_str()
-	//	);
-	//NCLDebug::AddStatusEntry(status_colour, "     \x01 T/Y to cycle or R to reload scene");
-
-	//Print Performance Timers
-
+	SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
 
 	NCLDebug::AddStatusEntry(status_colour, "     FPS: %5.2f  (Press 9 for %s info)", 1000.f / timer_total.GetAvg(), show_full_perf_metrics ? "less" : "more");
 	if (!show_full_perf_metrics) {
-		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
+		NCLDebug::AddStatusEntry(status_colour, "          Total RAM         : %4.2fMB", ((float)(physMemUsedByMe/1048576.0f)));
+		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        : ");
 		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
-		timer_render.PrintOutputToStatusEntry(status_colour,	"            Renderer Update :");
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Renderer Update : ");
 		timer_update.PrintOutputToStatusEntry(status_colour,	"            Gameplay Update :");
 		Game::Instance()->PrintPerformanceTimers(status_colour);//           NetworkUpdate
 		timer_audio.PrintOutputToStatusEntry(status_colour,		"            Audio Update    :");
 	}
 	else 
 	{
-		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
+		NCLDebug::AddStatusEntry(status_colour, "          Total RAM         : %4.2fMB", ((float)(physMemUsedByMe / 1048576.0f)));
+		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        : ");
 		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
 		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
-		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    :");
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    : ");
 		GraphicsPipeline::Instance()->PrintPerformanceTimers(status_colour);
 		timer_update.PrintOutputToStatusEntry(status_colour,	"            Gameplay update :");
 		SceneManager::Instance()->GetCurrentScene()->PrintPerformanceTimers(status_colour);
@@ -181,7 +171,7 @@ void PrintStatusEntries()
 		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] ", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "World Partition   : %s [B] ", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
+		//NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
 
 		NCLDebug::AddStatusEntry(status_color_debug, "");
 	}
@@ -306,9 +296,6 @@ void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 		Input::Instance()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
 		Input::Instance()->SetInput(DEBUGKEY, Window::GetKeyboard()->KeyTriggered(KEYBOARD_0));
 		Input::Instance()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
-		//possibly temporary
-		Input::Instance()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
-		Input::Instance()->SetInput(CAMERA_DOWN, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
 		PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
 	}
 
@@ -444,6 +431,7 @@ int main()
 	//lock mouse so moving around the screen is nicer
 	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
+
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false)
 	{
@@ -511,8 +499,7 @@ int main()
 		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
 		timer_update.EndTimingSection();
 
-
-
+		
 		timer_gameplay.BeginTimingSection();
 		Game::Instance()->Update(dt);
 		timer_gameplay.EndTimingSection();

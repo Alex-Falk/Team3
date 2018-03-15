@@ -972,8 +972,8 @@ void NCLDebug::_RenderDebugClipSpace()
 		glBindTexture(GL_TEXTURE_2D, g_glDefaultFontTex);
 		glDrawArrays(GL_LINES, g_glBufOffsets[8] >> 1, g_vCharsLogStart >> 1);
 
-		glBindTexture(GL_TEXTURE_2D, g_glLogFontTex);
-		glDrawArrays(GL_LINES, (g_glBufOffsets[8] + g_vCharsLogStart) >> 1, ((uint)g_vChars.size()-g_vCharsLogStart) >> 1);
+		//glBindTexture(GL_TEXTURE_2D, g_glLogFontTex);
+		//glDrawArrays(GL_LINES, (g_glBufOffsets[8] + g_vCharsLogStart) >> 1, ((uint)g_vChars.size()-g_vCharsLogStart) >> 1);
 		
 		glBindVertexArray(0);
 	}
