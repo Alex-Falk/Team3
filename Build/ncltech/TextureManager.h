@@ -52,6 +52,7 @@ enum TEXTURETYPE
 	Change_Color_Mask	= 7,
 	WaterDUDV			= 8,
 	Water				= 9,
+	Avatartex			= 10,
 	//Map Textures for Data Driven Map. Don't Change the order. Nikos Fragkas
 	Item_Texture_1,
 	Item_Texture_2,
