@@ -70,7 +70,7 @@ GraphicsPipeline::GraphicsPipeline()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	sceneBoundingRadius = 30.f; ///Approx based on scene contents
+	sceneBoundingRadius = 80.0f;	 ///Approx based on scene contents
 
 	camera->SetPosition(Vector3(0.0f, 10.0f, 15.0f));
 	camera->SetYaw(0.f);
@@ -147,7 +147,7 @@ void GraphicsPipeline::InitializeDefaults()
 
 	backgroundColor = Vector3(0.8f, 0.8f, 0.8f);
 	ambientColor = Vector3(0.2f, 0.2f, 0.2f);
-	lightDirection = Vector3(1.0f, -1.0f, 0.0f); lightDirection.Normalise();
+	lightDirection = Vector3(0.8f, -1.0f, 0.5f); lightDirection.Normalise();
 	specularFactor = 96.0f;
 
 	numSuperSamples = 4;
