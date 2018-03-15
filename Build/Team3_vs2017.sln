@@ -71,6 +71,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DebugShaders", "DebugShader
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{ED95B4D6-EA18-4092-8250-928DEC7E9B2A}"
 	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\Game\ChangeColorFragment.glsl = ..\Data\Shaders\Game\ChangeColorFragment.glsl
+		..\Data\Shaders\Game\ChangeColorVertex.glsl = ..\Data\Shaders\Game\ChangeColorVertex.glsl
 		..\Data\Shaders\Game\GroundFragment.glsl = ..\Data\Shaders\Game\GroundFragment.glsl
 		..\Data\Shaders\Game\GroundVertex.glsl = ..\Data\Shaders\Game\GroundVertex.glsl
 		..\Data\Shaders\Game\SkyBoxFragment.glsl = ..\Data\Shaders\Game\SkyBoxFragment.glsl

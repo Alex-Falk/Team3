@@ -9,7 +9,7 @@ in Vertex
 	vec2 texCoord;
 } IN;
 
-out vec4 gl_FragColor;
+out vec4 FragColor;
 
 void main(void)
 {
@@ -22,16 +22,16 @@ void main(void)
   {
 	  if (timer > IN.texCoord.y)
 	  {
-		  gl_FragColor = vec4(playerColour, 1.0f);
+		  FragColor = vec4(playerColour, 1.0f);
 	  }
 	  else
 	  {
-		  gl_FragColor = vec4(0.0f,0.0f,0.0f,1.0f);
+		  FragColor = vec4(0.0f,0.0f,0.0f,1.0f);
 	  }
   }
   else
   {
-    gl_FragColor = texture(diffuseTex, IN.texCoord);
+    FragColor = texture(diffuseTex, IN.texCoord);
   }
 
 }

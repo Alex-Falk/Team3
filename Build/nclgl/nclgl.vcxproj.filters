@@ -105,6 +105,9 @@
     <ClCompile Include="NCLDebug.cpp">
       <Filter>Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="ChangeColorRenderNode.cpp">
+      <Filter>Files\RenderNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">
@@ -217,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="Lexer.h">
       <Filter>Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChangeColorRenderNode.h">
+      <Filter>Files\RenderNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -24,7 +24,7 @@ position/orientation each frame.
 #include <functional>
 #include "CommonMeshes.h"
 #include <PC\GamePlay.h>
-
+#include <nclgl\ChangeColorRenderNode.h>
 class Scene;
 class PhysicsEngine;
 
@@ -139,6 +139,7 @@ public:
 	//-Alex Falk----------------------------------------------------------//
 	inline void SetColour(Colour c)
 	{
+		static_cast<ChangeColorRenderNode*>(renderNode)->StartChangeColor();
 		renderNode->SetBaseColor(EnumToVectorColour(c));
 		renderNode->SetChildBaseColor(EnumToVectorColour(c));
 	}

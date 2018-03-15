@@ -33,7 +33,7 @@ in Vertex{
 	vec4 temp_position;
 } IN;
 
-out vec4 gl_FragColor;
+out vec4 FragColor;
 
 void main(void)	{
 	vec4 player1Color = vec4(1, 0, 0, 1);
@@ -60,22 +60,22 @@ void main(void)	{
 	a4 = a4 * 0.8 - 0.4;
 
 	if (IN.temp_position.x < a1) {
-		gl_FragColor = player1Color;
+		FragColor = player1Color;
 	}
 	else if (IN.temp_position.x >= a1 && IN.temp_position.x < a2) {
-		gl_FragColor = player2Color;
+		FragColor = player2Color;
 	}
 	else if (IN.temp_position.x >= a2 && IN.temp_position.x < a3) {
-		gl_FragColor = player3Color;
+		FragColor = player3Color;
 	}
 	else if (IN.temp_position.x >= a3 && IN.temp_position.x <= a4) {
-		gl_FragColor = player4Color;
+		FragColor = player4Color;
 	}
 	else {
-		gl_FragColor = vec4(0, 0, 0, 1);
+		FragColor = vec4(0, 0, 0, 1);
 	}
 
 	//if (IN.temp_position.x > 0) {
-	//	gl_FragColor = player1Color;
+	//	FragColor = player1Color;
 	//}
 }
