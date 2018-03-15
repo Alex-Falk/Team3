@@ -32,7 +32,7 @@
 #include <PC\PaintPool.h>
 #include<PC\CaptureArea.h>
 
-#define MAX_NUMBER_OF_OBJECTS 50
+#define MAX_NUMBER_OF_OBJECTS 60
 
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
