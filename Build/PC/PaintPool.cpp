@@ -22,7 +22,7 @@
 #include "PaintPool.h"
 #include <string.h>
 #include "Avatar.h"
-
+#include <ncltech\GraphicsPipeline.h>
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
@@ -43,6 +43,8 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 			std::placeholders::_2
 		)
 	);
+
+	Render()->GetChild()->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ColorPool]);
 }
 
 bool PaintPool::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
@@ -69,6 +71,35 @@ bool PaintPool::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* colliding
 void PaintPool::ChangeColour(Colour newColour)
 {
 	Render()->SetChildBaseColor(EnumToVectorColour(newColour));
+
+	switch (newColour)
+	{
+	case RED:
+		paintColour = RED_COLOUR;
+		break;
+
+	case GREEN:
+		paintColour = GREEN_COLOUR;
+		break;
+
+	case BLUE:
+		paintColour = BLUE_COLOUR;
+		break;
+
+	case PINK:
+		paintColour = PINK_COLOUR;
+		break;
+
+	case START_COLOUR:
+		paintColour = DEFAULT_COLOUR;
+		break;
+
+	default:
+		paintColour = DEFAULT_COLOUR;
+		break;
+	}
+	paintColour.w = 0.5f;
+	Render()->SetChildBaseColor(paintColour);
 
 	colour = newColour;
 }

@@ -50,6 +50,8 @@ GraphicsPipeline::GraphicsPipeline()
 	, scoreFBO(NULL)
 	,time(0.0f)
 {
+
+	totalTime = 0;
 	for (int i = 0; i < 2; ++i) {
 		screenTexColor[i] = NULL;
 	}
@@ -273,6 +275,15 @@ void GraphicsPipeline::LoadShaders()
 	{
 		NCLERROR("Could not link shader: Change Color Object");
 	}
+
+	shaders[SHADERTYPE::ColorPool] = new Shader(
+		SHADERDIR"Game/ColorPoolVertex.glsl",
+		SHADERDIR"Game/ColorPoolFragment.glsl"
+	);
+	if (!shaders[SHADERTYPE::ColorPool]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: color Pool Object");
+	}
 	
 }
 
@@ -291,6 +302,7 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::ParticleCompute] = nullptr;
 	materials[MATERIALTYPE::ParticleRender] = new StandardMaterial();
 	materials[MATERIALTYPE::ChangeColorObject] = new ChangeColorMaterial();
+	materials[MATERIALTYPE::ColorPool] = new ColorPoolMaterial();
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -413,6 +425,8 @@ void GraphicsPipeline::DebugRender()
 
 void GraphicsPipeline::UpdateScene(float dt)
 {
+	totalTime += dt;
+
 	//update all of the camera stuff
 	camera->UpdateCamara(dt);
 

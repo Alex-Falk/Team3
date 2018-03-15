@@ -130,6 +130,7 @@ enum SHADERTYPE
 	ParticleCompute		= 9,
 	ParticleRender		= 10,
 	ChangeColorObject   = 11,
+	ColorPool			= 12,
 	Shader_Number,
 };
 
@@ -190,6 +191,7 @@ public:
 	inline GLuint& GetPathTex() { return pathTex; }
 	const Vector2& GetGroundSize() const { return groundSize; }
 
+	float GetTotalTime() { return totalTime; }
 	//GUI
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 	bool GetIsMainMenu() { return isMainMenu; }
@@ -282,6 +284,7 @@ protected:
 	Mesh*		fullscreenQuad;
 	Camera*		camera;
 	bool		isVsyncEnabled;
+	float		totalTime;
 
 	std::vector<RenderNode*> allNodes;
 
