@@ -31,6 +31,7 @@
 
 PaintPool::PaintPool()
 {
+	Physics()->SetType(PAINTPOOL_PHYS_NODE);
 	soundCooldown = 0;
 }
 
@@ -119,6 +120,8 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 			std::placeholders::_2
 		)
 	);
+
+	Physics()->SetType(PAINTPOOL_PHYS_NODE);
 	soundCooldown = 0;
 }
 

@@ -1180,11 +1180,8 @@ void GraphicsPipeline::DrawMiniMap() {
 				case PICKUP:
 				{
 					Pickup* p = static_cast<Pickup*>(go);
-					if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
+					if (p->GetActive()) {
 						pickupTypes[count] = p->GetPickupType();
-						if (pickupTypes[count] == PickupType::PAINTPOOL) {
-							pickupColours[count] = ((PaintPool*)p)->GetColour();
-						}
 						Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
 						pickupPositions[count * 2] = v.x;
 						pickupPositions[(count * 2) + 1] = v.y;
@@ -1208,6 +1205,17 @@ void GraphicsPipeline::DrawMiniMap() {
 					pickupPositions[(count * 2) + 1] = v.y;
 					count++;
 					break;
+				}
+				case PAINTPOOL_PHYS_NODE:
+				{
+					GameObject* p = static_cast<GameObject*>(go);
+					pickupColours[count] = ((PaintPool*)p)->GetColour();
+					pickupTypes[count] = PAINTPOOL;
+					Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
+					pickupPositions[count * 2] = v.x;
+					pickupPositions[(count * 2) + 1] = v.y;
+					count++;
+					
 				}
 				}
 			}
