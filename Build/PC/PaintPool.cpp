@@ -23,12 +23,15 @@
 #include <string.h>
 #include "Avatar.h"
 #include <ncltech\GraphicsPipeline.h>
+#include "AudioSystem.h"
+
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #define min(a,b)    (((a) < (b)) ? (a) : (b))
 
 PaintPool::PaintPool()
 {
+	soundCooldown = 0;
 }
 
 PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respawnTime)
@@ -116,14 +119,21 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 			std::placeholders::_2
 		)
 	);
+	soundCooldown = 0;
 }
 
 bool PaintPool::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
 {
 	if (collidingObject->GetType() == PLAYER)
 	{
+		
 		if (this->colour == ((Avatar*)collidingObject->GetParent())->GetColour())
 		{
+			if (soundCooldown >= AudioSystem::Instance()->GetSoundLength(PAINT_FILL_SOUND) * 0.001f) {
+				AudioSystem::Instance()->PlayASound(PAINT_FILL_SOUND, false, collidingObject->GetPosition());
+				soundCooldown = 0;
+			}
+			
 			((Avatar*)collidingObject->GetParent())->ChangeLife(1);
 		}
 		else
@@ -171,6 +181,7 @@ void PaintPool::ChangeSize(Vector3 newSize)
 
 void PaintPool::Update(float dt)
 {
+	soundCooldown += dt;
 }
 
 PaintPool::~PaintPool()

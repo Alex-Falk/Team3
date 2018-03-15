@@ -33,12 +33,16 @@
 #include <ncltech\CommonUtils.h>
 #include "MinionCaptureArea.h"
 #include <nclgl\ChangeColorRenderNode.h>
+#include "AudioSystem.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
 //--------------------------------------------------------------------------------------------//
 void DataDrivenMap::OnInitializeScene()
 {
+	AudioSystem::Instance()->StopAllSounds();
+	AudioSystem::Instance()->Update();
+	AudioSystem::Instance()->PlayASound(GAME_MUSIC, true);
 	float m_AccumTime = 0;
 	linenum = 0;
 	textID = 0;

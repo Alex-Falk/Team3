@@ -193,6 +193,7 @@ bool Projectile::ProjectileCallbackFunction(PhysicsNode * self, PhysicsNode * co
 
 	if (collidingObject->GetType() == BIG_NODE || collidingObject->GetType() == DEFAULT_PHYSICS || collidingObject->GetType() == PAINTABLE_OBJECT) {
 		if (projectileWorth >= 5 && !exploded) Explode();
+		else { AudioSystem::Instance()->PlayASound(PROJECTILE_HIT_SOUND, false, this->Physics()->GetPosition()); }
 		((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(false);
 		destroy = true;
 		return false;

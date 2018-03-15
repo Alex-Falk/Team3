@@ -39,6 +39,7 @@ public:
 	~PaintPool();
 private:
 	Vector4 paintColour;
+	float soundCooldown;
 	Colour colour;
 	float angle = 90.0f;
 };

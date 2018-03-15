@@ -32,6 +32,7 @@
 #include "Game.h"
 #include "Projectile.h"
 #include "Avatar.h"
+#include "AudioSystem.h"
 
 
 Avatar::Avatar()
@@ -340,7 +341,7 @@ void Avatar::Spray()
 
 			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
-
+			AudioSystem::Instance()->PlayASound(PROJECTILE_LAUNCH_SOUND, false, physicsNode->GetPosition());
 			// Alex Falk - Required for networking
 			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
 		}
@@ -382,6 +383,7 @@ void Avatar::ShootProjectile()
 
 		Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
 		ShootProjectile(Physics()->GetPosition(), direction);
+
 	}
 }
 
@@ -401,12 +403,14 @@ void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
 	projectile->Physics()->SetOrientation(Quaternion(0, sin(angle / 2), 0, cos(angle / 2)));
 	
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
+	AudioSystem::Instance()->PlayASound(ROCKET_FLYING_SOUND, true, projectile->Physics()->GetPosition(), { 0,0,0 }, projectile);
 }
 
 void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
+	AudioSystem::Instance()->PlayASound(PROJECTILE_LAUNCH_SOUND, false, physicsNode->GetPosition());
 }
 //--------------------------------------------------------------------//
 

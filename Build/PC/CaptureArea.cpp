@@ -31,6 +31,7 @@
 #include "Minion.h"
 #include "CaptureArea.h"
 #include <nclgl\ChangeColorRenderNode.h>
+#include "AudioSystem.h"
 CaptureArea::CaptureArea()
 {
 	CaptureArea({ 0,0,0 },0.0f,"CAPTUREAREA");
@@ -166,6 +167,7 @@ void CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index)
 		if (avatar->GetLife() >= avatar->GetMinLife() + (lifeToTake)) {
 			if (Game::Instance()->IsHost())
 				this->SetColour(avatar->GetColour());
+			AudioSystem::Instance()->PlayASound(CAPTURE_AREA_SOUND, false, this->Physics()->GetPosition());
 			Game::Instance()->Capture(this->index, this->colour, this->scoreValue);
 			avatar->ChangeLife(-lifeToTake);
 		}
@@ -205,6 +207,7 @@ void CaptureArea::CheckMinionCollision(PhysicsNode * p, int index)
 			if (playerScores[index] >= lifeReq) {
 				if (Game::Instance()->IsHost())
 					this->SetColour(minion->GetColour());
+				AudioSystem::Instance()->PlayASound(CAPTURE_AREA_SOUND, false, this->Physics()->GetPosition());
 				Game::Instance()->Capture(this->index, this->colour,this->scoreValue);
 			}
 		}	
@@ -239,6 +242,7 @@ void CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index)
 			if (playerScores[index] >= lifeReq) {
 				if (Game::Instance()->IsHost())
 					this->SetColour(projectile->GetColour());
+				AudioSystem::Instance()->PlayASound(CAPTURE_AREA_SOUND, false, this->Physics()->GetPosition());
 				Game::Instance()->Capture(this->index, this->colour,this->scoreValue);
 			}
 		}

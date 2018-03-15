@@ -232,6 +232,7 @@ void ControllableAvatar::MovementState(Movement inputDir, float yaw, float dt)
 			inAir = true;
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 			canJump = false;
+			AudioSystem::Instance()->PlayASound(JUMP_SOUND, false, physicsNode->GetPosition());
 		}
 		break;
 	}
