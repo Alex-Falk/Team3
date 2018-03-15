@@ -55,10 +55,8 @@ bool WeaponPickup::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collid
 		}
 
 		this->active = false;
-		return false;
 	}
 
-	//Return true to enable collision resolution, for Pickup just return false so we can drop the collision pair from the system
 	return false;
 
 }

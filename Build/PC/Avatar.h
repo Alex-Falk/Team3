@@ -29,28 +29,28 @@ class Avatar : public GameObject
 protected:
 
 	Colour col;				    // Colour - Team
-	Vector4 colour;				// The actual colour of the player;
+	Vector4 colour;				// The RGBA colour of the player;
 
 	bool canJump;
 	bool canShoot;
 	bool inAir;
 
-	float life;
-	float targetLife;
-	float maxLife;
-	float minLife;
+	float life;					// Current life
+	float targetLife;			// Life to lerp towards
+	float maxLife;				// Max life
+	float minLife;				// Min life
 
 	float size;					//Player size
 	float jumpImpulse;    	    // Jump Power
-	float standardJumpImpulse;
-	float boostedJumpImpulse;
+	float standardJumpImpulse;	// Default jump power
+	float boostedJumpImpulse;   // Jump power with boost active
 	float speed;			    // movement speed
-	float boostedSpeed;
-	float standardSpeed;
-	float maxRotationSpeed;			// Sets Maximum applied Force 
-	float shootCooldown;
+	float boostedSpeed;			// Speed of avatar with boost active
+	float standardSpeed;		// Default avatar speed
+	float maxRotationSpeed;		// Sets Maximum applied Force 
+	float shootCooldown;		// Cooldown between shots
 
-	float maxVel;
+	float maxVel;				// Maximum velocity for the avatar
 
 	bool collisionTimerActive;
 	float collisionTimer;

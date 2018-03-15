@@ -71,7 +71,6 @@ void MinionStateWander::Execute(Minion* pMinion)
 			pMinion->ChangeState(MinionStateChaseEnemyPlayer::GetInstance());
 		}
 		else if (pMinion->DistanceToEnemyZoneSQ() != NO_ENEMY_ZONES_FLAG)
-		//else if (pMinion->DistanceToEnemyZoneSQ() != NO_ENEMY_ZONES_FLAG && pMinion->DistanceToEnemyZoneSQ() <= pMinion->GetDetectionRadiusSQ())
 		{
 			pMinion->ChangeState(MinionStateCaptureZone::GetInstance());
 		}
