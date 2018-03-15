@@ -209,9 +209,7 @@ void Map::LoadTextures()
 	if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box, TEXTUREDIR"SkyBox\\skyright.jpg", TEXTUREDIR"SkyBox\\skyleft.jpg", TEXTUREDIR"SkyBox\\skytop.jpg",
 		TEXTUREDIR"SkyBox\\skybottom.jpg", TEXTUREDIR"SkyBox\\skyback.jpg", TEXTUREDIR"SkyBox\\skyfront.jpg"))
 		NCLERROR("Texture not loaded");
-	if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box_P, TEXTUREDIR"SkyBox\\skyright1.jpg", TEXTUREDIR"SkyBox\\skyleft1.jpg", TEXTUREDIR"SkyBox\\skytop1.jpg",
-		TEXTUREDIR"SkyBox\\skybottom1.jpg", TEXTUREDIR"SkyBox\\skyback1.jpg", TEXTUREDIR"SkyBox\\skyfront1.jpg"))
-		NCLERROR("Texture not loaded");
+
 	//minimap icons
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Paint_Pool, TEXTUREDIR"PaintPool.png", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");

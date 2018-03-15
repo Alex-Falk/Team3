@@ -106,6 +106,7 @@ bool GroundMaterial::Apply()
 	glActiveTexture(GL_TEXTURE6);
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "cubeTex"), 6);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, TextureManager::Instance()->GetTexture(TEXTURETYPE::Sky_Box));
+
 	return true;
 }
 
