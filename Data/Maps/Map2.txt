@@ -1,6 +1,6 @@
 NEW_TEXTURE 0 Metal.jpg
-NEW_TEXTURE 1 PaintPool.png 	//Texture with ID 1
-NEW_TEXTURE 2 PaintPool.png 	//Texture with ID 2
+NEW_TEXTURE 1 alexfloor.png
+NEW_TEXTURE 2 PaintPool.png
 NEW_TEXTURE 3 PaintPool.png 	//Texture with ID 3
 NEW_TEXTURE 4 PaintPool.png 	//Texture with ID 4
 NEW_TEXTURE 5 SprayIcon.png 	//Texture with ID 5
@@ -13,14 +13,14 @@ SPAWN_LOC 0 -4 5 -48		//Spawn Position 1 x y z
 SPAWN_LOC 1 -2 5 -48	 	//Spawn Position 2 x y z 
 SPAWN_LOC 2 2 5 -48 		//Spawn Position 3 x y z 
 SPAWN_LOC 3 4 5 -48 		//Spawn Position 4 x y z 
-GROUND 45 0 27 ground 5 5 25 -10 0 0						//Ramp 1
-GROUND -45 0 27 ground 5 5 25 -10 0 0						//Ramp 2
-GROUND 51 5 25 ground 1 5 25 0 0 0							//Wall for Ramp1
-GROUND -51 5 25 ground 1 5 25 0 0 0							//Wall for Ramp2
-GROUND 0 10 51.2 ground 51 5 1 0 0 0						//Wall for HighGround
-GROUND 0 5 25 ground 40 4 25 0 0 0							//High Ground
-GROUND 0 0 -20 ground 50 1 30 0 0 0	
-GROUND 0 8.5 -25 ground 5 0.5 25 0 0 0						//Upper Platform ground
+GROUND 45 0 27 ground 5 5 25 -10 0 0 TEXTURE 1				//Ramp 1
+GROUND -45 0 27 ground 5 5 25 -10 0 0 TEXTURE 1				//Ramp 2
+GROUND 0 0 -20 ground 50 1 30 0 0 0	TEXTURE 1				//GROUND
+GROUND 51 5 25 ground 1 5 25 0 0 0 TEXTURE 1				//Wall for Ramp1
+GROUND -51 5 25 ground 1 5 25 0 0 0	TEXTURE 1				//Wall for Ramp2
+GROUND 0 10 51.2 ground 51 5 1 0 0 0 TEXTURE 1				//Wall for HighGround
+GROUND 0 5 25 ground 40 4 25 0 0 0 TEXTURE 1				//High Ground
+GROUND 0 8.5 -25 ground 5 0.5 25 0 0 0 TEXTURE 1			//Upper Platform ground
 CUBE 0 1.1 -25 ground 8 0.01 25 0 0 0 0 TEXTURE 0
 CAPTURE_AREA 1 9.5 0 box 1 1 1 10 0.5 0 0 0
 CAPTURE_AREA 3 9.5 0 box 1 1 1 10 0.5 0 0 0
