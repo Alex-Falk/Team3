@@ -102,8 +102,8 @@ void main(void)	{
 		}
 		else if (IN.temp_position.x >= a3 && IN.temp_position.x <= a4) {
 			finalColor.r += 0.15;
-			finalColor.g += 0.15;
-			finalColor.b -= 0.7;
+			finalColor.b += 0.15;
+			finalColor.g -= 0.7;
 			FragColor = finalColor;
 		}
 		else {
