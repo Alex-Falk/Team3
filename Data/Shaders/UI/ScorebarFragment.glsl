@@ -45,6 +45,8 @@ in Vertex{
 out vec4 FragColor;
 
 void main(void)	{
+	float invGammaCorrection = 1.0 / uGammaCorrection;
+
 	vec4 player1Color = vec4(1, 0, 0, 0.6);
 	vec4 player2Color = vec4(0, 1, 0, 0.6);
 	vec4 player3Color = vec4(0, 0, 1, 0.6);
@@ -56,6 +58,8 @@ void main(void)	{
 	vec2 finalTexCoords = normalTexCoords + distortion1;
 
 	vec3 color = texture(DiffuseTex, finalTexCoords).xyz;
+
+	color = pow(color, vec3(invGammaCorrection));
 
 	float a1 = player1;
 	float a2 = player2;
@@ -103,8 +107,4 @@ void main(void)	{
 	else {
 		FragColor = vec4(0, 0, 0, 1);
 	}
-
-	//if (IN.temp_position.x > 0) {
-	//	FragColor = player1Color;
-	//}
 }

@@ -137,7 +137,7 @@ void Map::OnInitializeGUI()
 			Vector4(),
 			"Timer"
 		));
-	timer->setAlpha(0.7f);
+	timer->setAlpha(1);
 	timer->setText("00:00");
 
 	isLoading = true;
