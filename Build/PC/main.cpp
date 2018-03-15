@@ -64,21 +64,19 @@ void Quit(bool error = false, const std::string &reason = "") {
 
 //initialise all audio files
 void InitialiseAudioFiles() {
-	//TODO get actual audio files
-	//TODO place the remaining sounds
-	AudioSystem::Instance()->Create2DStream(MENU_MUSIC, SOUNDSDIR"MenuMusic.wav"); //done
-	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, SOUNDSDIR"gameMusic.wav"); //done
-	AudioSystem::Instance()->Create3DSound(JUMP_SOUND, SOUNDSDIR"jumpSound.wav", 5.0f, 50.0f); //done
+	AudioSystem::Instance()->Create2DStream(MENU_MUSIC, SOUNDSDIR"MenuMusic.wav"); 
+	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, SOUNDSDIR"gameMusic.wav"); 
+	AudioSystem::Instance()->Create3DSound(JUMP_SOUND, SOUNDSDIR"jumpSound.wav", 5.0f, 60.0f); 
 	AudioSystem::Instance()->Create3DSound(ROCKET_FLYING_SOUND, SOUNDSDIR"rocketLaunch.wav",40.0f, 160.0f);
-	AudioSystem::Instance()->Create3DSound(EXPLOSION_SOUND, SOUNDSDIR"explosionSound.wav", 40.0f, 100.0f);//done
-	AudioSystem::Instance()->Create3DSound(PROJECTILE_LAUNCH_SOUND, SOUNDSDIR"jumpSound.wav", 10.0f, 50.0f); 
-	AudioSystem::Instance()->Create2DSound(MENU_CHOICE_SOUND, SOUNDSDIR"menuChoiceSound.wav"); //done
-	AudioSystem::Instance()->Create3DSound(PICKUP_COLLECTED_SOUND, SOUNDSDIR"pickupCollectedSound.wav", 5.0f, 50.0f); //done
-	AudioSystem::Instance()->Create3DSound(PAINT_FILL_SOUND, SOUNDSDIR"paintFill.wav", 5.0f, 50.0f); //done
-	AudioSystem::Instance()->Create2DSound(VICTORY_SOUND, SOUNDSDIR"victorySound.wav"); //done
-	AudioSystem::Instance()->Create2DSound(LOSS_SOUND, SOUNDSDIR"lossSound.mp3"); //done
-	AudioSystem::Instance()->Create3DSound(CAPTURE_AREA_SOUND, SOUNDSDIR"CaptureObject.wav", 5.0f, 40.0f);//need placement
-	AudioSystem::Instance()->Create3DSound(PROJECTILE_HIT_SOUND, SOUNDSDIR"projectileHit.wav", 15.0f, 40.0f); //done
+	AudioSystem::Instance()->Create3DSound(EXPLOSION_SOUND, SOUNDSDIR"explosionSound.wav", 40.0f, 100.0f);
+	AudioSystem::Instance()->Create3DSound(PROJECTILE_LAUNCH_SOUND, SOUNDSDIR"jumpSound.wav", 10.0f, 60.0f); 
+	AudioSystem::Instance()->Create2DSound(MENU_CHOICE_SOUND, SOUNDSDIR"menuChoiceSound.wav");
+	AudioSystem::Instance()->Create3DSound(PICKUP_COLLECTED_SOUND, SOUNDSDIR"pickupCollectedSound.wav", 5.0f, 60.0f); 
+	AudioSystem::Instance()->Create3DSound(PAINT_FILL_SOUND, SOUNDSDIR"paintFill.wav", 5.0f, 60.0f); 
+	AudioSystem::Instance()->Create2DSound(VICTORY_SOUND, SOUNDSDIR"victorySound.wav"); 
+	AudioSystem::Instance()->Create2DSound(LOSS_SOUND, SOUNDSDIR"lossSound.mp3"); 
+	AudioSystem::Instance()->Create3DSound(CAPTURE_AREA_SOUND, SOUNDSDIR"CaptureObject.wav", 5.0f, 60.0f);
+	AudioSystem::Instance()->Create3DSound(PROJECTILE_HIT_SOUND, SOUNDSDIR"projectileHit.wav", 15.0f, 60.0f);
 }
 
 // Program Initialise
