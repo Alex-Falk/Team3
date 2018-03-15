@@ -68,36 +68,7 @@ bool PaintPool::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* colliding
 
 void PaintPool::ChangeColour(Colour newColour)
 {
-	Vector4 paintColour;
-
-	switch (newColour)
-	{
-	case RED:
-		paintColour = RED_COLOUR;
-		break;
-
-	case GREEN:
-		paintColour = GREEN_COLOUR;
-		break;
-
-	case BLUE:
-		paintColour = BLUE_COLOUR;
-		break;
-
-	case PINK:
-		paintColour = PINK_COLOUR;
-		break;
-
-	case START_COLOUR:
-		paintColour = DEFAULT_COLOUR;
-		break;
-
-	default:
-		paintColour = DEFAULT_COLOUR;
-		break;
-	}
-
-	Render()->SetChildBaseColor(paintColour);
+	Render()->SetChildBaseColor(EnumToVectorColour(newColour));
 
 	colour = newColour;
 }

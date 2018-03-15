@@ -22,9 +22,7 @@ MultiPaintPool::MultiPaintPool(Vector3 pos, string unique_name, Vector3 halfdims
 
 void MultiPaintPool::SetColour(Colour c)
 {
-	colour = c;
-
-	Render()->SetChildBaseColor(EnumToVectorColour(colour));
+	CaptureArea::SetColour(c);
 
 	for (auto itr = pools.begin(); itr != pools.end(); ++itr)
 	{

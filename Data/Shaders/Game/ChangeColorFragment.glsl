@@ -88,10 +88,21 @@ float DoShadowTest(vec3 tsShadow, int tsLayer, vec2 pix)
 
 void main(void)	{
 
+
+	vec4 objectColor;
 	float mask = texture(uMaskTex, IN.texCoord).r;
-	mask = mask+(uCurrentColorPercent);
-	mask = min(mask,1.0f);
-	vec4 objectColor = mix(uPriviousColor, uColor, mask);
+
+	if (mask < uCurrentColorPercent)
+	{
+		objectColor = uColor;
+	}
+	else
+	{
+		objectColor = uPriviousColor;
+	}
+
+	//mask = mask+(uCurrentColorPercent);
+	//mask = min(mask,1.0f);
 
 
 	vec3 normal 	= normalize(IN.normal);
