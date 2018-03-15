@@ -37,7 +37,7 @@ void SimpleGamePlay::SetSpawnLocations()
 void SimpleGamePlay::AddObjects()
 {
 
-	BuildGround(dimensions);
+	BuildInvisibleWalls(dimensions);
 
 	GameObject* ground = CommonUtils::BuildCuboidObject(
 		"Ground",

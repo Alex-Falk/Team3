@@ -177,6 +177,7 @@ void User::StartGame(uint mapID)
 	GraphicsPipeline::Instance()->GetCamera()->SetMaxDistance(30);
 }
 
+// Calculate position/velocity from received update and LERP between them and own estimated position
 void User::DeadReckon(uint ID, float dt)
 {
 

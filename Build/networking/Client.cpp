@@ -131,6 +131,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 {
 	switch (evnt.type)
 	{
+	// When client connects to server
 	case ENET_EVENT_TYPE_CONNECT:
 	{
 		if (evnt.peer == serverConnection)
@@ -139,7 +140,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		break;
 	}
-
+	// When client receives a packet from the server
 	case ENET_EVENT_TYPE_RECEIVE:
 	{
 		string data = GetPacketData(evnt);
@@ -470,25 +471,3 @@ void Client::DeadReckonObject(GameObject * go,
 	go->Physics()->SetAngularVelocity(newAngVel);
 	go->Physics()->SetAcceleration(newAcc);
 }
-
-typedef struct usercmd_s
-{
-	// Interpolation time on client  
-	short lerp_msec;
-	// Duration in ms of command  
-	byte msec;
-	// Command view angles.  
-	Vector3 viewangles;
-	// intended velocities  
-	// Forward velocity.  
-	float forwardmove;
-	// Sideways velocity.  
-	float sidemove;
-	// Upward velocity.  
-	float upmove;
-	// Attack buttons  
-	unsigned short buttons;
-	//  
-	// Additional fields omitted...  
-	//  
-} usercmd_t;

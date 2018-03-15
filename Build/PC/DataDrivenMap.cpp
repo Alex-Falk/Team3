@@ -156,7 +156,7 @@ vector<string> DataDrivenMap::GetObjects(std::string line) {
 
 void DataDrivenMap::BuildMapDimenions(vector<std::string> object) {
 	Map::SetMapDimensions(Vector2(stof(object[1]), stof(object[2])));
-	BuildGround(Vector2(stof(object[1]), stof(object[2])));
+	BuildInvisibleWalls(Vector2(stof(object[1]), stof(object[2])));
 }
 
 void DataDrivenMap::SetSpawnLocation(vector<std::string> object) {

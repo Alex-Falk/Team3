@@ -84,25 +84,3 @@ void Particle::SetColour(Colour c)
 	renderNode->SetBaseColor(EnumToVectorColour(c));
 	renderNode->SetChildBaseColor(EnumToVectorColour(c));
 }
-
-//void Particle::Update(float dt)
-//{
-	//velocity += Vector3(0, -9.81f, 0) * dt;
-	//position += velocity * dt;	
-	//lifeTime -= dt;
-
-	//float dist = (spawnPos - position).Length();
-
-	//float alpha = max((1.0f - (dist / 10.0f)), 0.0f);
-
-	//renderNode->SetChildColor(Vector4(RGB.x, RGB.y, RGB.z, 0.1f));
-	//renderNode->SetChildBaseColor(Vector4(RGB.x, RGB.y, RGB.z, 0.1f));
-	//renderNode->SetColor(Vector4(RGB.x, RGB.y, RGB.z, 0.1f));
-	//renderNode->SetBaseColor(Vector4(RGB.x, RGB.y, RGB.z, 0.1f));
-	//renderNode->SetTransform(Matrix4::Translation(position));
-
-	//if (dist > maxDist || lifeTime <= 0)
-	//{
-	//	SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(this);
-	//}	
-//}

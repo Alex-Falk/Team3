@@ -87,7 +87,7 @@ public:
 	virtual void OnInitializeScene() override;
 	virtual void OnInitializeGUI() override;
 
-	void BuildGround(Vector2 Dimensions);
+	void BuildInvisibleWalls(Vector2 Dimensions);
 	virtual void LoadTextures();
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();

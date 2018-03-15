@@ -89,6 +89,7 @@ void Map::OnInitializeScene() {
 
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
 
+	// reset minions
 	for (int i = 0; i < maxMinions; ++i)
 	{
 		if (minions[i])
@@ -170,7 +171,7 @@ void Map::OnInitializeGUI()
 }
 
 // Builds Invisible walls - Nikos Fragkas
-void Map::BuildGround(Vector2 dimensions) {
+void Map::BuildInvisibleWalls(Vector2 dimensions) {
 
 	GameObject* upWall = CommonUtils::InvisibleWall(
 		"UpWall",

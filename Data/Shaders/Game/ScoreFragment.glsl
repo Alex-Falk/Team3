@@ -1,5 +1,6 @@
 #version 440 core
-
+// Alex - Falk
+// Shader to count score of pixels 
 
 in Vertex	{
 	smooth vec2 	 texCoord;

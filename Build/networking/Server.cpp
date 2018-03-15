@@ -138,6 +138,7 @@ void Server::UpdateUser(float dt)
 		{
 			switch (evnt.type)
 			{
+			// When a client connects check if the game is running and there is space for them to connect
 			case ENET_EVENT_TYPE_CONNECT:
 			{
 				//printf(" - New Client Connected\n");
@@ -170,7 +171,7 @@ void Server::UpdateUser(float dt)
 
 			}
 			break;
-
+			// Handle incoming network packets
 			case ENET_EVENT_TYPE_RECEIVE:
 			{
 				string data = GetPacketData(evnt);
@@ -206,6 +207,7 @@ void Server::UpdateUser(float dt)
 				}
 				break;
 			}
+			// If a user disconnects, remove their avatar from the game
 			case ENET_EVENT_TYPE_DISCONNECT:
 			{
 				//printf(" - Client %d has disconnected.\n", evnt.peer->incomingPeerID + 1);
@@ -231,6 +233,7 @@ void Server::UpdateUser(float dt)
 			}
 		});
 
+		// Send packets specific to game running
 		if (Game::Instance()->IsRunning())
 		{
 			accumTime += dt;
@@ -242,7 +245,7 @@ void Server::UpdateUser(float dt)
 				{
 					if (Game::Instance()->GetPlayer(i))
 					{
-						//SendSize(i);
+						//Send Updates 
 						SendAvatarUpdate(
 							i,
 							Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition(),
@@ -258,6 +261,7 @@ void Server::UpdateUser(float dt)
 
 				Map * m = static_cast<Map*>(Game::Instance()->GetMap());
 
+				// Send moving game object update
 				for (GameObject * go : m->GetConstantGameObjects())
 				{
 					if (go->Physics())
@@ -269,6 +273,7 @@ void Server::UpdateUser(float dt)
 					}
 				}
 
+				// Send Minion updates
 				MinionBase ** minions = m->GetMinions();
 				for (int i = 0; i < m->GetMaxMinions(); ++i)
 				{
