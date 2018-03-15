@@ -45,10 +45,6 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 	RenderNode* rnode = new RenderNode();
 	Mesh * m = Mesh::GeneratePlane(2, 2);
 	m->type = GL_PATCHES;
-	//m->GenerateNormals();
-	//m->GenerateTangents();
-	//m->ClearBuffers();
-	//m->BufferData();
 	Vector4 col = EnumToVectorColour(colour);
 	col.w = 0.7f;
 	RenderNode* dummy = new RenderNode(m, "PickUp", col);

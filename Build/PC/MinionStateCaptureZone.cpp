@@ -66,13 +66,10 @@ void MinionStateCaptureZone::Execute(Minion* pMinion)
 			pMinion->ChangeState(MinionStateHealFriendlyPlayer::GetInstance());
 		}
 		else if (pMinion->DistanceToClosestEnemySQ() <= pMinion->GetDetectionRadiusSQ() && pMinion->DistanceToClosestEnemySQ() < pMinion->DistanceToEnemyZoneSQ())
-		/*else if (pMinion->DistanceToClosestEnemy() <= pMinion->GetDetectionRadius() && 
-			    ((pMinion->DistanceToClosestEnemy() < pMinion->DistanceToEnemyZone() && pMinion->DistanceToEnemyZone() != NO_ENEMY_ZONES_FLAG) || pMinion->DistanceToEnemyZone() == NO_ENEMY_ZONES_FLAG))*/
 		{
 			pMinion->ChangeState(MinionStateChaseEnemyPlayer::GetInstance());
 		}
 		else if (pMinion->DistanceToEnemyZoneSQ() == NO_ENEMY_ZONES_FLAG)
-		//else if (pMinion->DistanceToEnemyZoneSQ() == NO_ENEMY_ZONES_FLAG || pMinion->DistanceToEnemyZoneSQ() > pMinion->GetDetectionRadiusSQ())
 		{
 			pMinion->ChangeState(MinionStateWander::GetInstance());
 		}

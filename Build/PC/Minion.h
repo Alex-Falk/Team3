@@ -52,7 +52,6 @@ public:
 	Avatar * GetClosestFriendlyPlayer() { return closestFriendlyPlayer; }
 	CaptureArea * GetClosestCaptureArea() { return closestCaptureArea; }
 
-	//TODO: change physics engine to hold sperate lists of objects
 	bool IncomingProjectile() {/*Needs implimentation*/ return false; };
 	float GetDetectionRadiusSQ() { return detectionRadiusSQ; }
 	float GetPursueRadiusSQ() { return pursueRadiusSQ; }

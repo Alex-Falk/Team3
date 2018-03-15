@@ -26,12 +26,9 @@ using namespace Behaviours;
 
 Vector3 Behaviours::Seek(Vector3 targetPos, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxXZMagnitude)
 {
-	// Applies wall avoid accelleration
-	Vector3 behaviourAccn(0,0,0); // = WallAvoid(currentPos, currentVelocity);
+	Vector3 behaviourAccn(0,0,0);
 
-	// If no wall avoidance was needed
 	if (grounded && currentVelocity.LengthSQ() < 2)
-	//if (grounded)
 	{
 		// Create a vector to the target point 
 		Vector3 desiredDirection = (targetPos - currentPos).Normalise();
@@ -114,26 +111,4 @@ Vector3 Behaviours::Evade(PhysicsNode* target, PhysicsNode* currentNode, bool gr
 	return Flee(TargetPrediction(target->GetPosition(), target->GetLinearVelocity(), currentNode->GetPosition(), maxXZMagnitude),
 		currentNode->GetPosition(), currentNode->GetLinearVelocity(), grounded, weight, maxXZMagnitude);
 }
-
-//Vector3 Behaviours::WallAvoid(Vector3 currentPos, Vector3 currentVelocity, float weight)
-//{
-//	// Sphere used to check wall collisions
-//	SphereCollisionShape collisionCircle(currentPos, 5.0f);
-//
-//	// If the circle collides with a wall
-//	if (StaticMap::GetInstance()->IsInsideBlock(collisionCircle))
-//	{
-//		//Creates a vector away from the wall
-//		Vector3 MoveAwayVector = (2.5f * StaticMap::GetInstance()->GetNormalToSurface(collisionCircle, false));
-//		Renderer::GetInstance()->DrawLine(currentPos, currentPos + MoveAwayVector, 6);
-//		return MoveAwayVector * weight;
-//	}
-//
-//	// If no wall collision occurs
-//	else
-//	{
-//		return Vector3(0.0f, 0.0f);
-//	}
-//
-//}
 
