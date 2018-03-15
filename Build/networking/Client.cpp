@@ -440,7 +440,8 @@ void Client::ReceiveAreaCapture(string data)
 	m->GetGameObject(objectID)->SetColour(c);
 }
 
-void Client::DeadReckonObject(GameObject * go, TempObjData data, float dt)
+void Client::DeadReckonObject(GameObject * go, 
+	TempObjData data, float dt)
 {
 	Vector3 estimatePos =
 		data.pos +
@@ -455,13 +456,39 @@ void Client::DeadReckonObject(GameObject * go, TempObjData data, float dt)
 		data.angVel +
 		data.acc * dt;
 
-	Vector3 newPos = LerpVector3(estimatePos, go->Physics()->GetPosition(), lerpFactor);
-	Vector3 newLinVel = LerpVector3(estimateLinVel, go->Physics()->GetLinearVelocity(), lerpFactor);
-	Vector3 newAngVel = LerpVector3(estimateAngVel, go->Physics()->GetAngularVelocity(), lerpFactor);
-	Vector3 newAcc = LerpVector3(data.acc, go->Physics()->GetAcceleration(), lerpFactor);
+	Vector3 newPos = LerpVector3(estimatePos, 
+		go->Physics()->GetPosition(), lerpFactor);
+	Vector3 newLinVel = LerpVector3(estimateLinVel, 
+		go->Physics()->GetLinearVelocity(), lerpFactor);
+	Vector3 newAngVel = LerpVector3(estimateAngVel, 
+		go->Physics()->GetAngularVelocity(), lerpFactor);
+	Vector3 newAcc = LerpVector3(data.acc, 
+		go->Physics()->GetAcceleration(), lerpFactor);
 
 	go->Physics()->SetPosition(newPos);
 	go->Physics()->SetLinearVelocity(newLinVel);
 	go->Physics()->SetAngularVelocity(newAngVel);
 	go->Physics()->SetAcceleration(newAcc);
 }
+
+typedef struct usercmd_s
+{
+	// Interpolation time on client  
+	short lerp_msec;
+	// Duration in ms of command  
+	byte msec;
+	// Command view angles.  
+	Vector3 viewangles;
+	// intended velocities  
+	// Forward velocity.  
+	float forwardmove;
+	// Sideways velocity.  
+	float sidemove;
+	// Upward velocity.  
+	float upmove;
+	// Attack buttons  
+	unsigned short buttons;
+	//  
+	// Additional fields omitted...  
+	//  
+} usercmd_t;

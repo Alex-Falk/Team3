@@ -115,21 +115,21 @@ void Map::OnInitializeGUI()
 	GUIsystem::Instance()->drawPlayerName = true;
 	GUIsystem::Instance()->SetIsTyping(false);
 	GUIsystem::Instance()->SetDrawMiniMap(true);
-	lifeBar = static_cast<CEGUI::ProgressBar*>(
-		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
-			Vector4(0.40f, 0.9f, 0.25f, 0.03f),
-			Vector4(),
-			"lifeBar"
-		));
+	GUIsystem::Instance()->SetDrawLifeBar(true);
 	
 	background = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Menubar",
 			Vector4(0.292f, 0.04f, 0.415f, 0.04f),
 			Vector4(),
+			"scorebarBackground"
+		));
+
+	background1 = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Menubar",
+			Vector4(0.292f, 0.917f, 0.415f, 0.04f),
+			Vector4(),
 			"lifebarBackground"
 		));
-	background->setAlpha(1);
-	background->setText("00:00");
 
 	timer = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -345,10 +345,11 @@ void Map::UpdateGUI(float dt)
 		}
 	}
 
+	//Update player life
 	if (Game::Instance()->GetUser())
 	{
 		if (Game::Instance()->GetPlayer(Game::Instance()->GetUserID()))
-			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+			GUIsystem::Instance()->UpdateLifebar(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
 }
 void Map::showPauseMenu()

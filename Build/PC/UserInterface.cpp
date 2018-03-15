@@ -23,13 +23,21 @@ GUIsystem::GUIsystem()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, scorebarDUDV);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	//LifeBar
+	lifebar = Mesh::GenerateQuad();
+	lifebarShader = new Shader(SHADERDIR"UI/lifebarVert.glsl",
+		SHADERDIR"UI/lifebarFrag.glsl");
+	if (!scorebarShader->LinkProgram()) {
+		NCLERROR("Load lifebar shader failed");
+	}
+
 	//phil 28/02/2018
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	//weapon icon
 	weaponIcon = Mesh::GenerateQuad();
 	weaponShader = new Shader(SHADERDIR"Game/MiniMapVertex.glsl",
@@ -59,6 +67,11 @@ GUIsystem::~GUIsystem()
 {
 	Destory();
 
+}
+
+void GUIsystem::UpdateLifebar(float life)
+{
+	playerLife = life;
 }
 
 void GUIsystem::Init(const std::string& resourceDirectory)
@@ -120,6 +133,16 @@ void GUIsystem::Reset()
 
 void GUIsystem::Draw()
 {
+	DrawNormalUI();
+	DrawWeaponIcon();
+	DrawLifebar();
+	DrawScorebar();
+	DrawPlayerName();
+	DrawWinLostText();
+}
+
+void GUIsystem::DrawNormalUI()
+{
 	//Render normal UI
 	glUseProgram(0);
 	glActiveTexture(GL_TEXTURE0);
@@ -131,11 +154,24 @@ void GUIsystem::Draw()
 	m_renderer->endRendering();
 	glDisable(GL_SCISSOR_TEST);
 	glEnable(GL_DEPTH_TEST);
+}
 
-	//draw weapon icon
-	DrawWeaponIcon();
+void GUIsystem::DrawPlayerName()
+{
+	if (drawPlayerName) {
+		//Draw player names
+		for (int i = 0; i < 4; i++) {
+			if (Game::Instance()->GetPlayer(i)) {
+				//draw
+				playersPosition[i].y += 0.7f;
+				NCLDebug::DrawTextWs(playersPosition[i], 25.0f, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), playerNames[i]);
+			}
+		}
+	}
+}
 
-
+void GUIsystem::DrawScorebar()
+{
 	//Render score bar
 	if (drawScorebar == true) {
 		float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
@@ -148,6 +184,8 @@ void GUIsystem::Draw()
 			GraphicsPipeline::Instance()->GetGammaCorrection());
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "moveFactor"), GraphicsPipeline::Instance()->GetTotalTime()*0.1);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uNumSuperSamples"), superSamples);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "isLifebar"), 0.0);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "health"), playerLife);
 		glUniform2f(glGetUniformLocation(scorebarShader->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
 		glActiveTexture(GL_TEXTURE0);
 		glUniform1i(glGetUniformLocation(scorebarShader->GetProgram(), "DiffuseTex"), 0);
@@ -159,23 +197,44 @@ void GUIsystem::Draw()
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
+		//glBindTexture(GL_TEXTURE_2D, 0);
+		//glActiveTexture(0);
 		scorebar->Draw();
 		glUseProgram(0);
 	}
+}
 
-
-	if (drawPlayerName) {
-		//Draw player names
-		for (int i = 0; i < 4; i++) {
-			if (Game::Instance()->GetPlayer(i)) {
-				//draw
-				playersPosition[i].y += 0.7f;
-				NCLDebug::DrawTextWs(playersPosition[i], 25.0f, TEXTALIGN_CENTRE, Vector4(0, 0, 0, 1), playerNames[i]);
-			}
-		}
+void GUIsystem::DrawLifebar()
+{
+	if (drawLifebar == true) {
+		float superSamples = (float)(GraphicsPipeline::Instance()->GetNumSuperSamples());
+		glUseProgram(scorebarShader->GetProgram());
+		Matrix4 modelMatrix = Matrix4::Translation(Vector3(0.0f, -0.88f, 0.0f)) * Matrix4::Scale(Vector3(0.40f, 0.03f, 0.0f));
+		Matrix4 textureMatrix;
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "textureMatrix"), 1, GL_FALSE, (float*)&textureMatrix);
+		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uGammaCorrection"),
+			GraphicsPipeline::Instance()->GetGammaCorrection());
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "moveFactor"), GraphicsPipeline::Instance()->GetTotalTime()*0.1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uNumSuperSamples"), superSamples);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "isLifebar"), 1.0);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "health"), playerLife);
+		glUniform2f(glGetUniformLocation(scorebarShader->GetProgram(), "uSinglepixel"), 1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(), 1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(glGetUniformLocation(scorebarShader->GetProgram(), "DiffuseTex"), 0);
+		glBindTexture(GL_TEXTURE_2D, scorebarTexture);
+		glActiveTexture(GL_TEXTURE1);
+		glUniform1i(glGetUniformLocation(scorebarShader->GetProgram(), "dudvTex"), 1);
+		glBindTexture(GL_TEXTURE_2D, scorebarDUDV);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player1"), p1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player2"), p2);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player3"), p3);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "player4"), p4);
+		//glBindTexture(GL_TEXTURE_2D, 0);
+		//glActiveTexture(0);
+		scorebar->Draw();
+		glUseProgram(0);
 	}
-
-	DrawWinLostText();
 }
 
 void GUIsystem::SetMouseCursor(const std::string & imageFile)

@@ -31,6 +31,7 @@ void MainMenu::OnInitializeScene()
 	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GUIsystem::Instance()->SetDrawScoreBar(false);
 	GUIsystem::Instance()->SetDrawMiniMap(false);
+	GUIsystem::Instance()->SetDrawLifeBar(false);
 	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
 
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))

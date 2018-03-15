@@ -19,7 +19,7 @@
 //         ======`-.____`-.___\_____/___.-`____.-'======
 //                            `=---='
 //        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-// 
+//							Jianfei
 //////////////////////////////////////////////////////////////////////////////////////
 
 #version 330 core
@@ -34,6 +34,8 @@ uniform float	uGammaCorrection;
 uniform float	uNumSuperSamples;
 uniform vec2 	uSinglepixel;
 uniform float moveFactor;
+uniform float isLifebar;
+uniform float health;
 
 const float waveStrength = 0.015;
 
@@ -56,7 +58,6 @@ void main(void)	{
 	vec2 normalTexCoords = vec2(IN.texCoord.x + moveFactor, IN.texCoord.y);
 	vec2 distortion1 = (texture(dudvTex, vec2(IN.texCoord.x, IN.texCoord.y)).rg * 2.0 - 1.0) * waveStrength;
 	vec2 finalTexCoords = normalTexCoords + distortion1;
-
 	vec3 color = texture(DiffuseTex, finalTexCoords).xyz;
 
 	color = pow(color, vec3(invGammaCorrection));
@@ -80,31 +81,42 @@ void main(void)	{
 	a4 = a4 * 0.8 - 0.4;
 	vec4 finalColor = vec4(color, 1.0);
 
-	if (IN.temp_position.x < a1) {
-		finalColor.g -= 0.7;
-		finalColor.b -= 0.7;
-		finalColor.r += 0.7;
-		FragColor = finalColor;
-	}
-	else if (IN.temp_position.x >= a1 && IN.temp_position.x < a2) {
-		finalColor.r -= 0.7;
-		finalColor.b -= 0.7;
-		finalColor.g += 0.7;
-		FragColor = finalColor;
-	}
-	else if (IN.temp_position.x >= a2 && IN.temp_position.x < a3) {
-		finalColor.r -= 0.7;
-		finalColor.g -= 0.7;
-		finalColor.b += 0.7;
-		FragColor = finalColor;
-	}
-	else if (IN.temp_position.x >= a3 && IN.temp_position.x <= a4) {
-		finalColor.r += 0.15;
-		finalColor.g += 0.15;
-		finalColor.b -= 0.7;
-		FragColor = finalColor;
+	if (isLifebar == 0) {
+		if (IN.temp_position.x < a1) {
+			finalColor.g -= 0.7;
+			finalColor.b -= 0.7;
+			finalColor.r += 0.7;
+			FragColor = finalColor;
+		}
+		else if (IN.temp_position.x >= a1 && IN.temp_position.x < a2) {
+			finalColor.r -= 0.7;
+			finalColor.b -= 0.7;
+			finalColor.g += 0.7;
+			FragColor = finalColor;
+		}
+		else if (IN.temp_position.x >= a2 && IN.temp_position.x < a3) {
+			finalColor.r -= 0.7;
+			finalColor.g -= 0.7;
+			finalColor.b += 0.7;
+			FragColor = finalColor;
+		}
+		else if (IN.temp_position.x >= a3 && IN.temp_position.x <= a4) {
+			finalColor.r += 0.15;
+			finalColor.g += 0.15;
+			finalColor.b -= 0.7;
+			FragColor = finalColor;
+		}
+		else {
+			FragColor = vec4(0, 0, 0, 1);
+		}
 	}
 	else {
-		FragColor = vec4(0, 0, 0, 1);
+		float playerPerc = health * 0.8 - 0.4;
+		if (IN.temp_position.x < playerPerc) {
+			FragColor = finalColor;
+		}
+		else {
+			FragColor = vec4(0.2, 0.2, 0.2, 1);
+		}
 	}
 }
