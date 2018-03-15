@@ -138,7 +138,7 @@ void Game::ResetGame()
 	enet_deinitialize();
 	gameRunning = false;
 	time = 0.0f;
-
+	isHost = false;
 	//reset GUI
 	GUIsystem::Instance()->SetResult(RESULT::NONE);
 	GUIsystem::Instance()->SetHasWeapon(false);

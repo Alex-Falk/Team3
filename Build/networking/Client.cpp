@@ -437,7 +437,7 @@ void Client::ReceiveAreaCapture(string data)
 	uint objectID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 	Colour c = Colour(stoi(data.substr(semicolonIdx + 1)));
 
-	m->GetGameObject(objectID)->SetColour(c);
+	static_cast<CaptureArea*>(m->GetGameObject(objectID))->SetColour(c);
 }
 
 void Client::DeadReckonObject(GameObject * go, TempObjData data, float dt)
