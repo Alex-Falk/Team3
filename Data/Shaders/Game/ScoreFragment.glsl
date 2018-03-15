@@ -27,7 +27,7 @@ void main(void)	{
 	{
 		atomicCounterIncrement(scores[2]);
 	}
-	else if (color == vec4(1.0f, 0.2f, 1.0f,1))
+	else if (color == vec4(1.0f, 0.0f, 1.0f,1))
 	{
 		atomicCounterIncrement(scores[3]);
 	}
