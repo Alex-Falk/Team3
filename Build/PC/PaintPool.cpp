@@ -29,6 +29,7 @@
 
 PaintPool::PaintPool()
 {
+	Physics()->SetType(PAINTPOOL_PHYS_NODE);
 }
 
 PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respawnTime)
@@ -116,6 +117,8 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 			std::placeholders::_2
 		)
 	);
+
+	Physics()->SetType(PAINTPOOL_PHYS_NODE);
 }
 
 bool PaintPool::PickupCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)

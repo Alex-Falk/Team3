@@ -222,7 +222,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map1Text"
 		));
-	Map1Text->setText("MAP1: Phil's boudoir");
+	Map1Text->setText("MAP1: Arena");
 
 	Map2Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -230,7 +230,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map2Text"
 		));
-	Map2Text->setText("MAP2: Urban Science Building");
+	Map2Text->setText("MAP2: Cliff");
 
 	Map3Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -238,7 +238,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map3Text"
 		));
-	Map3Text->setText("MAP3: 404 not found");
+	Map3Text->setText("MAP3: City");
 
 	Map4Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -246,7 +246,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map4Text"
 		));
-	Map4Text->setText("MAP4: give this a fcking name");
+	Map4Text->setText("MAP4: River");
 	
 	customMap.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
