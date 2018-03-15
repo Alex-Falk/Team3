@@ -122,9 +122,18 @@ void Map::OnInitializeGUI()
 			"lifeBar"
 		));
 	
+	background = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("TaharezLook/Menubar",
+			Vector4(0.295f, 0.04f, 0.41f, 0.04f),
+			Vector4(),
+			"lifebarBackground"
+		));
+	background->setAlpha(1);
+	background->setText("00:00");
+
 	timer = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
-			Vector4(0.45f, 0.00f, 0.10f, 0.05f),
+			Vector4(0.45f, 0.00f, 0.10f, 0.03f),
 			Vector4(),
 			"Timer"
 		));
@@ -345,12 +354,16 @@ void Map::showPauseMenu()
 	exit->setVisible(true);
 	_continue->enable();
 	_continue->setVisible(true);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
+	GUIsystem::Instance()->SetIsPaused(true);
 }
 void Map::OnExitButtonClicked()
 {
 	//Return to MainMenu
 	Game::Instance()->ResetGame();
 	SceneManager::Instance()->JumpToScene(0);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	GUIsystem::Instance()->SetIsPaused(false);
 }
 void Map::OnContinueButtonClicked()
 {
@@ -358,6 +371,8 @@ void Map::OnContinueButtonClicked()
 	exit->setVisible(false);
 	_continue->disable();
 	_continue->setVisible(false);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	GUIsystem::Instance()->SetIsPaused(false);
 }
 //--------------------------------------------------------------------------------------------//
 // Updating Scene

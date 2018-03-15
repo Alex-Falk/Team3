@@ -112,9 +112,11 @@ void MainMenu::onStartGameClicked()
 void MainMenu::OnUpdateScene(float dt)
 {
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-	yaw += 0.1f;
+	yaw += 0.05f;
 	GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 	Scene::OnUpdateScene(dt);
+
+	GUIsystem::Instance()->LimitTextLength();
 
 	//Send player name info
 	if (GUIsystem::Instance()->sendInfo == true) {
@@ -137,6 +139,7 @@ void MainMenu::OnUpdateScene(float dt)
 		+ temp[1] + "\n\n"
 		+ temp[2] + "\n\n"
 		+ temp[3] + "\n\n");
+
 }
 
 //Setting UP GUI

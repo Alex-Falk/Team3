@@ -86,7 +86,7 @@ void InitialiseAudioFiles() {
 void Initialize()
 {
 	//Initialise the Window
-	if (!Window::Initialise("Game Technologies", 1280, 800, false))
+	if (!Window::Initialise("Game Technologies", 1440, 900, false))
 		Quit(true, "Window failed to initialise!");
 
 	//Initialize Renderer
@@ -297,7 +297,7 @@ void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 	}
 
 	//mouse input
-	if (handleMouse)
+	if (handleMouse && GraphicsPipeline::Instance()->GetIsMainMenu()==false)
 	{
 		Input::Instance()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
 		Input::Instance()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
@@ -373,6 +373,10 @@ void HandleGUITextInput()
 	}
 	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT)) {
 		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RIGHT);
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_COMMA)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_COMMA);
 		return;
 	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
@@ -461,13 +465,19 @@ int main()
 		}
 
 		//Handle Keyboard Inputs
-		if (GUIsystem::Instance()->GetIsTyping() == false) {
-			HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+		if (GUIsystem::Instance()->GetIsPaused() == false && 
+			GUIsystem::Instance()->GetCurrentLoadingScreen() == NOT_LOADING &&
+			GUIsystem::Instance()->GetResult() == NONE) 
+		{
+			if (GUIsystem::Instance()->GetIsTyping() == false) {
+				HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+			}
+			else {
+				//Handle User Typing input
+				HandleGUITextInput();
+			}
 		}
-		else {
-			//Handle User Typing input
-			HandleGUITextInput();
-		}
+		
 
 		timer_total.BeginTimingSection();
 
