@@ -247,7 +247,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map4Text"
 		));
-	Map4Text->setText("MAP4: River");
+	Map4Text->setText("MAP4: ----");
 	
 	//customMap.editbox = static_cast<CEGUI::Editbox*>(
 	//	GUIsystem::Instance()->createWidget("OgreTray/Editbox",
