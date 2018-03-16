@@ -20,6 +20,8 @@ Shader::Shader(string vFile, string fFile, string gFile) {
 	SetDefaultAttributes();
 }
 
+//Alex Falk-----------------------------------------------------------//
+// Implementation for compute and tesselation shaders
 Shader::Shader(string compute) {
 	NCLDebug::Log("Loading Shader:");
 	program = glCreateProgram();
@@ -49,6 +51,7 @@ Shader::Shader(string vFile, string fFile, string cFile, string eFile, string gF
 	SetDefaultAttributes();
 
 }
+//--------------------------------------------------------------------//
 
 Shader::~Shader(void) {
 	for (int i = 0; i < 3; ++i) {

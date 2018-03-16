@@ -98,6 +98,8 @@ MinionBase::MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string na
 
 	isGrounded = false;
 
+	//-Alex Falk----------------------------------------------------------//
+	// Visual effect for minions - particles bouncing around, set not to have shadows
 	emitter = new ParticleEmitter(
 		32, 
 		this->colour, 
@@ -112,6 +114,7 @@ MinionBase::MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string na
 		2.0f);
 
 	dummy->SetHasShadow(false);
+	//--------------------------------------------------------------------//
 }
 
 MinionBase::~MinionBase()

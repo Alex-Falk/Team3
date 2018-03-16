@@ -18,6 +18,8 @@ MinionCaptureArea::MinionCaptureArea(Colour col, string unique_name, Vector3 pos
 	colour = col;
 	type = MINION_CAPTURE_AREA;
 
+	//-Alex Falk----------------------------------------------------------//
+	// Visual Effect of the Minion spawner - just a particle emitter
 	e = new ParticleEmitter(
 		128,
 		colour,
@@ -33,6 +35,7 @@ MinionCaptureArea::MinionCaptureArea(Colour col, string unique_name, Vector3 pos
 
 	renderNode->GetChild()->SetTransform(Matrix4::Scale(Vector3(0.1f,0.1f,0.1f)));
 	renderNode->SetTransform(Matrix4::Translation(Vector3(pos.x, 0, pos.z)));
+	//--------------------------------------------------------------------//
 }
 
 MinionCaptureArea::~MinionCaptureArea() {
@@ -47,7 +50,7 @@ void MinionCaptureArea::Update(float dt) {
 		if (colour != START_COLOUR)
 			currentSpawnTimer += dt;
 
-		//if the spawntimer is over 5 seconds and there is less than 5 active minions from this spawner, spawn minion
+		//if the spawntimer is over 5 seconds
 		if (colour != START_COLOUR && currentSpawnTimer > spawnTimer) {
 			Minion * m = new Minion(colour, Render()->GetchildBaseColor(), Physics()->GetPosition() + Vector3{ 0,Render()->GetBoundingRadius() * 1.2f,0 });
 			Game::Instance()->SpawnMinion(m);

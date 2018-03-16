@@ -17,6 +17,7 @@ ___________)______________          _____
 
 *****************************************************************************/
 //adapted by Jianfei - add multi render targets
+//adapted by Alex Falk - from mixing of colours to harsher changes
 #version 330 core
 #define SHADOWMAP_NUM  4
 
@@ -92,6 +93,7 @@ void main(void)	{
 	vec4 objectColor;
 	float mask = texture(uMaskTex, IN.texCoord).r;
 
+	// Alex -------------------------------//
 	if (mask < uCurrentColorPercent)
 	{
 		objectColor = uColor;
@@ -100,6 +102,7 @@ void main(void)	{
 	{
 		objectColor = uPriviousColor;
 	}
+	//-------------------------------------//
 
 	//mask = mask+(uCurrentColorPercent);
 	//mask = min(mask,1.0f);

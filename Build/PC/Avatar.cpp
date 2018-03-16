@@ -305,8 +305,6 @@ void Avatar::UpdatePickUp(float dt)
 
 void Avatar::Spray()
 {
-	int randPitch;
-	int randYaw;
 	Vector3 direction;
 
 	if (targetLife > minLife + 5.0f)
@@ -335,7 +333,7 @@ void Avatar::Spray()
 				Matrix3::Rotation(pitch + (float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * 
 				Matrix3::Rotation(yaw + (float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * 
 				Vector3(0.0f, 0.0f, -1.0f) * 
-				(50 + randSpeed);
+				(float)(50 + randSpeed);
 
 			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);

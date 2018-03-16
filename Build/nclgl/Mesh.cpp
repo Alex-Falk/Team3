@@ -340,6 +340,7 @@ Mesh* Mesh::GenerateQuadAlt()	{
 	return m;
 }
 
+//Alex Falk-----------------------------------------------------------//
 Mesh* Mesh::GenerateMesh(int w, int h, float s) {
 	Mesh* m = new Mesh();
 	if (w == 0) { w = h; }
@@ -377,22 +378,6 @@ Mesh* Mesh::GenerateMesh(int w, int h, float s) {
 			}
 		}
 
-	//for (int i = 0; i < w; ++i) {
-	//	for (int j = 0; j < h; ++j) {
-	//		m->vertices[c] = Vector3(s*i,s*j, 0.0f);
-	//		m->vertices[c + 1] = Vector3(s*i,s*(j+1), 0.0f);
-	//		m->vertices[c + 2] = Vector3(s*(i+1),s*j, 0.0f);
-	//		m->vertices[c + 3] = Vector3(s*(i+1),s*(j+1), 0.0f);
-
-	//		m->textureCoords[c] = Vector2(0.0f, 1.0f);
-	//		m->textureCoords[c + 1] = Vector2(0.0f, 0.0f);
-	//		m->textureCoords[c + 2] = Vector2(1.0f, 1.0f);
-	//		m->textureCoords[c + 3] = Vector2(1.0f, 0.0f);
-
-	//		c += 4;
-	//	}
-	//}
-
 	for (uint i = 0; i < m->numVertices; ++i) {
 		m->colours[i] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		m->normals[i] = Vector3(0.0f, 0.0f, -1.0f);
@@ -404,6 +389,7 @@ Mesh* Mesh::GenerateMesh(int w, int h, float s) {
 	return m;
 }
 
+// Used for tesselation - different to the above because it uses triangle strips
 Mesh * Mesh::GeneratePlane(int x, int y) {
 	Mesh* m = new Mesh();
 	if (y == 0) { y = x; }
@@ -434,7 +420,7 @@ Mesh * Mesh::GeneratePlane(int x, int y) {
 		}
 	}
 
-	for (int i = 0; i < m->numVertices; ++i) {
+	for (uint i = 0; i < m->numVertices; ++i) {
 		m->colours[i] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		m->normals[i] = Vector3(0.0f, 0.0f, -1.0f);
 		m->tangents[i] = Vector3(1.0f, 0.0f, 0.0f);
@@ -443,6 +429,8 @@ Mesh * Mesh::GeneratePlane(int x, int y) {
 	m->BufferData();
 	return m;
 }
+
+//--------------------------------------------------------------------//
 
 
 void Mesh::ClearBuffers() {

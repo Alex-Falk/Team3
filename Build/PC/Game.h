@@ -50,21 +50,20 @@ public:
 	// Setters
 	//--------------------------------------------------------------------------------------------//
 
+	// Helpers used by Network
 	inline void SetScore(uint id, int score)			{ teamScores[id] = (float)score; }
-
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
-
 	inline void SetName(string name)					{ userNames[GetUserID()] = name; user->UpdateName(); }
 	inline void SetPlayerName(uint id, string name)		{ userNames[id] = name; }
-
+	
 	inline void SetSize(uint id, float size)			{ avatars[id]->SetLife(size); }
-
 	inline void SetAcceleration(uint id, Vector3 a)		{ avatars[id]->GetGameObject()->Physics()->SetAcceleration(a); }
 	inline void SetLinearVelocity(uint id, Vector3 v)	{ avatars[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
 	inline void SetAngularVelocity(uint id, Vector3 v)	{ avatars[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }
 	inline void SetPosition(uint id, Vector3 p)			{ avatars[id]->GetGameObject()->Physics()->SetPosition(p); }
 	inline void SetGameLength(float f)					{ gameLength = f; }
 
+	// Setters to set up current user
 	void SetServer();
 	void SetClient(IP ip);
 

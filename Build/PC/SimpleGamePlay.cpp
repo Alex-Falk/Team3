@@ -73,7 +73,7 @@ void SimpleGamePlay::AddObjects()
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
 	
-	AddGameObject(new LaunchPad(Vector3(0, 1.0f, 25.0f), Vector3(2, 0.01, 2), "poo"));
+	AddGameObject(new LaunchPad(Vector3(0.0f, 1.0f, 25.0f), Vector3(2.0f, 0.01f, 2.0f), "poo"));
 
 	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15.0f, 0.6f, -15.0f), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
 	AddGameObject(mpp);
