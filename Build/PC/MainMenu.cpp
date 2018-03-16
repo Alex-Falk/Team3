@@ -223,7 +223,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map1Text"
 		));
-	Map1Text->setText("MAP1: Arena");
+	Map1Text->setText("MAP1: Cliff");
 
 	Map2Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -231,7 +231,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map2Text"
 		));
-	Map2Text->setText("MAP2: Cliff");
+	Map2Text->setText("MAP2: Arena");
 
 	Map3Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",

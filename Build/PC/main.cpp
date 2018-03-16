@@ -102,10 +102,10 @@ void Initialize()
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
 
-	SceneManager::Instance()->EnqueueScene(new MainMenu("Dong Li's El BLOOB", "MainMenu"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "map2"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "PhilsMap"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Dong Li's El BLOOB", "map1"));
+	SceneManager::Instance()->EnqueueScene(new MainMenu("El BLOOB", "MainMenu"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("El BLOOB", "map2"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("El BLOOB", "PhilsMap"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("El BLOOB", "map1"));
 	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 4", "map2"));
 	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
