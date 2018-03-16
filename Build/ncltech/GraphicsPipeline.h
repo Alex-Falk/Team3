@@ -95,7 +95,7 @@
 //   currently results in shadows using up 256MB of space. Which is quite alot,
 //   but also currently the only potentially memory sensitive thing we do in this 
 //   renderer so it's fine.
-#define SHADOWMAP_SIZE 4096
+#define SHADOWMAP_SIZE 8192
 
 
 #define SHADOW_PROJ_FAR      50.0f			//Can see for 50m - setting this too far really hurts shadow quality as they attempt to cover the entirety of the view frustum
@@ -127,6 +127,10 @@ enum SHADERTYPE
 	SkyBox				= 6,
 	MiniMap				= 7,
 	Score				= 8,
+	ParticleCompute		= 9,
+	ParticleRender		= 10,
+	ChangeColorObject   = 11,
+	ColorPool			= 12,
 	Shader_Number,
 };
 
@@ -176,6 +180,7 @@ public:
 	inline GLuint& GetShadowTex() { return shadowTex; }
 
 	inline Shader** GetAllShaders() { return shaders; }
+	inline Shader* GetShader(SHADERTYPE type) { return shaders[type]; }
 	inline Material** GetAllMaterials() { return materials; }
 
 	inline void AddPlayerRenderNode(RenderNode* playerRenderNode){ playerRenderNodes.push_back(playerRenderNode); }
@@ -184,7 +189,9 @@ public:
 	inline void RemoveAllPlayerRenderNode() { playerRenderNodes.clear(); }
 	void InitPath(Vector2 groundSize);
 	inline GLuint& GetPathTex() { return pathTex; }
+	const Vector2& GetGroundSize() const { return groundSize; }
 
+	float GetTotalTime() { return totalTime; }
 	//GUI
 	void SetIsMainMenu(bool a) { isMainMenu = a; }
 	bool GetIsMainMenu() { return isMainMenu; }
@@ -207,6 +214,7 @@ public:
 	{
 		perfShadow.PrintOutputToStatusEntry(color,		"              Shadows        :");
 		perfObjects.PrintOutputToStatusEntry(color,		"              Objects        :");
+		perfPath.PrintOutputToStatusEntry(color,		"              Path           :");
 		perfPostProcess.PrintOutputToStatusEntry(color, "              PostProcess    :");
 		perfScoreandMap.PrintOutputToStatusEntry(color, "              Score & Map    :");
 	}
@@ -276,6 +284,7 @@ protected:
 	Mesh*		fullscreenQuad;
 	Camera*		camera;
 	bool		isVsyncEnabled;
+	float		totalTime;
 
 	std::vector<RenderNode*> allNodes;
 
@@ -316,6 +325,7 @@ protected:
 	//--------------------------------------------------------------------------------------------//	
 	PerfTimer perfShadow;
 	PerfTimer perfObjects;
+	PerfTimer perfPath;
 	PerfTimer perfPostProcess;
 	PerfTimer perfScoreandMap;
 };

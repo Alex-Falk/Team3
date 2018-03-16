@@ -30,13 +30,14 @@
 #include "Projectile.h"
 #include "Minion.h"
 #include "CaptureArea.h"
-
+#include <nclgl\ChangeColorRenderNode.h>
+#include "AudioSystem.h"
 CaptureArea::CaptureArea()
 {
-	CaptureArea({ 0,0,0 },"CAPTUREAREA");
+	CaptureArea({ 0,0,0 },0.0f,"CAPTUREAREA");
 }
 
-CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
+CaptureArea::CaptureArea(Vector3 posit, float invmass, string unique_name, Vector3 halfdims, int scoreValue, Colour colour)
 {
 	Vector3 pos = posit;
 	friendlyName = unique_name;
@@ -45,11 +46,11 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 	this->colour = colour;
 
 	RenderNode* rnode = new RenderNode();
-	RenderNode* dummy = new RenderNode(CommonMeshes::Cube(), unique_name,paintColour);
+	RenderNode* dummy = new ChangeColorRenderNode(CommonMeshes::Cube(), unique_name,paintColour);
 
 	dummy->SetTransform(Matrix4::Scale(halfdims));
 
-	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
+	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
 
 	rnode->AddChild(dummy);
 
@@ -60,7 +61,7 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 
 	pnode = new PhysicsNode();
 	pnode->SetPosition(pos);
-	pnode->SetInverseMass(0.0f);
+	pnode->SetInverseMass(invmass);
 	pnode->SetName(unique_name);
 	pnode->SetType(PAINTABLE_OBJECT);
 
@@ -77,7 +78,7 @@ CaptureArea::CaptureArea(Vector3 posit, string unique_name, Vector3 halfdims, in
 
 	CollisionShape* pColshape = new CuboidCollisionShape(halfdims);
 	pnode->SetCollisionShape(pColshape);
-	pnode->SetInverseInertia(pColshape->BuildInverseInertia(0.0f));
+	pnode->SetInverseInertia(pColshape->BuildInverseInertia(invmass));
 	this->renderNode = rnode;
 	this->physicsNode = pnode;
 RegisterPhysicsToRenderTransformCallback();
@@ -97,6 +98,7 @@ Physics()->SetOnCollisionCallback(
 	UpdatePercentage();
 	currentlyCapturing = RED;
 	type = DEFAULT_CAPTURE_AREA;
+	pnode->SetElasticity(0.05f);
 }
 
 void CaptureArea::SetColour(Colour c)
@@ -114,6 +116,7 @@ void CaptureArea::SetColour(Colour c)
 		case START_COLOUR:	paintColour = DEFAULT_COLOUR;	playerScores[0] = 0;		playerScores[1] = 0;		playerScores[2] = 0;		playerScores[3] = 0;		break;
 	}
 
+	static_cast<ChangeColorRenderNode*>(Render()->GetChild())->StartChangeColor();
 	Render()->SetChildBaseColor(paintColour);
 }
 
@@ -129,28 +132,20 @@ void CaptureArea::SetType(CaptureAreaType newType)
 
 bool CaptureArea::CaptureAreaCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject)
 {
+	switch(collidingObject->GetType())
 	{
-		if (collidingObject->GetType() == PLAYER)
-		{
-			CheckPlayerCollision(collidingObject, Game::Instance()->GetUserID());
-		}
-		else if (collidingObject->GetType() == PROJECTILE || collidingObject->GetType() == SPRAY)
-		{
-			if (CheckProjectileCollision(collidingObject, Game::Instance()->GetUserID())) return true;
-		}
-		else if (collidingObject->GetType() == MINION)
-		{
-			if (CheckMinionCollision(collidingObject, Game::Instance()->GetUserID())) return true;
-		}
+		case PLAYER:		CheckPlayerCollision(collidingObject, Game::Instance()->GetUserID());		break;
+		case PROJECTILE:
+		case SPRAY:			CheckProjectileCollision(collidingObject, Game::Instance()->GetUserID());	break;
+		case MINION:		CheckMinionCollision(collidingObject, Game::Instance()->GetUserID());		break;
 	}
-
-
+	
 	//Return true to enable collision resolution
-	return true;
+	return (this->GetType() == MINION_CAPTURE_AREA) ? false : true;
 
 }
 //----------------------------------------------------------------------------------------------//
-#pragma region AlexFalk
+//  AlexFalk
 
 void CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index) 
 {
@@ -170,89 +165,92 @@ void CaptureArea::CheckPlayerCollision(PhysicsNode * p, int index)
 		}
 		//check if player actually has enough life to take the point
 		if (avatar->GetLife() >= avatar->GetMinLife() + (lifeToTake)) {
-			this->SetColour(avatar->GetColour());
-			Game::Instance()->Capture(this->index, this->colour);
+			if (Game::Instance()->IsHost())
+				this->SetColour(avatar->GetColour());
+			AudioSystem::Instance()->PlayASound(CAPTURE_AREA_SOUND, false, this->Physics()->GetPosition());
+			Game::Instance()->Capture(this->index, this->colour, this->scoreValue);
 			avatar->ChangeLife(-lifeToTake);
 		}
 		UpdatePercentage();
 	}
 }
-#pragma endregion AlexFalk
 //----------------------------------------------------------------------------------------------//
 
-bool CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) {
-	if (Game::Instance()->GetPlayer(index)) {
-		if (this->GetColour() == ((Minion*)p->GetParent())->GetColour() || Game::Instance()->GetPlayer(index)->GetColour() != ((Minion*)p->GetParent())->GetColour()) {
-			return false;
-		}
-		else {
-			float lifeToTake = ((Minion*)p->GetParent())->GetLife() / 10;
-			((Minion*)p->GetParent())->ChangeLife(-50);
-			//take the amount of life of the minion from whoever is currently capturing the area
-			for (int i = 0; i < 4; i++) {
-				if (playerScores[i] > 0 && i != index) {
-					float tempLifeToTake = lifeToTake;
-					lifeToTake -= playerScores[i];
-					playerScores[i] -= tempLifeToTake;
-					if (playerScores[i] <= 0) {
-						this->SetColour(START_COLOUR);
-					}
+//----------------------------------------------------------------------------------------------//
+// Nick
+void CaptureArea::CheckMinionCollision(PhysicsNode * p, int index) 
+{
+	Minion* minion = static_cast<Minion*>(p->GetParent());
+	
+	if (this->GetColour() != minion->GetColour()) {
+		
+		float lifeToTake = ((Minion*)p->GetParent())->GetLife() / 10;
+		minion->ChangeLife(-50);
+		//take the amount of life of the minion from whoever is currently capturing the area
+		for (int i = 0; i < 4; i++) {
+			if (playerScores[i] > 0 && i != index) {
+				float tempLifeToTake = lifeToTake;
+				lifeToTake -= playerScores[i];
+				playerScores[i] -= tempLifeToTake;
+				if (playerScores[i] <= 0) {
+					this->SetColour(START_COLOUR);
 				}
 			}
-			//if area has been set to neutral, add remaining life of minion to the player
-			if (lifeToTake > 0) {
-				for (int i = 0; i < 4; i++) {
-					if (i == index) {
-						playerScores[index] += lifeToTake;
-					}
-				}
-				if (playerScores[index] >= lifeReq) {
-					this->SetColour(((Minion*)p->GetParent())->GetColour());
-					//Game::Instance()->ClaimArea(this->GetIdx());
-				}
-			}	
-			UpdatePercentage();
-			return true;
 		}
+		//if area has been set to neutral, add remaining life of minion to the player
+		if (lifeToTake > 0) {
+			for (int i = 0; i < 4; i++) {
+				if (i == index) {
+					playerScores[index] += lifeToTake;
+				}
+			}
+			if (playerScores[index] >= lifeReq) {
+				if (Game::Instance()->IsHost())
+					this->SetColour(minion->GetColour());
+				AudioSystem::Instance()->PlayASound(CAPTURE_AREA_SOUND, false, this->Physics()->GetPosition());
+				Game::Instance()->Capture(this->index, this->colour,this->scoreValue);
+			}
+		}	
+		UpdatePercentage();
 	}
-	return false;
 }
 
-bool CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index) {
-	if (Game::Instance()->GetPlayer(index)) {
-		if (Game::Instance()->GetPlayer(index)->GetColour() != ((Projectile*)p->GetParent())->GetColour()) {
-			return false;
+void CaptureArea::CheckProjectileCollision(PhysicsNode * p, int index) 
+{
+	Projectile* projectile = static_cast<Projectile*>(p->GetParent());
+
+	if (this->GetColour() != projectile->GetColour()) 
+	{
+		float lifeToTake = projectile->GetProjectileWorth();
+		for (int i = 0; i < 4; i++) {
+			if (playerScores[i] > 0 && i != index) {
+				float tempLifeToTake = lifeToTake;
+				lifeToTake -= playerScores[i];
+				playerScores[i] -= tempLifeToTake;
+				if (playerScores[i] <= 0) {
+					this->SetColour(START_COLOUR);
+				}
+			}
 		}
-		else {
-			float lifeToTake = ((Projectile*)p->GetParent())->GetProjectileWorth();
+		if (lifeToTake > 0) {
 			for (int i = 0; i < 4; i++) {
-				if (playerScores[i] > 0 && i != index) {
-					float tempLifeToTake = lifeToTake;
-					lifeToTake -= playerScores[i];
-					playerScores[i] -= tempLifeToTake;
-					if (playerScores[i] <= 0) {
-						this->SetColour(START_COLOUR);
-					}
+				if (i == index) {
+					playerScores[index] += lifeToTake;
+					projectile->SetToDestroy();
 				}
 			}
-			if (lifeToTake > 0) {
-				for (int i = 0; i < 4; i++) {
-					if (i == index) {
-						playerScores[index] += lifeToTake;
-						((Projectile*)p->GetParent())->SetToDestroy();
-					}
-				}
-				if (playerScores[index] >= lifeReq) {
-					this->SetColour(((Projectile*)p->GetParent())->GetColour());
-					//Game::Instance()->ClaimArea(this->GetIdx());
-				}
+			if (playerScores[index] >= lifeReq) {
+				if (Game::Instance()->IsHost())
+					this->SetColour(projectile->GetColour());
+				AudioSystem::Instance()->PlayASound(CAPTURE_AREA_SOUND, false, this->Physics()->GetPosition());
+				Game::Instance()->Capture(this->index, this->colour,this->scoreValue);
 			}
-			UpdatePercentage();
-			return true;
 		}
+		UpdatePercentage();
 	}
-	return false;
+
 }
+//----------------------------------------------------------------------------------------------//
 
 void CaptureArea::UpdatePercentage() {
 	bool updated = false;

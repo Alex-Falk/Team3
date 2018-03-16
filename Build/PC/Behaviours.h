@@ -43,5 +43,4 @@ namespace Behaviours
 	Vector3 Evade(Vector3 targetPos, Vector3 targetVelocity, Vector3 currentPos, Vector3 currentVelocity, bool grounded, float weight, float maxMagnitude);
 	Vector3 Evade(PhysicsNode* target, PhysicsNode* currentNode, bool grounded, float weight, float maxMagnitude);
 
-	//Vector3 WallAvoid(Vector3 currentPos, Vector3 currentVelocity, float weight);
 };

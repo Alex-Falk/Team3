@@ -48,10 +48,20 @@ void SceneManager::EnqueueScene(Scene* scene)
 void SceneManager::JumpToScene()
 {
 	JumpToScene((m_SceneIdx + 1) % m_vpAllScenes.size());
+
 }
 
 void SceneManager::JumpToScene(int idx)
-{
+{	
+	if (!firstTimeBoot) {
+		GUIsystem::Instance()->SetLoadingScreen(TRANSITION);
+		isLoading = true;
+		GraphicsPipeline::Instance()->RenderScene();
+	}
+
+	SetLoadBar(0.1f);
+
+
 	if (idx < 0 || idx >= (int)m_vpAllScenes.size())
 	{
 		NCLERROR("Invalid Scene Index: %d", idx);
@@ -63,20 +73,34 @@ void SceneManager::JumpToScene(int idx)
 	{
 		NCLLOG("[SceneManager] - Exiting scene -");
 		scene->OnCleanupScene();
-		PhysicsEngine::Instance()->RemoveAllPhysicsObjects();	
+		PhysicsEngine::Instance()->RemoveAllPhysicsObjects();
 	}
+
+	SetLoadBar(0.3f);
+
 
 	m_SceneIdx = idx;
 	scene = m_vpAllScenes[idx];
 	NCLLOG("");
-
+	
 	//Initialize new scene
 	GUIsystem::Instance()->Reset();
+	SetLoadBar(0.6f);
 	PhysicsEngine::Instance()->SetDefaults();
+	SetLoadBar(0.8f);
 	GraphicsPipeline::Instance()->InitializeDefaults();
+	SetLoadBar(1.0f);
+	
 	scene->OnInitializeScene();
+
 	Window::GetWindow().SetWindowTitle("NCLTech - [%d/%d] %s", idx + 1, m_vpAllScenes.size(), scene->GetSceneName().c_str());
+
 	NCLLOG("[SceneManager] - Scene switched to: \"%s\"", scene->GetSceneName().c_str());
+
+
+	GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::NOT_LOADING);
+	firstTimeBoot = false;
+	isLoading = false;	
 }
 
 void SceneManager::JumpToScene(const std::string& friendly_name)
@@ -100,5 +124,12 @@ void SceneManager::JumpToScene(const std::string& friendly_name)
 	else
 	{
 		NCLERROR("Unknown Scene Alias: \"%s\"", friendly_name.c_str());
+	}
+}
+
+void SceneManager::SetLoadBar(float f) {
+	if (!firstTimeBoot) {
+		GUIsystem::Instance()->SetLoadingBar(f);
+		GraphicsPipeline::Instance()->RenderScene();
 	}
 }

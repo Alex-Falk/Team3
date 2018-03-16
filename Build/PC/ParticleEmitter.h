@@ -33,24 +33,79 @@
 #include <ncltech\GameObject.h>
 #include "GamePlay.h"
 
+class Particle;
+
+struct vec3 {
+	float x;
+	float y;
+	float z;
+	float buff;
+};
+
 class ParticleEmitter : public GameObject {
 protected:
-	Colour col;
-	Vector3 pos;
-	Vector3 dir;
-	float rate;
-	float spreadYaw;
-	float spreadPitch;
-	float particleLife;
-	float particleMaxDist;
-	float yaw = 0.0f;
-	float t = 0.0f;
-public:
-	ParticleEmitter(Colour c, Vector3 pos, float rate, Vector3 direction = { 0,1,0 }, float spreadYaw = 45.0f, float spreadPitch = 45.0f, float particleLife = 5.0f, float particleMaxDist = 10.0f);
-	~ParticleEmitter() {}
 
+	//--------------------------------------------------------------------------------------------//
+	// Compute shader specific variables
+	//--------------------------------------------------------------------------------------------//
+
+	GLuint posSBO;
+	GLuint velSBO;
+	GLuint startVelSBO;
+
+	vec3 * positions;
+	vec3 * velocities;
+	vec3 * startingVels;
+
+	Shader * shader;
+
+	//--------------------------------------------------------------------------------------------//
+	// other variables
+	//--------------------------------------------------------------------------------------------//
+
+	uint particleNum;
+	vector<Particle*> particles;
+
+	Colour c;
+	Vector4 RGB;
+	Vector3 pos;
+	Vector3 scale;
+	Vector3 direction;
+	float rate;
+	float lifeTime;
+	bool isDeleting = true;
+
+	float particleLifeTime;
+	float particleMaxDist;
+
+	float timer;
+
+public:
+
+	//--------------------------------------------------------------------------------------------//
+	// Constructor, Deconstructor and General functions
+	//--------------------------------------------------------------------------------------------//
+
+	ParticleEmitter(
+		uint numParticles, 
+		Colour c, 
+		Vector3 pos, 
+		float rate = (1.0f / 60.0f), 
+		float lifetime = 0.0f, 
+		Vector3 scale = { 0.1f,0.1f,0.1f }, 
+		Vector3 direction = { 0,1,0 }, 
+		float spreadYaw = 10.0f, 
+		float spreadPitch = 10.0f, 
+		float particleLife = 5.0f, 
+		float particleMaxDist = 10.0f);
+	~ParticleEmitter();
+
+	void SetPos(Vector3 pos) { this->pos = pos; }
+	void SetScale(Vector3 scale) { this->scale = scale; }
+	void SetDirection(Vector3 dir) { this->direction = dir; }
+	void SetColour(Colour c);
 	virtual void Update(float dt);
 
-	void SetDirection(Vector3 dir)	{ this->dir = dir; }
-	void SetPosition(Vector3 pos)	{ this->pos = pos; }
+	virtual void OnDetachedFromScene();
+
 };

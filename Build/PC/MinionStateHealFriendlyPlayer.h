@@ -24,14 +24,6 @@
 #include "state.h"
 #include "Minion.h"
 
-/*
-	bool goToNearestEnemy;
-	bool goToNearestCaptureZone;
-	bool goToClosestAlly;
-	bool fleeTarget;
-	bool wander;
-*/
-
 class MinionStateHealFriendlyPlayer : public State<Minion>
 {
 private:

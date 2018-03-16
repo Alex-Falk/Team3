@@ -1,4 +1,3 @@
-
 #include <enet\enet.h>
 #include <ncltech\SceneManager.h>
 #include <nclgl\Window.h>
@@ -14,6 +13,8 @@
 #include "SimpleGamePlay.h"
 #include "DataDrivenMap.h"
 
+#include "windows.h"
+#include "psapi.h"
 
 bool draw_debug = true;
 bool draw_performance = false;
@@ -65,8 +66,19 @@ void Quit(bool error = false, const std::string &reason = "") {
 
 //initialise all audio files
 void InitialiseAudioFiles() {
-	AudioSystem::Instance()->Create3DSound(MENU_MUSIC, "../AudioFiles/singing.wav", 0.5f, 30.0f);
-	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, "../AudioFiles/wave.mp3");
+	AudioSystem::Instance()->Create2DStream(MENU_MUSIC, SOUNDSDIR"MenuMusic.wav"); 
+	AudioSystem::Instance()->Create2DStream(GAME_MUSIC, SOUNDSDIR"gameMusic.wav"); 
+	AudioSystem::Instance()->Create3DSound(JUMP_SOUND, SOUNDSDIR"jumpSound.wav", 5.0f, 60.0f); 
+	AudioSystem::Instance()->Create3DSound(ROCKET_FLYING_SOUND, SOUNDSDIR"rocketLaunch.wav",40.0f, 160.0f);
+	AudioSystem::Instance()->Create3DSound(EXPLOSION_SOUND, SOUNDSDIR"explosionSound.wav", 40.0f, 100.0f);
+	AudioSystem::Instance()->Create3DSound(PROJECTILE_LAUNCH_SOUND, SOUNDSDIR"jumpSound.wav", 10.0f, 60.0f); 
+	AudioSystem::Instance()->Create2DSound(MENU_CHOICE_SOUND, SOUNDSDIR"menuChoiceSound.wav");
+	AudioSystem::Instance()->Create3DSound(PICKUP_COLLECTED_SOUND, SOUNDSDIR"pickupCollectedSound.wav", 5.0f, 60.0f); 
+	AudioSystem::Instance()->Create3DSound(PAINT_FILL_SOUND, SOUNDSDIR"paintFill.wav", 5.0f, 60.0f); 
+	AudioSystem::Instance()->Create2DSound(VICTORY_SOUND, SOUNDSDIR"victorySound.wav"); 
+	AudioSystem::Instance()->Create2DSound(LOSS_SOUND, SOUNDSDIR"lossSound.mp3"); 
+	AudioSystem::Instance()->Create3DSound(CAPTURE_AREA_SOUND, SOUNDSDIR"CaptureObject.wav", 5.0f, 60.0f);
+	AudioSystem::Instance()->Create3DSound(PROJECTILE_HIT_SOUND, SOUNDSDIR"projectileHit.wav", 15.0f, 60.0f);
 }
 
 // Program Initialise
@@ -75,7 +87,7 @@ void InitialiseAudioFiles() {
 void Initialize()
 {
 	//Initialise the Window
-	if (!Window::Initialise("Game Technologies", 1280, 800, false))
+	if (!Window::Initialise("Game Technologies", 1280, 720, false))
 		Quit(true, "Window failed to initialise!");
 
 	//Initialize Renderer
@@ -87,16 +99,15 @@ void Initialize()
 	
 	//Initialise the PhysicsEngine
 	PhysicsEngine::Instance();
-
-	SceneManager::Instance()->EnqueueScene(new MainMenu("MainMenu - Dongli's Angels!"));
-	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("SimpleGamePlay - Dongli's Angels"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	SceneManager::Instance()->EnqueueScene(new SimpleGamePlay("SimpleGamePlay - The Best Game Ever"));
-	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
-
 	AudioSystem::Instance();
 	InitialiseAudioFiles();
+
+	SceneManager::Instance()->EnqueueScene(new MainMenu("El BLOOB", "MainMenu"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("El BLOOB", "map2"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("El BLOOB", "PhilsMap"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("El BLOOB", "map1"));
+	SceneManager::Instance()->EnqueueScene(new DataDrivenMap("Map 4", "map2"));
+	//SceneManager::Instance()->EnqueueScene(new MapOne("Fourth Stage - The Best Game Ever"));
 
 	GUIsystem::Instance()->SetUpLoadingScreen();
 }
@@ -107,42 +118,32 @@ void Initialize()
 void PrintStatusEntries()
 {
 	const Vector4 status_color_debug = Vector4(1.0f, 0.6f, 1.0f, 1.0f);
-	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [0] ---");
+//	NCLDebug::AddStatusEntry(status_color_debug, "--- Debug Draw  [0] ---");
 	if (!show_debug)
 		return;
 
-	////Print Engine Options
-	//NCLDebug::AddStatusEntry(status_colour_header, "NCLTech Settings");
-	//NCLDebug::AddStatusEntry(status_colour, "     Physics Engine: %s (Press P to toggle)", PhysicsEngine::Instance()->IsPaused() ? "Paused  " : "Enabled ");
-	//NCLDebug::AddStatusEntry(status_colour, "     Monitor V-Sync: %s (Press V to toggle)", GraphicsPipeline::Instance()->GetVsyncEnabled() ? "Enabled " : "Disabled");
-	//NCLDebug::AddStatusEntry(status_colour, "");
+	PROCESS_MEMORY_COUNTERS pmc;
+	BOOL result = GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc));
 
-	////Print Current Scene Name
-	//NCLDebug::AddStatusEntry(status_colour_header, "[%d/%d]: %s",
-	//	SceneManager::Instance()->GetCurrentSceneIndex() + 1,
-	//	SceneManager::Instance()->SceneCount(),
-	//	SceneManager::Instance()->GetCurrentScene()->GetSceneName().c_str()
-	//	);
-	//NCLDebug::AddStatusEntry(status_colour, "     \x01 T/Y to cycle or R to reload scene");
-
-	//Print Performance Timers
-
+	SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
 
 	NCLDebug::AddStatusEntry(status_colour, "     FPS: %5.2f  (Press 9 for %s info)", 1000.f / timer_total.GetAvg(), show_full_perf_metrics ? "less" : "more");
 	if (!show_full_perf_metrics) {
-		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
+		NCLDebug::AddStatusEntry(status_colour, "          Total RAM         : %4.2fMB", ((float)(physMemUsedByMe/1048576.0f)));
+		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        : ");
 		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
-		timer_render.PrintOutputToStatusEntry(status_colour,	"            Renderer Update :");
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Renderer Update : ");
 		timer_update.PrintOutputToStatusEntry(status_colour,	"            Gameplay Update :");
 		Game::Instance()->PrintPerformanceTimers(status_colour);//           NetworkUpdate
 		timer_audio.PrintOutputToStatusEntry(status_colour,		"            Audio Update    :");
 	}
 	else 
 	{
-		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        :");
+		NCLDebug::AddStatusEntry(status_colour, "          Total RAM         : %4.2fMB", ((float)(physMemUsedByMe / 1048576.0f)));
+		timer_total.PrintOutputToStatusEntry(status_colour,		"          Total Time        : ");
 		timer_physics.PrintOutputToStatusEntry(status_colour,	"            Physics Update  :");
 		PhysicsEngine::Instance()->PrintPerformanceTimers(status_colour);
-		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    :");
+		timer_render.PrintOutputToStatusEntry(status_colour,	"            Render Scene    : ");
 		GraphicsPipeline::Instance()->PrintPerformanceTimers(status_colour);
 		timer_update.PrintOutputToStatusEntry(status_colour,	"            Gameplay update :");
 		SceneManager::Instance()->GetCurrentScene()->PrintPerformanceTimers(status_colour);
@@ -169,7 +170,7 @@ void PrintStatusEntries()
 		NCLDebug::AddStatusEntry(status_color_debug, "Collision Volumes : %s [C] ", (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "Manifolds         : %s [V] ", (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD) ? "Enabled " : "Disabled");
 		NCLDebug::AddStatusEntry(status_color_debug, "World Partition   : %s [B] ", (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD) ? "Enabled " : "Disabled");
-		NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
+		//NCLDebug::AddStatusEntry(status_color_debug, "Bounding          : %s [N]", (drawFlags & DEBUGDRAW_FLAGS_BOUNDING) ? "Enabled " : "Disabled");
 
 		NCLDebug::AddStatusEntry(status_color_debug, "");
 	}
@@ -186,68 +187,129 @@ static bool ScoreCallbackFunction(PhysicsNode * self, PhysicsNode* collidingObje
 //  - Handles all program wide keyboard inputs for
 //    things such toggling the physics engine and 
 //    cycling through scenes.
-void HandleKeyboardInputs()
+void HandleMouseAndKeyboardInputs(bool handleMouse, bool handleKeyBoard)
 {
-	//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
-	//	PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
-		GraphicsPipeline::Instance()->SetVsyncEnabled(!GraphicsPipeline::Instance()->GetVsyncEnabled());
-
-	uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
-	uint sceneMax = SceneManager::Instance()->SceneCount();
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE))
+	if (handleKeyBoard)
 	{
-		Game::Instance()->ResetGame();
-		SceneManager::Instance()->JumpToScene(0);
-	}
+		//if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
+		//	PhysicsEngine::Instance()->SetPaused(!PhysicsEngine::Instance()->IsPaused());
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+			GraphicsPipeline::Instance()->SetVsyncEnabled(!GraphicsPipeline::Instance()->GetVsyncEnabled());
+
+		uint sceneIdx = SceneManager::Instance()->GetCurrentSceneIndex();
+		uint sceneMax = SceneManager::Instance()->SceneCount();
+
+		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_ESCAPE))
+		{
+			if (Game::Instance()->IsRunning())
+			{
+				((Map*)Game::Instance()->GetMap())->showPauseMenu();
+			}
+			else
+			{
+				Game::Instance()->ResetGame();
+				SceneManager::Instance()->JumpToScene(0);
+			}
+
+		}
+
+		uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
 		
+		if (Input::Instance()->GetInput(DEBUGKEY))
+		{
+			show_debug = !show_debug;
+			if (!show_debug)
+			{
+				if (drawFlags & DEBUGDRAW_FLAGS_CONSTRAINT)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_COLLISIONNORMALS)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_COLLISIONVOLUMES)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_MANIFOLD)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_FIXED_WORLD)
+				{
+					drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
+				}
+				if (drawFlags & DEBUGDRAW_FLAGS_BOUNDING)
+				{ 
+					drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
+				}
+			}
+		}
+		
+		if (show_debug)
+		{			
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
+				drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
-		show_full_perf_metrics = !show_full_perf_metrics;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
+				drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_0))
-		show_debug = !show_debug;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
+				drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
 
-	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_Z))
-		drawFlags ^= DEBUGDRAW_FLAGS_CONSTRAINT;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
+				drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_X))
-		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONNORMALS;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
+				drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_C))
-		drawFlags ^= DEBUGDRAW_FLAGS_COLLISIONVOLUMES;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
+				drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_V))
-		drawFlags ^= DEBUGDRAW_FLAGS_MANIFOLD;
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
+				NCLDebug::Log("Pistol Activated");
+				Game::Instance()->GetCurrentAvatar()->SetWeapon(PAINT_PISTOL);
+			}
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
+				NCLDebug::Log("Rocket Activated");
+				Game::Instance()->GetCurrentAvatar()->SetWeapon(PAINT_ROCKET);
+			}
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
+				NCLDebug::Log("Spray Activated");
+				Game::Instance()->GetCurrentAvatar()->SetWeapon(PAINT_SPRAY);
+			}
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
+				NCLDebug::Log("Auto Activated");
+				Game::Instance()->GetCurrentAvatar()->SetWeapon(AUTO_PAINT_LAUNCHER);
+			}
 
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_B))
-		drawFlags ^= DEBUGDRAW_FLAGS_FIXED_WORLD;
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
-		drawFlags ^= DEBUGDRAW_FLAGS_BOUNDING;
-
-	Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
-	Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
-	Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
-	Input::Instance()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
-	Input::Instance()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
-	//Input::Instance()->SetInput(PAUSE, Window::GetKeyboard()->KeyDown(KEYBOARD_P));
-	Input::Instance()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
-	//possibly temporary
-	Input::Instance()->SetInput(CAMERA_UP, Window::GetKeyboard()->KeyDown(KEYBOARD_SHIFT));
-	Input::Instance()->SetInput(CAMERA_DOWN, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
+			if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_9))
+				show_full_perf_metrics = !show_full_perf_metrics;
+		}
+		Input::Instance()->SetInput(FORWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_W) || Window::GetKeyboard()->KeyDown(KEYBOARD_UP));
+		Input::Instance()->SetInput(BACKWARD, Window::GetKeyboard()->KeyDown(KEYBOARD_S) || Window::GetKeyboard()->KeyDown(KEYBOARD_DOWN));
+		Input::Instance()->SetInput(LEFT, Window::GetKeyboard()->KeyDown(KEYBOARD_A) || Window::GetKeyboard()->KeyDown(KEYBOARD_LEFT));
+		Input::Instance()->SetInput(RIGHT, Window::GetKeyboard()->KeyDown(KEYBOARD_D) || Window::GetKeyboard()->KeyDown(KEYBOARD_RIGHT));
+		Input::Instance()->SetInput(JUMP, Window::GetKeyboard()->KeyDown(KEYBOARD_SPACE));
+		Input::Instance()->SetInput(DEBUGKEY, Window::GetKeyboard()->KeyTriggered(KEYBOARD_0));
+		Input::Instance()->SetInput(SHOOT, Window::GetMouse()->ButtonDown(MOUSE_LEFT) && !Window::GetMouse()->ButtonHeld(MOUSE_LEFT));
+		PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
+	}
 
 	//mouse input
-	Input::Instance()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
-	Input::Instance()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
+	if (handleMouse && GraphicsPipeline::Instance()->GetIsMainMenu()==false)
+	{
+		Input::Instance()->SetLookX(Window::GetMouse()->GetRelativePosition().x);
+		Input::Instance()->SetLookY(Window::GetMouse()->GetRelativePosition().y);
+	}
 
-	PhysicsEngine::Instance()->SetDebugDrawFlags(drawFlags);
-//	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
+	//	GraphicsPipeline::Instance()->SetDebugDrawFlags(drawFlags);
 }
 
+
+//GUI interation function - Jeffery 12/03/2018
 void HandleGUIMouseCursor()
 {
 	Vector2 absPos;
@@ -303,6 +365,22 @@ void HandleGUITextInput()
 		GUIsystem::Instance()->HandleTextInput(KEYBOARD_BACK);
 		return;
 	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_CAPITAL)) {
+		GUIsystem::Instance()->SetIsCapsLocked(!GUIsystem::Instance()->GetIsCapsLocked());
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_LEFT)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_LEFT);
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_RIGHT)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_RIGHT);
+		return;
+	}
+	else if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_COMMA)) {
+		GUIsystem::Instance()->HandleTextInput(KEYBOARD_COMMA);
+		return;
+	}
 	for (int i = KeyboardKeys::KEYBOARD_0; i <= KeyboardKeys::KEYBOARD_PERIOD; i++) {
 		if (Window::GetKeyboard()->KeyTriggered(static_cast<KeyboardKeys>(i))) {
 			GUIsystem::Instance()->HandleTextInput(static_cast<KeyboardKeys>(i));
@@ -311,6 +389,7 @@ void HandleGUITextInput()
 	}
 }
 
+//Post process test - Jeffery 
 void TestPostProcess()
 {
 	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_F1)) {
@@ -351,6 +430,7 @@ int main()
 	//lock mouse so moving around the screen is nicer
 	Window::GetWindow().LockMouseToWindow(true);
 	Window::GetWindow().ShowOSPointer(false);
+
 	//Create main game-loop
 	while (Window::GetWindow().UpdateWindow() && SceneManager::Instance()->GetExitButtonClicked() == false)
 	{
@@ -376,16 +456,44 @@ int main()
 		PrintStatusEntries();
 
 		//Test Post Process
-		TestPostProcess();
+		//TestPostProcess();
+
+		if (!SceneManager::Instance()->GetCurrentSceneIndex())
+		{
+			GraphicsPipeline::Instance()->GetCamera()->acceptMouseInput = false;
+		}
+		else
+		{
+			GraphicsPipeline::Instance()->GetCamera()->acceptMouseInput = true;
+		}
+
+
 
 		//Handle Keyboard Inputs
-		if (GUIsystem::Instance()->GetIsTyping() == false) {
-			HandleKeyboardInputs();
+		if (GUIsystem::Instance()->GetIsPaused() == false && 
+			GUIsystem::Instance()->GetCurrentLoadingScreen() == NOT_LOADING &&
+			GUIsystem::Instance()->GetResult() == NONE) 
+		{
+			if (GUIsystem::Instance()->GetIsTyping() == false) {
+				HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+			}
+			else {
+				//Handle User Typing input
+				HandleGUITextInput();
+			}
 		}
-		else {
-			//Handle User Typing input
-			HandleGUITextInput();
+		else
+		{
+			//Handle Keyboard Inputs
+			if (GUIsystem::Instance()->GetIsTyping() == false) {
+				HandleMouseAndKeyboardInputs(true, !((Map*)Game::Instance()->GetMap())->isLoading);
+			}
+			else
+			{
+				GraphicsPipeline::Instance()->GetCamera()->acceptMouseInput = true;
+			}
 		}
+		
 
 		timer_total.BeginTimingSection();
 
@@ -394,8 +502,7 @@ int main()
 		SceneManager::Instance()->GetCurrentScene()->OnUpdateScene(dt);
 		timer_update.EndTimingSection();
 
-
-
+		
 		timer_gameplay.BeginTimingSection();
 		Game::Instance()->Update(dt);
 		timer_gameplay.EndTimingSection();

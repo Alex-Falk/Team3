@@ -45,6 +45,7 @@ in Vertex	{
 	smooth vec3 	 worldPos;
 	smooth vec2 	 texCoord;
 	smooth vec3 	 normal;
+	smooth vec2		 pathTexCoord;
 } IN;
 
 layout(location = 0) out vec4 OutFrag;
@@ -89,11 +90,15 @@ void main(void)	{
 	vec4 texColor  	= texture(uDiffuseTex, IN.texCoord);
 	vec4 color 		= uColor * texColor;
 
-	vec2 coord = vec2(-IN.texCoord.x, -IN.texCoord.y);
-	vec4 pathColor = texture(uPathTex, coord);
 	float isPath = 0;
-	if (pathColor.r > 0 || pathColor.g > 0 || pathColor.b > 0)
-		isPath = 1;
+	vec4 pathColor = vec4(0.0f);
+	vec2 coord = vec2(IN.pathTexCoord.x, IN.pathTexCoord.y);
+	if (coord.x > 0.0f && coord.x < 1.0f && coord.y > 0.0f && coord.y < 1.0f)
+	{
+		pathColor = texture(uPathTex, coord);
+		if (pathColor.r > 0 || pathColor.g > 0 || pathColor.b > 0)
+			isPath = 1;
+	}
 
 //Shadow Calculations
 	vec4 shadowWsPos = vec4(IN.worldPos + normal * NORMAL_BIAS, 1.0f);
@@ -113,6 +118,8 @@ void main(void)	{
 			break;
 		}
 	}
+
+	shadow = clamp(shadow, 0.2f, 1.0f);
 	
 //Lighting Calculations
 	vec3 viewDir 		= normalize(uCameraPos - IN.worldPos);
@@ -140,14 +147,14 @@ void main(void)	{
 	vec3 toWPos = normalize(IN.worldPos - uCameraPos);
 	vec4 reflection = texture(cubeTex, reflect(toWPos, normalize(IN.normal)));
 	reflection = reflection * vec4(diffuse,0.0f) * isPath;
-	finalLightColor = finalLightColor + reflection;
+	finalLightColor = finalLightColor;
 
 	
 	
 	vec3 up = vec3(0, 1, 0);
 	vec4 FinalColor;
-	if (length((normal - up)) < 0.1)
-		FinalColor = mix(finalLightColor, pathColor + finalLightColor * 0.1 + reflection * 0.5, isPath);
+	if (length((normal - up)) < 0.9)
+		FinalColor = mix(finalLightColor, pathColor * shadow + pathColor * 0.4 + finalLightColor * 0.2 + reflection, isPath);
 	else
 		FinalColor = finalLightColor;
 	OutFrag = FinalColor;

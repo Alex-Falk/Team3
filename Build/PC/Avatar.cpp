@@ -32,6 +32,7 @@
 #include "Game.h"
 #include "Projectile.h"
 #include "Avatar.h"
+#include "AudioSystem.h"
 
 
 Avatar::Avatar()
@@ -58,7 +59,7 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 
 	maxRotationSpeed = 20;
 
-	maxVel = 20.0f;
+	maxVel = 40.0f;
 
 	minLife = 20;
 	maxLife = 100;
@@ -97,9 +98,13 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 		default:			colour = DEFAULT_COLOUR;	name = "DEFAULT_PLAYER";	break;
 	}
 
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Avatartex, TEXTUREDIR"avatartex.png", GL_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
+
 	RenderNode* rnode = new RenderNode();
 	float radius = s;
 	RenderNode* dummy = new PlayerRenderNode(CommonMeshes::Sphere(), name, colour);
+	dummy->SetTexture(TextureManager::Instance()->GetTexture(TEXTURETYPE::Avatartex));
 	dummy->SetTransform(Matrix4::Scale(Vector3(radius, radius, radius)));
 
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::Forward_Lighting]);
@@ -138,8 +143,8 @@ Avatar::Avatar(Vector3 pos, Colour c, uint id, float s)
 	);
 
 	playerId = id;
-	
-
+	((PlayerRenderNode*)dummy)->SetIsInAir(true);
+	inAir = true;
 }
 
 bool Avatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject) {
@@ -183,6 +188,15 @@ void Avatar::Update(float dt) {
 	
 	UpdatePickUp(dt);
 
+	// Hard Reset if player falls off the map
+	if (this->Physics()->GetPosition().y <= -10.0f)
+	{
+		this->Physics()->SetPosition(((Map*)Game::Instance()->GetMap())->GetSpawnPos(this->col));
+		this->Physics()->SetForce(Vector3(0, 0, 0));
+		this->Physics()->SetLinearVelocity(Vector3(0, 0, 0));
+		this->Physics()->SetAngularVelocity(Vector3(0, 0, 0));
+	}
+
 	if (targetLife < minLife)
 	{
 		targetLife = minLife;
@@ -190,9 +204,7 @@ void Avatar::Update(float dt) {
 	
 	LerpLife(dt);
 
-	curSize = size * (life / 100);
-
-	ChangeSize(curSize);
+	ChangeSize(size * (life / 100));
 
 	if (collisionTimerActive)
 	{
@@ -293,39 +305,39 @@ void Avatar::UpdatePickUp(float dt)
 
 void Avatar::Spray()
 {
-	int randPitch;
-	int randYaw;
 	Vector3 direction;
 
 	if (targetLife > minLife + 5.0f)
 	{
-		randPitch = rand() % 90;
-		randYaw = rand() % 360;
-
-		direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
-		
-		Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
-		SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
-
 		int randPitch;
 		int randYaw;
+		int randSpeed;
 		Vector3 direction;
 
-		for (int i = 0; i < 10; ++i)
+		targetLife -= 5.0f;
+
+		for (int i = 0; i < 40; ++i)
 		{
-			randPitch = rand() % 90;
-			randYaw = rand() % 360;
+			randPitch = (rand() % 20) - 10;
+			randYaw = (rand() % 20) - 10;
+			randSpeed = (rand() % 10) - 5;
 
-			float a = (float)(rand() % 10);
-			float b = (float)(rand() % 10);
-			float c = (float)(rand() % 10);
+			float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
+			float pitch = GraphicsPipeline::Instance()->GetCamera()->GetPitch();
 
-			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 15;
-			direction = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 10;
+			if (canJump && pitch < 0) {
+				pitch = 0.0f;
+			}
+
+			direction = 
+				Matrix3::Rotation(pitch + (float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * 
+				Matrix3::Rotation(yaw + (float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * 
+				Vector3(0.0f, 0.0f, -1.0f) * 
+				(float)(50 + randSpeed);
 
 			Projectile * spray = new Projectile(col, colour, Physics()->GetPosition(), direction, 0.15f, 5.0f, SPRAY, 1, "Spray");
 			SceneManager::Instance()->GetCurrentScene()->AddGameObject(spray,1);
-
+			AudioSystem::Instance()->PlayASound(PROJECTILE_LAUNCH_SOUND, false, physicsNode->GetPosition());
 			// Alex Falk - Required for networking
 			Game::Instance()->GetUser()->SendWeaponFire(Game::Instance()->GetUserID(), PAINT_SPRAY, Physics()->GetPosition(), direction);
 		}
@@ -367,6 +379,7 @@ void Avatar::ShootProjectile()
 
 		Vector3 direction = Matrix3::Rotation(pitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(yaw, Vector3(0.0f, 1.0f, 0.0f)) * Vector3(0.0f, 0.0f, -1.0f) * 50;
 		ShootProjectile(Physics()->GetPosition(), direction);
+
 	}
 }
 
@@ -386,12 +399,14 @@ void Avatar::ShootRocket(Vector3 pos, Vector3 dir)
 	projectile->Physics()->SetOrientation(Quaternion(0, sin(angle / 2), 0, cos(angle / 2)));
 	
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
+	AudioSystem::Instance()->PlayASound(ROCKET_FLYING_SOUND, true, projectile->Physics()->GetPosition(), { 0,0,0 }, projectile);
 }
 
 void Avatar::ShootProjectile(Vector3 pos, Vector3 dir)
 {
 	Projectile* projectile = new Projectile(col, colour, pos, dir, 0.18f, 5.0f, PROJECTILE, 2, "Projectile");
 	SceneManager::Instance()->GetCurrentScene()->AddGameObject(projectile,1);
+	AudioSystem::Instance()->PlayASound(PROJECTILE_LAUNCH_SOUND, false, physicsNode->GetPosition());
 }
 //--------------------------------------------------------------------//
 

@@ -46,9 +46,9 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Utility
 	//--------------------------------------------------------------------------------------------//
-	virtual void UpdateUser(float dt);
+	void UpdateUser(float dt);
 
-	virtual void Disconnect();
+	void Disconnect();
 
 	void ProcessNetworkEvent(const ENetEvent & evnt);
 
@@ -57,8 +57,8 @@ public:
 	//--------------------------------------------------------------------------------------------//
 
 	void SendUsername();
-	virtual void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life, int inAir);
-	virtual void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
+	void SendAvatarUpdate(uint ID, Vector3 pos, Vector3 linVel, Vector3 angVel, Vector3 acc, float life, int inAir);
+	void SendWeaponFire(uint ID, WeaponType type, Vector3 pos, Vector3 dir);
 	void RequestPickup(uint ID, uint objectID);
 
 	virtual void UpdateName() { SendUsername(); };

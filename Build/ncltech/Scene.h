@@ -26,6 +26,7 @@ Description:
 	For example usage see Tuts_Physics project.
 
 *//////////////////////////////////////////////////////////////////////////////
+// Adapted by Alex Falk
 #pragma once
 
 #include "GameObject.h"
@@ -54,8 +55,8 @@ class Scene
 {
 public:
 
-	Scene(const std::string& friendly_name)	//Called once at program start - all scene initialization should be done in 'OnInitializeScene'
-		: m_SceneName(friendly_name)
+	Scene(const std::string& friendly_name, const std::string& MapName)	//Called once at program start - all scene initialization should be done in 'OnInitializeScene'
+		: m_SceneName(friendly_name), mapName(MapName)
 	{}; 
 
 	~Scene()
@@ -64,12 +65,11 @@ public:
 		m_UpdateCallbacks.clear();
 	}
 
-
 	// Called when scene is being activated, and will begin being rendered/updated. 
 	//	 - Initialize objects/physics here
 	virtual void OnInitializeScene()	{ 
 		PhysicsEngine::Instance()->ResetWorldPartition();
-		PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+		//PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 	}
 
 	// Called when scene is being swapped and will no longer be rendered/updated 
@@ -84,26 +84,11 @@ public:
 	//	   michael davis: projectiles delete after 10 seconds
 	virtual void onConnectToScene() {}
 	virtual void OnUpdateScene(float dt) {
-		//vector<GameObject*> tempVec;
-		//for (int i = 0; i < m_vpObjects.size(); i++) {
-		//	m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
-		//	if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE || m_vpObjects[i]->Physics()->GetType() == SPRAY) {
-		//		if (m_vpObjects[i]->GetTimeInScene() > 10.0f) {
-		//			m_vpObjects[i]->SetToDestroy();
-		//			//tempVec.push_back(m_vpObjects[i]);
-		//		}
-		//	}
-		//}
-		//for (int i = 0; i < tempVec.size(); i++) {
-		//	RemoveGameObject(tempVec[i]);
-		//}
 	}
 
 	//Timers For The Scenes
 	void PrintPerformanceTimers(const Vector4& color)
 	{
-		perfPlayer.PrintOutputToStatusEntry(color,		"              Player Update  :");
-		perfAI.PrintOutputToStatusEntry(color,			"              AI Update      :");
 		perfMapObjects.PrintOutputToStatusEntry(color,	"              Objects Update :");
 	}
 
@@ -134,13 +119,13 @@ public:
 
 			if (dynamic)
 			{
-				game_object->SetIdx(mapDynamicObjects.size());
+				game_object->SetIdx((uint)mapDynamicObjects.size());
 				game_object->SetDynamic(true);
 				mapDynamicObjects.push_back(game_object);
 			}
 			else
 			{
-				game_object->SetIdx(mapConstantObjects.size());
+				game_object->SetIdx((uint)mapConstantObjects.size());
 				mapConstantObjects.push_back(game_object);
 			}
 
@@ -151,12 +136,12 @@ public:
 			if (game_object->physicsNode) PhysicsEngine::Instance()->AddPhysicsObject(game_object->physicsNode);
 		}
 	}
-	//--------------------------------------------------------------------//
 
 	vector<GameObject*> GetConstantGameObjects()
 	{
 		return mapConstantObjects;
 	}
+	//--------------------------------------------------------------------//
 
 	GameObject* GetGameObject(uint idx)
 	{
@@ -274,7 +259,8 @@ public:
 	}
 
 	virtual void OnInitializeGUI(){}
-
+	void SetMapName(std::string name) { mapName = name; }
+	std::string GetMapName() { return mapName; }
 protected:
 	// Delete all contained Objects
 	//    - This is the default action upon firing OnCleanupScene()
@@ -292,6 +278,8 @@ protected:
 
 		mapDynamicObjects.clear();
 	}
+	
+
 
 
 protected:
@@ -300,9 +288,8 @@ protected:
 	std::vector<GameObject*>	mapDynamicObjects;
 	SceneUpdateMap				m_UpdateCallbacks;
 
+	string mapName;
 	// Timing Variables
-	PerfTimer perfPlayer;
-	PerfTimer perfAI;
 	PerfTimer perfMapObjects;
 
 };

@@ -31,8 +31,11 @@ void Camera::UpdateCamara(float dt) {
 	//Update the mouse by how much
 	if (Window::GetMouse()->ButtonDown(MOUSE_LEFT) || !free)
 	{
-		pitch -= (Input::Instance()->GetLookY());
-		yaw -= (Input::Instance()->GetLookX());
+		if (acceptMouseInput)
+		{
+			pitch -= (Input::Instance()->GetLookY());
+			yaw -= (Input::Instance()->GetLookX());
+		}
 		//if the mouse hasn't moved in the x add time onto time since mouse
 		if (Input::Instance()->GetLookX() == 0) {
 			timeSinceMouse += dt;

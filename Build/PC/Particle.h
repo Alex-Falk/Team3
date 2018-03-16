@@ -44,7 +44,13 @@ protected:
 	Vector3 velocity;
 	Vector3 spawnPos;
 public:
-	Particle(Colour col, Vector3 pos, Vector3 vel, float size, float lifeTime = 5.0f, float maxDist = 10.0f, string name = "");
+	Particle(Colour col, Vector3 pos, Vector3 vel, Vector3 size, float lifeTime = 5.0f, float maxDist = 10.0f, string name = "");
 
-	virtual void Update(float dt);
+	Vector3 GetPos() { return position; }
+	void SetPos(Vector3 pos);
+	void SetScale(Vector3 scale);
+	virtual void SetColour(Colour c);
+
+	virtual void OnDetachedFromScene();
+	//virtual void Update(float dt);
 };

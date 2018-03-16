@@ -6,4 +6,5 @@ uniform vec4 uColor;
 
 void main(void)	{
 	OutFrag = uColor;
+	OutFrag.a = 1.0f;
 }

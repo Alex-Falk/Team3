@@ -178,6 +178,7 @@ private:
 	CEGUI::Titlebar* ipText;
 	inputBox IpInputBox;
 	inputBox userName;
+	inputBox customMap;
 	CEGUI::PushButton* ComfirmHostName;
 	//3.1 Map text
 	CEGUI::Titlebar* Map1Text;
@@ -206,8 +207,8 @@ private:
 	//User chosen map
 	int nextMapID = 1;
 public:
-	MainMenu(const std::string& friendly_name)
-		: Scene(friendly_name) {}
+	MainMenu(const std::string& friendly_name, const std::string& mapName)
+		: Scene(friendly_name, mapName) {}
 	~MainMenu();
 
 	//Scene functions
@@ -224,13 +225,13 @@ public:
 
 	//Clicked function
 	//1. MainMenu buttons
-	void onOptionButtonClicked() { HideMainMenu(); ShowOptionMenu1(); }
-	void onButtonClicked() { SceneManager::Instance()->JumpToScene(); }
+	void onOptionButtonClicked() { HideMainMenu(); ShowOptionMenu1(); PlayMenuChoiceSound(); }
+	void onButtonClicked() { SceneManager::Instance()->JumpToScene(); PlayMenuChoiceSound(); }
 	void onCreateGameClicked();
-	void onJoinGameClicked() { HideMainMenu(); ShowConnectionMenu(); }
+	void onJoinGameClicked() { HideMainMenu(); ShowConnectionMenu(); PlayMenuChoiceSound(); }
 
 	//2. Option Menu buttons
-	void OnOptionMenuBackClicked() { ShowMainMenu(); HideOptionMenu(); }
+	void OnOptionMenuBackClicked() { ShowMainMenu(); HideOptionMenu(); PlayMenuChoiceSound(); }
 	void OnEnableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(true); }
 	void OnDisableVsyncClicked() { GraphicsPipeline::Instance()->SetVsyncEnabled(false); }
 	//Slider function
@@ -241,7 +242,7 @@ public:
 	void onEnableBloomButtonClicked();
 	void onDisableBloomButtonClicked();
 
-
+	void PlayMenuChoiceSound();
 	//3. create game menu buttons
 	void onStartGameClicked();
 	void onMap1selected();
@@ -250,9 +251,15 @@ public:
 	void onMap4selected();
 	void onHostNameConfirmed();
 	void OnUserNameClicked() {
-		userName.editbox->setText("");
+		//userName.editbox->setText("");
 		GUIsystem::Instance()->SetIsTyping(true);
 		GUIsystem::Instance()->currentType = "UserName";
+	}
+	void OnCostomMapClicked()
+	{
+		//customMap.editbox->setText("");
+		GUIsystem::Instance()->SetIsTyping(true);
+		GUIsystem::Instance()->currentType = "customMap";
 	}
 	void onLobbyMenuBackButtonClicked();
 	

@@ -86,6 +86,8 @@ public:
 	//update arm
 	//so the camera can look at all the physics objects inside
 	void UpdateDistance();
+
+	bool acceptMouseInput = true;
 protected:
 	float	yaw;
 	float	pitch;

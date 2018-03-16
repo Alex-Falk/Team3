@@ -161,7 +161,7 @@ public:
 	//Add a status entry at the top left of the screen (Cleared each frame)
 	static void AddStatusEntry(const Vector4& color, const std::string text, ...); ///See "printf" for usuage manual
 
-																					//Add a log entry at the bottom left - persistent until scene reset
+			//Add a log entry at the bottom left - persistent until scene reset
 	static void Log(const Vector3& color, const std::string text, ...); ///See "printf" for usuage manual
 	static void Log(const std::string text, ...); //Default Text Color
 
@@ -197,7 +197,7 @@ public:
 	static void _LoadShaders();
 	static void _ReleaseShaders();
 
-	
+	static bool		printLOG;
 
 
 protected:

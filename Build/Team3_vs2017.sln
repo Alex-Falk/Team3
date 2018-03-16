@@ -71,6 +71,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DebugShaders", "DebugShader
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Game", "Game", "{ED95B4D6-EA18-4092-8250-928DEC7E9B2A}"
 	ProjectSection(SolutionItems) = preProject
+		..\Data\Shaders\Game\ChangeColorFragment.glsl = ..\Data\Shaders\Game\ChangeColorFragment.glsl
+		..\Data\Shaders\Game\ChangeColorVertex.glsl = ..\Data\Shaders\Game\ChangeColorVertex.glsl
+		..\Data\Shaders\Game\ColorPoolFragment.glsl = ..\Data\Shaders\Game\ColorPoolFragment.glsl
+		..\Data\Shaders\Game\ColorPoolVertex.glsl = ..\Data\Shaders\Game\ColorPoolVertex.glsl
 		..\Data\Shaders\Game\GroundFragment.glsl = ..\Data\Shaders\Game\GroundFragment.glsl
 		..\Data\Shaders\Game\GroundVertex.glsl = ..\Data\Shaders\Game\GroundVertex.glsl
 		..\Data\Shaders\Game\SkyBoxFragment.glsl = ..\Data\Shaders\Game\SkyBoxFragment.glsl
@@ -82,6 +86,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{8F46EB91-D896-4889-8C43-9CF76240A4E3}"
 	ProjectSection(SolutionItems) = preProject
 		..\Data\Shaders\UI\ColorFragment.glsl = ..\Data\Shaders\UI\ColorFragment.glsl
+		..\Data\Shaders\UI\lifebarFrag.glsl = ..\Data\Shaders\UI\lifebarFrag.glsl
+		..\Data\Shaders\UI\lifebarVert.glsl = ..\Data\Shaders\UI\lifebarVert.glsl
 		..\Data\Shaders\UI\LoadingScreenFrag.glsl = ..\Data\Shaders\UI\LoadingScreenFrag.glsl
 		..\Data\Shaders\UI\LoadingScreenVertex.glsl = ..\Data\Shaders\UI\LoadingScreenVertex.glsl
 		..\Data\Shaders\Game\MiniMapFragment.glsl = ..\Data\Shaders\Game\MiniMapFragment.glsl

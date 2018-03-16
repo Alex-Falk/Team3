@@ -103,7 +103,7 @@ void Client::UpdateUser(float dt)
 	if (Game::Instance()->IsRunning() )
 	{
 		accumTime += dt;
-		if (accumTime > 1 / 60.0f)
+		if (accumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
 		{
 			accumTime = 0.0f;
 			Avatar * p = Game::Instance()->GetCurrentAvatar();
@@ -131,6 +131,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 {
 	switch (evnt.type)
 	{
+	// When client connects to server
 	case ENET_EVENT_TYPE_CONNECT:
 	{
 		if (evnt.peer == serverConnection)
@@ -139,7 +140,7 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 		}
 		break;
 	}
-
+	// When client receives a packet from the server
 	case ENET_EVENT_TYPE_RECEIVE:
 	{
 		string data = GetPacketData(evnt);
@@ -151,26 +152,13 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 			Game::Instance()->StartGame(mapID);
 			break;
 		}
-		case NUMBER_USERS:
-		{
-			ReceiveNumberUsers(data);
-			break;
-		}
+		case NUMBER_USERS:		ReceiveNumberUsers(data);				break;
+		case PLAYER_NAME:		ReceiveUserNames(data);					break;
 		case CONNECTION_ID:
 		{
 			userID = stoi(data.substr(data.find_first_of(':') + 1));
 			NCLDebug::Log("Connection ID recieved");
 			SendUsername();
-			break;
-		}
-		case PLAYER_NAME:
-		{
-			ReceiveUserNames(data);
-			break;
-		}
-		case OBJECT_UPDATE:
-		{
-			ReceiveObjectUpdate(data);
 			break;
 		}
 		case PLAYER_UPDATE:
@@ -185,55 +173,19 @@ void Client::ProcessNetworkEvent(const ENetEvent& evnt)
 				DeadReckon(playerID, serverConnection->roundTripTime / 2000.0f);
 			break;
 		}
-		case PLAYER_SCORES:
-		{
-			ReceiveScores(data);
-			break;
-		}
-		case PLAYER_WEAPON:
-		{
-			ReceiveWeapon(data);
-			break;
-		}
-		case MAP_INDEX:
-		{
-			ReceiveMapIndex(data);
-			break;
-		}
-		case MAP_PICKUP_REQUEST:
-		{
-			ReceiveRequestResponse(data, PICKUP);
-			break;
-		}
-		case MAP_OBJECT_CAPTURE:
-		{
-			ReceiveAreaCapture(data);
-			break;
-		}
-		case MINION_SPAWN:
-		{
-			ReceiveMinionSpawn(data);
-			break;
-		}
-		case MINION_UPDATE:
-		{
-			ReceiveMinionUpdate(data);
-			break;
-		}
-		case MINION_DEATH:
-		{
-			ReceiveMinionDeath(data);
-			break;
-		}
+		case OBJECT_UPDATE:		ReceiveObjectUpdate(data);				break;
+		case PLAYER_SCORES:		ReceiveScores(data);					break;
+		case PLAYER_WEAPON:		ReceiveWeapon(data);					break;
+		case MAP_INDEX:			ReceiveMapIndex(data);					break;
+		case MAP_PICKUP_REQUEST:ReceiveRequestResponse(data, PICKUP);	break;
+		case MAP_OBJECT_CAPTURE:ReceiveAreaCapture(data);				break;
+		case MINION_SPAWN:		ReceiveMinionSpawn(data);				break;
+		case MINION_UPDATE:		ReceiveMinionUpdate(data);				break;
+		case MINION_DEATH:		ReceiveMinionDeath(data);				break;
 		}
 		break;
 	}
-	case ENET_EVENT_TYPE_DISCONNECT:
-	{
-		destroy = true;
-
-		break;
-	}
+	case ENET_EVENT_TYPE_DISCONNECT:	destroy = true;		break;
 	}
 }
 
@@ -309,7 +261,7 @@ void Client::ReceiveNumberUsers(string data)
 void Client::ReceiveUserNames(string data)
 {
 	string s = data.substr(data.find_first_of(':') + 1);
-	vector<string> splitData = split_string(s, ' ');
+	vector<string> splitData = split_string(s, ',');
 
 	for (uint i = 0; i < 4; ++i)
 	{
@@ -470,6 +422,7 @@ void Client::ReceiveMinionDeath(string data)
 
 	if (m->GetMinion(minionID))
 	{
+		m->GetMinion(minionID)->SetToDestroy();
 		m->RemoveMinion(m->GetMinion(minionID));
 	}
 
@@ -485,10 +438,11 @@ void Client::ReceiveAreaCapture(string data)
 	uint objectID = stoi(data.substr(colonIdx + 1, semicolonIdx));
 	Colour c = Colour(stoi(data.substr(semicolonIdx + 1)));
 
-	m->GetGameObject(objectID)->SetColour(c);
+	static_cast<CaptureArea*>(m->GetGameObject(objectID))->SetColour(c);
 }
 
-void Client::DeadReckonObject(GameObject * go, TempObjData data, float dt)
+void Client::DeadReckonObject(GameObject * go, 
+	TempObjData data, float dt)
 {
 	Vector3 estimatePos =
 		data.pos +
@@ -503,10 +457,14 @@ void Client::DeadReckonObject(GameObject * go, TempObjData data, float dt)
 		data.angVel +
 		data.acc * dt;
 
-	Vector3 newPos = LerpVector3(estimatePos, go->Physics()->GetPosition(), lerpFactor);
-	Vector3 newLinVel = LerpVector3(estimateLinVel, go->Physics()->GetLinearVelocity(), lerpFactor);
-	Vector3 newAngVel = LerpVector3(estimateAngVel, go->Physics()->GetAngularVelocity(), lerpFactor);
-	Vector3 newAcc = LerpVector3(data.acc, go->Physics()->GetAcceleration(), lerpFactor);
+	Vector3 newPos = LerpVector3(estimatePos, 
+		go->Physics()->GetPosition(), lerpFactor);
+	Vector3 newLinVel = LerpVector3(estimateLinVel, 
+		go->Physics()->GetLinearVelocity(), lerpFactor);
+	Vector3 newAngVel = LerpVector3(estimateAngVel, 
+		go->Physics()->GetAngularVelocity(), lerpFactor);
+	Vector3 newAcc = LerpVector3(data.acc, 
+		go->Physics()->GetAcceleration(), lerpFactor);
 
 	go->Physics()->SetPosition(newPos);
 	go->Physics()->SetLinearVelocity(newLinVel);

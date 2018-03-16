@@ -50,22 +50,20 @@ public:
 	// Setters
 	//--------------------------------------------------------------------------------------------//
 
+	// Helpers used by Network
 	inline void SetScore(uint id, int score)			{ teamScores[id] = (float)score; }
-	inline void SetAreaScores(uint id, int score)		{ teamAreaScores[id] = (float)score; }
-
 	inline void SetPlayerNumber(uint i)					{ playerNumber = i; }
-
 	inline void SetName(string name)					{ userNames[GetUserID()] = name; user->UpdateName(); }
 	inline void SetPlayerName(uint id, string name)		{ userNames[id] = name; }
-
+	
 	inline void SetSize(uint id, float size)			{ avatars[id]->SetLife(size); }
-
 	inline void SetAcceleration(uint id, Vector3 a)		{ avatars[id]->GetGameObject()->Physics()->SetAcceleration(a); }
 	inline void SetLinearVelocity(uint id, Vector3 v)	{ avatars[id]->GetGameObject()->Physics()->SetLinearVelocity(v); }
 	inline void SetAngularVelocity(uint id, Vector3 v)	{ avatars[id]->GetGameObject()->Physics()->SetAngularVelocity(v); }
 	inline void SetPosition(uint id, Vector3 p)			{ avatars[id]->GetGameObject()->Physics()->SetPosition(p); }
 	inline void SetGameLength(float f)					{ gameLength = f; }
 
+	// Setters to set up current user
 	void SetServer();
 	void SetClient(IP ip);
 
@@ -109,7 +107,7 @@ public:
 	void DetermineWinner();
 
 	void ClaimPickup(uint i);
-	void Capture(uint i, Colour c);
+	void Capture(uint i, Colour c,int scoreValue);
 
 	void SpawnMinion(MinionBase * minion);
 	void KillMinion(MinionBase * minion);
@@ -148,7 +146,7 @@ private:
 	uint mapIdx;
 
 	float teamScores[4];
-	float teamAreaScores[4];
+	float captureScores[4];
 	Avatar* avatars[4];
 	string userNames[4] = { "Player 1","Player 2","Player 3","Player 4" };
 

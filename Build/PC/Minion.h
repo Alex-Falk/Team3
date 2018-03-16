@@ -4,6 +4,8 @@
 #include "MinionBase.h"
 #include "MinionBlackboard.h"
 #include "State.h"
+#include "CaptureArea.h" 
+#include "Avatar.h"
 
 
 class Minion : public MinionBase {
@@ -35,6 +37,7 @@ public:
 	Minion();
 	Minion(Colour c, Vector4 RGBA, Vector3 position, const string name = "");
 	
+	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
 	MinionBlackboard* GetMinionBlackBoard() { return &minionBlackboard; }
 
@@ -49,7 +52,6 @@ public:
 	Avatar * GetClosestFriendlyPlayer() { return closestFriendlyPlayer; }
 	CaptureArea * GetClosestCaptureArea() { return closestCaptureArea; }
 
-	//TODO: change physics engine to hold sperate lists of objects
 	bool IncomingProjectile() {/*Needs implimentation*/ return false; };
 	float GetDetectionRadiusSQ() { return detectionRadiusSQ; }
 	float GetPursueRadiusSQ() { return pursueRadiusSQ; }
@@ -59,7 +61,7 @@ public:
 		if (closestFriendlyPlayer) return (physicsNode->GetPosition() - closestFriendlyPlayer->Physics()->GetPosition()).LengthSQ();
 		else return detectionRadiusSQ + 1;
 	}
-	float HealthOfClosestFriendly() { if (closestFriendlyPlayer) return closestFriendlyPlayer->GetLife(); }
+	float HealthOfClosestFriendly() { if (closestFriendlyPlayer) return closestFriendlyPlayer->GetLife(); return 100.0f; }
 	float GetAllyHealPursueLimit() { return allyHealPursueLimit; }
 
 	float DistanceToClosestEnemySQ() { 

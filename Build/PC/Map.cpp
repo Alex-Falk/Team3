@@ -29,6 +29,7 @@
                            .,cll:.                            
 */
 // General Map Class that serves as a base for Maps - now as a base for the DataDrivenMap.
+// Extended by J. Zhou and N. Fragkas
 #include <ncltech\CommonUtils.h>
 #include "Pickup.h"
 #include "CaptureArea.h"
@@ -50,6 +51,7 @@ Map::~Map()
 //--------------------------------------------------------------------------------------------//
 // Initialization
 //--------------------------------------------------------------------------------------------//
+// Done when the game is actually started, needs to be after initialization and after initial network setup
 void Map::onConnectToScene()
 {
 	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); i++) {
@@ -73,9 +75,11 @@ void Map::onConnectToScene()
 		}
 	}
 	
+	
 	GraphicsPipeline::Instance()->ResetPath();
 }
 
+// Done when the scene is loaded
 void Map::OnInitializeScene() {
 	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
 
@@ -85,6 +89,7 @@ void Map::OnInitializeScene() {
 
 	GraphicsPipeline::Instance()->InitPath(Vector2(dimensions));
 
+	// reset minions
 	for (int i = 0; i < maxMinions; ++i)
 	{
 		if (minions[i])
@@ -105,47 +110,68 @@ void Map::OnInitializeScene() {
 	
 }
 
-//--------------------------------------------------------------------------------------------//
-// Updating CaptureAreas Score
-//--------------------------------------------------------------------------------------------//
-
 void Map::OnInitializeGUI()
 {
 	GraphicsPipeline::Instance()->SetIsMainMenu(false);
 	GUIsystem::Instance()->drawPlayerName = true;
+	GUIsystem::Instance()->SetIsTyping(false);
 	GUIsystem::Instance()->SetDrawMiniMap(true);
-	lifeBar = static_cast<CEGUI::ProgressBar*>(
-		GUIsystem::Instance()->createWidget("TaharezLook/ProgressBar",
-			Vector4(0.40f, 0.9f, 0.25f, 0.03f),
-			Vector4(),
-			"lifeBar"
-		));
+	GUIsystem::Instance()->SetDrawLifeBar(true);
 	
+	background = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Menubar",
+			Vector4(0.292f, 0.04f, 0.415f, 0.04f),
+			Vector4(),
+			"scorebarBackground"
+		));
+
+	background1 = static_cast<CEGUI::Titlebar*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Menubar",
+			Vector4(0.292f, 0.917f, 0.415f, 0.04f),
+			Vector4(),
+			"lifebarBackground"
+		));
+
 	timer = static_cast<CEGUI::Titlebar*>(
-		GUIsystem::Instance()->createWidget("OgreTray/Titlebar",
-			Vector4(0.45f, 0.00f, 0.10f, 0.05f),
+		GUIsystem::Instance()->createWidget("OgreTray/Title",
+			Vector4(0.45f, 0.00f, 0.10f, 0.03f),
 			Vector4(),
 			"Timer"
 		));
+	timer->setAlpha(0.7f);
 	timer->setText("00:00");
 
 	isLoading = true;
 	GUIsystem::Instance()->SetLoadingScreen(LoadingScreenType::TRANSITION);
+
+	exit = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.45f, 0.70f, 0.10f, 0.05f),
+			Vector4(),
+			"exit_pause"
+		));
+	exit->setText("EXIT");
+	exit->setAlpha(0.9f);
+	exit->disable();
+	exit->setVisible(false);
+	exit->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&Map::OnExitButtonClicked, this));
+
+
+	_continue = static_cast<CEGUI::PushButton*>(
+		GUIsystem::Instance()->createWidget("OgreTray/Button",
+			Vector4(0.45f, 0.60f, 0.10f, 0.05f),
+			Vector4(),
+			"continue_pause"
+		));
+	_continue->setText("CONTINUE");
+	_continue->setAlpha(0.9f);
+	_continue->disable();
+	_continue->setVisible(false);
+	_continue->subscribeEvent(CEGUI::PushButton::EventMouseClick, CEGUI::Event::Subscriber(&Map::OnContinueButtonClicked, this));
 }
 
-void Map::BuildGround(Vector2 dimensions) {
-	GameObject* ground = CommonUtils::BuildCuboidObject(
-		"Ground",
-		Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
-		Vector3(dimensions.x, 1.0f, dimensions.y),		// Scale
-		true,
-		0.0f,
-		true,
-		false,								// Dragable By User
-		BIG_NODE,
-		Vector4(0.6f, 0.6f, 0.6f, 1.0f),
-		MATERIALTYPE::Ground);	// Colour
-	this->AddGameObject(ground);
+// Builds Invisible walls - Nikos Fragkas
+void Map::BuildInvisibleWalls(Vector2 dimensions) {
 
 	GameObject* upWall = CommonUtils::InvisibleWall(
 		"UpWall",
@@ -178,7 +204,7 @@ void Map::BuildGround(Vector2 dimensions) {
 
 void Map::LoadTextures()
 {
-	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
 
 	if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box, TEXTUREDIR"SkyBox\\skyright.jpg", TEXTUREDIR"SkyBox\\skyleft.jpg", TEXTUREDIR"SkyBox\\skytop.jpg",
@@ -196,7 +222,12 @@ void Map::LoadTextures()
 		NCLERROR("Texture not loaded");
 	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Capture_Point, TEXTUREDIR"capture.png", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
-
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Change_Color_Mask, TEXTUREDIR"mask2.png", GL_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::WaterDUDV, TEXTUREDIR"waterDUDV.png", GL_MIRRORED_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Water, TEXTUREDIR"Water.jpg", GL_REPEAT, GL_NEAREST))
+		NCLERROR("Texture not loaded");
 }
 
 void Map::SetSpawnLocations()
@@ -233,10 +264,11 @@ void Map::TransferAndUpdateTimer()
 	}
 }
 
-//void Map::AddCaptureArea(CaptureArea * ca) {
-//	captureAreas.push_back(ca);
-//	AddGameObject(ca);
-//}
+
+//--------------------------------------------------------------------------------------------//
+// Minions
+//--------------------------------------------------------------------------------------------//
+
 
 void Map::AddMinion(MinionBase * m)
 {
@@ -289,7 +321,7 @@ uint Map::GetMinionID(MinionBase * m)
 
 
 //--------------------------------------------------------------------------------------------//
-// Updating Avatars
+// Updating GUI
 //--------------------------------------------------------------------------------------------//
 void Map::UpdateGUI(float dt)
 {
@@ -302,7 +334,6 @@ void Map::UpdateGUI(float dt)
 			GUIsystem::Instance()->playersPosition[i] = Game::Instance()->GetPlayer(i)->GetPosition();
 		}
 	}
-	perfPlayer.EndTimingSection();
 
 	//Loading screen
 	if (isLoading == true) {
@@ -315,14 +346,41 @@ void Map::UpdateGUI(float dt)
 		}
 	}
 
+	//Update player life
 	if (Game::Instance()->GetUser())
 	{
 		if (Game::Instance()->GetPlayer(Game::Instance()->GetUserID()))
-			lifeBar->setProgress(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
+			GUIsystem::Instance()->UpdateLifebar(Game::Instance()->GetCurrentAvatar()->GetLife() / 100.0f);
 	}
 }
+void Map::showPauseMenu()
+{
+	exit->enable();
+	exit->setVisible(true);
+	_continue->enable();
+	_continue->setVisible(true);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::PERFORMANCE_BLUR);
+	GUIsystem::Instance()->SetIsPaused(true);
+}
+void Map::OnExitButtonClicked()
+{
+	//Return to MainMenu
+	Game::Instance()->ResetGame();
+	SceneManager::Instance()->JumpToScene(0);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	GUIsystem::Instance()->SetIsPaused(false);
+}
+void Map::OnContinueButtonClicked()
+{
+	exit->disable();
+	exit->setVisible(false);
+	_continue->disable();
+	_continue->setVisible(false);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	GUIsystem::Instance()->SetIsPaused(false);
+}
 //--------------------------------------------------------------------------------------------//
-// Updating Avatars
+// Updating Scene
 //--------------------------------------------------------------------------------------------//
 void Map::OnUpdateScene(float dt)
 {
@@ -335,8 +393,8 @@ void Map::OnUpdateScene(float dt)
 
 	UpdateGUI(dt);
 
-	if (m_AccumTime > 1 / 60.0f)
-	{
+	//if (m_AccumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
+	//{
 		perfMapObjects.BeginTimingSection();
 		for (int i = 0; i < this->mapConstantObjects.size(); ++i)
 		{
@@ -345,6 +403,7 @@ void Map::OnUpdateScene(float dt)
 				mapConstantObjects[i]->Update(dt);
 			}
 		}
+		perfMapObjects.EndTimingSection();
 
 		for (int i = 0; i < this->mapDynamicObjects.size(); ++i)
 		{
@@ -353,12 +412,14 @@ void Map::OnUpdateScene(float dt)
 				mapDynamicObjects[i]->Update(dt);
 			}
 		}
-
-		perfMapObjects.EndTimingSection();
-	}
+	//}
 
 
 	uint drawFlags = PhysicsEngine::Instance()->GetDebugDrawFlags();
+
+	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_PAUSE)) {
+		showPauseMenu();
+	}
 }
 
 //--------------------------------------------------------------------------------------------//

@@ -6,7 +6,7 @@
 #define GREEN_COLOUR Vector4(0.0f, 1.0f, 0.0f, 1.0f)
 #define BLUE_COLOUR Vector4(0.0f, 0.0f, 1.0f, 1.0f)
 #define RED_COLOUR Vector4(1.0f, 0.0f, 0.0f, 1.0f)
-#define PINK_COLOUR Vector4(1.0f, 0.2f, 1.0f, 1.0f)
+#define PINK_COLOUR Vector4(1.0f, 0.0f, 1.0f, 1.0f)
 
 enum Colour
 {
@@ -39,7 +39,7 @@ enum CaptureAreaType
 
 //Game music should always be the last music. So if you add more music, put it before Game music
 enum Audio {
-	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND
+	MENU_MUSIC, GAME_MUSIC, JUMP_SOUND, ROCKET_FLYING_SOUND, EXPLOSION_SOUND, PROJECTILE_LAUNCH_SOUND, MENU_CHOICE_SOUND, PICKUP_COLLECTED_SOUND, VICTORY_SOUND, LOSS_SOUND, CAPTURE_AREA_SOUND, PAINT_FILL_SOUND, PROJECTILE_HIT_SOUND
 };
 
 //Function to get the vector 4 colour of an enum 
@@ -51,6 +51,6 @@ static Vector4 EnumToVectorColour(Colour c)
 		case GREEN:			return GREEN_COLOUR;
 		case BLUE:			return BLUE_COLOUR;
 		case PINK:			return PINK_COLOUR;
-		case START_COLOUR:	return DEFAULT_COLOUR;
+		default:			return DEFAULT_COLOUR;
 	}
 }

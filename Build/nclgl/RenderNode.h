@@ -81,8 +81,11 @@ public:
 	void			SetMesh(Mesh*m)				{mesh = m;}
 	Mesh*			GetMesh()					{return mesh;}
 
-	void			SetCulling(bool b) { cullFaces = b; }
-	bool			IsCulling() { return cullFaces; }
+	void			SetCulling(bool b)			{ cullFaces = b; }
+	bool			IsCulling()					{ return cullFaces; }
+
+	void			SetHasShadow(bool b)		{ hasShadow = b; }
+	bool			HasShadow()					{ return hasShadow; }
 
 	RenderNode*		GetChildWithName(string s);
 
@@ -112,6 +115,9 @@ public:
 	float GetSmoothness() { return smoothness; }
 	void SetSmoothness(float smoothness) { this->smoothness = smoothness; }
 
+	GLuint GetTexture() { return texture; }
+	void SetTexture(int tex) { texture = tex; }
+
 protected:
 
 	void RecursiveSetMaterial(Material* mat, RenderNode* renderNode);
@@ -130,7 +136,9 @@ protected:
 	bool		awake;
 	bool		isCollided = false;
 	bool		cullFaces = true;
+	bool		hasShadow = true;
 	string		name;
+	GLuint		texture;
 	std::vector<RenderNode*>		children;
 
 protected :

@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "Avatar.h"
 #include "MainMenu.h"
+#include "DataDrivenMap.h"
 
 string temp[4] = { "", "", "", "" };
 
@@ -23,11 +24,17 @@ void MainMenu::OnCleanupScene()
 
 void MainMenu::OnInitializeScene()
 {
+	AudioSystem::Instance()->StopAllSounds();
+	AudioSystem::Instance()->Update();
+	AudioSystem::Instance()->PlayASound(MENU_MUSIC, true);
+
 	GraphicsPipeline::Instance()->SetIsMainMenu(true);
 	GUIsystem::Instance()->SetDrawScoreBar(false);
 	GUIsystem::Instance()->SetDrawMiniMap(false);
+	GUIsystem::Instance()->SetDrawLifeBar(false);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
 
-	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Checker_Board, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
+	if (!TextureManager::Instance()->LoadTexture(TEXTURETYPE::Ground_Texture, TEXTUREDIR"checkerboard.tga", GL_REPEAT, GL_NEAREST))
 		NCLERROR("Texture not loaded");
 	if (!TextureManager::Instance()->LoadCubeMap(TEXTURETYPE::Sky_Box, TEXTUREDIR"SkyBox\\skyright.jpg", TEXTUREDIR"SkyBox\\skyleft.jpg", TEXTUREDIR"SkyBox\\skytop.jpg",
 		TEXTUREDIR"SkyBox\\skybottom.jpg", TEXTUREDIR"SkyBox\\skyback.jpg", TEXTUREDIR"SkyBox\\skyfront.jpg"))
@@ -71,8 +78,26 @@ void MainMenu::TextInputHelper()
 			Game::Instance()->SetName(clientName.editbox->getText().c_str());
 			GUIsystem::Instance()->SetIsTyping(false);
 		}
+		//else if(GUIsystem::Instance()->currentType == "customMap"){
+			////TODO:set next map name here
+			//Map1Rbutton->disable();
+			//Map2Rbutton->disable();
+			//Map3Rbutton->disable();
+			//Map4Rbutton->disable();
+			//nextMapID = 4;
+			//string temp = customMap.editbox->getText().c_str();
+			//SetMapName(temp);
+
+			//int temp = 0;
+			//for (Scene* a : SceneManager::Instance()->m_vpAllScenes) {
+			//	if (a->GetMapName() == customMap.editbox->getText().c_str()) {
+			//		nextMapID = temp;
+			//	}
+			//	temp++;
+			//}
+			//GUIsystem::Instance()->SetIsTyping(false);
+		//}
 		else {
-			//Currently ip input is handled in MainMenu.cpp
 			return;
 		}
 		GUIsystem::Instance()->sendInfo = false;
@@ -88,16 +113,18 @@ void MainMenu::onStartGameClicked()
 void MainMenu::OnUpdateScene(float dt)
 {
 	float yaw = GraphicsPipeline::Instance()->GetCamera()->GetYaw();
-	yaw += 0.1f;
+	yaw += 0.05f;
 	GraphicsPipeline::Instance()->GetCamera()->SetYaw(yaw);
 	Scene::OnUpdateScene(dt);
+
+	GUIsystem::Instance()->LimitTextLength();
 
 	//Send player name info
 	if (GUIsystem::Instance()->sendInfo == true) {
 		TextInputHelper();
 	}
 	
-	for (int i = 0; i < Game::Instance()->GetPlayerNumber(); ++i) {
+	for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i) {
 		temp[i] = Game::Instance()->GetName(i);
 	}
 
@@ -113,6 +140,7 @@ void MainMenu::OnUpdateScene(float dt)
 		+ temp[1] + "\n\n"
 		+ temp[2] + "\n\n"
 		+ temp[3] + "\n\n");
+
 }
 
 //Setting UP GUI
@@ -195,7 +223,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map1Text"
 		));
-	Map1Text->setText("MAP1: xxxxxxxx");
+	Map1Text->setText("MAP1: Cliff");
 
 	Map2Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -203,7 +231,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map2Text"
 		));
-	Map2Text->setText("MAP2: xxxxxxxx");
+	Map2Text->setText("MAP2: Arena");
 
 	Map3Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -211,7 +239,7 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map3Text"
 		));
-	Map3Text->setText("MAP3: xxxxxxxx");
+	Map3Text->setText("MAP3: City");
 
 	Map4Text = static_cast<CEGUI::Titlebar*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Title",
@@ -219,8 +247,19 @@ void MainMenu::SetUpLobby()
 			Vector4(),
 			"Map4Text"
 		));
-	Map4Text->setText("MAP4: xxxxxxxx");
+	Map4Text->setText("MAP4: ----");
 	
+	//customMap.editbox = static_cast<CEGUI::Editbox*>(
+	//	GUIsystem::Instance()->createWidget("OgreTray/Editbox",
+	//		Vector4(0.65f, 0.85f, 0.2f, 0.05f),
+	//		Vector4(),
+	//		"customMap"
+	//	));
+	//customMap.type = "customMap";
+	//customMap.editbox->setText("Type Data driven map name");
+	//customMap.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnCostomMapClicked, this));
+	//GUIsystem::Instance()->editboxes.push_back(customMap);
+
 	userName.editbox = static_cast<CEGUI::Editbox*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Editbox",
 			Vector4(0.40f, 0.60f, 0.2f, 0.05f),
@@ -228,7 +267,7 @@ void MainMenu::SetUpLobby()
 			"userName"
 		));
 	userName.type = "UserName";
-	userName.editbox->setText("Dong Li");
+	userName.editbox->setText("Phil-sama");
 	userName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnUserNameClicked, this));
 	GUIsystem::Instance()->editboxes.push_back(userName);
 
@@ -300,8 +339,14 @@ void MainMenu::onHostNameConfirmed()
 	
 }
 
+void MainMenu::PlayMenuChoiceSound() {
+	AudioSystem::Instance()->PlayASound(MENU_CHOICE_SOUND, false);
+}
+
 void MainMenu::HideLobby()
 {
+	Game::Instance()->ResetGame();
+
 	ipText->setVisible(false);
 	ipText->disable();
 
@@ -322,6 +367,9 @@ void MainMenu::HideLobby()
 
 	userName.editbox->setVisible(false);
 	userName.editbox->disable();
+
+	//customMap.editbox->setVisible(false);
+	//customMap.editbox->disable();
 
 	Map1Rbutton->setVisible(false);
 	Map1Rbutton->disable();
@@ -347,8 +395,10 @@ void MainMenu::HideLobby()
 
 void MainMenu::onLobbyMenuBackButtonClicked()
 {
+	Game::Instance()->ResetGame();
 	HideLobby();
 	ShowMainMenu();
+	PlayMenuChoiceSound();
 }
 void MainMenu::onMap1selected()
 {
@@ -389,6 +439,9 @@ void MainMenu::ShowLobbyMenuServer()
 
 	userName.editbox->setVisible(true);
 	userName.editbox->enable();
+
+	//customMap.editbox->setVisible(true);
+	//customMap.editbox->enable();
 
 	Map1Rbutton->setVisible(true);
 	Map1Rbutton->enable();
@@ -461,7 +514,7 @@ void MainMenu::SetUpconnectionMenu()
 			Vector4(),
 			"Client Name"
 		));
-	clientName.editbox->setText("Dong Li");
+	clientName.editbox->setText("Phil Sama");
 	clientName.type = "ClientName";
 	clientName.editbox->subscribeEvent(CEGUI::Editbox::EventMouseClick, CEGUI::Event::Subscriber(&MainMenu::OnClientNameClicked, this));
 	GUIsystem::Instance()->editboxes.push_back(clientName);
@@ -480,6 +533,7 @@ void MainMenu::OnConnectMenuBackButtonClicked()
 {
 	HideConnectionMenu();
 	ShowMainMenu();
+	PlayMenuChoiceSound();
 }
 
 void MainMenu::onIPinputClicked()
@@ -490,7 +544,7 @@ void MainMenu::onIPinputClicked()
 
 void MainMenu::OnClientNameClicked()
 {
-	clientName.editbox->setText("");
+	//clientName.editbox->setText("");
 	GUIsystem::Instance()->SetIsTyping(true);
 	GUIsystem::Instance()->currentType = "ClientName";
 }
@@ -529,10 +583,10 @@ void MainMenu::SetUpOptionMenu()
 		));
 
 	GameSoundsSlider->setMaxValue(1.0f);
-	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetGameSoundsVolume());
 	GameSoundsSlider->setVisible(false);
 	GameSoundsSlider->disable();
-	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	GameSoundsSlider->setCurrentValue(AudioSystem::Instance()->GetGameSoundsVolume());
 	GameSoundsSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onGameSoundvolumeChanged, this));
 	MusicSlider = static_cast<CEGUI::Slider*>(
 		GUIsystem::Instance()->createWidget("OgreTray/Slider",
@@ -541,10 +595,10 @@ void MainMenu::SetUpOptionMenu()
 			"MusicSlider"
 		));
 	MusicSlider->setMaxValue(1.0f);
-	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMusicVolume());
 	MusicSlider->setVisible(false);
 	MusicSlider->disable();
-	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMasterVolume());
+	MusicSlider->setCurrentValue(AudioSystem::Instance()->GetMusicVolume());
 	MusicSlider->subscribeEvent(CEGUI::Slider::EventValueChanged, CEGUI::Event::Subscriber(&MainMenu::onMusicvolumeChanged, this));
 
 	mastervolumeText = static_cast<CEGUI::Titlebar*>(
@@ -656,7 +710,7 @@ void MainMenu::onCameraSensitivityChanged()
 
 void MainMenu::onEnableBloomButtonClicked()
 {
-	PostProcess::Instance()->SetPostProcessType(PostProcessType::SOBEL);
+	PostProcess::Instance()->SetPostProcessType(PostProcessType::HDR_BLOOM);
 }
 
 void MainMenu::onDisableBloomButtonClicked()
@@ -667,14 +721,18 @@ void MainMenu::onDisableBloomButtonClicked()
 void MainMenu::onCreateGameClicked()
 {
 	
-	if (!Game::Instance()->GetUser())
+	if (Game::Instance()->GetUser())
 	{
-		Game::Instance()->SetServer();
-		ipText->setText("Your IP: \n" + Game::Instance()->GetUser()->GetIP());
-		createButton->disable();
+		Game::Instance()->ResetGame();
 	}
+
+	Game::Instance()->SetServer();
+	ipText->setText("Your IP: \n" + Game::Instance()->GetUser()->GetIP());
+	createButton->disable();
+
 	HideMainMenu();
 	ShowLobbyMenuServer();
+	PlayMenuChoiceSound();
 }
 
 void MainMenu::onConnectButtonClicked()
@@ -714,14 +772,16 @@ void MainMenu::onConnectButtonClicked()
 	}
 	HideConnectionMenu();
 	ShowWaitingInfo();
+	PlayMenuChoiceSound();
 }
 
 void MainMenu::OndisconnectButtonClicked()
 {
 	//TODO:disconnect from lobby
-	Game::Instance()->GetUser()->Disconnect();
+	Game::Instance()->ResetGame();
 	HideWaitingInfo();
 	ShowConnectionMenu();
+	PlayMenuChoiceSound();
 }
 
 void MainMenu::ShowMainMenu()
@@ -880,7 +940,7 @@ void MainMenu::ShowOptionMenu1()
 
 void MainMenu::onMastervolumeChanged() { float temp = mastervolumeSlider->getCurrentValue(); AudioSystem::Instance()->SetMasterVolume(temp); }
 void MainMenu::onGameSoundvolumeChanged() { float temp = GameSoundsSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
-void MainMenu::onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetGameSoundsVolume(temp); }
+void MainMenu::onMusicvolumeChanged() { float temp = MusicSlider->getCurrentValue(); AudioSystem::Instance()->SetMusicVolume(temp); }
 
 void MainMenu::Quit() {
 	SceneManager::Instance()->SetExitButtonClicked(true);

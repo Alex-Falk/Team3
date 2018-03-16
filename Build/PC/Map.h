@@ -52,8 +52,12 @@ protected:
 	
 	//--------------------------------------------------------------------------------------------//
 	// UI Elements in the scene
-	CEGUI::ProgressBar* lifeBar;
+	//CEGUI::ProgressBar* lifeBar;
 	CEGUI::Titlebar* timer;
+	CEGUI::Titlebar* background;
+	CEGUI::Titlebar* background1;
+	CEGUI::PushButton* exit;
+	CEGUI::PushButton* _continue;
 	//--------------------------------------------------------------------------------------------//
 
 	//--------------------------------------------------------------------------------------------//
@@ -74,7 +78,7 @@ public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialization
 	//--------------------------------------------------------------------------------------------//
-	Map(const std::string& friendly_name) : Scene(friendly_name) {}
+	Map(const std::string& friendly_name, const std::string& mapName) : Scene(friendly_name, mapName) {}
 	virtual ~Map();
 
 	virtual void OnCleanupScene();
@@ -83,7 +87,7 @@ public:
 	virtual void OnInitializeScene() override;
 	virtual void OnInitializeGUI() override;
 
-	void BuildGround(Vector2 Dimensions);
+	void BuildInvisibleWalls(Vector2 Dimensions);
 	virtual void LoadTextures();
 	virtual void AddObjects() {};
 	virtual void SetSpawnLocations();
@@ -99,6 +103,7 @@ public:
 	inline float GetXDimension() { return dimensions.x; }
 	inline float GetYDimension() { return dimensions.y; }
 
+	inline Vector3 GetSpawnPos(Colour c) { return spawnPositions[c]; }
 
 	//--------------------------------------------------------------------------------------------//
 	// Minions - Special Gameobjects
@@ -115,7 +120,7 @@ public:
 
 
 	//--------------------------------------------------------------------------------------------//
-	// Updating Avatars
+	// Updating
 	//--------------------------------------------------------------------------------------------//
 	virtual void OnUpdateScene(float dt) override;
 
@@ -124,6 +129,11 @@ public:
 
 	//Jeffery 06/03/2018 for updating playername and position for GUI rendering
 	void UpdateGUI(float dt);
+
+	//J 12/03 for pause Menu
+	void showPauseMenu();
+	void OnExitButtonClicked();
+	void OnContinueButtonClicked();
 
 	float temp_fps = 0;
 	bool isLoading = false;

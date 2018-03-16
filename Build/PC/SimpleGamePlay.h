@@ -53,13 +53,13 @@ class SimpleGamePlay : public Map
 private:
 	float m_AccumTime = 0;
 	Vector2 dimensions;
-
+	float dicks;
 public:
 	//--------------------------------------------------------------------------------------------//
 	// Initialisation and Cleanup
 	//--------------------------------------------------------------------------------------------//
-	SimpleGamePlay(const std::string& friendly_name) :
-		Map(friendly_name)
+	SimpleGamePlay(const std::string& friendly_name, const std::string& mapName) :
+		Map(friendly_name, mapName)
 	{
 	}
 

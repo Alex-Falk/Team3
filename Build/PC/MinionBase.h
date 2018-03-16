@@ -34,10 +34,8 @@
 
 #include "GamePlay.h"
 #include "../ncltech/GameObject.h"
-#include "../ncltech/SphereCollisionShape.h"
-#include "CaptureArea.h" 
-#include "Avatar.h"
-#include "../ncltech/SceneManager.h"
+
+class ParticleEmitter;
 
 class MinionBase : public GameObject {
 protected:
@@ -48,17 +46,20 @@ protected:
 	float minLife;
 	float maxLife;
 	float size;
+	float scale = 0.1f;
 
 	Vector3 lastPos;
 
 	bool isGrounded;
 	bool dead;
 
+	ParticleEmitter * emitter;
+
 public:
 	MinionBase();
 	MinionBase(Colour c, Vector4 RGBA, Vector3 position, const string name = "");
 
-	bool MinionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
+	~MinionBase();
 
 	void SetColour(Colour c) { colour = c; }
 	Colour GetColour() { return colour; }
@@ -83,4 +84,6 @@ public:
 	virtual void Update(float dt);
 
 	bool IsAlive() { return !dead; }
+
+	virtual void OnDetachedFromScene();
 };

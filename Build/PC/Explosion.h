@@ -1,7 +1,8 @@
 #pragma once
 #include "Projectile.h"
-
 //Michael Davis 26/02/2018
+
+class ParticleEmitter;
 
 class Explosion : public Projectile {
 public:
@@ -11,4 +12,7 @@ public:
 	bool ExplosionCallbackFunction(PhysicsNode* self, PhysicsNode* collidingObject);
 
 	virtual ~Explosion();
+protected:
+	ParticleEmitter * e;
+	float darn;
 };

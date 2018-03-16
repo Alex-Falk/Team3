@@ -1,0 +1,25 @@
+NEW_TEXTURE 0 PaintPool.png 	//Texture with ID 0
+NEW_TEXTURE 1 PaintPool.png 	//Texture with ID 1
+NEW_TEXTURE 2 PaintPool.png 	//Texture with ID 2
+NEW_TEXTURE 3 PaintPool.png 	//Texture with ID 3
+NEW_TEXTURE 4 PaintPool.png 	//Texture with ID 4
+NEW_TEXTURE 5 SprayIcon.png 	//Texture with ID 5
+NEW_TEXTURE 6 PaintPool.png 	//Texture with ID 6
+NEW_TEXTURE 7 PaintPool.png 	//Texture with ID 7
+NEW_TEXTURE 8 PaintPool.png 	//Texture with ID 8
+NEW_TEXTURE 9 PaintPool.png 	//Texture with ID 9
+MAP 100 100  			//Ground Dimensions 
+SPAWN_LOC 0 92 24 98		//Spawn Position 1 x y z 
+SPAWN_LOC 1 94 24 98	 	//Spawn Position 2 x y z 
+SPAWN_LOC 2 96 24 98 		//Spawn Position 3 x y z 
+SPAWN_LOC 3 98 24 98 		//Spawn Position 4 x y z 
+GROUND 95 0 55 ground 5 10 50 -10 0 0
+GROUND 101 0 55 ground 1 20 50 0 0 0
+GROUND 93 0 101 ground 7 20 1 0 0 0
+WEAPON_PICKUP 92 5 10 PAINT_PISTOL weapon 10
+WEAPON_PICKUP 94 5 10 PAINT_PISTOL weapon 10
+WEAPON_PICKUP 96 5 10 PAINT_PISTOL weapon 10
+WEAPON_PICKUP 98 5 10 PAINT_PISTOL weapon 10
+CAPTURE_AREA 70 15 95 captureArea 5 1 5 500 0
+MULTI_POOL 50 16 95 pool 50 15 95 5 1 5
+CAPTURE_AREA 30 15 95 captureArea 5 1 5 500 0

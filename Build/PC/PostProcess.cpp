@@ -183,12 +183,12 @@ void PostProcess::RenderGaussianBlur(int a)
 	glUniform1i(glGetUniformLocation(postProcessShaders[PostProcessType::BLUR]->GetProgram(), "uColorTex"), 0);
 	glUniform2f(glGetUniformLocation(postProcessShaders[PostProcessType::BLUR]->GetProgram(), "uSinglepixel"),1.f / GraphicsPipeline::Instance()->GetScreenTexWidth(),1.f / GraphicsPipeline::Instance()->GetScreenTexHeight());
 	glActiveTexture(GL_TEXTURE0);
-	GLuint amount = 6;
+	GLuint amount = 10;
 	GLboolean horizontal = true, first_iteration = true;
-	for (int i = 0; i < amount; ++i) {
+	for (uint i = 0; i < amount; ++i) {
 		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
 		glUniform1i(glGetUniformLocation(postProcessShaders[PostProcessType::BLUR]->GetProgram(), "horizontal"), horizontal);
-		if (first_iteration == true) {
+		if ((bool)first_iteration == true) {
 			if (a == 1) {
 				glBindTexture(GL_TEXTURE_2D, GraphicsPipeline::Instance()->GetScreenTexColor2());
 			}

@@ -1,17 +1,17 @@
 /*
            \\\///
-	     	  / ~  ~ \
-	     	(| (.)(.) |)
+	      / ~  ~ \
+		(| (.)(.) |)
 .-----.OOOo--C---oOOO.---.
 |                        |
 |   Made By Philip Beck  |
 |      20/02/2018        |
 |                        |
-'-----.oooO--------------'
-      (   )   Oooo.
-       \ (    (   )
-	     \_)    ) /
-	           (_/
+'----.oooO---------------'
+     (   )            Oooo.
+      \ (	    	 (	  )
+	   \_)      	  ) /
+			         (_/
 */
 
 #version 150 core
@@ -29,10 +29,10 @@ uniform int colours[4];
 //pickups etc, 20 is a random quite high number and can
 //be changed to be the exact maximum number of pickups in the future
 uniform uint pickupCount;
-uniform uint pickupTypes[20];
-uniform vec2 pickupPositions[20];
+uniform uint pickupTypes[50];
+uniform vec2 pickupPositions[50];
 //this wont be used for all pickups
-uniform int pickupColours[20];
+uniform int pickupColours[50];
 
 uniform float opacity;
 //which player is the one to center the map on
@@ -44,8 +44,8 @@ uniform float angle;
 //time for making the icons grow and shrink
 uniform float time;
 //constants
-uniform const float BASE_POOL_SIZE = 0.025;
-uniform const float BASE_PICKUP_SIZE = 0.025;
+const float BASE_POOL_SIZE = 0.025;
+const float BASE_PICKUP_SIZE = 0.025;
 
 in Vertex {
 	vec2 texCoord;
@@ -121,20 +121,6 @@ void main()
 		}
 	}
 
-	//gives the players a colour
-	//the powers are multiplied by zoom so they don't change size depending on how far out the zoom is
-  for(int i = 0; i < int(playerCount); i++){
-    float dist = pow(abs(newCoords.x - players[i].x),2) + pow(abs(newCoords.y - players[i].y),2);
-		vec3 colour = getColour(colours[i]);
-		//0.02^2
-		if(dist < pow(0.02 * zoom,2)){
-      FragColor.rgb = colour/3;
-    }
-    else if(dist < pow(0.025 * zoom, 2)){
-      FragColor.rgb = colour;
-    }
-  }
-
 	//draw pickups
 	for(int i = 0; i < int(pickupCount); i++){
 		//pickup is a paint pool or capture object (larger and colourable)
@@ -195,6 +181,21 @@ void main()
 			}
 		}
 	}
+
+	//gives the players a colour
+	//the powers are multiplied by zoom so they don't change size depending on how far out the zoom is
+	for (int i = 0; i < int(playerCount); i++) {
+		float dist = pow(abs(newCoords.x - players[i].x), 2) + pow(abs(newCoords.y - players[i].y), 2);
+		vec3 colour = getColour(colours[i]);
+		//0.02^2
+		if (dist < pow(0.02 * zoom, 2)) {
+			FragColor.rgb = colour / 3;
+		}
+		else if (dist < pow(0.025 * zoom, 2)) {
+			FragColor.rgb = colour;
+		}
+	}
+
 	//set alpha
 	FragColor.a = opacity;
 }

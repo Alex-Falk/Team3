@@ -18,6 +18,7 @@ enum InputType{
 	PAUSE,
 	CAMERA_UP,
 	CAMERA_DOWN,
+	DEBUGKEY,
 	//must stay at the bottom, this is the size of the array
 	COUNT
 };

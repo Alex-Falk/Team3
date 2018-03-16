@@ -32,6 +32,8 @@
 #include <PC\PaintPool.h>
 #include<PC\CaptureArea.h>
 
+#define MAX_NUMBER_OF_OBJECTS 60
+
 GraphicsPipeline::GraphicsPipeline()
 	: OGLRenderer(Window::GetWindow())
 	, camera(new Camera())
@@ -48,6 +50,8 @@ GraphicsPipeline::GraphicsPipeline()
 	, scoreFBO(NULL)
 	,time(0.0f)
 {
+
+	totalTime = 0;
 	for (int i = 0; i < 2; ++i) {
 		screenTexColor[i] = NULL;
 	}
@@ -68,7 +72,7 @@ GraphicsPipeline::GraphicsPipeline()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	sceneBoundingRadius = 30.f; ///Approx based on scene contents
+	sceneBoundingRadius = 80.0f;	 ///Approx based on scene contents
 
 	camera->SetPosition(Vector3(0.0f, 10.0f, 15.0f));
 	camera->SetYaw(0.f);
@@ -145,7 +149,7 @@ void GraphicsPipeline::InitializeDefaults()
 
 	backgroundColor = Vector3(0.8f, 0.8f, 0.8f);
 	ambientColor = Vector3(0.2f, 0.2f, 0.2f);
-	lightDirection = Vector3(0.5f, -1.0f, -0.8f); lightDirection.Normalise();
+	lightDirection = Vector3(0.8f, -1.0f, 0.5f); lightDirection.Normalise();
 	specularFactor = 96.0f;
 
 	numSuperSamples = 4;
@@ -249,6 +253,42 @@ void GraphicsPipeline::LoadShaders()
 		NCLERROR("Could not link shader: Score");
 	}
 
+	shaders[SHADERTYPE::ParticleCompute] = new Shader(SHADERDIR"Compute/computeParticles.glsl");
+	if (!shaders[SHADERTYPE::ParticleCompute]->LinkProgram()) {
+		NCLERROR("Could not link shader: Particle Compute shader");
+	}
+
+	shaders[SHADERTYPE::ParticleRender] = new Shader(
+		SHADERDIR"Common/EmptyVertex.glsl",
+		SHADERDIR"Common/ColorFragment.glsl"
+	);
+	if (!shaders[SHADERTYPE::ParticleRender]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Particle Renderer");
+	}
+
+	shaders[SHADERTYPE::ChangeColorObject] = new Shader(
+		SHADERDIR"Game/ChangeColorVertex.glsl",
+		SHADERDIR"Game/ChangeColorFragment.glsl"
+	);
+	if (!shaders[SHADERTYPE::ChangeColorObject]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: Change Color Object");
+	}
+
+	shaders[SHADERTYPE::ColorPool] = new Shader(
+		SHADERDIR"watertes/water_tess_vert.glsl",
+		SHADERDIR"watertes/water_tess_frag.glsl",
+		SHADERDIR"watertes/water_tess_ctrl.glsl",
+		SHADERDIR"watertes/water_tess_eval.glsl",
+		SHADERDIR"watertes/water_tess_geom.glsl"
+	);
+
+	if (!shaders[SHADERTYPE::ColorPool]->LinkProgram())
+	{
+		NCLERROR("Could not link shader: color Pool Object");
+	}
+	
 }
 
 void GraphicsPipeline::LoadMaterial()
@@ -263,6 +303,10 @@ void GraphicsPipeline::LoadMaterial()
 	materials[MATERIALTYPE::SkyBox] = nullptr;
 	materials[MATERIALTYPE::MiniMap] = nullptr;
 	materials[MATERIALTYPE::Score] = nullptr;
+	materials[MATERIALTYPE::ParticleCompute] = nullptr;
+	materials[MATERIALTYPE::ParticleRender] = new StandardMaterial();
+	materials[MATERIALTYPE::ChangeColorObject] = new ChangeColorMaterial();
+	materials[MATERIALTYPE::ColorPool] = new ColorPoolMaterial();
 }
 
 void GraphicsPipeline::UpdateAssets(int width, int height)
@@ -385,12 +429,15 @@ void GraphicsPipeline::DebugRender()
 
 void GraphicsPipeline::UpdateScene(float dt)
 {
+	totalTime += dt;
+
 	//update all of the camera stuff
 	camera->UpdateCamara(dt);
 
 	// Update Timers
 	perfShadow.UpdateRealElapsedTime(dt);
 	perfObjects.UpdateRealElapsedTime(dt);
+	perfPath.UpdateRealElapsedTime(dt);
 	perfPostProcess.UpdateRealElapsedTime(dt);
 	perfScoreandMap.UpdateRealElapsedTime(dt);
 
@@ -407,6 +454,9 @@ void GraphicsPipeline::UpdateScene(float dt)
 		projMatrix,
 		viewMatrix,
 		camera->GetPosition());
+
+	for (RenderNode* node : allNodes)
+		node->Update(dt); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
 }
 
 void GraphicsPipeline::RenderScene()
@@ -414,8 +464,7 @@ void GraphicsPipeline::RenderScene()
 	//Build World Transforms
 	// - Most scene objects will probably end up being static, so we really should only be updating
 	//   modelMatrices for objects (and their children) who have actually moved since last frame
-	for (RenderNode* node : allNodes)
-		node->Update(0.0f); //Not sure what the msec is here is for, apologies if this breaks anything in your framework!
+
 
 							//Build Transparent/Opaque Renderlists
 	BuildAndSortRenderLists();
@@ -439,9 +488,10 @@ void GraphicsPipeline::RenderScene()
 		RenderObject();
 		perfObjects.EndTimingSection();
 
-
 		//render the path to texture
+		perfPath.BeginTimingSection();
 		RenderPath();
+		perfPath.EndTimingSection();
 
 		//post process and present
 		perfPostProcess.BeginTimingSection();
@@ -452,7 +502,7 @@ void GraphicsPipeline::RenderScene()
 		//draw the minimap on screen
 		perfScoreandMap.BeginTimingSection();
 
-		if (accumTime > 0.1f)
+		if (accumTime > 1.0f/60.0f)
 		{
 			if (isMainMenu == false) {
 				CountScore();
@@ -465,8 +515,6 @@ void GraphicsPipeline::RenderScene()
 		}
 
 		perfScoreandMap.EndTimingSection();
-		
-
 
 		//NCLDEBUG - Text Elements (aliased)
 		if (isMainMenu == false) {
@@ -594,32 +642,52 @@ void GraphicsPipeline::RecursiveAddToRenderLists(RenderNode* node)
 void GraphicsPipeline::RenderAllObjects(bool isShadowPass, std::function<void(RenderNode*)> perObjectFunc)
 {
 	// sort render opaque order
-	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
-	{
-		perObjectFunc((*i).first);
-		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
-		else { glDisable(GL_CULL_FACE); }
-		(*i).first->DrawOpenGL(isShadowPass);
-	}
 
 	if (isShadowPass)
 	{
+		return;
+		for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
+		{
+			perObjectFunc((*i).first);
+			if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
+			else { glDisable(GL_CULL_FACE); }
+
+			if ((*i).first->HasShadow()) {
+				(*i).first->DrawOpenGL(isShadowPass);
+			}
+			
+		}
+
 		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
 		{
 			perObjectFunc((*i).first);
-			(*i).first->DrawOpenGL(isShadowPass);
+
+			if ((*i).first->HasShadow()) {
+				(*i).first->DrawOpenGL(isShadowPass);
+			}
 		}
 	}
 	else
 	{
+		for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i)
+		{
+			perObjectFunc((*i).first);
+			if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
+			else { glDisable(GL_CULL_FACE); }
+			(*i).first->DrawOpenGL(isShadowPass);
+		}
+		
 		for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i)
 		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			perObjectFunc((*i).first);
 			glCullFace(GL_FRONT);
 			(*i).first->DrawOpenGL(isShadowPass);
 
 			glCullFace(GL_BACK);
 			(*i).first->DrawOpenGL(isShadowPass);
+			glDisable(GL_BLEND);
 		}
 	}
 }
@@ -690,11 +758,13 @@ void GraphicsPipeline::RenderShadow()
 	for (std::vector<RenderNodePair>::reverse_iterator i = renderlistOpaque.rbegin(); i != renderlistOpaque.rend(); ++i) {
 		if ((*i).first->IsCulling()) { glEnable(GL_CULL_FACE); }
 		else { glDisable(GL_CULL_FACE); }
-		(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
+		if ((*i).first->HasShadow())
+			(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
 	}
 	for (std::vector<RenderNodePair>::iterator i = renderlistTransparent.begin(); i != renderlistTransparent.end(); ++i) {
 		Material* mat = (*i).first->GetMaterial();
-		(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
+		if ((*i).first->HasShadow())
+			(*i).first->DrawOpenGL(true, materials[MATERIALTYPE::Shadow]);
 	}
 }
 
@@ -906,8 +976,8 @@ void GraphicsPipeline::InitPath(Vector2 _groundSize)
 	//Color Texture
 	if (!pathTex) glGenTextures(1, &pathTex);
 	glBindTexture(GL_TEXTURE_2D, pathTex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8, (GLsizei)(groundSize.x*PIXELPERSIZE), (GLsizei)(groundSize.y*PIXELPERSIZE), 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
@@ -1091,9 +1161,9 @@ void GraphicsPipeline::DrawMiniMap() {
 	//get the current map
 	Map* map = (Map*)SceneManager::Instance()->GetCurrentScene();
 	//int array for pickup type
-	uint pickupTypes[20];
-	float pickupPositions[40];
-	int pickupColours[20];
+	uint pickupTypes[MAX_NUMBER_OF_OBJECTS];
+	float pickupPositions[MAX_NUMBER_OF_OBJECTS*2];
+	int pickupColours[MAX_NUMBER_OF_OBJECTS];
 	//reset count
 	count = 0;
 
@@ -1110,11 +1180,8 @@ void GraphicsPipeline::DrawMiniMap() {
 				case PICKUP:
 				{
 					Pickup* p = static_cast<Pickup*>(go);
-					if (p->GetActive() || p->GetPickupType() == PickupType::PAINTPOOL) {
+					if (p->GetActive()) {
 						pickupTypes[count] = p->GetPickupType();
-						if (pickupTypes[count] == PickupType::PAINTPOOL) {
-							pickupColours[count] = ((PaintPool*)p)->GetColour();
-						}
 						Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
 						pickupPositions[count * 2] = v.x;
 						pickupPositions[(count * 2) + 1] = v.y;
@@ -1125,7 +1192,13 @@ void GraphicsPipeline::DrawMiniMap() {
 				case PAINTABLE_OBJECT:
 				{
 					CaptureArea * c = static_cast<CaptureArea*>(go);
-					pickupTypes[count] = 4;
+					switch (c->GetType())
+					{
+						case MULTIPAINTPOOL_CAPTURE_AREA:	pickupTypes[count] = 6;		break;
+						case MINION_CAPTURE_AREA:			pickupTypes[count] = 5;		break;
+						default:							pickupTypes[count] = 4;		break;
+					}
+
 					pickupColours[count] = c->GetColour();
 					Vector2 v = VectorToMapCoord(c->Physics()->GetPosition());
 					pickupPositions[count * 2] = v.x;
@@ -1133,15 +1206,26 @@ void GraphicsPipeline::DrawMiniMap() {
 					count++;
 					break;
 				}
+				case PAINTPOOL_PHYS_NODE:
+				{
+					GameObject* p = static_cast<GameObject*>(go);
+					pickupColours[count] = ((PaintPool*)p)->GetColour();
+					pickupTypes[count] = PAINTPOOL;
+					Vector2 v = VectorToMapCoord(p->Physics()->GetPosition());
+					pickupPositions[count * 2] = v.x;
+					pickupPositions[(count * 2) + 1] = v.y;
+					count++;
+					
+				}
 				}
 			}
 		}
 	}
 
 	glUniform1ui (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupCount"), count);
-	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), 20, pickupTypes);
-	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), 20, pickupPositions);
-	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), 20, pickupColours);
+	glUniform1uiv(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupTypes"), MAX_NUMBER_OF_OBJECTS, pickupTypes);
+	glUniform2fv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupPositions"), MAX_NUMBER_OF_OBJECTS*2, pickupPositions);
+	glUniform1iv (glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "pickupColours"), MAX_NUMBER_OF_OBJECTS, pickupColours);
 
 	//pass the view angle through in radians
 	glUniform1f(glGetUniformLocation(shaders[SHADERTYPE::MiniMap]->GetProgram(), "angle"), -(camera->GetYaw() + 180.0f)*PI/180.0f);
@@ -1159,7 +1243,7 @@ void GraphicsPipeline::DrawMiniMap() {
 
 Vector2 GraphicsPipeline::VectorToMapCoord(Vector3 pos) {
 	Vector2 r;
-	//get the x and y demensions of map
+	//get the x and y dimensions of map
 	float xDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetXDimension();
 	float yDimension = ((Map*)(SceneManager::Instance()->GetCurrentScene()))->GetYDimension();
 

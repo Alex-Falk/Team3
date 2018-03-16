@@ -30,6 +30,7 @@
 #include <nclgl\PlayerRenderNode.h>
 #include "Pickup.h"
 #include "WeaponPickup.h"
+#include "AudioSystem.h"
 
 //I blame Microsoft...
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
@@ -79,26 +80,8 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 
 	
 	MovementState(move, yaw, dt);
-
-
-
-
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_1)) {
-		NCLDebug::Log("Pistol Activated");
-		weapon = PAINT_PISTOL;
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_2)) {
-		NCLDebug::Log("Rocket Activated");
-		weapon = PAINT_ROCKET;
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_3)) {
-		NCLDebug::Log("Spray Activated");
-		weapon = PAINT_SPRAY;
-	}
-	if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_4)) {
-		NCLDebug::Log("Auto Activated");
-		weapon = AUTO_PAINT_LAUNCHER;
-	}
+	
+	//TODO: DELETE THIS ONCE ALL DEBUGGING STOPS
 
 	if (Input::Instance()->GetInput(SHOOT))
 	{
@@ -109,6 +92,19 @@ void ControllableAvatar::ProcessAvatarInput(float dt)
 
 // Updates everything on player
 void ControllableAvatar::Update(float dt) {
+
+	if (this->Physics()->GetPosition().y <= -10.0f)
+	{
+		this->Physics()->SetPosition(((Map*)Game::Instance()->GetMap())->GetSpawnPos(this->col));
+		this->Physics()->SetForce(Vector3(0, 0, 0));
+		this->Physics()->SetLinearVelocity(Vector3(0, 0, 0));
+		this->Physics()->SetAngularVelocity(Vector3(0, 0, 0));
+	}
+
+	if (targetLife < minLife)
+	{
+		targetLife = minLife;
+	}
 
 	shooting = false;
 
@@ -137,9 +133,7 @@ void ControllableAvatar::Update(float dt) {
 	
 	LerpLife(dt);
 
-	curSize = size * (life / 100);
-
-	ChangeSize(curSize);
+	ChangeSize(size * (life / 100));
 
 	if (collisionTimerActive)
 	{
@@ -170,6 +164,7 @@ bool ControllableAvatar::PlayerCallbackFunction(PhysicsNode* self, PhysicsNode* 
 		Pickup * p = (Pickup*)(collidingObject->GetParent());
 		if (p->GetActive())
 		{
+			AudioSystem::Instance()->PlayASound(PICKUP_COLLECTED_SOUND, false, physicsNode->GetPosition());
 			activePickUp = p->GetPickupType();
 			if (activePickUp == WEAPON)
 			{
@@ -231,10 +226,11 @@ void ControllableAvatar::MovementState(Movement inputDir, float yaw, float dt)
 		curMove = MOVE_JUMP;
 		if (canJump) {
 			Vector3 vel = Physics()->GetLinearVelocity();
-			Physics()->SetLinearVelocity(Vector3(vel.x*.6f, jumpImpulse, vel.z*.6f));
+			Physics()->SetLinearVelocity(Vector3(vel.x*.9f, jumpImpulse, vel.z*.9f));
 			inAir = true;
 			((PlayerRenderNode*)Render()->GetChild())->SetIsInAir(true);
 			canJump = false;
+			AudioSystem::Instance()->PlayASound(JUMP_SOUND, false, physicsNode->GetPosition());
 		}
 		break;
 	}

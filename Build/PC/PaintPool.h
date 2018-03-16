@@ -23,7 +23,7 @@
 
 #include "Pickup.h"
 
-class PaintPool : public Pickup
+class PaintPool : public GameObject
 {
 public:
 	PaintPool();
@@ -38,8 +38,9 @@ public:
 	inline Colour GetColour() { return colour; }
 	~PaintPool();
 private:
-
+	Vector4 paintColour;
+	float soundCooldown;
 	Colour colour;
-
+	float angle = 90.0f;
 };
 

@@ -75,7 +75,7 @@ string Win32_PrintAllAdapterIPAddresses()
 			IP_ADDR_STRING* cIpAddress = &cAdapter->IpAddressList;
 			while (cIpAddress != NULL)
 			{
-				printf("\t - Listening for connections on %s:%u\n", cIpAddress->IpAddress.String, 1234);
+				//printf("\t - Listening for connections on %s:%u\n", cIpAddress->IpAddress.String, 1234);
 				ip = cIpAddress->IpAddress.String;
 				cIpAddress = cIpAddress->Next;
 			}
@@ -93,11 +93,12 @@ Server::Server() {
 	{
 
 		server = new NetworkBase();
-		printf("Server Initiated\n");
+		//printf("Server Initiated\n");
 
 		server->Initialize(1234, 32);
 		ip = Win32_PrintAllAdapterIPAddresses();
 		userID = 0;
+		lerpFactor = 0.6f;
 		timer.GetTimedMS();
 
 		freeIDs = { 3,2,1 };
@@ -137,13 +138,14 @@ void Server::UpdateUser(float dt)
 		{
 			switch (evnt.type)
 			{
+			// When a client connects check if the game is running and there is space for them to connect
 			case ENET_EVENT_TYPE_CONNECT:
 			{
-				printf(" - New Client Connected\n");
+				//printf(" - New Client Connected\n");
 				if (Game::Instance()->IsRunning())
 				{
 					enet_peer_disconnect(evnt.peer, 0);
-					cout << clientIPAddress[0];
+					//cout << clientIPAddress[0];
 				}
 				else
 				{
@@ -155,7 +157,7 @@ void Server::UpdateUser(float dt)
 
 						connectedIDs.push_back(freeIDs[freeIDs.size() - 1]);
 						SendConnectionID(freeIDs[freeIDs.size() - 1]);
-						enet_peer_timeout(evnt.peer, 800000, 800000, 800000);
+						enet_peer_timeout(evnt.peer, 800, 800, 800);
 						evnt.peer->pingInterval = 100;
 						freeIDs.pop_back();
 						SendPlayerNames();
@@ -169,7 +171,7 @@ void Server::UpdateUser(float dt)
 
 			}
 			break;
-
+			// Handle incoming network packets
 			case ENET_EVENT_TYPE_RECEIVE:
 			{
 				string data = GetPacketData(evnt);
@@ -201,17 +203,14 @@ void Server::UpdateUser(float dt)
 					enet_host_broadcast(server->m_pNetwork, 0, packet);
 					break;
 				}
-				case MAP_PICKUP_REQUEST:
-				{
-					ReceiveRequest(data,PICKUP);
-					break;
-				}
+				case MAP_PICKUP_REQUEST:	ReceiveRequest(data,PICKUP); break;
 				}
 				break;
 			}
+			// If a user disconnects, remove their avatar from the game
 			case ENET_EVENT_TYPE_DISCONNECT:
 			{
-				printf(" - Client %d has disconnected.\n", evnt.peer->incomingPeerID + 1);
+				//printf(" - Client %d has disconnected.\n", evnt.peer->incomingPeerID + 1);
 				for (uint i = 0; i < connectedIDs.size(); ++i)
 				{
 					if (connectedIDs[i] - 1 == evnt.peer->incomingPeerID)
@@ -221,25 +220,32 @@ void Server::UpdateUser(float dt)
 					}
 				}
 
-				GraphicsPipeline::Instance()->RemovePlayerRenderNode((Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1))->Render()->GetChild());
-				SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
-				Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
+				if (Game::Instance()->IsRunning())
+				{
+					GraphicsPipeline::Instance()->RemovePlayerRenderNode((Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1))->Render()->GetChild());
+					SceneManager::Instance()->GetCurrentScene()->RemoveGameObject(Game::Instance()->GetPlayer(evnt.peer->incomingPeerID + 1));
+					Game::Instance()->SetAvatar(evnt.peer->incomingPeerID + 1, nullptr);
+					Game::Instance()->SetPlayerName(evnt.peer->incomingPeerID + 1, "");
+					SendPlayerNames();
+				}
 				break;
 			}
 			}
 		});
 
+		// Send packets specific to game running
 		if (Game::Instance()->IsRunning())
 		{
 			accumTime += dt;
-			if (accumTime > 1 / 60.0f)
+			if (accumTime > PhysicsEngine::Instance()->GetUpdateTimestep())
 			{
+				accumTime = 0.0f;
 				HandleRequests();
 				for (uint i = 0; i < Game::Instance()->GetPlayerNumber(); ++i)
 				{
 					if (Game::Instance()->GetPlayer(i))
 					{
-						//SendSize(i);
+						//Send Updates 
 						SendAvatarUpdate(
 							i,
 							Game::Instance()->GetPlayer(i)->GetGameObject()->Physics()->GetPosition(),
@@ -255,15 +261,19 @@ void Server::UpdateUser(float dt)
 
 				Map * m = static_cast<Map*>(Game::Instance()->GetMap());
 
+				// Send moving game object update
 				for (GameObject * go : m->GetConstantGameObjects())
 				{
-					if (go->Physics()->GetInverseMass() > 0.01f)
+					if (go->Physics())
 					{
-						SendObjectUpdate(go);
+						if (go->Physics()->GetInverseMass() > 0.01f)
+						{
+							SendObjectUpdate(go);
+						}
 					}
-					
 				}
 
+				// Send Minion updates
 				MinionBase ** minions = m->GetMinions();
 				for (int i = 0; i < m->GetMaxMinions(); ++i)
 				{
@@ -404,9 +414,9 @@ void Server::SendPlayerNames()
 	string data;
 
 	data = to_string(PLAYER_NAME) + ":" +
-		Game::Instance()->GetName(0) + " " +
-		Game::Instance()->GetName(1) + " " +
-		Game::Instance()->GetName(2) + " " +
+		Game::Instance()->GetName(0) + "," +
+		Game::Instance()->GetName(1) + "," +
+		Game::Instance()->GetName(2) + "," +
 		Game::Instance()->GetName(3);
 
 	ENetPacket* packet = enet_packet_create(data.c_str(), sizeof(char) * data.length(), ENET_PACKET_FLAG_RELIABLE);

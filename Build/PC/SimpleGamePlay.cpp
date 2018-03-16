@@ -5,6 +5,8 @@
 #include "MultiPaintPool.h"
 #include "CaptureArea.h"
 #include "ParticleEmitter.h"
+#include "AudioSystem.h"
+#include "LaunchPad.h"
 
 //--------------------------------------------------------------------------------------------//
 // Initialisation and Cleanup
@@ -12,6 +14,11 @@
 void SimpleGamePlay::OnInitializeScene()
 {
 	dimensions = Vector2(100,100);
+	AudioSystem::Instance()->StopAllSounds();
+	AudioSystem::Instance()->Update();
+	AudioSystem::Instance()->PlayASound(GAME_MUSIC, true);
+
+	dimensions = Vector2(35, 50);
 
 	Map::SetMapDimensions(dimensions);
 	Map::OnInitializeScene();
@@ -30,7 +37,20 @@ void SimpleGamePlay::SetSpawnLocations()
 void SimpleGamePlay::AddObjects()
 {
 
-	BuildGround(dimensions);
+	BuildInvisibleWalls(dimensions);
+
+	GameObject* ground = CommonUtils::BuildCuboidObject(
+		"Ground",
+		Vector3(0.0f, 0.0f, 0.0f),			// Centre Position
+		Vector3(dimensions.x, 1.0f, dimensions.y),		// Scale
+		true,
+		0.0f,
+		true,
+		false,								// Dragable By User
+		BIG_NODE,
+		Vector4(0.6f, 0.6f, 0.6f, 1.0f),
+		MATERIALTYPE::Ground);	// Colour
+	this->AddGameObject(ground);
 
 	// PICKUPS 
 	AddGameObject(new PaintPool(Vector3(0, 0.6f, 0), RED,"0"));
@@ -53,15 +73,18 @@ void SimpleGamePlay::AddObjects()
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "0", { 0,1.5f,15 }, { 0.5f,0.5f,0.5f }, 10));
 	AddGameObject(new MinionCaptureArea(START_COLOUR, "1", { 0,1.5f,-30 }, { 0.5f,0.5f,0.5f }, 10));
 	
-	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15, 0.6, -15), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
+	AddGameObject(new LaunchPad(Vector3(0.0f, 1.0f, 25.0f), Vector3(2.0f, 0.01f, 2.0f), "poo"));
+
+	MultiPaintPool* mpp = new MultiPaintPool(Vector3(15.0f, 0.6f, -15.0f), "2", Vector3(3.0f, 0.5f, 3.0f), 10);
 	AddGameObject(mpp);
 	mpp->AddPool(cpp1);
 	mpp->AddPool(cpp2);
 	mpp->AddPool(cpp3);
 	mpp->AddPool(cpp4);
 
-	ParticleEmitter * e = new ParticleEmitter(RED, { 0,2,0 }, 20, { 1,1,0 }, 10,10,5,50);
-	this->AddGameObject(e);
+
+
+	//this->AddGameObject(e);
 }
 
 //--------------------------------------------------------------------------------------------//

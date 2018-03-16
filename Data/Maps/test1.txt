@@ -1,0 +1,17 @@
+NEW_TEXTURE 0 PaintPool.png 	//Texture with ID 0
+NEW_TEXTURE 1 PaintPool.png 	//Texture with ID 1
+NEW_TEXTURE 2 PaintPool.png 	//Texture with ID 2
+NEW_TEXTURE 3 PaintPool.png 	//Texture with ID 3
+NEW_TEXTURE 4 PaintPool.png 	//Texture with ID 4
+NEW_TEXTURE 5 SprayIcon.png 	//Texture with ID 5
+NEW_TEXTURE 6 PaintPool.png 	//Texture with ID 6
+NEW_TEXTURE 7 PaintPool.png 	//Texture with ID 7
+NEW_TEXTURE 8 PaintPool.png 	//Texture with ID 8
+NEW_TEXTURE 9 PaintPool.png 	//Texture with ID 9
+MAP 100 100  			//Ground Dimensions 
+SPAWN_LOC 0 92 24 98		//Spawn Position 1 x y z 
+SPAWN_LOC 1 94 24 98	 	//Spawn Position 2 x y z 
+SPAWN_LOC 2 96 24 98 		//Spawn Position 3 x y z 
+SPAWN_LOC 3 98 24 98 		//Spawn Position 4 x y z 
+GROUND 0 -1 0 ground 100 2 100 0 0 0
+CAPTURE_AREA 0 100 0 fucker 5 5 5 500 1

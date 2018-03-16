@@ -20,6 +20,39 @@ Shader::Shader(string vFile, string fFile, string gFile) {
 	SetDefaultAttributes();
 }
 
+//Alex Falk-----------------------------------------------------------//
+// Implementation for compute and tesselation shaders
+Shader::Shader(string compute) {
+	NCLDebug::Log("Loading Shader:");
+	program = glCreateProgram();
+	objects[SHADER_COMPUTE] = GenerateShader(compute, GL_COMPUTE_SHADER);
+	glAttachShader(program, objects[SHADER_COMPUTE]);
+
+	//SetDefaultAttributes();
+}
+
+Shader::Shader(string vFile, string fFile, string cFile, string eFile, string gFile) {
+	program = glCreateProgram();
+	objects[SHADER_VERTEX] = GenerateShader(vFile, GL_VERTEX_SHADER);
+	objects[SHADER_FRAGMENT] = GenerateShader(fFile, GL_FRAGMENT_SHADER);
+	objects[SHADER_CONTROL] = GenerateShader(cFile, GL_TESS_CONTROL_SHADER);
+	objects[SHADER_EVALUATION] = GenerateShader(eFile, GL_TESS_EVALUATION_SHADER);
+
+	if (!gFile.empty())
+	{
+		objects[SHADER_GEOMETRY2] = GenerateShader(gFile, GL_GEOMETRY_SHADER);
+		glAttachShader(program, objects[SHADER_GEOMETRY2]);
+	}
+
+	glAttachShader(program, objects[SHADER_VERTEX]);
+	glAttachShader(program, objects[SHADER_FRAGMENT]);
+	glAttachShader(program, objects[SHADER_CONTROL]);
+	glAttachShader(program, objects[SHADER_EVALUATION]);
+	SetDefaultAttributes();
+
+}
+//--------------------------------------------------------------------//
+
 Shader::~Shader(void) {
 	for (int i = 0; i < 3; ++i) {
 		glDetachShader(program, objects[i]);
