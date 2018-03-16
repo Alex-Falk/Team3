@@ -147,8 +147,6 @@ void Projectile::Explode() {
 	//turn into sphere for spherical paint splat
 	Render()->GetChild()->SetMesh(CommonMeshes::Sphere());
 	Render()->GetChild()->SetTransform((Matrix4::Scale(Vector3(3.0f, 3.0f, 3.0f))));
-	int randPitch;
-	int randYaw;
 	
 	Explosion * explosion = new Explosion(this->colour, Vector4{ 1.0f, 1.0f, 1.0f, 0.0f }, Physics()->GetPosition(), { 0,0,0 }, 3.0f, 5.0f, SPRAY, 4, "Spray");
 	explosion->UnregisterPhysicsToRenderTransformCallback();

@@ -94,8 +94,8 @@ ParticleEmitter::ParticleEmitter(
 	
 	vec3 *vels = (vec3*)glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, particleNum * sizeof(vec3), bufMask);
 
-	int randPitch;
-	int randYaw;
+	float randPitch;
+	float randYaw;
 	float randScale;
 	Vector3 velScale;
 	for (uint i = 0; i < particleNum; ++i)
@@ -121,10 +121,10 @@ ParticleEmitter::ParticleEmitter(
 
 	for (uint i = 0; i < particleNum; ++i)
 	{
-		randPitch = (rand() % (int)spreadPitch*2) - spreadPitch;
-		randYaw = rand() % (int)spreadYaw;
+		randPitch = (float)((rand() % (int)spreadPitch*2) - spreadPitch);
+		randYaw = (float)(rand() % (int)spreadYaw);
 		randScale = (rand() % 5) / 100.0f;
-		Vector3 dir = Matrix3::Rotation((float)randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation((float)randYaw, Vector3(0.0f, 1.0f, 0.0f)) * (direction + (direction*randScale));
+		Vector3 dir = Matrix3::Rotation(randPitch, Vector3(1.0f, 0.0f, 0.0f)) * Matrix3::Rotation(randYaw, Vector3(0.0f, 1.0f, 0.0f)) * (direction + (direction*randScale));
 
 		startvels[i].x = dir.x;
 		startvels[i].y = dir.y;
@@ -178,9 +178,6 @@ void ParticleEmitter::SetColour(Colour c)
 
 void ParticleEmitter::Update(float dt)
 {
-	int randPitch;
-	int randYaw;
-
 	// If emitter has lifetime, reduce its lifetime
 	if (isDeleting)
 	{

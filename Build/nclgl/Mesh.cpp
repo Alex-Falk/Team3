@@ -420,7 +420,7 @@ Mesh * Mesh::GeneratePlane(int x, int y) {
 		}
 	}
 
-	for (int i = 0; i < m->numVertices; ++i) {
+	for (uint i = 0; i < m->numVertices; ++i) {
 		m->colours[i] = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 		m->normals[i] = Vector3(0.0f, 0.0f, -1.0f);
 		m->tangents[i] = Vector3(1.0f, 0.0f, 0.0f);

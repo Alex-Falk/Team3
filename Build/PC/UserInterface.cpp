@@ -182,7 +182,7 @@ void GUIsystem::DrawScorebar()
 		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uGammaCorrection"),
 			GraphicsPipeline::Instance()->GetGammaCorrection());
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "moveFactor"), GraphicsPipeline::Instance()->GetTotalTime()*0.1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "moveFactor"), GraphicsPipeline::Instance()->GetTotalTime()*0.1f);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uNumSuperSamples"), superSamples);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "isLifebar"), 0.0);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "health"), playerLife);
@@ -215,7 +215,7 @@ void GUIsystem::DrawLifebar()
 		glUniformMatrix4fv(glGetUniformLocation(scorebarShader->GetProgram(), "uModelMtx"), 1, false, *&modelMatrix.values);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uGammaCorrection"),
 			GraphicsPipeline::Instance()->GetGammaCorrection());
-		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "moveFactor"), GraphicsPipeline::Instance()->GetTotalTime()*0.1);
+		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "moveFactor"), GraphicsPipeline::Instance()->GetTotalTime()*0.1f);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "uNumSuperSamples"), superSamples);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "isLifebar"), 1.0);
 		glUniform1f(glGetUniformLocation(scorebarShader->GetProgram(), "health"), playerLife);
