@@ -1,5 +1,5 @@
 #version 400 core
-
+// Alex - Falk - Tesselation control shader for paintpools/'water'
 layout(vertices = 4) out;
 
 // in Vertex {

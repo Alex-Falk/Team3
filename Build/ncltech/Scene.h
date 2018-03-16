@@ -26,6 +26,7 @@ Description:
 	For example usage see Tuts_Physics project.
 
 *//////////////////////////////////////////////////////////////////////////////
+// Adapted by Alex Falk
 #pragma once
 
 #include "GameObject.h"
@@ -83,19 +84,6 @@ public:
 	//	   michael davis: projectiles delete after 10 seconds
 	virtual void onConnectToScene() {}
 	virtual void OnUpdateScene(float dt) {
-		//vector<GameObject*> tempVec;
-		//for (int i = 0; i < m_vpObjects.size(); i++) {
-		//	m_vpObjects[i]->SetTimeInScene(m_vpObjects[i]->GetTimeInScene() + dt);
-		//	if (m_vpObjects[i]->Physics()->GetType() == PROJECTILE || m_vpObjects[i]->Physics()->GetType() == SPRAY) {
-		//		if (m_vpObjects[i]->GetTimeInScene() > 10.0f) {
-		//			m_vpObjects[i]->SetToDestroy();
-		//			//tempVec.push_back(m_vpObjects[i]);
-		//		}
-		//	}
-		//}
-		//for (int i = 0; i < tempVec.size(); i++) {
-		//	RemoveGameObject(tempVec[i]);
-		//}
 	}
 
 	//Timers For The Scenes
@@ -148,12 +136,12 @@ public:
 			if (game_object->physicsNode) PhysicsEngine::Instance()->AddPhysicsObject(game_object->physicsNode);
 		}
 	}
-	//--------------------------------------------------------------------//
 
 	vector<GameObject*> GetConstantGameObjects()
 	{
 		return mapConstantObjects;
 	}
+	//--------------------------------------------------------------------//
 
 	GameObject* GetGameObject(uint idx)
 	{

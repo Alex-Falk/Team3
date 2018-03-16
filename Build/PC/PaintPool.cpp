@@ -19,6 +19,8 @@
 //          `^Y8b..   ``^^^Y88888888P^^^'    ..d8P^'
 //              `^Y888bo.,            ,.od888P^'
 //                   "`^^Y888888888888P^^'"  
+// Adapted by Alex Falk
+
 #include "PaintPool.h"
 #include <string.h>
 #include "Avatar.h"
@@ -42,17 +44,22 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 	friendlyName = unique_name;
 	this->colour = colour;
 
+	//-Alex Falk----------------------------------------------------------//
 	RenderNode* rnode = new RenderNode();
+	// Create a 2x2 Patch of quads that will be tesselated
 	Mesh * m = Mesh::GeneratePlane(2, 2);
 	m->type = GL_PATCHES;
 	Vector4 col = EnumToVectorColour(colour);
 	col.w = 0.7f;
+
+	// The render node that is to be tesselated
 	RenderNode* dummy = new RenderNode(m, "PickUp", col);
 	dummy->SetCulling(false);
 	dummy->SetTransform(Matrix4::Translation(Vector3(-halfdims.x,0.7f,-halfdims.z)) * Matrix4::Scale(halfdims) * Matrix4::Rotation(angle, Vector3(1, 0, 0)));
 	dummy->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ColorPool]);
 	rnode->AddChild(dummy);
 
+	// Side walls for the paint pool
 	RenderNode* dummy2 = new ChangeColorRenderNode(CommonMeshes::Cube(), "lower", EnumToVectorColour(colour));
 	dummy2->SetTransform(Matrix4::Translation(Vector3(0.0f, 0.3f, -halfdims.z)) * Matrix4::Scale(Vector3(3.0f,0.6f,0.05f)));
 	dummy2->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
@@ -73,11 +80,12 @@ PaintPool::PaintPool(Vector3 pos, Colour colour, string unique_name, float respa
 	dummy5->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
 	rnode->AddChild(dummy5);
 
+	// Bottom ground of the paintpool - so that the floor cannot be seen
 	RenderNode* dummy6 = new ChangeColorRenderNode(CommonMeshes::Cube(), "lower", EnumToVectorColour(colour));
 	dummy6->SetTransform(Matrix4::Translation(Vector3(0, 0.4f, 0.0f)) * Matrix4::Scale(Vector3(3.0f, 0.2f, 3.0f)));
 	dummy6->SetMaterial(GraphicsPipeline::Instance()->GetAllMaterials()[MATERIALTYPE::ChangeColorObject]);
 	rnode->AddChild(dummy6);
-
+//--------------------------------------------------------------------//
 	//rnode->SetCulling(true);
 	rnode->SetTransform(Matrix4::Translation(pos));
 	rnode->SetBoundingRadius(Vector3(3.0f, 0.5f, 3.0f).Length());

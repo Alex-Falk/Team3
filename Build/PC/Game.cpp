@@ -41,6 +41,7 @@
 // Setters
 //--------------------------------------------------------------------------------------------//
 
+// Make this user a server
 void Game::SetServer()
 {
 	if (user) { SAFE_DELETE(user) };
@@ -48,6 +49,7 @@ void Game::SetServer()
 	isHost = true;
 }
 
+// Make this user a client
 void Game::SetClient(IP ip)
 {
 	if (user) { SAFE_DELETE(user) };
@@ -94,7 +96,7 @@ void Game::Update(float dt)
 			ResetGame();
 			SceneManager::Instance()->JumpToScene(0);
 		}
-		// find a winnter to the game, reset timer to 10 seconds
+		// find a winner to the game, reset timer to 10 seconds
 		else if (time > gameLength) {
 			
 			DetermineWinner();

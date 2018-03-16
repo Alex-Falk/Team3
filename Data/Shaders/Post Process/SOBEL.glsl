@@ -1,6 +1,6 @@
 #version 330 core
 
-// Alex Falk
+// Alex Falk - sobel shader used for black outlines
 uniform sampler2D uColorTex;
 
 uniform vec2 	uSinglepixel;
